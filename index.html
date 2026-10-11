@@ -5,1470 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DYF | Defender Your Foot</title>
   <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
-  <style>
-    :root {
-      --bg-deep: #141210;
-      --leather-caramel: #C29553;
-      --leather-dark: #3D2415;
-      --gold-primary: #D8B264;
-      --gold-light: #F6E7B2;
-      --gold-glow: rgba(216, 178, 100, 0.45);
-      --stitch-line: #E8E4D9;
-      --stitch-alpha: rgba(232, 228, 217, 0.35);
-      --text-ivory: #FDFBF7;
-      --text-main: #FDFBF7;
-      --text-muted: #9E9587;
-      --card-bg: rgba(61, 36, 21, 0.55);
-      --card-border: rgba(216, 178, 100, 0.25);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Vazirmatn', -apple-system, sans-serif;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      scroll-padding-top: 85px;
-    }
-
-    body {
-      position: relative;
-      background-color: var(--bg-deep);
-      color: var(--text-main);
-      overflow-x: hidden;
-      min-height: 100vh;
-    }
-
-    /* بافت نامحسوس چرم کروکو در پس‌زمینه */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: 
-        radial-gradient(circle at 20% 30%, rgba(194, 149, 83, 0.04) 1px, transparent 1px),
-        radial-gradient(circle at 80% 70%, rgba(61, 36, 21, 0.06) 1.5px, transparent 1.5px),
-        repeating-linear-gradient(45deg, rgba(61, 36, 21, 0.03) 0, rgba(61, 36, 21, 0.03) 12px, transparent 12px, transparent 24px),
-        repeating-linear-gradient(-45deg, rgba(194, 149, 83, 0.02) 0, rgba(194, 149, 83, 0.02) 16px, transparent 16px, transparent 32px);
-      background-size: 40px 40px, 60px 60px, 48px 48px, 64px 64px;
-      pointer-events: none;
-      z-index: -1;
-      opacity: 0.85;
-    }
-
-    /* نوار دوخت چرمی بالای هدر */
-    .top-saddle-stitch {
-      width: 100%;
-      height: 3px;
-      border-top: 2px dashed var(--stitch-line);
-      background: #19120c;
-    }
-
-    /* هدر اصلی */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 5%;
-      background: rgba(16, 13, 10, 0.92);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-    }
-
-    /* برند و لوگو */
-    .brand-logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-    }
-
-    .logo-shield {
-      width: 44px;
-      height: 50px;
-      background: radial-gradient(circle, #352115 0%, #120b07 100%);
-      border: 1.8px solid var(--gold-primary);
-      border-radius: 4px 4px 50% 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
-    }
-
-    .logo-monogram {
-      color: var(--gold-light);
-      font-weight: 900;
-      font-size: 1.05rem;
-      letter-spacing: -1px;
-    }
-
-    .logo-text-group h1 {
-      font-size: 1.35rem;
-      font-weight: 900;
-      letter-spacing: 2.5px;
-      color: var(--gold-light);
-      line-height: 1.1;
-    }
-
-    .logo-text-group span {
-      font-size: 0.65rem;
-      color: var(--text-muted);
-      letter-spacing: 0.8px;
-    }
-
-    /* منوی میانی دسکتاپ */
-    .desktop-nav ul {
-      display: flex;
-      list-style: none;
-      gap: 2.2rem;
-    }
-
-    .nav-item {
-      position: relative;
-      text-decoration: none;
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      font-weight: 500;
-      padding: 8px 2px;
-      transition: color 0.3s ease;
-      display: inline-block;
-    }
-
-    /* انیمیشن خط طلایی از گوشه راست */
-    .nav-item::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--gold-primary), var(--gold-light));
-      box-shadow: 0 0 10px var(--gold-glow);
-      border-radius: 2px;
-      transition: width 0.35s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-
-    .nav-item:hover {
-      color: #fff;
-    }
-
-    .nav-item:hover::after {
-      width: 100%;
-    }
-
-    /* دکمه Specular */
-    .btn-specular {
-      --x: 50%;
-      --y: 50%;
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.75rem 1.6rem;
-      border-radius: 10px;
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--gold-light);
-      background: linear-gradient(145deg, #281a12 0%, #170f0a 100%);
-      border: 1px solid rgba(212, 175, 55, 0.4);
-      cursor: pointer;
-      overflow: hidden;
-      box-shadow:
-        0 4px 15px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.6);
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
-      user-select: none;
-    }
-
-    .btn-specular::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(
-        circle 90px at var(--x) var(--y),
-        rgba(246, 231, 178, 0.45) 0%,
-        rgba(212, 175, 55, 0.15) 40%,
-        transparent 80%
-      );
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      mix-blend-mode: screen;
-    }
-
-    .btn-specular:hover {
-      transform: translateY(-2px);
-      border-color: rgba(212, 175, 55, 0.85);
-      box-shadow:
-        0 8px 25px rgba(184, 134, 70, 0.35),
-        inset 0 1px 1px rgba(255, 255, 255, 0.35);
-    }
-
-    .btn-specular:hover::before {
-      opacity: 1;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    /* دکمه همبرگری (سه خط) */
-    .hamburger-btn {
-      display: none;
-      flex-direction: column;
-      justify-content: space-around;
-      width: 44px;
-      height: 44px;
-      padding: 10px;
-      background: rgba(40, 26, 18, 0.7);
-      border: 1px solid rgba(212, 175, 55, 0.4);
-      border-radius: 8px;
-      cursor: pointer;
-      z-index: 150;
-      transition: background 0.3s ease, border-color 0.3s ease;
-    }
-
-    .hamburger-btn:hover {
-      border-color: var(--gold-primary);
-    }
-
-    .hamburger-btn span {
-      width: 100%;
-      height: 2px;
-      background-color: var(--gold-light);
-      border-radius: 2px;
-      transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-
-    /* انیمیشن تبدیل سه خط به ضربدر هنگام باز بودن */
-    .hamburger-btn.active span:nth-child(1) {
-      transform: translateY(7.5px) rotate(45deg);
-    }
-
-    .hamburger-btn.active span:nth-child(2) {
-      opacity: 0;
-      transform: translateX(-10px);
-    }
-
-    .hamburger-btn.active span:nth-child(3) {
-      transform: translateY(-7.5px) rotate(-45deg);
-    }
-
-    /* دراور منوی موبایل (Drawer) */
-    .mobile-menu-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(8px);
-      z-index: 120;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.35s ease, visibility 0.35s ease;
-    }
-
-    .mobile-menu-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .mobile-menu-drawer {
-      position: fixed;
-      top: 0;
-      right: -320px;
-      width: 300px;
-      height: 100vh;
-      background: linear-gradient(180deg, #1c130d 0%, #100d0a 100%);
-      border-left: 1px solid rgba(212, 175, 55, 0.3);
-      box-shadow: -10px 0 35px rgba(0, 0, 0, 0.8);
-      z-index: 130;
-      display: flex;
-      flex-direction: column;
-      padding: 5rem 1.8rem 2rem 1.8rem;
-      transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .mobile-menu-drawer.active {
-      right: 0;
-    }
-
-    .mobile-nav-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      margin-bottom: auto;
-    }
-
-    .mobile-nav-link {
-      color: var(--text-main);
-      text-decoration: none;
-      font-size: 1.1rem;
-      font-weight: 600;
-      display: block;
-      padding-bottom: 8px;
-      border-bottom: 1px dashed rgba(232, 228, 217, 0.15);
-      transition: color 0.3s ease, padding-right 0.3s ease;
-    }
-
-    .mobile-nav-link:hover {
-      color: var(--gold-light);
-      padding-right: 6px;
-    }
-
-    .mobile-drawer-bottom {
-      display: flex;
-      flex-direction: column;
-      gap: 1.2rem;
-      border-top: 1px solid rgba(212, 175, 55, 0.2);
-      padding-top: 1.5rem;
-    }
-
-    .mobile-drawer-bottom .btn-specular {
-      width: 100%;
-      text-align: center;
-    }
-
-    /* پترن دوخت کارگاهی سراجی */
-    .saddle-stitched {
-      border: 1px dashed var(--stitch-alpha);
-      outline: 1px solid rgba(216, 178, 100, 0.18);
-      outline-offset: -5px;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 1220px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-    }
-
-    /* بخش هیرو با چیدمان دو ستونه لوکس و پس‌زمینه اختصاصی کارگاه چرم ۲T */
-    .hero-section {
-      position: relative;
-      min-height: 88vh;
-      display: flex;
-      align-items: center;
-      padding: 7.5rem 1.5rem 7rem;
-      background-image:
-        linear-gradient(180deg,
-          rgba(20, 18, 16, 0.80) 0%,
-          rgba(38, 22, 13, 0.64) 50%,
-          rgba(20, 18, 16, 0.92) 100%
-        ),
-        radial-gradient(circle at 75% 25%, rgba(216, 178, 100, 0.22) 0%, transparent 60%),
-        radial-gradient(circle at 25% 75%, rgba(194, 149, 83, 0.12) 0%, transparent 55%),
-        url('2T04ndvjSbkxPxkuVAuDxhTEGCYF8vOKrvdxq47aDFVDyu9NSnlrBv5Vl57zbZlMcRgpWZjOhCXmZzhf2n08d4K1xOlVB9QuY7jf3wbQHV1XLrzgNpUHfhuSUQDZB5w3UcG123-qmqgwb9Gu7KumtC__cpy2gSPYfWdMvQCH6ZNyXAaMakesLqqK2OiduWGG.jpeg');
-      background-size: cover;
-      background-position: center center;
-      background-repeat: no-repeat;
-      overflow: hidden;
-      border-bottom: 1px solid rgba(216, 178, 100, 0.18);
-    }
-
-    .hero-section > .container {
-      width: 100%;
-    }
-
-    .hero-section::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      border-top: 1px dashed var(--stitch-alpha);
-      pointer-events: none;
-    }
-
-    .hero-layout {
-      display: grid;
-      grid-template-columns: 1fr 1.25fr;
-      gap: 2.5rem;
-      align-items: stretch;
-    }
-
-    /* کارت جایگاه لوگو (سمت راست در چیدمان راست‌به‌چپ - آماده بارگذاری و طراحی لوگو) */
-    .hero-logo-card {
-      position: relative;
-      background: linear-gradient(160deg, rgba(38, 22, 13, 0.75) 0%, rgba(18, 15, 12, 0.88) 100%);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px dashed rgba(232, 228, 217, 0.35);
-      border-radius: 18px;
-      padding: 2.2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 440px;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(246, 231, 178, 0.15);
-      text-align: center;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .hero-logo-card:hover {
-      border-color: rgba(216, 178, 100, 0.55);
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65), 0 0 25px rgba(216, 178, 100, 0.12);
-    }
-
-    .logo-empty-frame {
-      width: 100%;
-      height: 100%;
-      min-height: 350px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 1.2rem;
-      border: 1.5px dashed rgba(216, 178, 100, 0.35);
-      border-radius: 14px;
-      background: radial-gradient(circle at 50% 50%, rgba(61, 36, 21, 0.35) 0%, rgba(20, 18, 16, 0.25) 100%);
-      padding: 2.2rem 1.6rem;
-      transition: all 0.3s ease;
-    }
-
-    .hero-logo-card:hover .logo-empty-frame {
-      border-color: rgba(216, 178, 100, 0.65);
-      background: radial-gradient(circle at 50% 50%, rgba(61, 36, 21, 0.5) 0%, rgba(20, 18, 16, 0.35) 100%);
-    }
-
-    .logo-empty-icon-wrap {
-      width: 82px;
-      height: 82px;
-      border-radius: 50%;
-      background: rgba(61, 36, 21, 0.55);
-      border: 1px dashed rgba(246, 231, 178, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--gold-light);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 16px rgba(216, 178, 100, 0.15);
-    }
-
-    .logo-empty-label {
-      font-size: 1.12rem;
-      font-weight: 800;
-      color: var(--gold-light);
-      letter-spacing: 0.5px;
-    }
-
-    .logo-empty-hint {
-      font-size: 0.84rem;
-      color: var(--text-muted);
-      font-weight: 400;
-      line-height: 1.6;
-      max-width: 270px;
-    }
-
-    /* کارت محتوا و معرفی B2B (سمت چپ در چیدمان راست‌به‌چپ) */
-    .hero-content-card {
-      position: relative;
-      background: linear-gradient(160deg, rgba(46, 28, 17, 0.78) 0%, rgba(20, 17, 14, 0.88) 100%);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px dashed rgba(232, 228, 217, 0.35);
-      border-radius: 18px;
-      padding: 3rem 2.4rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 2rem;
-      min-height: 440px;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(246, 231, 178, 0.15);
-      text-align: right;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
-      border-radius: 30px;
-      background: rgba(61, 36, 21, 0.75);
-      border: 1px dashed rgba(232, 228, 217, 0.35);
-      color: var(--gold-light);
-      font-size: 0.82rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      margin-bottom: 1.5rem;
-      width: fit-content;
-    }
-
-    .hero-badge::before {
-      content: '';
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--leather-caramel);
-      box-shadow: 0 0 8px var(--leather-caramel);
-    }
-
-    .hero-main-title {
-      font-size: clamp(1.9rem, 3vw, 2.75rem);
-      font-weight: 900;
-      color: var(--text-ivory);
-      line-height: 1.35;
-      margin-bottom: 1.3rem;
-      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.8);
-    }
-
-    .hero-main-title span {
-      background: linear-gradient(135deg, var(--gold-light) 0%, var(--leather-caramel) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: inline-block;
-    }
-
-    .hero-main-desc {
-      color: #dfd7cc;
-      font-size: 1.05rem;
-      line-height: 1.95;
-      font-weight: 400;
-      margin-bottom: 1.2rem;
-    }
-
-    .hero-main-desc strong {
-      color: var(--gold-light);
-      font-weight: 800;
-    }
-
-    .hero-actions-group {
-      display: flex;
-      align-items: center;
-      gap: 1.1rem;
-      flex-wrap: wrap;
-    }
-
-    .hero-btn-primary {
-      padding: 0.95rem 2rem;
-      font-size: 0.98rem;
-      gap: 8px;
-    }
-
-    .hero-btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0.95rem 1.8rem;
-      border-radius: 10px;
-      text-decoration: none;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text-ivory);
-      background: rgba(20, 18, 16, 0.75);
-      border: 1px dashed rgba(232, 228, 217, 0.4);
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .hero-btn-secondary:hover {
-      background: rgba(61, 36, 21, 0.85);
-      border-color: var(--gold-primary);
-      color: var(--gold-light);
-      transform: translateY(-2px);
-    }
-
-    /* ۱. نوار شاخص‌های اعتبار کارگاهی (Trust Metrics Bar) */
-    .trust-metrics-section {
-      position: relative;
-      padding: 3.5rem 0;
-      background: linear-gradient(180deg, #17130f 0%, #120f0d 100%);
-      border-bottom: 1px solid rgba(216, 178, 100, 0.15);
-    }
-
-    .trust-metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.25rem;
-    }
-
-    .trust-card {
-      position: relative;
-      background: linear-gradient(155deg, rgba(61, 36, 21, 0.45) 0%, rgba(20, 18, 16, 0.8) 100%);
-      border-radius: 12px;
-      padding: 1.4rem 1.2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      border: 1px dashed rgba(232, 228, 217, 0.22);
-      outline: 1px solid rgba(216, 178, 100, 0.12);
-      outline-offset: -4px;
-      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .trust-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(216, 178, 100, 0.5);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5), 0 0 16px rgba(194, 149, 83, 0.12);
-    }
-
-    .trust-icon-box {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
-      background: radial-gradient(circle, #3D2415 0%, #1f130b 100%);
-      border: 1px solid rgba(216, 178, 100, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--gold-light);
-      font-size: 1.2rem;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-    }
-
-    .trust-card-title {
-      color: var(--text-ivory);
-      font-size: 1rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .trust-card-desc {
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      line-height: 1.65;
-    }
-
-    .trust-card-tag {
-      margin-top: auto;
-      font-size: 0.72rem;
-      color: var(--leather-caramel);
-      font-weight: 700;
-      letter-spacing: 0.3px;
-    }
-
-    /* تیترهای مشترک سکشن‌ها */
-    .section-header {
-      text-align: center;
-      margin-bottom: 3.5rem;
-    }
-
-    .section-kicker {
-      display: inline-block;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--leather-caramel);
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-bottom: 0.6rem;
-    }
-
-    .section-title {
-      font-size: clamp(1.8rem, 3.2vw, 2.5rem);
-      font-weight: 900;
-      color: var(--text-ivory);
-      margin-bottom: 0.8rem;
-    }
-
-    .section-desc {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      max-width: 620px;
-      margin: 0 auto;
-      line-height: 1.75;
-    }
-
-    /* ۲. دسته‌بندی مفهومی لاین‌ها (The Craft Lines) */
-    .craft-lines-section {
-      padding: 5.5rem 0;
-      position: relative;
-    }
-
-    .craft-cards-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 2rem;
-    }
-
-    .craft-card {
-      position: relative;
-      border-radius: 16px;
-      background: linear-gradient(160deg, #2b1a10 0%, #15110d 60%, #0d0a08 100%);
-      border: 1.5px dashed rgba(232, 228, 217, 0.35);
-      outline: 1px solid rgba(216, 178, 100, 0.2);
-      outline-offset: -6px;
-      overflow: hidden;
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
-    }
-
-    .craft-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(216, 178, 100, 0.65);
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(194, 149, 83, 0.2);
-    }
-
-    .craft-card-visual {
-      position: relative;
-      height: 240px;
-      background: radial-gradient(circle at 50% 50%, #3d2415 0%, #19110a 80%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      border-bottom: 1px dashed rgba(232, 228, 217, 0.25);
-    }
-
-    /* پترن گرافیکی چرم و دوخت در هدر کارت */
-    .craft-card-visual::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(90deg, rgba(232, 228, 217, 0.04) 0, rgba(232, 228, 217, 0.04) 30px, transparent 30px, transparent 60px);
-      pointer-events: none;
-    }
-
-    .visual-badge-tier {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      background: rgba(16, 13, 10, 0.85);
-      border: 1px solid var(--gold-primary);
-      color: var(--gold-light);
-      padding: 4px 12px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      backdrop-filter: blur(6px);
-      z-index: 2;
-    }
-
-    .visual-badge-order {
-      position: absolute;
-      bottom: 14px;
-      right: 14px;
-      background: linear-gradient(135deg, rgba(61, 36, 21, 0.95), rgba(20, 18, 16, 0.95));
-      border: 1px dashed rgba(232, 228, 217, 0.4);
-      color: var(--text-ivory);
-      padding: 5px 12px;
-      border-radius: 6px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .visual-badge-order::before {
-      content: '✔';
-      color: var(--leather-caramel);
-      font-size: 0.75rem;
-    }
-
-    .craft-card-icon-art {
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #4a2d1a 0%, #20130b 70%, #140d07 100%);
-      border: 2px solid var(--gold-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(216, 178, 100, 0.2);
-      transition: transform 0.4s ease;
-    }
-
-    .craft-card:hover .craft-card-icon-art {
-      transform: scale(1.08) rotate(3deg);
-    }
-
-    .craft-card-icon-art svg {
-      width: 58px;
-      height: 58px;
-      fill: var(--gold-light);
-      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6));
-    }
-
-    .craft-card-body {
-      padding: 1.8rem;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-      gap: 1.1rem;
-    }
-
-    .craft-card-head-group {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-
-    .craft-title-fa {
-      font-size: 1.35rem;
-      font-weight: 900;
-      color: var(--text-ivory);
-      margin-bottom: 2px;
-    }
-
-    .craft-title-en {
-      font-size: 0.8rem;
-      color: var(--leather-caramel);
-      font-weight: 600;
-      letter-spacing: 1px;
-    }
-
-    .craft-specs-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.65rem;
-      background: rgba(20, 18, 16, 0.6);
-      padding: 1rem 1.2rem;
-      border-radius: 10px;
-      border: 1px solid rgba(216, 178, 100, 0.12);
-    }
-
-    .craft-spec-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 0.85rem;
-      border-bottom: 1px dashed rgba(232, 228, 217, 0.12);
-      padding-bottom: 0.45rem;
-    }
-
-    .craft-spec-item:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-
-    .craft-spec-lbl {
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    .craft-spec-val {
-      color: var(--text-ivory);
-      font-weight: 700;
-      text-align: left;
-    }
-
-    .craft-card-desc {
-      color: var(--text-muted);
-      font-size: 0.88rem;
-      line-height: 1.7;
-    }
-
-    .craft-card-action {
-      margin-top: auto;
-      padding-top: 0.5rem;
-    }
-
-    /* ۳. تشریح هویت «Defender» (آناتومی کیفیت و محافظت) */
-    .defender-section {
-      padding: 5.5rem 0;
-      background: linear-gradient(180deg, #120f0d 0%, #18130e 50%, #120f0d 100%);
-      border-top: 1px solid rgba(216, 178, 100, 0.15);
-      border-bottom: 1px solid rgba(216, 178, 100, 0.15);
-      position: relative;
-    }
-
-    .exploded-view-container {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 2.5rem;
-      align-items: center;
-      margin-top: 2rem;
-    }
-
-    .exploded-graphic-wrap {
-      position: relative;
-      background: radial-gradient(circle at 45% 45%, #2d1b11 0%, #16110d 65%, #0e0a08 100%);
-      border: 1.5px dashed rgba(232, 228, 217, 0.35);
-      outline: 1px solid rgba(216, 178, 100, 0.2);
-      outline-offset: -6px;
-      border-radius: 18px;
-      padding: 2.2rem;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
-      min-height: 480px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 1.25rem;
-    }
-
-    .exploded-layer-card {
-      position: relative;
-      background: linear-gradient(145deg, rgba(61, 36, 21, 0.75) 0%, rgba(20, 18, 16, 0.85) 100%);
-      border: 1px solid rgba(216, 178, 100, 0.3);
-      border-radius: 12px;
-      padding: 1.1rem 1.4rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
-    }
-
-    .exploded-layer-card:hover,
-    .exploded-layer-card.active {
-      border-color: var(--gold-primary);
-      background: linear-gradient(145deg, #3d2415 0%, #1f130b 100%);
-      transform: translateX(-8px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), 0 0 18px rgba(216, 178, 100, 0.25);
-    }
-
-    .layer-card-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .layer-pin-dot {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #D8B264 0%, #b88646 100%);
-      color: #141210;
-      font-weight: 900;
-      font-size: 0.85rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 12px rgba(216, 178, 100, 0.6);
-      flex-shrink: 0;
-    }
-
-    .layer-card-info h4 {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--text-ivory);
-      margin-bottom: 2px;
-    }
-
-    .layer-card-info span {
-      font-size: 0.78rem;
-      color: var(--leather-caramel);
-      font-weight: 600;
-    }
-
-    .layer-badge-feature {
-      font-size: 0.75rem;
-      padding: 4px 10px;
-      border-radius: 20px;
-      background: rgba(20, 18, 16, 0.8);
-      border: 1px dashed rgba(232, 228, 217, 0.3);
-      color: var(--gold-light);
-      white-space: nowrap;
-    }
-
-    /* پنل توضیحات تخصصی لایه */
-    .defender-details-panel {
-      background: linear-gradient(155deg, rgba(61, 36, 21, 0.5) 0%, rgba(20, 18, 16, 0.9) 100%);
-      border: 1px dashed rgba(232, 228, 217, 0.3);
-      outline: 1px solid rgba(216, 178, 100, 0.18);
-      outline-offset: -5px;
-      border-radius: 16px;
-      padding: 2.2rem;
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
-    }
-
-    .defender-panel-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 1.2rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid rgba(216, 178, 100, 0.18);
-    }
-
-    .panel-shield-icon {
-      width: 44px;
-      height: 48px;
-      background: radial-gradient(circle, #3D2415 0%, #150f09 100%);
-      border: 1.5px solid var(--gold-primary);
-      border-radius: 4px 4px 50% 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--gold-light);
-      font-size: 1.2rem;
-      box-shadow: 0 4px 12px rgba(216, 178, 100, 0.2);
-      flex-shrink: 0;
-    }
-
-    .panel-titles h3 {
-      font-size: 1.25rem;
-      font-weight: 900;
-      color: var(--text-ivory);
-    }
-
-    .panel-titles p {
-      font-size: 0.8rem;
-      color: var(--leather-caramel);
-    }
-
-    .panel-content-text {
-      color: var(--text-muted);
-      font-size: 0.92rem;
-      line-height: 1.85;
-      margin-bottom: 1.8rem;
-    }
-
-    .defender-points-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1.8rem;
-    }
-
-    .point-box {
-      background: rgba(20, 18, 16, 0.7);
-      padding: 0.9rem;
-      border-radius: 8px;
-      border: 1px solid rgba(216, 178, 100, 0.15);
-    }
-
-    .point-box strong {
-      display: block;
-      color: var(--gold-light);
-      font-size: 0.85rem;
-      margin-bottom: 4px;
-    }
-
-    .point-box span {
-      display: block;
-      color: var(--text-muted);
-      font-size: 0.78rem;
-      line-height: 1.5;
-    }
-
-    /* ۴. فرآیند ۴ مرحله‌ای سفارش عمده (B2B Production Pipeline) */
-    .pipeline-section {
-      padding: 5.5rem 0;
-      position: relative;
-    }
-
-    .pipeline-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem;
-      position: relative;
-      margin-top: 1.5rem;
-    }
-
-    .pipeline-step-card {
-      position: relative;
-      background: linear-gradient(155deg, rgba(61, 36, 21, 0.45) 0%, rgba(20, 18, 16, 0.85) 100%);
-      border: 1.5px dashed rgba(232, 228, 217, 0.3);
-      outline: 1px solid rgba(216, 178, 100, 0.15);
-      outline-offset: -5px;
-      border-radius: 14px;
-      padding: 2rem 1.4rem 1.6rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      transition: transform 0.3s ease, border-color 0.3s ease;
-    }
-
-    .pipeline-step-card:hover {
-      transform: translateY(-5px);
-      border-color: var(--gold-primary);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6), 0 0 16px rgba(216, 178, 100, 0.15);
-    }
-
-    .step-number-tag {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      background: radial-gradient(circle, #3D2415 0%, #170f0a 100%);
-      border: 1.5px solid var(--gold-primary);
-      color: var(--gold-light);
-      font-size: 1.15rem;
-      font-weight: 900;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    }
-
-    .step-card-title {
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: var(--text-ivory);
-      line-height: 1.4;
-    }
-
-    .step-card-desc {
-      color: var(--text-muted);
-      font-size: 0.86rem;
-      line-height: 1.7;
-    }
-
-    .step-card-badge {
-      margin-top: auto;
-      padding-top: 0.6rem;
-      border-top: 1px dashed rgba(232, 228, 217, 0.15);
-      color: var(--leather-caramel);
-      font-size: 0.75rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .step-card-badge::before {
-      content: '◀';
-      font-size: 0.6rem;
-      color: var(--gold-primary);
-    }
-
-    /* ۵. فرم اقدام نهایی (Inquiry & Catalog Drawer / VIP Box) */
-    .inquiry-section {
-      padding: 5.5rem 0 6rem;
-      position: relative;
-    }
-
-    .inquiry-vip-box {
-      background: linear-gradient(150deg, #321c10 0%, #1a120c 45%, #100d0a 100%);
-      border: 2px dashed rgba(232, 228, 217, 0.45);
-      outline: 1.5px solid rgba(216, 178, 100, 0.35);
-      outline-offset: -8px;
-      border-radius: 20px;
-      padding: clamp(2rem, 5vw, 3.8rem);
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(194, 149, 83, 0.15);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .inquiry-vip-box::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, transparent, var(--gold-primary), var(--gold-light), transparent);
-    }
-
-    .inquiry-grid {
-      display: grid;
-      grid-template-columns: 1fr 1.1fr;
-      gap: 3rem;
-      align-items: center;
-    }
-
-    .inquiry-info-side {
-      display: flex;
-      flex-direction: column;
-      gap: 1.4rem;
-    }
-
-    .vip-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 5px 14px;
-      border-radius: 20px;
-      background: rgba(20, 18, 16, 0.8);
-      border: 1px solid var(--gold-primary);
-      color: var(--gold-light);
-      font-size: 0.8rem;
-      font-weight: 700;
-      width: fit-content;
-    }
-
-    .inquiry-info-title {
-      font-size: clamp(1.8rem, 3vw, 2.3rem);
-      font-weight: 900;
-      color: var(--text-ivory);
-      line-height: 1.3;
-    }
-
-    .inquiry-info-desc {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      line-height: 1.8;
-    }
-
-    .vip-guarantees {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-      margin-top: 0.5rem;
-    }
-
-    .vip-guarantee-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--text-ivory);
-      font-size: 0.88rem;
-      font-weight: 500;
-    }
-
-    .vip-guarantee-item::before {
-      content: '✓';
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--leather-caramel);
-      color: #141210;
-      font-size: 0.75rem;
-      font-weight: 900;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    /* فرم سمت چپ */
-    .inquiry-form-wrap {
-      background: rgba(20, 18, 16, 0.85);
-      border: 1px dashed rgba(232, 228, 217, 0.25);
-      border-radius: 14px;
-      padding: 2.2rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    }
-
-    .inquiry-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1.3rem;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .form-label {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--gold-light);
-    }
-
-    .form-input,
-    .form-select {
-      width: 100%;
-      padding: 0.85rem 1.1rem;
-      border-radius: 8px;
-      background: rgba(30, 20, 14, 0.8);
-      border: 1px solid rgba(216, 178, 100, 0.3);
-      color: var(--text-ivory);
-      font-size: 0.92rem;
-      outline: none;
-      transition: border-color 0.25s ease, box-shadow 0.25s ease;
-      font-family: inherit;
-    }
-
-    .form-input::placeholder {
-      color: rgba(158, 149, 135, 0.6);
-      font-size: 0.85rem;
-    }
-
-    .form-input:focus,
-    .form-select:focus {
-      border-color: var(--gold-primary);
-      box-shadow: 0 0 12px rgba(216, 178, 100, 0.35);
-      background: rgba(45, 27, 17, 0.9);
-    }
-
-    .form-submit-btn {
-      width: 100%;
-      padding: 0.95rem 1.5rem;
-      font-size: 0.95rem;
-      margin-top: 0.5rem;
-    }
-
-    .form-privacy-note {
-      text-align: center;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    /* بنر پیام موفقیت ارسال */
-    .form-success-banner {
-      display: none;
-      background: linear-gradient(135deg, rgba(61, 36, 21, 0.9), rgba(20, 18, 16, 0.95));
-      border: 1px solid var(--gold-primary);
-      border-radius: 10px;
-      padding: 1.8rem;
-      text-align: center;
-      animation: fadeIn 0.4s ease;
-    }
-
-    .form-success-banner.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* فوتر اختصاصی B2B */
-    .site-footer {
-      background: #0d0a08;
-      border-top: 2px dashed rgba(232, 228, 217, 0.25);
-      padding: 3.5rem 0 2rem;
-      position: relative;
-    }
-
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr 1fr;
-      gap: 2.5rem;
-      margin-bottom: 3rem;
-    }
-
-    .footer-brand h3 {
-      font-size: 1.3rem;
-      font-weight: 900;
-      color: var(--gold-light);
-      margin-bottom: 0.5rem;
-    }
-
-    .footer-brand p {
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      line-height: 1.8;
-      max-width: 360px;
-    }
-
-    .footer-col h4 {
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: var(--text-ivory);
-      margin-bottom: 1rem;
-      border-bottom: 1px solid rgba(216, 178, 100, 0.2);
-      padding-bottom: 0.5rem;
-    }
-
-    .footer-links {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-    }
-
-    .footer-link {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.85rem;
-      transition: color 0.25s ease, padding-right 0.25s ease;
-    }
-
-    .footer-link:hover {
-      color: var(--gold-light);
-      padding-right: 4px;
-    }
-
-    .footer-bottom {
-      border-top: 1px dashed rgba(232, 228, 217, 0.15);
-      padding-top: 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
-
-    /* واکنش‌گرایی: تغییر چیدمان در موبایل و تبلت */
-    @media (max-width: 992px) {
-      .hero-section {
-        min-height: auto;
-        padding: 5rem 1.25rem 4rem;
-      }
-      .hero-layout {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-      }
-      .hero-content-card {
-        order: 1;
-      }
-      .hero-logo-card {
-        order: 2;
-        min-height: 280px;
-      }
-      .trust-metrics-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .craft-cards-grid {
-        grid-template-columns: 1fr;
-      }
-      .exploded-view-container {
-        grid-template-columns: 1fr;
-      }
-      .pipeline-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .inquiry-grid {
-        grid-template-columns: 1fr;
-      }
-      .footer-grid {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-      }
-    }
-
-    @media (max-width: 920px) {
-      .desktop-nav {
-        display: none;
-      }
-      .header-actions .btn-desktop {
-        display: none; /* حذف دکمه از نوار بالای هدر در موبایل */
-      }
-      .hamburger-btn {
-        display: flex; /* نمایش دکمه سه خط در موبایل */
-      }
-    }
-
-    @media (max-width: 640px) {
-      .hero-section {
-        padding: 3.8rem 1rem 3rem;
-      }
-      .hero-content-card,
-      .hero-logo-card {
-        padding: 1.8rem 1.2rem;
-      }
-      .logo-empty-frame {
-        min-height: 240px;
-        padding: 1.5rem 1rem;
-      }
-      .hero-actions-group {
-        flex-direction: column;
-        width: 100%;
-      }
-      .hero-btn-primary,
-      .hero-btn-secondary {
-        width: 100%;
-        justify-content: center;
-      }
-      .trust-metrics-grid {
-        grid-template-columns: 1fr;
-      }
-      .pipeline-grid {
-        grid-template-columns: 1fr;
-      }
-      .defender-points-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -1476,7 +13,7 @@
   <div class="top-saddle-stitch"></div>
 
   <!-- هدر سایت -->
-  <header>
+  <header class="site-header">
     <!-- لوگو -->
     <a href="#" class="brand-logo">
       <div class="logo-shield">
@@ -1492,7 +29,7 @@
     <nav class="desktop-nav">
       <ul>
         <li><a href="#about" class="nav-item">درباره ما</a></li>
-        <li><a href="#production" class="nav-item">توانمندی تولید</a></li>
+        <li><a href="#editorial-lines" class="nav-item">لاین‌های تولید</a></li>
         <li><a href="#inquiry" class="nav-item">همکاری با ما</a></li>
         <li><a href="#contact" class="nav-item">تماس با ما</a></li>
       </ul>
@@ -1520,7 +57,7 @@
   <div class="mobile-menu-drawer" id="mobileDrawer">
     <ul class="mobile-nav-list">
       <li><a href="#about" class="mobile-nav-link">درباره ما</a></li>
-      <li><a href="#production" class="mobile-nav-link">توانمندی تولید</a></li>
+      <li><a href="#editorial-lines" class="mobile-nav-link">لاین‌های تولید</a></li>
       <li><a href="#inquiry" class="mobile-nav-link">همکاری با ما</a></li>
       <li><a href="#contact" class="mobile-nav-link">تماس با ما</a></li>
     </ul>
@@ -1583,72 +120,193 @@
     </div>
   </section>
 
-  <!-- ==================== ۱. نوار شاخص‌های اعتبار کارگاهی ==================== -->
-  <section class="trust-metrics-section" id="production">
+  <!-- ==================== ۲. داستان برند DYF (Brand Story) ==================== -->
+  <section class="story-section" id="about">
     <div class="container">
-      <div class="trust-metrics-grid">
-        <!-- شاخص ۱: متریال -->
-        <article class="trust-card">
-          <div class="trust-icon-box" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
+      <div class="story-grid">
+        <!-- ستون متن: برچسب، تیتر، توضیحات و ۳ نکته کوتاه (سمت راست در چیدمان راست‌به‌چپ) -->
+        <div class="story-text-col">
+          <div class="story-badge">
+            <span class="story-badge-dot"></span>
+            <span>داستان DYF</span>
           </div>
-          <h3 class="trust-card-title">متریال اصیل تبریز</h3>
-          <p class="trust-card-desc">
-            ۱۰۰٪ چرم طبیعی تبریز با سورت دستی درجه‌یک، دباغی گیاهی استاندارد و بدون ترک‌خوردگی در خمش‌های متوالی.
+
+          <h2 class="story-title">
+            تجربه‌ای که پیش از نام DYF آغاز شد.
+          </h2>
+
+          <p class="story-description">
+            فعالیت ما در بازار کفش به بیش از یک دهه تجربه برمی‌گردد. DYF ادامه این مسیر با هویتی مستقل است؛ مسیری که شناخت نیاز بازار، ارتباط مستقیم با فروشندگان و شکل‌دادن به همکاری‌های ماندگار، بخش مهمی از آن بوده است.
           </p>
-          <span class="trust-card-tag">سورت دستی درجه‌یک کارگاهی</span>
+
+          <div class="story-points">
+            <div class="story-point-item">
+              <div class="point-index-badge">۰۱</div>
+              <span class="point-label">تجربه در بازار کفش مردانه</span>
+            </div>
+
+            <div class="story-point-item">
+              <div class="point-index-badge">۰۲</div>
+              <span class="point-label">همکاری با کسب‌وکارهای سراسر ایران</span>
+            </div>
+
+            <div class="story-point-item">
+              <div class="point-index-badge">۰۳</div>
+              <span class="point-label">ارتباط مستقیم برای بررسی سفارش‌ها</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ستون تصویر: میز کار کفاشی، ابزارهای تولید و متریال (سمت چپ در چیدمان راست‌به‌چپ) -->
+        <div class="story-image-col">
+          <div class="story-image-card">
+            <div class="story-image-frame">
+              <img 
+                src="iC9OP0JjJJz3a4xbohUsd7uxZiWFwtEMYkXwhtH5JkQHq8NaZ4ypb5LBeiIOqBikILRoFuejg8n9lM90fF3nYX1FvMi3ZFU-GLenv5oGXBoVPJKPT42iAaQUM1-1RH3IcaUOyYp97cji2NU5fekFhg10ocNuU8A__w-FBlp8ntyApyHgFJssK_c2IHZKsX5V.jpeg" 
+                alt="میز کار کفاشی کارگاه DYF، ابزارهای اندازه‌گیری و متریال چرم طبیعی" 
+                class="story-workbench-img"
+                loading="lazy"
+              />
+              <div class="story-image-overlay"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ۳. لاین‌های تولید DYF (The Editorial Lookbook) ==================== -->
+  <section class="craft-editorial-section" id="editorial-lines">
+    <div class="container">
+      <!-- هدر سکشن: تیتر بزرگ با فضای خالی کافی و توضیح کوتاه -->
+      <div class="craft-editorial-header">
+        <span class="craft-editorial-kicker">DYF LOOKBOOK • LINE PRODUCTION ARCHIVE</span>
+        <h2 class="craft-main-title">برای هر سبک، یک انتخاب.</h2>
+        <p class="craft-main-desc">
+          تولید متمرکز بر دو لاین مستقل رسمی و اسپرت، متناسب با استانداردهای کیفی کارگاه و نیازهای متنوع در بازار کفش مردانه.
+        </p>
+        <div class="craft-curation-badge">
+          <span>تولید اختصاصی کارگاهی تبریز</span>
+          <span class="badge-sep">•</span>
+          <span>سری‌های ۱۰ تا ۱۰۰ جفتی</span>
+          <span class="badge-sep">•</span>
+          <span>ویژه بنکداران و بوتیک‌های کفش</span>
+        </div>
+      </div>
+
+      <!-- دو ردیف افقی بزرگ و نامتقارن تحریریه‌ای -->
+      <div class="craft-rows-wrap">
+        <!-- ردیف اول: لاین رسمی و چرمی (در RTL: تصویر عمودی سمت راست، متن سمت چپ) -->
+        <article class="craft-editorial-row craft-row-formal">
+          <!-- ستون تصویر عمودی (سمت راست دسکتاپ در RTL) -->
+          <div class="craft-media-col">
+            <div class="craft-media-frame">
+              <img 
+                src="J1uvn91eKz4771BI11833pp6GFVd2PTqZk3LcktRNGdjf8w8l7dnnn-RH9q1-8nlz5TPl-cb3Jvt9jlgw23bYaR5G3N8AjzjUe0PTO0_iiMfeBkJ0wuNcURVu-yrOLq1OaCjQmcwSJjBsPN3T9PvTaCPsTojcfN_eGIidTTAzuDUCU2H0veI2U9KqnZXtQf9.jpeg" 
+                alt="استادکار در حال پرداخت و دوخت کفش چرمی در کارگاه - لاین رسمی و چرمی DYF" 
+                class="craft-editorial-img craft-img-formal"
+                decoding="async"
+              />
+              <span class="craft-photo-tag" aria-hidden="true">FIG. 01 — THE EXECUTIVE • WORKSHOP ARCHIVE</span>
+            </div>
+          </div>
+
+          <!-- ستون متن (سمت چپ دسکتاپ در RTL) -->
+          <div class="craft-text-col">
+            <div class="craft-line-meta">
+              <span class="craft-line-num">01</span>
+              <span class="craft-line-divider" aria-hidden="true">/</span>
+              <span class="craft-line-en">FORMAL</span>
+            </div>
+            <h3 class="craft-line-title">رسمی و چرمی</h3>
+            <p class="craft-line-desc">
+              مدل‌های مناسب استایل رسمی و محیط‌های کاری، برای فروشگاه‌هایی با نیازهای متنوع در بازار کفش مردانه.
+            </p>
+
+            <!-- نوار مشخصات فنی ژورنالی -->
+            <div class="craft-spec-strip" aria-label="مشخصات شاخص لاین رسمی">
+              <div class="craft-spec-pill">
+                <span class="spec-label">متریال اصلی رویه:</span>
+                <span class="spec-value">چرم طبیعی هورس و گاوی واکس‌خورده دستی</span>
+              </div>
+              <div class="craft-spec-pill">
+                <span class="spec-label">ساختار زیره:</span>
+                <span class="spec-value">نیولایت فشرده نشکن و چرم طبیعی لایه‌ای</span>
+              </div>
+              <div class="craft-spec-pill">
+                <span class="spec-label">تیراژ سفارش:</span>
+                <span class="spec-value">سری‌های ۱۰ تا ۱۰۰ جفتی کارگاهی</span>
+              </div>
+            </div>
+
+            <a href="#inquiry" class="craft-order-link js-select-line" data-line="executive">
+              <span class="craft-link-text">بررسی شرایط سفارش</span>
+              <span class="craft-link-arrow" aria-hidden="true">←</span>
+            </a>
+          </div>
         </article>
 
-        <!-- شاخص ۲: ظرفیت تأمین -->
-        <article class="trust-card">
-          <div class="trust-icon-box" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-            </svg>
-          </div>
-          <h3 class="trust-card-title">ظرفیت تأمین مقیاس‌پذیر</h3>
-          <p class="trust-card-desc">
-            شبکه چندکارگاهی تخصصی برای تأمین مستمر و تحویل به موقع تیراژهای سنگین در پیک‌های خرید فصلی بازار.
-          </p>
-          <span class="trust-card-tag">شبکه چندکارگاهی همگام</span>
-        </article>
+        <!-- خط جداکننده ساده و مینیمال بین دو ردیف -->
+        <div class="craft-editorial-separator" aria-hidden="true">
+          <span class="separator-line"></span>
+          <span class="separator-symbol">✦</span>
+          <span class="separator-line"></span>
+        </div>
 
-        <!-- شاخص ۳: گارانتی کارگاهی -->
-        <article class="trust-card">
-          <div class="trust-icon-box" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
-          </div>
-          <h3 class="trust-card-title">گارانتی رسمی کارگاهی</h3>
-          <p class="trust-card-desc">
-            تعهد بازگشت و جایگزینی بدون قید و شرط در صورت هرگونه نقص فنی در دوخت، دانه چرم یا تزریق و شکست زیره.
-          </p>
-          <span class="trust-card-tag">پوشش کامل زیره و چرم</span>
-        </article>
+        <!-- ردیف دوم: لاین اسپرت و کژوال (در RTL: متن سمت راست، تصویر عمودی سمت چپ) -->
+        <article class="craft-editorial-row craft-row-sport">
+          <!-- ستون متن (سمت راست دسکتاپ در RTL) -->
+          <div class="craft-text-col">
+            <div class="craft-line-meta">
+              <span class="craft-line-num">02</span>
+              <span class="craft-line-divider" aria-hidden="true">/</span>
+              <span class="craft-line-en">SPORT &amp; CASUAL</span>
+            </div>
+            <h3 class="craft-line-title">اسپرت و کژوال</h3>
+            <p class="craft-line-desc">
+              مدل‌های مناسب استفاده روزمره و سلیقه‌های متنوع بازار.
+            </p>
 
-        <!-- شاخص ۴: انحصار جغرافیایی -->
-        <article class="trust-card">
-          <div class="trust-icon-box" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
-            </svg>
+            <!-- نوار مشخصات فنی ژورنالی -->
+            <div class="craft-spec-strip" aria-label="مشخصات شاخص لاین اسپرت">
+              <div class="craft-spec-pill">
+                <span class="spec-label">متریال اصلی رویه:</span>
+                <span class="spec-value">چرم نرم ناپا (Nappa) با لمس ابریشمی</span>
+              </div>
+              <div class="craft-spec-pill">
+                <span class="spec-label">ساختار زیره:</span>
+                <span class="spec-value">ارگونومیک سبک PU ضدسایش و ضدانعکاس ضربه</span>
+              </div>
+              <div class="craft-spec-pill">
+                <span class="spec-label">تیراژ سفارش:</span>
+                <span class="spec-value">سری‌های ۱۰ تا ۱۰۰ جفتی کارگاهی</span>
+              </div>
+            </div>
+
+            <a href="#inquiry" class="craft-order-link js-select-line" data-line="sneaker">
+              <span class="craft-link-text">بررسی شرایط سفارش</span>
+              <span class="craft-link-arrow" aria-hidden="true">←</span>
+            </a>
           </div>
-          <h3 class="trust-card-title">انحصار جغرافیایی</h3>
-          <p class="trust-card-desc">
-            عدم عرضه همان مدل و لاین به همکاران در محدوده یک بازار، پاساژ یا راسته مشخص جهت حفظ حاشیه سود شما.
-          </p>
-          <span class="trust-card-tag">حفظ انحصار راسته و بازار</span>
+
+          <!-- ستون تصویر عمودی (سمت چپ دسکتاپ در RTL) -->
+          <div class="craft-media-col">
+            <div class="craft-media-frame">
+              <img 
+                src="vans.jpeg" 
+                alt="کارگاه ساخت و اتصال زیره کفش ونس و اسنیکر - لاین اسپرت و کژوال DYF" 
+                class="craft-editorial-img craft-img-sport"
+                decoding="async"
+              />
+              <span class="craft-photo-tag" aria-hidden="true">FIG. 02 — THE MODERN SNEAKER • ATELIER CRAFT</span>
+            </div>
+          </div>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- ==================== ۲. دسته‌بندی مفهومی لاین‌ها ==================== -->
+  <!-- ==================== ۴. دسته‌بندی مفهومی لاین‌ها (The Craft Lines - کارت‌های مشخصات فنی) ==================== -->
   <section class="craft-lines-section" id="lines">
     <div class="container">
       <div class="section-header">
@@ -1708,7 +366,7 @@
             </ul>
 
             <div class="craft-card-action">
-              <button class="btn-specular js-specular js-scroll-inquiry" style="width: 100%;">
+              <button class="btn-specular js-specular js-scroll-inquiry js-select-line" data-line="executive" style="width: 100%;">
                 استعلام تیراژ لاین رسمی
               </button>
             </div>
@@ -1763,7 +421,7 @@
             </ul>
 
             <div class="craft-card-action">
-              <button class="btn-specular js-specular js-scroll-inquiry" style="width: 100%;">
+              <button class="btn-specular js-specular js-scroll-inquiry js-select-line" data-line="sneaker" style="width: 100%;">
                 استعلام تیراژ لاین ونس
               </button>
             </div>
@@ -1773,103 +431,141 @@
     </div>
   </section>
 
-  <!-- ==================== ۳. تشریح هویت DEFENDER (آناتومی کیفیت و محافظت) ==================== -->
+  <!-- ==================== ۳. مطالعه متریال و ساخت DEFENDER (The Defender Material Study) ==================== -->
   <section class="defender-section" id="leather">
     <div class="container">
-      <div class="section-header">
-        <span class="section-kicker">THE DEFENDER ENGINEERING</span>
-        <h2 class="section-title">آناتومی کیفیت و محافظت (Exploded View)</h2>
-        <p class="section-desc">
-          چرا نام برند ما «Defender Your Foot» است؟ تفکیک ساختار ۳ لایه مهندسی کفش جهت محافظت همه‌جانبه از گام، قوس پا و ستون فقرات در استفاده‌های سنگین روزمره.
+      <!-- بخش اول: عنوان ژورنالی، روایت هویت کارگاهی و مشخصات مبنایی -->
+      <header class="defender-showcase-header">
+        <div class="defender-header-meta">
+          <span class="defender-showcase-kicker">THE DEFENDER MATERIAL ARCHIVE</span>
+          <span class="defender-meta-divider" aria-hidden="true">✦</span>
+          <span class="defender-showcase-subkicker">ATELIER CRAFT STUDY</span>
+        </div>
+        
+        <h2 class="defender-showcase-title">
+          جزئیات، پیش از محصول.
+        </h2>
+
+        <p class="defender-showcase-lead">
+          در کارگاه DYF، کیفیت کفش پیش از شکل‌گیری محصول، در انتخاب آگاهانه متریال و ظرافت پرداخت آغاز می‌شود؛ پیوندی دقیق میان چرم اصیل، دوخت سراجی و مهندسی گام که هویت پایدار هر مدل را رقم می‌زند.
         </p>
-      </div>
 
-      <div class="exploded-view-container">
-        <!-- سمت راست: نمای تعاملی لایه‌لایه -->
-        <div class="exploded-graphic-wrap">
-          <div style="text-align: center; margin-bottom: 0.5rem;">
-            <span style="font-size: 0.8rem; color: var(--gold-light); font-weight: 700; letter-spacing: 1px;">
-              ▼ روی لایه‌ها کلیک کنید تا مشخصات محافظت بررسی شود ▼
-            </span>
+        <!-- برچسب‌های شاخص‌های فنی و اصالت سراجی -->
+        <div class="defender-meta-pills" aria-label="شاخص‌های ارزیابی کیفی متریال">
+          <div class="defender-meta-pill">
+            <span class="pill-dot"></span>
+            <span>سورت دست‌چین چرم طبیعی</span>
           </div>
-
-          <!-- لایه ۱: رویه -->
-          <div class="exploded-layer-card active js-layer-trigger" data-layer="upper">
-            <div class="layer-card-left">
-              <span class="layer-pin-dot">۱</span>
-              <div class="layer-card-info">
-                <h4>رویه چرم تنفس‌پذیر (The Upper Shield)</h4>
-                <span>ضدترک‌خوردگی • دباغی تبریز • ضخامت ۱.۸ میلی‌متر</span>
-              </div>
-            </div>
-            <span class="layer-badge-feature">سپر فیزیکی و تهویه</span>
+          <div class="defender-meta-pill">
+            <span class="pill-dot"></span>
+            <span>سراجی و دوخت تقویت‌شده</span>
           </div>
-
-          <!-- لایه ۲: کفی میانی -->
-          <div class="exploded-layer-card js-layer-trigger" data-layer="midsole">
-            <div class="layer-card-left">
-              <span class="layer-pin-dot">۲</span>
-              <div class="layer-card-info">
-                <h4>کفی میانی ارگونومیک (Shock Midsole)</h4>
-                <span>فوم لاتکس سلول‌باز طبی • پرکننده قوس • ضدفشار پاشنه</span>
-              </div>
-            </div>
-            <span class="layer-badge-feature">تعدیل ضربه و ارگونومی</span>
+          <div class="defender-meta-pill">
+            <span class="pill-dot"></span>
+            <span>مهندسی ارگونومی و توزیع وزن گام</span>
           </div>
+        </div>
+      </header>
 
-          <!-- لایه ۳: زیره -->
-          <div class="exploded-layer-card js-layer-trigger" data-layer="outsole">
-            <div class="layer-card-left">
-              <span class="layer-pin-dot">۳</span>
-              <div class="layer-card-info">
-                <h4>زیره ضدسایش با چسبندگی بالا (Grip Outsole)</h4>
-                <span>الاستومر و PU نانوتقویت‌شده • آج‌های شیب‌دار ضدلغزش</span>
-              </div>
-            </div>
-            <span class="layer-badge-feature">گریپ حداکثری و دوام</span>
+      <!-- بخش دوم: ترکیب‌بندی تصویر شاخص و دو تصویر جزئیات همراه با نشان‌های آرشیو کارگاهی -->
+      <div class="defender-visual-triptych">
+        <!-- تصویر اصلی: بزرگ‌ترین تصویر در سمت راست ترکیب‌بندی -->
+        <div class="defender-master-frame">
+          <img 
+            src="shoes.jpeg" 
+            alt="کفش تمام چرم رسمی مردانه DYF - تصویر شاخص فرم و کیفیت محصول" 
+            class="defender-master-img"
+            loading="lazy"
+            decoding="async"
+          />
+          <div class="defender-frame-badge">
+            <span class="badge-code">ARCHIVE 01</span>
+            <span class="badge-title">فرم پایانی و هندسه قالب کفش</span>
           </div>
         </div>
 
-        <!-- سمت چپ: پنل تشریح تخصصی لایه انتخاب‌شده -->
-        <div class="defender-details-panel" id="layerDetailsPanel">
-          <div class="defender-panel-header">
-            <div class="panel-shield-icon" id="panelIcon">
-              🛡️
-            </div>
-            <div class="panel-titles">
-              <h3 id="panelTitle">رویه چرم تنفس‌پذیر مقاوم</h3>
-              <p id="panelSub">لایه بیرونی: محافظت از بافت پا در برابر سایش و تنش‌های مکانیکی</p>
+        <!-- دو تصویر کوچک‌تر: در سمت چپ تصویر اصلی، به‌صورت عمودی روی هم قرار بگیرند -->
+        <div class="defender-details-stack">
+          <!-- تصویر دوم: نمای نزدیک از بافت چرم -->
+          <div class="defender-detail-frame">
+            <img 
+              src="bag.jpeg" 
+              alt="نمای نزدیک از بافت و دانه چرم طبیعی" 
+              class="defender-detail-img"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="defender-frame-badge">
+              <span class="badge-code">STUDY 02</span>
+              <span class="badge-title">دانه و بافت چرم طبیعی</span>
             </div>
           </div>
 
-          <p class="panel-content-text" id="panelDesc">
-            رویه کفش‌های DYF از ممتازترین چرم گاوی سورت تبریز تهیه می‌شود. ساختار الیاف ارگانیک چرم اجازه تنفس ۲۴ ساعته به پای کاربر می‌دهد و مانع از تشکیل بوی نامطبوع و رطوبت می‌گردد. همچنین فرآیند واکس‌زنی روغنی، مقاومت چرم را در برابر چین‌خوردگی‌های متوالی راه رفتن تضمین می‌کند.
+          <!-- تصویر سوم: نمای نزدیک از فرایند ساخت، اتصال و دوخت چرم -->
+          <div class="defender-detail-frame">
+            <img 
+              src="bag2.jpeg" 
+              alt="نمای نزدیک از فرایند دوخت سراجی و پرداخت دست‌دوز چرم" 
+              class="defender-detail-img"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="defender-frame-badge">
+              <span class="badge-code">STUDY 03</span>
+              <span class="badge-title">سراجی و اتصال دست‌دوز</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- بخش سوم: ستون‌های ۳ گانه تشریح متریال و مهندسی ساخت -->
+      <div class="defender-craft-pillars">
+        <!-- ستون ۱: رویه و متریال -->
+        <article class="defender-pillar-card">
+          <div class="pillar-header">
+            <span class="pillar-num">۰۱</span>
+            <span class="pillar-en">UPPER &amp; LEATHER</span>
+          </div>
+          <h3 class="pillar-title">رویه و متریال اصیل</h3>
+          <p class="pillar-desc">
+            انتخاب سورت اول چرم طبیعی تبریز با خمش استاندارد و تنفس‌پذیری پیوسته، برای حفظ آراستگی فرم و دوام در استفاده مکرر روزمره.
           </p>
+        </article>
 
-          <div class="defender-points-grid" id="panelPoints">
-            <div class="point-box">
-              <strong>ضخامت کنترل‌شده</strong>
-              <span>۱.۶ تا ۱.۸ میلی‌متر با انعطاف بالا در خمش</span>
-            </div>
-            <div class="point-box">
-              <strong>مقاومت رطوبتی</strong>
-              <span>پوشش گیاهی هیدروفوبیک جهت دفع لکه و نفوذ آب</span>
-            </div>
-            <div class="point-box">
-              <strong>آستر داخلی ارگانیک</strong>
-              <span>چرم طبیعی بدون رنگ‌های شیمیایی آلرژی‌زا</span>
-            </div>
-            <div class="point-box">
-              <strong>دوخت دوبل سراجی</strong>
-              <span>نخ موم‌زده پلی‌استر مقاوم در برابر پارگی</span>
-            </div>
+        <!-- ستون ۲: ساخت و پرداخت سراجی -->
+        <article class="defender-pillar-card">
+          <div class="pillar-header">
+            <span class="pillar-num">۰۲</span>
+            <span class="pillar-en">CRAFT &amp; FINISHING</span>
           </div>
+          <h3 class="pillar-title">ساخت و پرداخت سراجی</h3>
+          <p class="pillar-desc">
+            دقت در کوک‌های دوبل مقاوم، لبه‌گیری و واکس‌خوری کارگاهی، که ثبات ظاهری و مقاومت کفش را در برابر تنش‌های حرکتی تضمین می‌کند.
+          </p>
+        </article>
 
-          <button class="btn-specular js-specular js-scroll-inquiry" style="width: 100%;">
-            درخواست نمونه فیزیکی جهت لمس متریال
-          </button>
-        </div>
+        <!-- ستون ۳: زیره و اتصال مهندسی -->
+        <article class="defender-pillar-card">
+          <div class="pillar-header">
+            <span class="pillar-num">۰۳</span>
+            <span class="pillar-en">SOLE &amp; ERGONOMICS</span>
+          </div>
+          <h3 class="pillar-title">زیره و اتصال مهندسی</h3>
+          <p class="pillar-desc">
+            ترکیب زیره مستحکم با جذب شوک ضربه و توزیع متوازن وزن، متناسب با گام‌های حساب‌شده و کاهش فشار روی مفاصل و پاشنه پا.
+          </p>
+        </article>
       </div>
+
+      <!-- بخش چهارم: امضای برند DYF و پایان‌بندی ظریف -->
+      <footer class="defender-showcase-footer">
+        <p class="defender-essence-tag">MATERIAL · CRAFT · DETAIL</p>
+        <div class="defender-brand-signoff" aria-label="امضای برند DYF">
+          <span class="signoff-hairline" aria-hidden="true"></span>
+          <span class="signoff-label">DEFENDER YOUR FOOT — DYF • ATELIER STUDY</span>
+          <span class="signoff-hairline" aria-hidden="true"></span>
+        </div>
+      </footer>
     </div>
   </section>
 
@@ -2038,7 +734,7 @@
   </section>
 
   <!-- ==================== فوتر تکمیلی سایت ==================== -->
-  <footer class="site-footer" id="about">
+  <footer class="site-footer">
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
@@ -2051,9 +747,10 @@
         <div class="footer-col">
           <h4>بخش‌های اصلی</h4>
           <ul class="footer-links">
-            <li><a href="#lines" class="footer-link">لاین رسمی و اداری</a></li>
-            <li><a href="#lines" class="footer-link">لاین ونس و کژوال لوکس</a></li>
-            <li><a href="#leather" class="footer-link">آناتومی محافظت Defender</a></li>
+            <li><a href="#about" class="footer-link">داستان DYF</a></li>
+            <li><a href="#editorial-lines" class="footer-link">لوک‌بوک و لاین‌های کارگاهی</a></li>
+            <li><a href="#lines" class="footer-link">مشخصات فنی و تیراژ لاین‌ها</a></li>
+            <li><a href="#leather" class="footer-link">مطالعه متریال Defender</a></li>
             <li><a href="#order" class="footer-link">فرآیند ۴ مرحله‌ای سفارش عمده</a></li>
             <li><a href="#inquiry" class="footer-link">میز استعلام تیراژ و کاتالوگ</a></li>
           </ul>
@@ -2062,11 +759,11 @@
         <div class="footer-col" id="contact">
           <h4>تماس با ما و تعهدات کارگاهی</h4>
           <ul class="footer-links">
-            <li><span class="footer-link">📍 کارگاه و دفتر: تبریز / تهران</span></li>
-            <li><span class="footer-link">📞 تماس مستقیم B2B: ۰۹۱۲XXXXXXX</span></li>
-            <li><span class="footer-link">💬 ارتباط واتساپ و مشاوره تیراژ</span></li>
-            <li><span class="footer-link">🛡️ ضمانت بازگشت و نقص فنی زیره و چرم</span></li>
-            <li><a href="#inquiry" class="footer-link" style="color: var(--gold-light); font-weight: 700;">🤝 ثبت فرم درخواست همکاری</a></li>
+            <li><span class="footer-link">کارگاه و دفتر: تبریز / تهران</span></li>
+            <li><span class="footer-link">تماس مستقیم B2B: ۰۹۱۲XXXXXXX</span></li>
+            <li><span class="footer-link">ارتباط واتساپ و مشاوره تیراژ</span></li>
+            <li><span class="footer-link">ضمانت بازگشت و نقص فنی زیره و چرم</span></li>
+            <li><a href="#inquiry" class="footer-link" style="color: var(--gold-light); font-weight: 700;">ثبت فرم درخواست همکاری</a></li>
           </ul>
         </div>
       </div>
@@ -2075,155 +772,10 @@
         <div>
           کلیه حقوق مادی و معنوی، طراحی‌ها و قالب‌ها متعلق به مجموعه <strong>Defender Your Foot (DYF)</strong> می‌باشد.
         </div>
-        <div style="color: var(--gold-light);">
-          اصالت کارگاهی • مهندسی گام • سراجی دست‌دوز
-        </div>
       </div>
     </div>
   </footer>
 
-  <script>
-    // کنترل تعاملی منوی همبرگری موبایل
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    const mobileDrawer = document.getElementById('mobileDrawer');
-    const mobileOverlay = document.getElementById('mobileOverlay');
-    const mobileLinks = document.querySelectorAll('.mobile-nav-link');
-
-    function toggleMenu() {
-      const isOpen = hamburgerBtn.classList.toggle('active');
-      mobileDrawer.classList.toggle('active');
-      mobileOverlay.classList.toggle('active');
-      document.body.style.overflow = isOpen ? 'hidden' : '';
-    }
-
-    hamburgerBtn.addEventListener('click', toggleMenu);
-    mobileOverlay.addEventListener('click', toggleMenu);
-
-    // بسته شدن منو با لمس هر لینک
-    mobileLinks.forEach(link => {
-      link.addEventListener('click', toggleMenu);
-    });
-
-    // انیمیشن Specular Highlight برای حرکت ماوس و تاچ
-    document.querySelectorAll('.js-specular').forEach(button => {
-      const handlePointer = (clientX, clientY) => {
-        const rect = button.getBoundingClientRect();
-        const x = clientX - rect.left;
-        const y = clientY - rect.top;
-        button.style.setProperty('--x', `${x}px`);
-        button.style.setProperty('--y', `${y}px`);
-      };
-
-      button.addEventListener('mousemove', (e) => handlePointer(e.clientX, e.clientY));
-      button.addEventListener('touchmove', (e) => {
-        if (e.touches[0]) handlePointer(e.touches[0].clientX, e.touches[0].clientY);
-      });
-    });
-
-    // اسکرول نرم به فرم استعلام برای دکمه‌های هدر و اکشن
-    document.querySelectorAll('.js-scroll-inquiry, .header-actions .btn-desktop, .mobile-drawer-bottom .btn-specular').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const target = document.getElementById('inquiry');
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth' });
-          if (mobileDrawer.classList.contains('active')) {
-            toggleMenu();
-          }
-        }
-      });
-    });
-
-    // تعامل Exploded View در بخش مهندسی Defender
-    const layerData = {
-      upper: {
-        title: 'رویه چرم تنفس‌پذیر مقاوم (The Upper Shield)',
-        sub: 'لایه بیرونی: محافظت از بافت پا در برابر سایش، آب‌وهوا و تنش‌های مکانیکی',
-        desc: 'رویه کفش‌های DYF از ممتازترین چرم گاوی سورت دست‌چین تبریز تهیه می‌شود. ساختار الیاف ارگانیک چرم اجازه تنفس ۲۴ ساعته به پای کاربر می‌دهد و مانع از تشکیل بوی نامطبوع و رطوبت می‌گردد. همچنین فرآیند واکس‌زنی روغنی کارگاهی، مقاومت چرم را در برابر چین‌خوردگی‌های متوالی راه رفتن تضمین می‌کند.',
-        points: [
-          { title: 'ضخامت کنترل‌شده', desc: '۱.۶ تا ۱.۸ میلی‌متر با انعطاف بالا در خمش گام' },
-          { title: 'مقاومت رطوبتی', desc: 'پوشش گیاهی هیدروفوبیک جهت دفع لکه و نفوذ آب' },
-          { title: 'آستر داخلی ارگانیک', desc: 'چرم طبیعی بدون رنگ‌های شیمیایی آلرژی‌زا' },
-          { title: 'دوخت دوبل سراجی', desc: 'نخ موم‌زده پلی‌استر مقاوم در برابر گسستگی' }
-        ],
-        icon: '🛡️'
-      },
-      midsole: {
-        title: 'کفی میانی ارگونومیک جاذب ضربه (Shock Midsole)',
-        sub: 'لایه میانی: اصلاح راستای گام، حذف فشارهای کوبشی پاشنه و پرکردن گودی پا',
-        desc: 'طراحی آناتومیک کفی میانی با فوم لاتکس سلول‌باز طبی، شوک‌های ناشی از برخورد پاشنه با زمین را تا ۷۰ درصد خنثی می‌کند. این ساختار از خستگی مفرط پا در ایستادن‌های طولانی‌مدت فروشگاهی و کاری جلوگیری کرده و مانع از آسیب به زانو و دیسک کمر می‌گردد.',
-        points: [
-          { title: 'فوم لاتکس ارتجاعی', desc: 'عدم نشست یا افت ضخامت حتی پس از ماه‌ها استفاده مستمر' },
-          { title: 'پشتیبانی ارگونومیک قوس', desc: 'طراحی ویژه مطابق قالب استاندارد پای ایرانی' },
-          { title: 'روکش چرم گوسفندی', desc: 'جذب عرق پا و جلوگیری از تاول و سوزش کف پا' },
-          { title: 'ساختار ضدمیکروب', desc: 'تهویه ارگانیک سلول‌باز با خاصیت ضدمیکروب' }
-        ],
-        icon: '⚡'
-      },
-      outsole: {
-        title: 'زیره الاستومر ضدسایش با چسبندگی بالا (Grip Outsole)',
-        sub: 'لایه زیرین: اصطکاک پایدار بر روی سطوح لغزنده و مقاومت بی‌نظیر در برابر فرسایش',
-        desc: 'ترکیب مهندسی‌شده الاستومر و پلی‌یورتان تقویت‌شده با چگالی بالا، زیره‌ای بسیار سبک ولی در عین حال ضدمصرف و نشکن ایجاد کرده است. هندسه آج‌ها بر اساس خروج سریع سیالات و قفل شدن به سطوح صیقلی سنگ، سرامیک و پارکت طراحی شده است.',
-        points: [
-          { title: 'مقاومت سایشی فوق‌العاده', desc: 'حداقل فرسایش در تماس مکرر با آسفالت و سنگ' },
-          { title: 'آج‌های چندجهته', desc: 'چسبندگی بالا و گریپ مطمئن در سطوح مرطوب و بارانی' },
-          { title: 'عایق حرارتی کارگاهی', desc: 'جلوگیری از انتقال سرمای زمین و گرمای کف آسفالت' },
-          { title: 'انعطاف در پنجه', desc: 'خطوط شیاردار در پنجه جهت حرکت طبیعی مفصل انگشتان' }
-        ],
-        icon: '⚙️'
-      }
-    };
-
-    const layerCards = document.querySelectorAll('.js-layer-trigger');
-    const panelTitle = document.getElementById('panelTitle');
-    const panelSub = document.getElementById('panelSub');
-    const panelDesc = document.getElementById('panelDesc');
-    const panelPoints = document.getElementById('panelPoints');
-    const panelIcon = document.getElementById('panelIcon');
-
-    layerCards.forEach(card => {
-      card.addEventListener('click', () => {
-        layerCards.forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-
-        const layerKey = card.getAttribute('data-layer');
-        const data = layerData[layerKey];
-        if (data) {
-          panelTitle.textContent = data.title;
-          panelSub.textContent = data.sub;
-          panelDesc.textContent = data.desc;
-          panelIcon.textContent = data.icon;
-
-          panelPoints.innerHTML = data.points.map(pt => `
-            <div class="point-box">
-              <strong>${pt.title}</strong>
-              <span>${pt.desc}</span>
-            </div>
-          `).join('');
-        }
-      });
-    });
-
-    // مدیریت ارسال فرم استعلام B2B
-    const inquiryForm = document.getElementById('inquiryForm');
-    const formSuccessBanner = document.getElementById('formSuccessBanner');
-    const resetFormBtn = document.getElementById('resetFormBtn');
-
-    if (inquiryForm) {
-      inquiryForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        inquiryForm.style.display = 'none';
-        formSuccessBanner.classList.add('active');
-      });
-    }
-
-    if (resetFormBtn) {
-      resetFormBtn.addEventListener('click', () => {
-        formSuccessBanner.classList.remove('active');
-        inquiryForm.reset();
-        inquiryForm.style.display = 'flex';
-      });
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
