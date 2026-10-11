@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DYF | Defender Your Foot</title>
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- نوار دوخت چرمی -->
+  <div class="top-saddle-stitch"></div>
+
+  <!-- هدر سایت -->
+  <header class="site-header">
+    <!-- لوگو -->
+    <a href="#" class="brand-logo">
+      <div class="logo-shield">
+        <span class="logo-monogram">AM</span>
+      </div>
+      <div class="logo-text-group">
+        <h1>DYF</h1>
+        <span>DEFENDER YOUR FOOT</span>
+      </div>
+    </a>
+
+    <!-- منوی دسکتاپ -->
+    <nav class="desktop-nav">
+      <ul>
+        <li><a href="#about" class="nav-item">درباره ما</a></li>
+        <li><a href="#editorial-lines" class="nav-item">لاین‌های تولید</a></li>
+        <li><a href="#inquiry" class="nav-item">همکاری با ما</a></li>
+        <li><a href="#contact" class="nav-item">تماس با ما</a></li>
+      </ul>
+    </nav>
+
+    <!-- بخش اقدامات (دکمه دسکتاپ + همبرگر موبایل) -->
+    <div class="header-actions">
+      <!-- دکمه استعلام در دسکتاپ -->
+      <button class="btn-specular btn-desktop js-specular js-scroll-inquiry">
+        درخواست همکاری
+      </button>
+
+      <!-- آیکون سه خط موبایل -->
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="منوی موبایل">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- پس‌زمینه تیره و منوی کشویی موبایل -->
+  <div class="mobile-menu-overlay" id="mobileOverlay"></div>
+
+  <div class="mobile-menu-drawer" id="mobileDrawer">
+    <ul class="mobile-nav-list">
+      <li><a href="#about" class="mobile-nav-link">درباره ما</a></li>
+      <li><a href="#editorial-lines" class="mobile-nav-link">لاین‌های تولید</a></li>
+      <li><a href="#inquiry" class="mobile-nav-link">همکاری با ما</a></li>
+      <li><a href="#contact" class="mobile-nav-link">تماس با ما</a></li>
+    </ul>
+
+    <!-- دکمه‌ای که در موبایل به داخل منو منتقل شد -->
+    <div class="mobile-drawer-bottom">
+      <button class="btn-specular js-specular js-scroll-inquiry">
+        درخواست همکاری
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== HERO SECTION ==================== -->
+  <section class="hero-section" id="hero">
+    <div class="container">
+      <div class="hero-layout">
+        <!-- باکس ۱: جایگاه لوگو و نشان رسمی (سمت راست در چیدمان راست‌به‌چپ - آماده بارگذاری لوگو) -->
+        <div class="hero-logo-card" id="heroLogoBox">
+          <div class="logo-empty-frame">
+            <div class="logo-empty-icon-wrap">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-dasharray="3 3"/>
+                <path d="M12 9v6M9 12h6" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="logo-empty-label">جایگاه لوگو و نشان تجاری DYF</div>
+            <div class="logo-empty-hint">کادر آماده برای درج نماد رسمی برند و نشان کارگاهی</div>
+          </div>
+        </div>
+
+        <!-- باکس ۲: محتوا و معرفی تجاری B2B (سمت چپ در چیدمان راست‌به‌چپ) -->
+        <div class="hero-content-card">
+          <div class="hero-content-top">
+            <div class="hero-badge">
+              تولید تخصصی B2B | اصالت چرم و سراجی تبریز
+            </div>
+
+            <h1 class="hero-main-title">
+              همراه کسب‌وکارهایی که <span>قدم‌هایشان حساب‌شده است.</span>
+            </h1>
+
+            <p class="hero-main-desc">
+              <strong>DYF</strong> تولیدکننده کفش مردانه در ایران است؛ با تمرکز بر لاین‌های رسمی، اسپرت و روزمره و همکاری مستقیم با بنکداران، عمده‌فروشان و فروشگاه‌های کفش. از سفارش مدل‌های موجود تا بررسی سفارش‌های اختصاصی، هدف ما ساختن همکاری‌هایی ماندگار و قابل اتکاست.
+            </p>
+          </div>
+
+          <!-- دکمه‌های اقدام -->
+          <div class="hero-actions-group">
+            <a href="#inquiry" class="btn-specular js-specular hero-btn-primary js-scroll-inquiry">
+              <span>درخواست همکاری</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a href="#about" class="hero-btn-secondary">
+              <span>آشنایی با DYF</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ۲. داستان برند DYF (Brand Story) ==================== -->
+  <section class="story-section" id="about">
+    <div class="container">
+      <div class="story-grid">
+        <!-- ستون متن: برچسب، تیتر، توضیحات و ۳ نکته کوتاه (سمت راست در چیدمان راست‌به‌چپ) -->
+        <div class="story-text-col">
+          <div class="story-badge">
+            <span class="story-badge-dot"></span>
+            <span>داستان DYF</span>
+          </div>
+
+          <h2 class="story-title">
+            تجربه‌ای که پیش از نام DYF آغاز شد.
+          </h2>
+
+          <p class="story-description">
+            فعالیت ما در بازار کفش به بیش از یک دهه تجربه برمی‌گردد. DYF ادامه این مسیر با هویتی مستقل است؛ مسیری که شناخت نیاز بازار، ارتباط مستقیم با فروشندگان و شکل‌دادن به همکاری‌های ماندگار، بخش مهمی از آن بوده است.
+          </p>
+
+          <div class="story-points">
+            <div class="story-point-item">
+              <div class="point-index-badge">۰۱</div>
+              <span class="point-label">تجربه در بازار کفش مردانه</span>
+            </div>
+
+            <div class="story-point-item">
+              <div class="point-index-badge">۰۲</div>
+              <span class="point-label">همکاری با کسب‌وکارهای سراسر ایران</span>
+            </div>
+
+            <div class="story-point-item">
+              <div class="point-index-badge">۰۳</div>
+              <span class="point-label">ارتباط مستقیم برای بررسی سفارش‌ها</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ستون تصویر: میز کار کفاشی، ابزارهای تولید و متریال (سمت چپ در چیدمان راست‌به‌چپ) -->
+        <div class="story-image-col">
+          <div class="story-image-card">
+            <div class="story-image-frame">
+              <img 
+                src="iC9OP0JjJJz3a4xbohUsd7uxZiWFwtEMYkXwhtH5JkQHq8NaZ4ypb5LBeiIOqBikILRoFuejg8n9lM90fF3nYX1FvMi3ZFU-GLenv5oGXBoVPJKPT42iAaQUM1-1RH3IcaUOyYp97cji2NU5fekFhg10ocNuU8A__w-FBlp8ntyApyHgFJssK_c2IHZKsX5V.jpeg" 
+                alt="میز کار کفاشی کارگاه DYF، ابزارهای اندازه‌گیری و متریال چرم طبیعی" 
+                class="story-workbench-img"
+                loading="lazy"
+              />
+              <div class="story-image-overlay"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ۳. لاین‌های تولید DYF (The Editorial Lookbook) ==================== -->
+  <section class="craft-editorial-section" id="editorial-lines">
+    <div class="container">
+      <!-- هدر سکشن: تیتر بزرگ با فضای خالی کافی و توضیح کوتاه -->
+      <div class="craft-editorial-header">
+        <span class="craft-editorial-kicker">DYF LOOKBOOK • LINE PRODUCTION ARCHIVE</span>
+        <h2 class="craft-main-title">برای هر سبک، یک انتخاب.</h2>
+        <p class="craft-main-desc">
+          تولید متمرکز بر دو لاین مستقل رسمی و اسپرت، متناسب با استانداردهای کیفی کارگاه و نیازهای متنوع در بازار کفش مردانه.
+        </p>
+        <div class="craft-curation-badge">
+          <span>تولید اختصاصی کارگاهی تبریز</span>
+          <span class="badge-sep">•</span>
+          <span>سری‌های ۱۰ تا ۱۰۰ جفتی</span>
+          <span class="badge-sep">•</span>
+          <span>ویژه بنکداران و بوتیک‌های کفش</span>
+        </div>
+      </div>
+
+      <!-- دو ردیف افقی بزرگ و نامتقارن تحریریه‌ای -->
+      <div class="craft-rows-wrap">
+        <!-- ردیف اول: لاین رسمی و چرمی (در RTL: تصویر عمودی سمت راست، متن سمت چپ) -->
+        <article class="craft-editorial-row craft-row-formal">
+          <!-- ستون تصویر عمودی (سمت راست دسکتاپ در RTL) -->
+          <div class="craft-media-col">
+            <div class="craft-media-frame">
+              <img 
+                src="J1uvn91eKz4771BI11833pp6GFVd2PTqZk3LcktRNGdjf8w8l7dnnn-RH9q1-8nlz5TPl-cb3Jvt9jlgw23bYaR5G3N8AjzjUe0PTO0_iiMfeBkJ0wuNcURVu-yrOLq1OaCjQmcwSJjBsPN3T9PvTaCPsTojcfN_eGIidTTAzuDUCU2H0veI2U9KqnZXtQf9.jpeg" 
+                alt="استادکار در حال پرداخت و دوخت کفش چرمی در کارگاه - لاین رسمی و چرمی DYF" 
+                class="craft-editorial-img craft-img-formal"
+                decoding="async"
+              />
+              <span class="craft-photo-tag" aria-hidden="true">FIG. 01 — THE EXECUTIVE • WORKSHOP ARCHIVE</span>
+            </div>
+          </div>
+
+          <!-- ستون متن (سمت چپ دسکتاپ در RTL) -->
+          <div class="craft-text-col">
+            <div class="craft-line-meta">
+              <span class="craft-line-num">01</span>
+              <span class="craft-line-divider" aria-hidden="true">/</span>
+              <span class="craft-line-en">FORMAL</span>
+            </div>
+            <h3 class="craft-line-title">رسمی و چرمی</h3>
+            <p class="craft-line-desc">
+              مدل‌های مناسب استایل رسمی و محیط‌های کاری، برای فروشگاه‌هایی با نیازهای متنوع در بازار کفش مردانه.
+            </p>
+
+            <!-- نوار مشخصات فنی ژورنالی -->
+            <div class="craft-spec-strip" aria-label="مشخصات شاخص لاین رسمی">
+              <div class="craft-spec-pill">
+                <span class="spec-label">متریال اصلی رویه:</span>
+                <span class="spec-value">چرم طبیعی هورس و گاوی واکس‌خورده دستی</span>
+              </div>
+              <div class="craft-spec-pill">
+                <span class="spec-label">ساختار زیره:</span>
+                <span class="spec-value">نیولایت فشرده نشکن و چرم طبیعی لایه‌ای</span>
+              </div>
+              <div class="craft-spec-pill">
+                <span class="spec-label">تیراژ سفارش:</span>
+                <span class="spec-value">سری‌های ۱۰ تا ۱۰۰ جفتی کارگاهی</span>
+              </div>
+            </div>
+
+            <a href="#inquiry" class="craft-order-link js-select-line" data-line="executive">
+              <span class="craft-link-text">بررسی شرایط سفارش</span>
+              <span class="craft-link-arrow" aria-hidden="true">←</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- خط جداکننده ساده و مینیمال بین دو ردیف -->
+        <div class="craft-editorial-separator" aria-hidden="true">
+          <span class="separator-line"></span>
+          <span class="separator-symbol">✦</span>
+          <span class="separator-line"></span>
+        </div>
+
+        <!-- ردیف دوم: لاین اسپرت و کژوال (در RTL: متن سمت راست، تصویر عمودی سمت چپ) -->
+        <article class="craft-editorial-row craft-row-sport">
+          <!-- ستون متن (سمت راست دسکتاپ در RTL) -->
+          <div class="craft-text-col">
+            <div class="craft-line-meta">
+              <span class="craft-line-num">02</span>
+              <span class="craft-line-divider" aria-hidden="true">/</span>
+              <span class="craft-line-en">SPORT &amp; CASUAL</span>
+            </div>
+            <h3 class="craft-line-title">اسپرت و کژوال</h3>
+            <p class="craft-line-desc">
+              مدل‌های مناسب استفاده روزمره و سلیقه‌های متنوع بازار.
+            </p>
+
+            <!-- نوار مشخصات فنی ژورنالی -->
+            <div class="craft-spec-strip" aria-label="مشخصات شاخص لاین اسپرت">
+              <div class="craft-spec-pill">
+                <span class="spec-label">متریال اصلی رویه:</span>
+                <span class="spec-value">چرم نرم ناپا (Nappa) با لمس ابریشمی</span>
+              </div>
+              <div class="craft-spec-pill">
+                <span class="spec-label">ساختار زیره:</span>
+                <span class="spec-value">ارگونومیک سبک PU ضدسایش و ضدانعکاس ضربه</span>
+              </div>
+              <div class="craft-spec-pill">
+                <span class="spec-label">تیراژ سفارش:</span>
+                <span class="spec-value">سری‌های ۱۰ تا ۱۰۰ جفتی کارگاهی</span>
+              </div>
+            </div>
+
+            <a href="#inquiry" class="craft-order-link js-select-line" data-line="sneaker">
+              <span class="craft-link-text">بررسی شرایط سفارش</span>
+              <span class="craft-link-arrow" aria-hidden="true">←</span>
+            </a>
+          </div>
+
+          <!-- ستون تصویر عمودی (سمت چپ دسکتاپ در RTL) -->
+          <div class="craft-media-col">
+            <div class="craft-media-frame">
+              <img 
+                src="vans.jpeg" 
+                alt="کارگاه ساخت و اتصال زیره کفش ونس و اسنیکر - لاین اسپرت و کژوال DYF" 
+                class="craft-editorial-img craft-img-sport"
+                decoding="async"
+              />
+              <span class="craft-photo-tag" aria-hidden="true">FIG. 02 — THE MODERN SNEAKER • ATELIER CRAFT</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ۴. دسته‌بندی مفهومی لاین‌ها (The Craft Lines - کارت‌های مشخصات فنی) ==================== -->
+  <section class="craft-lines-section" id="lines">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-kicker">CURATION LINES</span>
+        <h2 class="section-title">دسته‌بندی مفهومی لاین‌ها (The Craft Lines)</h2>
+        <p class="section-desc">
+          بدون فروش تکی و پراکنده؛ ۲ لاین پرچمدار کارگاهی به‌صورت مودبورد لاکچری با بالاترین تقاضای ویترین بنکداری و بوتیک‌های مطرح کشور.
+        </p>
+      </div>
+
+      <div class="craft-cards-grid">
+        <!-- لاین ۱: رسمی و اداری -->
+        <article class="craft-card">
+          <div class="craft-card-visual">
+            <span class="visual-badge-tier">لاین مستر | The Executive</span>
+            <div class="craft-card-icon-art">
+              <!-- آیکون کفش رسمی کلاسیک -->
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <path d="M58 38c-3-2-8-3-14-3-4 0-11 2-15 1s-7-5-11-7c-5-2-9-1-12 1-3 2-4 5-4 8v5c0 2 2 3 4 3h48c3 0 5-2 5-4v-4z"/>
+                <path d="M12 43h8v3h-8zM44 43h10v3H44z" fill="#C29553"/>
+                <path d="M22 26c4 3 8 7 13 8 7 1 15-2 19 2l2 2-7 1c-5 0-12-2-16-1s-8 5-11 5h-7c1-6 3-13 7-17z" opacity="0.6"/>
+              </svg>
+            </div>
+            <span class="visual-badge-order">قابل سفارش در سری‌های ۱۰ تا ۱۰۰ جفتی</span>
+          </div>
+
+          <div class="craft-card-body">
+            <div class="craft-card-head-group">
+              <div>
+                <h3 class="craft-title-fa">لاین رسمی و اداری</h3>
+                <span class="craft-title-en">THE EXECUTIVE LEATHER</span>
+              </div>
+              <span class="layer-badge-feature">پرچمدار تشریفات</span>
+            </div>
+
+            <p class="craft-card-desc">
+              طراحی اختصاصی برای مدیران، محیط‌های رسمی و مجالس تشریفاتی؛ خلق‌شده از گزیده‌ترین چرم‌های باوقار با واکس‌خوری عمیق و پولیش آینه‌ای سنتی تبریز.
+            </p>
+
+            <ul class="craft-specs-list">
+              <li class="craft-spec-item">
+                <span class="craft-spec-lbl">متریال اصلی رویه:</span>
+                <span class="craft-spec-val">چرم طبیعی هورس و گاوی واکس‌خورده دستی</span>
+              </li>
+              <li class="craft-spec-item">
+                <span class="craft-spec-lbl">ساختار زیره:</span>
+                <span class="craft-spec-val">نیولایت فشرده نشکن و چرم طبیعی لایه‌ای</span>
+              </li>
+              <li class="craft-spec-item">
+                <span class="craft-spec-lbl">آستر داخلی:</span>
+                <span class="craft-spec-val">چرم بزی ضدحساسیت و ضدتعریق</span>
+              </li>
+              <li class="craft-spec-item">
+                <span class="craft-spec-lbl">تیپ سایزبندی تیراژ:</span>
+                <span class="craft-spec-val">۴۰ تا ۴۵ (سری استاندارد یا سفارشی)</span>
+              </li>
+            </ul>
+
+            <div class="craft-card-action">
+              <button class="btn-specular js-specular js-scroll-inquiry js-select-line" data-line="executive" style="width: 100%;">
+                استعلام تیراژ لاین رسمی
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- لاین ۲: ونس و کژوال لوکس -->
+        <article class="craft-card">
+          <div class="craft-card-visual">
+            <span class="visual-badge-tier">لاین مدرن | The Modern Sneaker</span>
+            <div class="craft-card-icon-art">
+              <!-- آیکون ونس و اسنیکر لوکس -->
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <path d="M56 36c-2-2-6-3-12-3-5 0-9 1-14 3s-8 1-13-1c-5-2-8-1-10 1-2 2-3 5-3 8v4c0 2 2 3 4 3h44c3 0 5-2 5-4v-8z"/>
+                <path d="M10 44h40v3H10z" fill="#C29553"/>
+                <path d="M26 23c4 1 8 5 11 8 6 4 13 4 17 6l1 1-6 1c-6 0-11-2-15-2-4 0-7 2-10 2l-6-2c2-5 5-11 9-14z" opacity="0.6"/>
+              </svg>
+            </div>
+            <span class="visual-badge-order">قابل سفارش در سری‌های ۱۰ تا ۱۰۰ جفتی</span>
+          </div>
+
+          <div class="craft-card-body">
+            <div class="craft-card-head-group">
+              <div>
+                <h3 class="craft-title-fa">لاین ونس و کژوال لوکس</h3>
+                <span class="craft-title-en">THE MODERN SNEAKER</span>
+              </div>
+              <span class="layer-badge-feature">پرفروش بوتیک‌ها</span>
+            </div>
+
+            <p class="craft-card-desc">
+              تلفیق مینیمالیسم استایل خیابانی مدرن و پرستیژ چرم طبیعی نرم؛ مناسب استفاده روزمره طولانی با وزن سبک و زیره ارتجاعی مهندسی‌شده.
+            </p>
+
+            <ul class="craft-specs-list">
+              <li class="craft-spec-item">
+                <span class="craft-spec-lbl">متریال اصلی رویه:</span>
+                <span class="craft-spec-val">چرم نرم ناپا (Nappa) با لمس ابریشمی</span>
+              </li>
+              <li class="craft-spec-item">
+                <span class="craft-spec-lbl">ساختار زیره:</span>
+                <span class="craft-spec-val">ارگونومیک سبک PU ضدسایش و ضدانعکاس ضربه</span>
+              </li>
+              <li class="craft-spec-item">
+                <span class="craft-spec-lbl">کفی داخلی:</span>
+                <span class="craft-spec-val">مموری فوم طبی با روکش چرم طبیعی گوسفندی</span>
+              </li>
+              <li class="craft-spec-item">
+                <span class="craft-spec-lbl">تیپ سایزبندی تیراژ:</span>
+                <span class="craft-spec-val">۳۹ تا ۴۴ (سری متوازن بازار جوانان)</span>
+              </li>
+            </ul>
+
+            <div class="craft-card-action">
+              <button class="btn-specular js-specular js-scroll-inquiry js-select-line" data-line="sneaker" style="width: 100%;">
+                استعلام تیراژ لاین ونس
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ۳. مطالعه متریال و ساخت DEFENDER (The Defender Material Study) ==================== -->
+  <section class="defender-section" id="leather">
+    <div class="container">
+      <!-- بخش اول: عنوان ژورنالی، روایت هویت کارگاهی و مشخصات مبنایی -->
+      <header class="defender-showcase-header">
+        <div class="defender-header-meta">
+          <span class="defender-showcase-kicker">THE DEFENDER MATERIAL ARCHIVE</span>
+          <span class="defender-meta-divider" aria-hidden="true">✦</span>
+          <span class="defender-showcase-subkicker">ATELIER CRAFT STUDY</span>
+        </div>
+        
+        <h2 class="defender-showcase-title">
+          جزئیات، پیش از محصول.
+        </h2>
+
+        <p class="defender-showcase-lead">
+          در کارگاه DYF، کیفیت کفش پیش از شکل‌گیری محصول، در انتخاب آگاهانه متریال و ظرافت پرداخت آغاز می‌شود؛ پیوندی دقیق میان چرم اصیل، دوخت سراجی و مهندسی گام که هویت پایدار هر مدل را رقم می‌زند.
+        </p>
+
+        <!-- برچسب‌های شاخص‌های فنی و اصالت سراجی -->
+        <div class="defender-meta-pills" aria-label="شاخص‌های ارزیابی کیفی متریال">
+          <div class="defender-meta-pill">
+            <span class="pill-dot"></span>
+            <span>سورت دست‌چین چرم طبیعی</span>
+          </div>
+          <div class="defender-meta-pill">
+            <span class="pill-dot"></span>
+            <span>سراجی و دوخت تقویت‌شده</span>
+          </div>
+          <div class="defender-meta-pill">
+            <span class="pill-dot"></span>
+            <span>مهندسی ارگونومی و توزیع وزن گام</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- بخش دوم: ترکیب‌بندی تصویر شاخص و دو تصویر جزئیات همراه با نشان‌های آرشیو کارگاهی -->
+      <div class="defender-visual-triptych">
+        <!-- تصویر اصلی: بزرگ‌ترین تصویر در سمت راست ترکیب‌بندی -->
+        <div class="defender-master-frame">
+          <img 
+            src="shoes.jpeg" 
+            alt="کفش تمام چرم رسمی مردانه DYF - تصویر شاخص فرم و کیفیت محصول" 
+            class="defender-master-img"
+            loading="lazy"
+            decoding="async"
+          />
+          <div class="defender-frame-badge">
+            <span class="badge-code">ARCHIVE 01</span>
+            <span class="badge-title">فرم پایانی و هندسه قالب کفش</span>
+          </div>
+        </div>
+
+        <!-- دو تصویر کوچک‌تر: در سمت چپ تصویر اصلی، به‌صورت عمودی روی هم قرار بگیرند -->
+        <div class="defender-details-stack">
+          <!-- تصویر دوم: نمای نزدیک از بافت چرم -->
+          <div class="defender-detail-frame">
+            <img 
+              src="bag.jpeg" 
+              alt="نمای نزدیک از بافت و دانه چرم طبیعی" 
+              class="defender-detail-img"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="defender-frame-badge">
+              <span class="badge-code">STUDY 02</span>
+              <span class="badge-title">دانه و بافت چرم طبیعی</span>
+            </div>
+          </div>
+
+          <!-- تصویر سوم: نمای نزدیک از فرایند ساخت، اتصال و دوخت چرم -->
+          <div class="defender-detail-frame">
+            <img 
+              src="bag2.jpeg" 
+              alt="نمای نزدیک از فرایند دوخت سراجی و پرداخت دست‌دوز چرم" 
+              class="defender-detail-img"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="defender-frame-badge">
+              <span class="badge-code">STUDY 03</span>
+              <span class="badge-title">سراجی و اتصال دست‌دوز</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- بخش سوم: ستون‌های ۳ گانه تشریح متریال و مهندسی ساخت -->
+      <div class="defender-craft-pillars">
+        <!-- ستون ۱: رویه و متریال -->
+        <article class="defender-pillar-card">
+          <div class="pillar-header">
+            <span class="pillar-num">۰۱</span>
+            <span class="pillar-en">UPPER &amp; LEATHER</span>
+          </div>
+          <h3 class="pillar-title">رویه و متریال اصیل</h3>
+          <p class="pillar-desc">
+            انتخاب سورت اول چرم طبیعی تبریز با خمش استاندارد و تنفس‌پذیری پیوسته، برای حفظ آراستگی فرم و دوام در استفاده مکرر روزمره.
+          </p>
+        </article>
+
+        <!-- ستون ۲: ساخت و پرداخت سراجی -->
+        <article class="defender-pillar-card">
+          <div class="pillar-header">
+            <span class="pillar-num">۰۲</span>
+            <span class="pillar-en">CRAFT &amp; FINISHING</span>
+          </div>
+          <h3 class="pillar-title">ساخت و پرداخت سراجی</h3>
+          <p class="pillar-desc">
+            دقت در کوک‌های دوبل مقاوم، لبه‌گیری و واکس‌خوری کارگاهی، که ثبات ظاهری و مقاومت کفش را در برابر تنش‌های حرکتی تضمین می‌کند.
+          </p>
+        </article>
+
+        <!-- ستون ۳: زیره و اتصال مهندسی -->
+        <article class="defender-pillar-card">
+          <div class="pillar-header">
+            <span class="pillar-num">۰۳</span>
+            <span class="pillar-en">SOLE &amp; ERGONOMICS</span>
+          </div>
+          <h3 class="pillar-title">زیره و اتصال مهندسی</h3>
+          <p class="pillar-desc">
+            ترکیب زیره مستحکم با جذب شوک ضربه و توزیع متوازن وزن، متناسب با گام‌های حساب‌شده و کاهش فشار روی مفاصل و پاشنه پا.
+          </p>
+        </article>
+      </div>
+
+      <!-- بخش چهارم: امضای برند DYF و پایان‌بندی ظریف -->
+      <footer class="defender-showcase-footer">
+        <p class="defender-essence-tag">MATERIAL · CRAFT · DETAIL</p>
+        <div class="defender-brand-signoff" aria-label="امضای برند DYF">
+          <span class="signoff-hairline" aria-hidden="true"></span>
+          <span class="signoff-label">DEFENDER YOUR FOOT — DYF • ATELIER STUDY</span>
+          <span class="signoff-hairline" aria-hidden="true"></span>
+        </div>
+      </footer>
+    </div>
+  </section>
+
+  <!-- ==================== ۴. فرآیند ۴ مرحله‌ای سفارش عمده ==================== -->
+  <section class="pipeline-section" id="order">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-kicker">B2B WORKFLOW PIPELINE</span>
+        <h2 class="section-title">فرآیند ۴ مرحله‌ای سفارش عمده کارگاهی</h2>
+        <p class="section-desc">
+          برای خریداران و بنکدارانی که شفافیت تیراژ و دقت در تحویل برایشان حیاتی است؛ مسیر گام‌به‌گام از ژورنال فصلی تا بسته‌بندی در جعبه‌های اختصاصی DYF.
+        </p>
+      </div>
+
+      <div class="pipeline-grid">
+        <!-- گام ۱ -->
+        <article class="pipeline-step-card">
+          <div class="step-number-tag">۱</div>
+          <h3 class="step-card-title">انتخاب مدل از ژورنال فصلی</h3>
+          <p class="step-card-desc">
+            بررسی کلکسیون جدید، تطبیق کالیته‌های چرم هورس، گاوی و ناپا، و انتخاب لاین‌های متناسب با پرستیژ و سلیقه مشتریان فروشگاه شما.
+          </p>
+          <span class="step-card-badge">کاتالوگ تیراژ و قیمت همکار</span>
+        </article>
+
+        <!-- گام ۲ -->
+        <article class="pipeline-step-card">
+          <div class="step-number-tag">۲</div>
+          <h3 class="step-card-title">ارسال نمونه فیزیکی (Sample)</h3>
+          <p class="step-card-desc">
+            ارسال جفت نمونه قبل از ثبت سفارش سنگین، جهت ارزیابی حضوری دوخت دست‌ساز، وزن، ارگونومی قالب و اطمینان از اصالت سورت چرم.
+          </p>
+          <span class="step-card-badge">تست کیفیت و ارزیابی قالب</span>
+        </article>
+
+        <!-- گام ۳ -->
+        <article class="pipeline-step-card">
+          <div class="step-number-tag">۳</div>
+          <h3 class="step-card-title">عقد قرارداد تیراژ با تضمین زمان</h3>
+          <p class="step-card-desc">
+            ثبت قرارداد رسمی تیراژ با قید تاریخ دقیق تحویل، تیپ سایزبندی انتخابی، قیمت مقطوع کارگاهی و اعمال تعهد انحصار منطقه‌ای.
+          </p>
+          <span class="step-card-badge">تعهد کتبی تحویل و انحصار</span>
+        </article>
+
+        <!-- گام ۴ -->
+        <article class="pipeline-step-card">
+          <div class="step-number-tag">۴</div>
+          <h3 class="step-card-title">تولید، جعبه‌های DYF و ارسال</h3>
+          <p class="step-card-desc">
+            تولید تحت نظارت سرپرست کارگاه، بسته‌بندی نفیس در کارتن‌های شناسنامه‌دار DYF با خط دوخت سفید و ارسال بیمه‌شده به باربری مقصد.
+          </p>
+          <span class="step-card-badge">بسته‌بندی شناسنامه‌دار کارگاهی</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ۵. فرم اقدام نهایی (VIP Inquiry & Catalog Drawer) ==================== -->
+  <section class="inquiry-section" id="inquiry">
+    <div class="container">
+      <div class="inquiry-vip-box">
+        <div class="inquiry-grid">
+          <!-- اطلاعات و امتیازات خریدار عمده -->
+          <div class="inquiry-info-side">
+            <span class="vip-tag">
+              ★ بخش اختصاصی تأمین بنکداران و بوتیک‌داران
+            </span>
+
+            <h2 class="inquiry-info-title">
+              میز استعلام تیراژ و درخواست ژورنال فصلی
+            </h2>
+
+            <p class="inquiry-info-desc">
+              اگر به دنبال تأمین‌کننده‌ای پایدار با ثبات کیفیت در تیراژ، چرم ۱۰۰٪ طبیعی تبریز و تعهد به زمان‌بندی هستید، اطلاعات مجموعه خود را ثبت کنید تا کاتالوگ جامع تیراژ همراه با لیست قیمت اختصاصی برای شما ارسال شود.
+            </p>
+
+            <ul class="vip-guarantees">
+              <li class="vip-guarantee-item">
+                امکان درخواست ارسال نمونه فیزیکی پیش از ثبت سفارش سری
+              </li>
+              <li class="vip-guarantee-item">
+                بررسی ظرفیت اعطای انحصار مدل در راسته بازار یا شهر شما
+              </li>
+              <li class="vip-guarantee-item">
+                پشتیبانی مستقیم کارگاه و مشاور تخصصی سورت و متریال
+              </li>
+            </ul>
+          </div>
+
+          <!-- فرم ورود اطلاعات -->
+          <div class="inquiry-form-wrap">
+            <form class="inquiry-form" id="inquiryForm">
+              <div class="form-group">
+                <label class="form-label" for="storeName">نام فروشگاه / نام خانوادگی خریدار *</label>
+                <input 
+                  type="text" 
+                  id="storeName" 
+                  name="storeName" 
+                  class="form-input" 
+                  placeholder="مثال: بوتیک آروین / علی محمدی" 
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="cityMarket">شهر و بازار فعالیت *</label>
+                <input 
+                  type="text" 
+                  id="cityMarket" 
+                  name="cityMarket" 
+                  class="form-input" 
+                  placeholder="مثال: تهران - بازار بزرگ / اصفهان - چهارباغ" 
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="phoneNumber">شماره تماس (واتساپ / تلفن همراه) *</label>
+                <input 
+                  type="tel" 
+                  id="phoneNumber" 
+                  name="phoneNumber" 
+                  class="form-input" 
+                  placeholder="۰۹۱۲XXXXXXX" 
+                  dir="ltr"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="linePreference">لاین مورد نظر جهت استعلام</label>
+                <select id="linePreference" name="linePreference" class="form-select">
+                  <option value="both">هر دو لاین (رسمی اداری + ونس کژوال)</option>
+                  <option value="executive">فقط لاین رسمی و اداری (The Executive Leather)</option>
+                  <option value="sneaker">فقط لاین ونس و کژوال لوکس (The Modern Sneaker)</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn-specular form-submit-btn js-specular">
+                درخواست ارسال ژورنال تیراژ و نمونه
+              </button>
+
+              <p class="form-privacy-note">
+                اطلاعات فروشگاه و موقعیت جغرافیایی شما محرمانه تلقی شده و صرفاً جهت بررسی حریم انحصار منطقه‌ای استفاده می‌شود.
+              </p>
+            </form>
+
+            <!-- اعلان تایید پس از ثبت -->
+            <div class="form-success-banner" id="formSuccessBanner">
+              <div style="font-size: 2.2rem; margin-bottom: 0.8rem;">✨</div>
+              <h3 style="color: var(--gold-light); font-size: 1.2rem; margin-bottom: 0.5rem; font-weight: 900;">
+                درخواست شما با موفقیت در میز B2B کارگاه ثبت شد
+              </h3>
+              <p style="color: var(--text-ivory); font-size: 0.9rem; line-height: 1.7; margin-bottom: 1.2rem;">
+                کاتالوگ فصلی تیراژ و هماهنگی‌های لازم جهت ارسال نمونه فیزیکی به شماره ثبت‌شده ارسال خواهد شد.
+              </p>
+              <button type="button" class="btn-secondary" id="resetFormBtn" style="font-size: 0.85rem;">
+                ثبت استعلام جدید
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== فوتر تکمیلی سایت ==================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3>DEFENDER YOUR FOOT (DYF)</h3>
+          <p>
+            هویت کارگاهی تولید کفش تمام‌چرم طبیعی تبریز با تمرکز بر مهندسی محافظت از پا و پرستیژ بصری. تولید انحصاری سری‌های ۱۰ تا ۱۰۰ جفتی برای فعالان خوش‌نام صنعت کفش کشور.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4>بخش‌های اصلی</h4>
+          <ul class="footer-links">
+            <li><a href="#about" class="footer-link">داستان DYF</a></li>
+            <li><a href="#editorial-lines" class="footer-link">لوک‌بوک و لاین‌های کارگاهی</a></li>
+            <li><a href="#lines" class="footer-link">مشخصات فنی و تیراژ لاین‌ها</a></li>
+            <li><a href="#leather" class="footer-link">مطالعه متریال Defender</a></li>
+            <li><a href="#order" class="footer-link">فرآیند ۴ مرحله‌ای سفارش عمده</a></li>
+            <li><a href="#inquiry" class="footer-link">میز استعلام تیراژ و کاتالوگ</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col" id="contact">
+          <h4>تماس با ما و تعهدات کارگاهی</h4>
+          <ul class="footer-links">
+            <li><span class="footer-link">کارگاه و دفتر: تبریز / تهران</span></li>
+            <li><span class="footer-link">تماس مستقیم B2B: ۰۹۱۲XXXXXXX</span></li>
+            <li><span class="footer-link">ارتباط واتساپ و مشاوره تیراژ</span></li>
+            <li><span class="footer-link">ضمانت بازگشت و نقص فنی زیره و چرم</span></li>
+            <li><a href="#inquiry" class="footer-link" style="color: var(--gold-light); font-weight: 700;">ثبت فرم درخواست همکاری</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          کلیه حقوق مادی و معنوی، طراحی‌ها و قالب‌ها متعلق به مجموعه <strong>Defender Your Foot (DYF)</strong> می‌باشد.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
