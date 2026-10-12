@@ -81,6 +81,20 @@
       text-decoration: none;
     }
 
+    .brand-logo-img {
+      height: 64px;
+      width: auto;
+      max-height: 68px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 10px rgba(212, 175, 55, 0.35));
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
+
+    .brand-logo:hover .brand-logo-img {
+      transform: scale(1.06);
+      filter: drop-shadow(0 4px 14px rgba(212, 175, 55, 0.55));
+    }
+
     .logo-shield {
       width: 44px;
       height: 50px;
@@ -779,8 +793,7 @@
     /* ==========================================================================
        ۳.۱. لاین‌های تحریریه‌ای DYF (The Editorial Craft Lines — Dark Espresso & Gold Accents)
        ========================================================================== */
-    #editorial-lines,
-    #lines {
+    #editorial-lines {
       scroll-margin-top: 80px;
     }
 
@@ -797,16 +810,13 @@
       overflow: hidden;
     }
 
-    .craft-editorial-header,
-    .craft-header,
-    .craft-lines-header {
+    .craft-editorial-header {
       max-width: 780px;
       margin-bottom: 5rem;
       text-align: right;
     }
 
-    .craft-editorial-kicker,
-    .craft-lines-kicker {
+    .craft-editorial-kicker {
       display: inline-block;
       font-size: 0.82rem;
       font-weight: 800;
@@ -1105,299 +1115,56 @@
       opacity: 0.7;
     }
 
-    /* ==========================================================================
-       ۳.۲. دسته‌بندی مفهومی لاین‌ها (The Craft Lines Cards & Moodboards)
-       ========================================================================== */
-    .craft-lines-section {
-      padding: 5.5rem 0;
-      position: relative;
-      background: linear-gradient(180deg, #15110e 0%, #110e0c 100%);
-      border-bottom: 1px solid rgba(216, 178, 100, 0.15);
-    }
 
-    .craft-cards-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 2rem;
-    }
-
-    .craft-card {
-      position: relative;
-      border-radius: 16px;
-      background: linear-gradient(160deg, #2b1a10 0%, #15110d 60%, #0d0a08 100%);
-      border: 1.5px dashed rgba(232, 228, 217, 0.35);
-      outline: 1px solid rgba(216, 178, 100, 0.2);
-      outline-offset: -6px;
-      overflow: hidden;
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
-    }
-
-    .craft-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(216, 178, 100, 0.65);
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(194, 149, 83, 0.2);
-    }
-
-    .craft-card-visual {
-      position: relative;
-      height: 240px;
-      background: radial-gradient(circle at 50% 50%, #3d2415 0%, #19110a 80%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      border-bottom: 1px dashed rgba(232, 228, 217, 0.25);
-    }
-
-    /* پترن گرافیکی چرم و دوخت در هدر کارت */
-    .craft-card-visual::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(90deg, rgba(232, 228, 217, 0.04) 0, rgba(232, 228, 217, 0.04) 30px, transparent 30px, transparent 60px);
-      pointer-events: none;
-    }
-
-    .visual-badge-tier {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      background: rgba(16, 13, 10, 0.85);
-      border: 1px solid var(--gold-primary);
-      color: var(--gold-light);
-      padding: 4px 12px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      backdrop-filter: blur(6px);
-      z-index: 2;
-    }
-
-    .visual-badge-order {
-      position: absolute;
-      bottom: 14px;
-      right: 14px;
-      background: linear-gradient(135deg, rgba(61, 36, 21, 0.95), rgba(20, 18, 16, 0.95));
-      border: 1px dashed rgba(232, 228, 217, 0.4);
-      color: var(--text-ivory);
-      padding: 5px 12px;
-      border-radius: 6px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .visual-badge-order::before {
-      content: '✔';
-      color: var(--leather-caramel);
-      font-size: 0.75rem;
-    }
-
-    .craft-card-icon-art {
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #4a2d1a 0%, #20130b 70%, #140d07 100%);
-      border: 2px solid var(--gold-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(216, 178, 100, 0.2);
-      transition: transform 0.4s ease;
-    }
-
-    .craft-card:hover .craft-card-icon-art {
-      transform: scale(1.08) rotate(3deg);
-    }
-
-    .craft-card-icon-art svg {
-      width: 58px;
-      height: 58px;
-      fill: var(--gold-light);
-      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6));
-    }
-
-    .craft-card-body {
-      padding: 1.8rem;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-      gap: 1.1rem;
-    }
-
-    .craft-card-head-group {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-
-    .craft-title-fa {
-      font-size: 1.35rem;
-      font-weight: 900;
-      color: var(--text-ivory);
-      margin-bottom: 2px;
-    }
-
-    .craft-title-en {
-      font-size: 0.8rem;
-      color: var(--leather-caramel);
-      font-weight: 600;
-      letter-spacing: 1px;
-    }
-
-    .craft-specs-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.65rem;
-      background: rgba(20, 18, 16, 0.6);
-      padding: 1rem 1.2rem;
-      border-radius: 10px;
-      border: 1px solid rgba(216, 178, 100, 0.12);
-    }
-
-    .craft-spec-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 0.85rem;
-      border-bottom: 1px dashed rgba(232, 228, 217, 0.12);
-      padding-bottom: 0.45rem;
-    }
-
-    .craft-spec-item:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-
-    .craft-spec-lbl {
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    .craft-spec-val {
-      color: var(--text-ivory);
-      font-weight: 700;
-      text-align: left;
-    }
-
-    .craft-card-desc {
-      color: var(--text-muted);
-      font-size: 0.88rem;
-      line-height: 1.7;
-    }
-
-    .craft-card-action {
-      margin-top: auto;
-      padding-top: 0.5rem;
-    }
 
     /* ۳. مطالعه متریال و ساخت DEFENDER (The Defender Material Study - Hero & Detail Showcase) */
     .defender-section {
       padding: 7.5rem 0 6.5rem;
-      background: linear-gradient(180deg, rgba(16, 13, 10, 0.95) 0%, rgba(22, 17, 13, 0.90) 50%, rgba(16, 13, 10, 0.97) 100%),
-                  radial-gradient(circle at 85% 15%, rgba(216, 178, 100, 0.08) 0%, transparent 60%),
+      background: linear-gradient(180deg, rgba(18, 15, 12, 0.84) 0%, rgba(24, 19, 15, 0.76) 50%, rgba(18, 15, 12, 0.88) 100%),
+                  radial-gradient(circle at 80% 20%, rgba(216, 178, 100, 0.12) 0%, transparent 65%),
                   url('background.jpeg') center/cover no-repeat;
-      border-top: 1px dashed rgba(216, 178, 100, 0.22);
-      border-bottom: 1px dashed rgba(216, 178, 100, 0.22);
+      border-top: 1px solid rgba(216, 178, 100, 0.14);
+      border-bottom: 1px solid rgba(216, 178, 100, 0.14);
       position: relative;
       overflow: hidden;
     }
 
-    /* ۱. هدر ژورنالی بالا */
+    /* ۱. هدر ادیتوریال بالا */
     .defender-showcase-header {
       text-align: right;
-      max-width: 820px;
+      max-width: 1020px;
       margin: 0 0 3.6rem 0;
       padding: 0;
     }
 
-    .defender-header-meta {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 1.1rem;
-      flex-wrap: wrap;
-    }
-
     .defender-showcase-kicker {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 800;
-      letter-spacing: 3px;
+      letter-spacing: 3.5px;
       color: var(--gold-primary);
       text-transform: uppercase;
       font-family: var(--font-primary);
-    }
-
-    .defender-meta-divider {
-      color: rgba(216, 178, 100, 0.4);
-      font-size: 0.65rem;
-    }
-
-    .defender-showcase-subkicker {
-      font-size: 0.76rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      font-family: var(--font-primary);
+      display: inline-block;
+      margin-bottom: 1rem;
     }
 
     .defender-showcase-title {
-      font-size: clamp(2.3rem, 4.2vw, 3.4rem);
+      font-size: clamp(2.4rem, 4.4vw, 3.5rem);
       font-weight: 900;
       line-height: 1.3;
       color: var(--text-ivory);
       margin-bottom: 1.25rem;
       letter-spacing: -0.02em;
-      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
     }
 
     .defender-showcase-lead {
       font-size: 1.08rem;
       line-height: 2;
       color: #D6CEC4;
-      margin: 0 0 1.75rem 0;
-      max-width: 740px;
+      margin: 0;
+      max-width: 820px;
       font-weight: 400;
-    }
-
-    .defender-meta-pills {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .defender-meta-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 6px 14px;
-      border-radius: 20px;
-      background: rgba(38, 26, 18, 0.55);
-      border: 1px solid rgba(216, 178, 100, 0.22);
-      color: var(--gold-light);
-      font-size: 0.82rem;
-      font-weight: 600;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-
-    .pill-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--leather-caramel);
-      box-shadow: 0 0 6px var(--leather-caramel);
     }
 
     /* ۲. ترکیب تصاویر (تصویر شاخص و دو تصویر جزئیات) */
@@ -1406,7 +1173,7 @@
       grid-template-columns: 1.45fr 1fr;
       gap: 1.5rem;
       align-items: stretch;
-      margin-bottom: 1.25rem;
+      margin-bottom: 3.8rem;
     }
 
     .defender-master-frame,
@@ -1416,8 +1183,8 @@
       border-radius: 12px;
       overflow: hidden;
       background: #14110e;
-      border: 1px solid rgba(216, 178, 100, 0.22);
-      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(216, 178, 100, 0.14);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
     }
 
     .defender-master-frame {
@@ -1428,6 +1195,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: center 40%;
       display: block;
       transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
@@ -1451,136 +1219,89 @@
       transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
 
+    /* تنظیم کانون توجه و کراپ هر تصویر جزئیات */
+    .defender-detail-frame:first-child .defender-detail-img {
+      object-position: center center;
+    }
+
+    .defender-detail-frame:last-child .defender-detail-img {
+      object-position: center 30%;
+    }
+
     .defender-master-frame:hover .defender-master-img,
     .defender-detail-frame:hover .defender-detail-img {
-      transform: scale(1.025);
+      transform: scale(1.02);
     }
 
-    /* نشان‌های شناور آرشیو کارگاهی روی تصاویر */
-    .defender-frame-badge {
+    /* زیرنویس‌های مینیمال روی شیب ملایم پایین تصویر (بدون کارت یا کادر شناور) */
+    .defender-frame-caption {
       position: absolute;
-      bottom: 1.2rem;
-      right: 1.2rem;
-      background: rgba(16, 13, 10, 0.82);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(216, 178, 100, 0.28);
-      border-radius: 8px;
-      padding: 0.55rem 0.95rem;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-      pointer-events: none;
-      transition: transform 0.35s ease, border-color 0.35s ease;
-      max-width: calc(100% - 2.4rem);
-    }
-
-    .defender-master-frame:hover .defender-frame-badge,
-    .defender-detail-frame:hover .defender-frame-badge {
-      transform: translateY(-2px);
-      border-color: rgba(216, 178, 100, 0.5);
-    }
-
-    .badge-code {
-      font-size: 0.65rem;
-      font-weight: 800;
-      letter-spacing: 2px;
-      color: var(--gold-primary);
-      font-family: var(--font-primary);
-    }
-
-    .badge-title {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--text-ivory);
-    }
-
-    /* ۳. ستون‌های ۳ گانه تشریح متریال و مهندسی ساخت */
-    .defender-craft-pillars {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.8rem;
-      margin-top: 3.5rem;
-      margin-bottom: 3.5rem;
-      padding-top: 2.8rem;
-      border-top: 1px dashed rgba(216, 178, 100, 0.2);
-    }
-
-    .defender-pillar-card {
-      position: relative;
-      padding: 1.6rem 1.4rem;
-      background: linear-gradient(160deg, rgba(34, 24, 18, 0.5) 0%, rgba(18, 14, 11, 0.65) 100%);
-      border: 1px solid rgba(216, 178, 100, 0.18);
-      border-radius: 12px;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .defender-pillar-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(216, 178, 100, 0.45);
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55), 0 0 20px rgba(216, 178, 100, 0.1);
-    }
-
-    .pillar-header {
+      inset: auto 0 0 0;
+      padding: 2.2rem 1.4rem 1.1rem;
+      background: linear-gradient(to top, rgba(14, 11, 9, 0.8) 0%, rgba(14, 11, 9, 0.35) 60%, transparent 100%);
       display: flex;
       align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 0.9rem;
-      padding-bottom: 0.6rem;
-      border-bottom: 1px solid rgba(216, 178, 100, 0.12);
+      gap: 0.65rem;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
     }
 
-    .pillar-num {
-      font-size: 1.25rem;
-      font-weight: 900;
-      color: var(--gold-light);
-      font-family: var(--font-primary);
-    }
-
-    .pillar-en {
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      font-family: var(--font-primary);
-    }
-
-    .pillar-title {
-      font-size: 1.15rem;
+    .caption-index {
+      font-size: 0.72rem;
       font-weight: 800;
-      color: var(--text-ivory);
-      margin-bottom: 0.65rem;
-      line-height: 1.4;
+      color: var(--gold-primary);
+      letter-spacing: 1.5px;
+      font-family: var(--font-primary);
     }
 
-    .pillar-desc {
-      font-size: 0.92rem;
-      line-height: 1.85;
-      color: #C7BFB5;
-      font-weight: 400;
-      margin: 0;
+    .caption-title {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: rgba(253, 251, 247, 0.92);
+      letter-spacing: -0.01em;
     }
 
-    /* ۴. انتهای سکشن: امضای برند DYF، کوچک و ظریف */
+    /* ۳. انتهای سکشن: امضای برند DYF، ظریف و با فضای تنفس کافی */
     .defender-showcase-footer {
       text-align: center;
       padding-top: 0.5rem;
     }
 
     .defender-essence-tag {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 800;
-      letter-spacing: 4px;
+      letter-spacing: 3.5px;
       color: var(--gold-primary);
       text-transform: uppercase;
       font-family: var(--font-primary);
       margin-bottom: 1.25rem;
       display: block;
+    }
+
+    .defender-brand-signoff {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .signoff-hairline {
+      height: 1px;
+      flex: 1;
+      background: rgba(216, 178, 100, 0.16);
+    }
+
+    .signoff-label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-family: var(--font-primary);
+      white-space: nowrap;
+      opacity: 0.85;
     }
 
     .defender-brand-signoff {
@@ -1609,266 +1330,500 @@
       opacity: 0.9;
     }
 
-    /* ۴. فرآیند ۴ مرحله‌ای سفارش عمده (B2B Production Pipeline) */
+    /* ۴. فرآیند ۴ مرحله‌ای سفارش عمده (The Order Journey - Editorial Horizontal Timeline) */
     .pipeline-section {
-      padding: 5.5rem 0;
+      background-color: var(--bg-deep);
+      background-image: radial-gradient(ellipse 70% 50% at 50% 25%, rgba(61, 36, 21, 0.25) 0%, transparent 100%);
+      color: var(--text-ivory);
+      padding: 6.5rem 0 6rem;
       position: relative;
+      border-top: 1px solid rgba(216, 178, 100, 0.15);
     }
 
-    .pipeline-grid {
+    .pipeline-header {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 4.5rem;
+    }
+
+    .pipeline-kicker {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--leather-caramel);
+      letter-spacing: 2.2px;
+      text-transform: uppercase;
+      font-family: var(--font-primary);
+      margin-bottom: 0.8rem;
+    }
+
+    .pipeline-title {
+      font-size: clamp(1.85rem, 3.2vw, 2.5rem);
+      font-weight: 900;
+      color: var(--text-ivory);
+      line-height: 1.35;
+      margin-bottom: 0.85rem;
+    }
+
+    .pipeline-desc {
+      font-size: 0.98rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .pipeline-timeline {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem;
       position: relative;
-      margin-top: 1.5rem;
+      gap: 1.5rem;
+      margin: 0 auto 3.8rem;
     }
 
-    .pipeline-step-card {
-      position: relative;
-      background: linear-gradient(155deg, rgba(61, 36, 21, 0.45) 0%, rgba(20, 18, 16, 0.85) 100%);
-      border: 1.5px dashed rgba(232, 228, 217, 0.3);
-      outline: 1px solid rgba(216, 178, 100, 0.15);
-      outline-offset: -5px;
-      border-radius: 14px;
-      padding: 2rem 1.4rem 1.6rem;
+    /* خط اتصال افقی پیوسته بین دایره‌ها */
+    .pipeline-timeline::before {
+      content: '';
+      position: absolute;
+      top: 26px;
+      left: 12.5%;
+      right: 12.5%;
+      height: 2px;
+      background-color: rgba(216, 178, 100, 0.3);
+      z-index: 1;
+    }
+
+    .pipeline-node {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-      transition: transform 0.3s ease, border-color 0.3s ease;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      padding: 0 0.5rem;
+      transition: transform 0.25s ease;
     }
 
-    .pipeline-step-card:hover {
-      transform: translateY(-5px);
-      border-color: var(--gold-primary);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6), 0 0 16px rgba(216, 178, 100, 0.15);
-    }
-
-    .step-number-tag {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      background: radial-gradient(circle, #3D2415 0%, #170f0a 100%);
-      border: 1.5px solid var(--gold-primary);
-      color: var(--gold-light);
-      font-size: 1.15rem;
-      font-weight: 900;
+    .pipeline-marker {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background-color: var(--leather-dark);
+      border: 1.5px solid rgba(216, 178, 100, 0.45);
+      outline: 5px solid var(--bg-deep);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      position: relative;
+      z-index: 2;
+      margin-bottom: 1.5rem;
+      transition: transform 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
 
-    .step-card-title {
-      font-size: 1.1rem;
+    .pipeline-number {
+      font-family: var(--font-primary);
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-ivory);
+      line-height: 1;
+    }
+
+    .pipeline-node:hover .pipeline-marker {
+      transform: translateY(-2px);
+      background-color: #4A2D1B;
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 14px var(--gold-glow);
+    }
+
+    .pipeline-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 220px;
+    }
+
+    .pipeline-step-title {
+      font-size: 1.15rem;
       font-weight: 800;
       color: var(--text-ivory);
       line-height: 1.4;
+      margin-bottom: 0.5rem;
     }
 
-    .step-card-desc {
+    .pipeline-step-desc {
+      font-size: 0.88rem;
+      line-height: 1.75;
       color: var(--text-muted);
-      font-size: 0.86rem;
-      line-height: 1.7;
+      margin: 0;
     }
 
-    .step-card-badge {
-      margin-top: auto;
-      padding-top: 0.6rem;
-      border-top: 1px dashed rgba(232, 228, 217, 0.15);
-      color: var(--leather-caramel);
-      font-size: 0.75rem;
-      font-weight: 700;
-      display: flex;
+    .pipeline-action {
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+
+    .pipeline-cta-link {
+      display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 0.6rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--leather-caramel);
+      text-decoration: none;
+      padding-bottom: 0.4rem;
+      border-bottom: 1.5px solid rgba(216, 178, 100, 0.4);
+      transition: color 0.25s ease, border-color 0.25s ease, gap 0.25s ease;
     }
 
-    .step-card-badge::before {
-      content: '◀';
-      font-size: 0.6rem;
+    .pipeline-cta-link:hover {
       color: var(--gold-primary);
+      border-color: var(--gold-primary);
+      gap: 0.85rem;
     }
 
-    /* ۵. فرم اقدام نهایی (Inquiry & Catalog Drawer / VIP Box) */
+    .pipeline-cta-arrow {
+      display: inline-block;
+      font-family: var(--font-primary);
+      font-size: 1.1rem;
+      color: var(--gold-primary);
+      transition: transform 0.25s ease;
+    }
+
+    .pipeline-cta-link:hover .pipeline-cta-arrow {
+      transform: translateX(-3px);
+    }
+
+    /* ۵. فرم اقدام نهایی (Wholesale Inquiry — The Final Brand Signature) */
     .inquiry-section {
-      padding: 5.5rem 0 6rem;
-      position: relative;
-    }
-
-    .inquiry-vip-box {
-      background: linear-gradient(150deg, #321c10 0%, #1a120c 45%, #100d0a 100%);
-      border: 2px dashed rgba(232, 228, 217, 0.45);
-      outline: 1.5px solid rgba(216, 178, 100, 0.35);
-      outline-offset: -8px;
-      border-radius: 20px;
-      padding: clamp(2rem, 5vw, 3.8rem);
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(194, 149, 83, 0.15);
+      background-color: var(--bg-deep);
+      border-top: 1px solid rgba(216, 178, 100, 0.08);
+      padding: clamp(5.5rem, 8vw, 8rem) 0 clamp(6rem, 9vw, 8.5rem);
       position: relative;
       overflow: hidden;
     }
 
-    .inquiry-vip-box::before {
-      content: '';
+    .inquiry-watermark {
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, transparent, var(--gold-primary), var(--gold-light), transparent);
+      top: 8%;
+      left: -2%;
+      font-size: clamp(10rem, 22vw, 20rem);
+      font-weight: 900;
+      font-family: var(--font-primary), serif;
+      letter-spacing: -0.05em;
+      color: rgba(216, 178, 100, 0.022);
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+      line-height: 0.8;
     }
 
-    .inquiry-grid {
+    .inquiry-layout {
+      position: relative;
+      z-index: 1;
       display: grid;
-      grid-template-columns: 1fr 1.1fr;
-      gap: 3rem;
-      align-items: center;
+      grid-template-columns: 1fr 1.15fr;
+      gap: clamp(3.5rem, 6vw, 6rem);
+      align-items: start;
     }
 
-    .inquiry-info-side {
+    /* ستون راست: معرفی و هویت برند */
+    .inquiry-intro-col {
       display: flex;
       flex-direction: column;
-      gap: 1.4rem;
     }
 
-    .vip-tag {
+    .inquiry-meta {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 5px 14px;
-      border-radius: 20px;
-      background: rgba(20, 18, 16, 0.8);
-      border: 1px solid var(--gold-primary);
-      color: var(--gold-light);
-      font-size: 0.8rem;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .inquiry-kicker {
+      font-size: 0.76rem;
       font-weight: 700;
-      width: fit-content;
+      color: var(--gold-primary);
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      font-family: var(--font-primary);
     }
 
-    .inquiry-info-title {
-      font-size: clamp(1.8rem, 3vw, 2.3rem);
-      font-weight: 900;
-      color: var(--text-ivory);
-      line-height: 1.3;
+    .inquiry-meta-sep {
+      color: rgba(216, 178, 100, 0.35);
+      font-size: 0.75rem;
     }
 
-    .inquiry-info-desc {
+    .inquiry-meta-sub {
+      font-size: 0.72rem;
+      font-weight: 600;
       color: var(--text-muted);
-      font-size: 0.95rem;
-      line-height: 1.8;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
     }
 
-    .vip-guarantees {
-      list-style: none;
+    .inquiry-main-title {
+      font-size: clamp(2.2rem, 3.8vw, 3.2rem);
+      font-weight: 900;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+
+    .inquiry-title-line {
+      display: block;
+      color: var(--text-ivory);
+    }
+
+    .inquiry-title-accent {
+      display: block;
+      color: var(--gold-primary);
+      margin-top: 0.25rem;
+    }
+
+    .inquiry-intro-desc {
+      font-size: 1rem;
+      line-height: 1.9;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin-bottom: 2.75rem;
+    }
+
+    .inquiry-ledger {
       display: flex;
       flex-direction: column;
-      gap: 0.8rem;
-      margin-top: 0.5rem;
+      gap: 1.5rem;
+      border-top: 1px solid rgba(216, 178, 100, 0.12);
+      padding-top: 2rem;
+      max-width: 520px;
     }
 
-    .vip-guarantee-item {
+    .inquiry-ledger-item {
       display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--text-ivory);
-      font-size: 0.88rem;
-      font-weight: 500;
+      align-items: flex-start;
+      gap: 1.25rem;
     }
 
-    .vip-guarantee-item::before {
-      content: '✓';
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--leather-caramel);
-      color: #141210;
-      font-size: 0.75rem;
-      font-weight: 900;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .inquiry-ledger-num {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--gold-primary);
+      font-family: var(--font-primary);
+      padding-top: 0.15rem;
       flex-shrink: 0;
+      min-width: 2rem;
     }
 
-    /* فرم سمت چپ */
-    .inquiry-form-wrap {
-      background: rgba(20, 18, 16, 0.85);
-      border: 1px dashed rgba(232, 228, 217, 0.25);
-      border-radius: 14px;
-      padding: 2.2rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    .inquiry-ledger-body {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .inquiry-ledger-title {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: var(--text-ivory);
+      line-height: 1.5;
+    }
+
+    .inquiry-ledger-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ستون چپ: پنل معماری فرم استعلام */
+    .inquiry-form-sector {
+      border-inline-start: 1px solid rgba(216, 178, 100, 0.12);
+      padding-inline-start: clamp(2.5rem, 4vw, 4.5rem);
+      position: relative;
+    }
+
+    .inquiry-form-header {
+      margin-bottom: 2.25rem;
+    }
+
+    .inquiry-form-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text-ivory);
+      margin-bottom: 0.4rem;
+      letter-spacing: -0.01em;
+      line-height: 1.4;
+    }
+
+    .inquiry-form-subtitle {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
     }
 
     .inquiry-form {
       display: flex;
       flex-direction: column;
-      gap: 1.3rem;
+      gap: 1.5rem;
     }
 
-    .form-group {
+    .inquiry-fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.35rem 1.15rem;
+    }
+
+    .inquiry-form-group {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 0.5rem;
     }
 
-    .form-label {
-      font-size: 0.85rem;
+    .inquiry-label {
+      font-size: 0.82rem;
       font-weight: 700;
       color: var(--gold-light);
+      letter-spacing: 0.2px;
+      line-height: 1.4;
     }
 
-    .form-input,
-    .form-select {
+    .inquiry-input,
+    .inquiry-select {
       width: 100%;
-      padding: 0.85rem 1.1rem;
-      border-radius: 8px;
-      background: rgba(30, 20, 14, 0.8);
-      border: 1px solid rgba(216, 178, 100, 0.3);
+      min-height: 50px;
+      padding: 0.8rem 1.1rem;
+      border-radius: 6px;
+      background-color: rgba(22, 18, 15, 0.65);
+      border: 1px solid rgba(216, 178, 100, 0.18);
       color: var(--text-ivory);
       font-size: 0.92rem;
       outline: none;
-      transition: border-color 0.25s ease, box-shadow 0.25s ease;
       font-family: inherit;
+      transition: border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
     }
 
-    .form-input::placeholder {
-      color: rgba(158, 149, 135, 0.6);
-      font-size: 0.85rem;
+    .inquiry-input::placeholder {
+      color: rgba(158, 149, 135, 0.5);
+      font-size: 0.82rem;
     }
 
-    .form-input:focus,
-    .form-select:focus {
+    .inquiry-input:focus,
+    .inquiry-select:focus {
       border-color: var(--gold-primary);
-      box-shadow: 0 0 12px rgba(216, 178, 100, 0.35);
-      background: rgba(45, 27, 17, 0.9);
+      box-shadow: 0 0 0 2px rgba(216, 178, 100, 0.18);
+      background-color: rgba(28, 22, 18, 0.95);
     }
 
-    .form-submit-btn {
+    .inquiry-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23D8B264' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: left 1rem center;
+      padding-left: 2.2rem;
+      cursor: pointer;
+    }
+
+    .inquiry-select option {
+      background-color: #1a1512;
+      color: var(--text-ivory);
+    }
+
+    .inquiry-submit-btn {
       width: 100%;
-      padding: 0.95rem 1.5rem;
-      font-size: 0.95rem;
-      margin-top: 0.5rem;
+      min-height: 52px;
+      padding: 0.95rem 1.75rem;
+      background-color: var(--gold-primary);
+      color: var(--bg-deep);
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background-color 0.25s ease, transform 0.15s ease;
+      font-family: inherit;
+      margin-top: 0.35rem;
+      letter-spacing: 0.2px;
     }
 
-    .form-privacy-note {
-      text-align: center;
-      font-size: 0.75rem;
+    .inquiry-submit-btn:hover {
+      background-color: var(--gold-light);
+    }
+
+    .inquiry-submit-btn:active {
+      transform: scale(0.995);
+    }
+
+    .inquiry-submit-btn:focus-visible {
+      outline: 2px solid var(--gold-light);
+      outline-offset: 2px;
+    }
+
+    .inquiry-privacy-note {
+      font-size: 0.78rem;
       color: var(--text-muted);
-      line-height: 1.5;
+      line-height: 1.75;
+      text-align: center;
+      margin-top: -0.25rem;
     }
 
     /* بنر پیام موفقیت ارسال */
-    .form-success-banner {
+    .inquiry-success-panel {
       display: none;
-      background: linear-gradient(135deg, rgba(61, 36, 21, 0.9), rgba(20, 18, 16, 0.95));
-      border: 1px solid var(--gold-primary);
-      border-radius: 10px;
-      padding: 1.8rem;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
-      animation: fadeIn 0.4s ease;
+      padding: 3rem 1.5rem;
+      gap: 1rem;
     }
 
-    .form-success-banner.active {
-      display: block;
+    .inquiry-success-panel.active {
+      display: flex;
+      animation: fadeIn 0.35s ease;
+    }
+
+    .inquiry-success-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background-color: rgba(216, 178, 100, 0.12);
+      border: 1.5px solid var(--gold-primary);
+      color: var(--gold-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.25rem;
+    }
+
+    .inquiry-success-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-ivory);
+      line-height: 1.4;
+    }
+
+    .inquiry-success-desc {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text-muted);
+      max-width: 400px;
+      margin-bottom: 0.5rem;
+    }
+
+    .inquiry-reset-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.7rem 1.6rem;
+      background-color: transparent;
+      color: var(--gold-light);
+      border: 1px solid rgba(216, 178, 100, 0.35);
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+      font-family: inherit;
+    }
+
+    .inquiry-reset-btn:hover {
+      border-color: var(--gold-primary);
+      background-color: rgba(216, 178, 100, 0.08);
     }
 
     @keyframes fadeIn {
@@ -1977,18 +1932,11 @@
         margin: 0 auto;
         width: 100%;
       }
-      .craft-editorial-section,
-      .craft-lines-section {
+      .craft-editorial-section {
         padding: 5rem 0 4.5rem;
       }
-      .craft-editorial-header,
-      .craft-header,
-      .craft-lines-header {
+      .craft-editorial-header {
         margin-bottom: 3.25rem;
-      }
-      .craft-cards-grid {
-        grid-template-columns: 1fr;
-        gap: 2rem;
       }
       .craft-editorial-row,
       .craft-row-formal,
@@ -2022,6 +1970,7 @@
       .defender-visual-triptych {
         grid-template-columns: 1fr;
         gap: 1.25rem;
+        margin-bottom: 3rem;
       }
       .defender-master-frame {
         height: 440px;
@@ -2032,17 +1981,44 @@
         height: 240px;
         gap: 1.25rem;
       }
-      .defender-craft-pillars {
-        grid-template-columns: 1fr;
-        gap: 1.4rem;
-        margin-top: 2.8rem;
-        margin-bottom: 2.8rem;
+      .pipeline-section {
+        padding: 5.5rem 0 5rem;
       }
-      .pipeline-grid {
-        grid-template-columns: repeat(2, 1fr);
+      .pipeline-timeline {
+        gap: 1.25rem;
+        margin-bottom: 3.2rem;
       }
-      .inquiry-grid {
+      .pipeline-marker {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 1.25rem;
+      }
+      .pipeline-timeline::before {
+        top: 24px;
+      }
+      .pipeline-number {
+        font-size: 1.05rem;
+      }
+      .pipeline-step-title {
+        font-size: 1.05rem;
+      }
+      .pipeline-step-desc {
+        font-size: 0.84rem;
+        max-width: 190px;
+      }
+      .inquiry-layout {
         grid-template-columns: 1fr;
+        gap: 3.5rem;
+      }
+      .inquiry-intro-col {
+        max-width: 680px;
+      }
+      .inquiry-form-sector {
+        border-inline-start: none;
+        padding-inline-start: 0;
+        border-top: 1px solid rgba(216, 178, 100, 0.12);
+        padding-top: 3rem;
+        max-width: 680px;
       }
       .footer-grid {
         grid-template-columns: 1fr;
@@ -2063,6 +2039,9 @@
     }
 
     @media (max-width: 640px) {
+      .brand-logo-img {
+        height: 50px;
+      }
       .hero-section {
         padding: 3.8rem 1rem 3rem;
       }
@@ -2105,13 +2084,10 @@
         height: 34px;
         font-size: 0.82rem;
       }
-      .craft-editorial-section,
-      .craft-lines-section {
+      .craft-editorial-section {
         padding: 4rem 0 3.5rem;
       }
-      .craft-editorial-header,
-      .craft-header,
-      .craft-lines-header {
+      .craft-editorial-header {
         margin-bottom: 2.5rem;
       }
       .craft-curation-badge {
@@ -2120,10 +2096,7 @@
         font-size: 0.72rem;
         padding: 0.35rem 0.8rem;
       }
-      .craft-cards-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-      }
+
       .craft-main-title {
         font-size: 1.85rem;
       }
@@ -2161,73 +2134,104 @@
       .point-label {
         font-size: 0.92rem;
       }
-      .pipeline-grid {
-        grid-template-columns: 1fr;
-      }
-      .defender-section {
+      .pipeline-section {
         padding: 4.5rem 0 4rem;
       }
+      .pipeline-header {
+        margin-bottom: 2.8rem;
+        text-align: right;
+      }
+      .pipeline-timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        margin-bottom: 2.8rem;
+        position: relative;
+        padding-right: 0.5rem;
+      }
+      .pipeline-timeline::before {
+        display: none;
+      }
+      .pipeline-timeline::after {
+        content: '';
+        position: absolute;
+        top: 24px;
+        bottom: 24px;
+        right: calc(0.5rem + 23px);
+        width: 2px;
+        background-color: rgba(216, 178, 100, 0.3);
+        z-index: 1;
+      }
+      .pipeline-node {
+        flex-direction: row;
+        align-items: flex-start;
+        text-align: right;
+        gap: 1.25rem;
+        padding: 0;
+      }
+      .pipeline-marker {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        margin-bottom: 0;
+        outline: 4px solid var(--bg-deep);
+      }
+      .pipeline-body {
+        align-items: flex-start;
+        max-width: 100%;
+        padding-top: 0.25rem;
+      }
+      .pipeline-step-title {
+        font-size: 1.05rem;
+        margin-bottom: 0.35rem;
+      }
+      .pipeline-step-desc {
+        font-size: 0.86rem;
+        line-height: 1.7;
+      }
+      .pipeline-action {
+        text-align: center;
+      }
+      .defender-section {
+        padding: 4.8rem 0 4rem;
+      }
       .defender-showcase-header {
-        margin-bottom: 2rem;
+        margin-bottom: 2.2rem;
         text-align: right;
       }
       .defender-showcase-title {
-        font-size: 1.95rem;
+        font-size: 2rem;
+        margin-bottom: 1rem;
       }
       .defender-showcase-lead {
         font-size: 0.95rem;
-        line-height: 1.85;
+        line-height: 1.9;
         max-width: 100%;
-        margin-bottom: 1.25rem;
       }
-      .defender-meta-pills {
-        gap: 0.5rem;
-      }
-      .defender-meta-pill {
-        font-size: 0.74rem;
-        padding: 5px 10px;
+      .defender-visual-triptych {
+        margin-bottom: 2.5rem;
       }
       .defender-master-frame {
-        height: 320px;
+        height: 350px;
         border-radius: 10px;
       }
       .defender-details-stack {
         grid-template-columns: 1fr 1fr;
-        height: 160px;
+        height: 210px;
         gap: 0.75rem;
       }
       .defender-detail-frame {
         border-radius: 8px;
       }
-      .defender-frame-badge {
-        padding: 0.35rem 0.6rem;
-        bottom: 0.6rem;
-        right: 0.6rem;
-        border-radius: 6px;
+      .defender-frame-caption {
+        padding: 1.6rem 0.85rem 0.75rem;
+        gap: 0.45rem;
       }
-      .badge-code {
-        font-size: 0.58rem;
+      .caption-index {
+        font-size: 0.65rem;
       }
-      .badge-title {
-        font-size: 0.68rem;
-      }
-      .defender-craft-pillars {
-        grid-template-columns: 1fr;
-        gap: 1.1rem;
-        margin-top: 2.2rem;
-        margin-bottom: 2.2rem;
-        padding-top: 1.8rem;
-      }
-      .defender-pillar-card {
-        padding: 1.25rem 1.1rem;
-        border-radius: 10px;
-      }
-      .pillar-title {
-        font-size: 1.05rem;
-      }
-      .pillar-desc {
-        font-size: 0.88rem;
-        line-height: 1.75;
+      .caption-title {
+        font-size: 0.74rem;
       }
       .defender-essence-tag {
         font-size: 0.76rem;
@@ -2240,5 +2244,28 @@
       }
       .defender-brand-signoff {
         gap: 0.8rem;
+      }
+      .inquiry-section {
+        padding: 4.5rem 0 5rem;
+      }
+      .inquiry-watermark {
+        display: none;
+      }
+      .inquiry-layout {
+        gap: 2.75rem;
+      }
+      .inquiry-main-title {
+        font-size: 2rem;
+      }
+      .inquiry-intro-desc {
+        font-size: 0.95rem;
+        margin-bottom: 2rem;
+      }
+      .inquiry-fields-grid {
+        grid-template-columns: 1fr;
+        gap: 1.15rem;
+      }
+      .inquiry-form-sector {
+        padding-top: 2.5rem;
       }
     }
