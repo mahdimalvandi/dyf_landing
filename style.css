@@ -396,29 +396,27 @@
       display: grid;
       grid-template-columns: 1fr 1.25fr;
       gap: 2.5rem;
-      align-items: stretch;
+      align-items: center;
     }
 
-    /* کارت نشان رسمی برند (سمت راست در چیدمان راست‌به‌چپ) */
+    /* بخش نشان رسمی سه‌بعدی برند (بدون باکس پس‌زمینه و شناور روی صفحه) */
     .hero-logo-card {
       position: relative;
-      background: linear-gradient(160deg, rgba(32, 22, 16, 0.85) 0%, rgba(18, 15, 12, 0.95) 100%);
-      border: 1px solid rgba(216, 178, 100, 0.16);
-      border-radius: var(--r-lg);
-      padding: 2.5rem 2rem;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 440px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+      box-shadow: none;
       text-align: center;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     .hero-logo-card:hover {
-      border-color: rgba(216, 178, 100, 0.35);
-      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65);
+      border-color: transparent;
+      box-shadow: none;
     }
 
     .hero-emblem-showcase {
@@ -426,42 +424,66 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 1.4rem;
       width: 100%;
     }
 
-    .hero-emblem-img {
-      max-width: 220px;
-      width: 100%;
-      height: auto;
-      max-height: 250px;
-      object-fit: contain;
-      filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.65));
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .hero-logo-card:hover .hero-emblem-img {
-      transform: scale(1.03);
-    }
-
-    .hero-emblem-info {
+    .hero-3d-wrapper {
+      position: relative;
+      /* متغیر واحد کنترل سایز نشان سه‌بعدی: با تغییر این عدد، مدل مستقیماً کوچک و بزرگ می‌شود */
+      --emblem-size: 500px;
+      width: var(--emblem-size);
+      height: calc(var(--emblem-size) * 1.18);
+      max-width: 100%;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 0.35rem;
+      justify-content: center;
+      transform: translateX(10px);
     }
 
-    .hero-emblem-title {
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: var(--gold-light);
-      letter-spacing: 2px;
+    .hero-model-viewer {
+      width: 100%;
+      height: 100%;
+      --poster-color: transparent;
+      outline: none !important;
+      outline-width: 0 !important;
+      outline-style: none !important;
+      outline-color: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      -webkit-tap-highlight-color: transparent !important;
+      cursor: grab;
+      filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.7));
     }
 
-    .hero-emblem-subtitle {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      font-weight: 500;
+    .hero-model-viewer:active {
+      cursor: grabbing;
+    }
+
+    /* حذف کامل بوردر آبی و اوت‌لاین هنگام فوکوس روی مدل سه بعدی */
+    model-viewer,
+    .hero-model-viewer,
+    model-viewer:focus,
+    model-viewer:focus-visible,
+    model-viewer:focus-within,
+    .hero-model-viewer:focus,
+    .hero-model-viewer:focus-visible,
+    .hero-model-viewer:focus-within {
+      outline: none !important;
+      outline-width: 0 !important;
+      outline-style: none !important;
+      outline-color: transparent !important;
+      box-shadow: none !important;
+      border: none !important;
+      -webkit-tap-highlight-color: transparent !important;
+    }
+
+    /* حذف نوار پیشرفت پیش‌فرض و هاله سیاه بالای مدل هنگام لود اولیه */
+    .hero-model-viewer::part(default-progress-bar),
+    .hero-model-viewer::part(default-progress-mask) {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      height: 0 !important;
     }
 
     /* کارت محتوا و معرفی B2B (سمت چپ در چیدمان راست‌به‌چپ) */
@@ -1953,12 +1975,15 @@
       }
       .hero-logo-card {
         order: 2;
-        min-height: 190px;
-        padding: 1.4rem 1.2rem;
+        min-height: auto;
+        padding: 0;
+        background: transparent;
+        border: none;
+        box-shadow: none;
       }
-      .hero-emblem-img {
-        max-width: 125px;
-        max-height: 125px;
+      .hero-3d-wrapper {
+        --emblem-size: 290px;
+        transform: none;
       }
       .story-section {
         padding: 3.5rem 0;
@@ -2147,19 +2172,15 @@
         min-height: 44px;
       }
       .hero-logo-card {
-        padding: 1rem 0.85rem;
-        min-height: 150px;
+        padding: 0;
+        min-height: auto;
+        background: transparent;
+        border: none;
+        box-shadow: none;
       }
-      .hero-emblem-img {
-        max-width: 95px;
-        max-height: 95px;
-      }
-      .hero-emblem-title {
-        font-size: 0.76rem;
-        letter-spacing: 1.2px;
-      }
-      .hero-emblem-subtitle {
-        font-size: 0.68rem;
+      .hero-3d-wrapper {
+        --emblem-size: 250px;
+        transform: none;
       }
       .story-section {
         padding: 2.6rem 0;

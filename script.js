@@ -97,3 +97,18 @@
         inquiryForm.style.display = 'flex';
       });
     }
+
+    // جلوگیری از فوکوس، بوردر آبی کیبورد و حرکت ناخواسته مدل سه‌بعدی
+    const heroModelViewer = document.querySelector('.hero-model-viewer');
+    if (heroModelViewer) {
+      // هر زمان فوکوس گرفت فورا بلر شود تا بوردر نیاید
+      heroModelViewer.addEventListener('focus', () => {
+        heroModelViewer.blur();
+      });
+      // خنثی کردن کلیدهای جهت‌نما روی مدل سه‌بعدی تا صفحه بدون باگ اسکرول شود
+      heroModelViewer.addEventListener('keydown', (e) => {
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+          heroModelViewer.blur();
+        }
+      });
+    }

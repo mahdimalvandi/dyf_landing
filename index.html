@@ -6,6 +6,7 @@
   <title>DYF | تولید و پخش عمده کفش چرم و اسپرت مردانه</title>
   <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 </head>
 <body>
 
@@ -72,17 +73,33 @@
   <section class="hero-section" id="hero">
     <div class="container">
       <div class="hero-layout">
-        <!-- باکس ۱: نشان رسمی برند و هویت کارگاهی (سمت راست در چیدمان راست‌به‌چپ) -->
+        <!-- بخش نشان رسمی سه‌بعدی برند (سمت راست در چیدمان راست‌به‌چپ) -->
         <div class="hero-logo-card" id="heroLogoBox">
           <div class="hero-emblem-showcase">
-            <img 
-              src="logo-1.png" 
-              alt="نشان رسمی DEFENDER YOUR FOOT - کارگاه چرم DYF" 
-              class="hero-emblem-img"
-            >
-            <div class="hero-emblem-info">
-              <span class="hero-emblem-title">DEFENDER YOUR FOOT</span>
-              <span class="hero-emblem-subtitle">تولید کارگاهی کفش مردانه چرم و اسپرت</span>
+            <div class="hero-3d-wrapper">
+              <model-viewer
+                src="emblem_3d.glb"
+                poster="logo-1.png"
+                alt="نشان سه‌بعدی رسمی برند DYF"
+                camera-controls
+                auto-rotate
+                auto-rotate-delay="400"
+                rotation-per-second="20deg"
+                interaction-prompt="none"
+                disable-pan
+                disable-tap
+                disable-zoom
+                touch-action="pan-y"
+                tabindex="-1"
+                shadow-intensity="1.5"
+                shadow-softness="0.8"
+                exposure="1.2"
+                environment-image="neutral"
+                camera-orbit="0deg 85deg 94%"
+                loading="eager"
+                class="hero-model-viewer">
+                <div slot="progress-bar" style="display: none;"></div>
+              </model-viewer>
             </div>
           </div>
         </div>
