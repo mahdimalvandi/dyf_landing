@@ -83,23 +83,23 @@
     .brand-logo {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       text-decoration: none;
     }
 
     .brand-logo-img {
-      height: 48px;
+      height: 70px;
       width: auto;
-      max-height: 52px;
+      max-height: 74px;
       object-fit: contain;
-      filter: drop-shadow(0 2px 8px rgba(216, 178, 100, 0.3));
+      filter: drop-shadow(0 2px 10px rgba(216, 178, 100, 0.4));
       transition: transform 0.25s ease, filter 0.25s ease;
       flex-shrink: 0;
     }
 
     .brand-logo:hover .brand-logo-img {
       transform: scale(1.05);
-      filter: drop-shadow(0 4px 12px rgba(216, 178, 100, 0.5));
+      filter: drop-shadow(0 4px 14px rgba(216, 178, 100, 0.6));
     }
 
     .logo-text-group {
@@ -108,7 +108,7 @@
     }
 
     .logo-brand-name {
-      font-size: 1.35rem;
+      font-size: 1.45rem;
       font-weight: 900;
       letter-spacing: 2.5px;
       color: var(--gold-light);
@@ -117,7 +117,7 @@
     }
 
     .logo-brand-sub {
-      font-size: 0.65rem;
+      font-size: 0.72rem;
       color: var(--text-muted);
       letter-spacing: 0.8px;
       display: block;
@@ -2093,11 +2093,14 @@
         padding: 0 1.1rem;
       }
       .brand-logo-img {
-        height: 38px;
-        max-height: 40px;
+        height: 52px;
+        max-height: 56px;
       }
       .logo-brand-name {
-        font-size: 1.12rem;
+        font-size: 1.25rem;
+      }
+      .logo-brand-sub {
+        font-size: 0.68rem;
       }
       .hero-section {
         padding: 2.5rem 0.5rem 2rem;
