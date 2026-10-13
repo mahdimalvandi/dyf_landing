@@ -23,6 +23,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import bpy
+import bmesh
 import numpy as np
 
 
@@ -284,7 +285,7 @@ def build_exact_3d():
         for y, x in comp:
             m_w[y, x] = True
         l_raw = find_closed_loops(m_w, min_len=25)
-        wreath_loop_groups.append([rdp_simplify(l + [l[0]], 0.7)[:-1] for l in l_raw])
+        wreath_loop_groups.append([rdp_simplify(l + [l[0]], 1.1)[:-1] for l in l_raw])
 
     print("--- 2. Resetting Blender Scene ---")
     bpy.ops.object.select_all(action="SELECT")
@@ -371,52 +372,68 @@ def build_exact_3d():
         mesh_obj = bpy.context.active_object
         mesh = mesh_obj.data
 
-        # Lossless UV Mapping
+        # 1. Clean topology with bmesh: dissolve zero-area sliver faces before bevel
+        bm = bmesh.new()
+        bm.from_mesh(mesh)
+        bmesh.ops.dissolve_degenerate(bm, dist=0.0005, edges=bm.edges)
+        zero_faces = [f for f in bm.faces if f.calc_area() < 1e-6]
+        if zero_faces:
+            bmesh.ops.delete(bm, geom=zero_faces, context="FACES_ONLY")
+        bm.to_mesh(mesh)
+        bm.free()
+
+        # 2. Apply Bevel with angle clamp
+        if bevel_width > 0:
+            bev = mesh_obj.modifiers.new(name="Bevel", type="BEVEL")
+            bev.width = bevel_width
+            bev.segments = 2
+            bev.limit_method = "ANGLE"
+            bev.angle_limit = math.radians(45)
+            bev.use_clamp_overlap = True
+            bpy.ops.object.modifier_apply(modifier="Bevel")
+
+        # 3. Apply EdgeSplit modifier so sharp polygon edges don't cause shading interpolation glitches!
+        es = mesh_obj.modifiers.new(name="EdgeSplit", type="EDGE_SPLIT")
+        es.split_angle = math.radians(30)
+        es.use_edge_angle = True
+        bpy.ops.object.modifier_apply(modifier="EdgeSplit")
+
+        bpy.ops.object.shade_smooth()
+
+        # 4. Perfect Lossless UV Mapping on FINAL geometry
         for l in list(mesh.uv_layers):
             mesh.uv_layers.remove(l)
         uv_layer = mesh.uv_layers.new(name="UVMap")
         uv_layer.active = True
         uv_layer.active_render = True
-        thresh = extrude * 0.5
+
         for l in mesh.loops:
             v_co = mesh.vertices[l.vertex_index].co
             vx, vy, vz = v_co.x, v_co.y, v_co.z
-            if vz < -thresh or is_back:
+            if is_back:
                 u = (-vx / scale + 512.0) / 1024.0
             else:
                 u = (vx / scale + 512.0) / 1024.0
             v = (vy / scale + 512.0) / 1024.0
             uv_layer.data[l.index].uv = (u, v)
 
-        # Materials slots
+        # 5. Materials slots
         mesh.materials.append(front_mat)  # Slot 0
         mesh.materials.append(side_mat)   # Slot 1
         if back_mat is not None:
             mesh.materials.append(back_mat)  # Slot 2
 
-        # Assign materials based strictly on vertex Z coordinates
-        # Top cap (Z > thresh): front_mat (Slot 0)
-        # Bottom cap (Z < -thresh): back_mat (Slot 2) or side_mat (Slot 1)
-        # Sides/bevels: side_mat (Slot 1)
+        # 6. Assign materials strictly based on polygon normal:
+        # Flat front surface (normal.z > 0.5): front_mat (Slot 0)
+        # Flat back surface (normal.z < -0.5): back_mat (Slot 2) or side_mat (Slot 1)
+        # Bevels and sides (normal.z around 0): solid 24K gold (Slot 1)
         for poly in mesh.polygons:
-            poly_zs = [mesh.vertices[vi].co.z for vi in poly.vertices]
-            if all(z > thresh for z in poly_zs):
-                poly.material_index = 0  # Front cap
-            elif all(z < -thresh for z in poly_zs):
-                poly.material_index = 2 if back_mat is not None else 1  # Back cap
+            if poly.normal.z > 0.5:
+                poly.material_index = 0  # Front
+            elif poly.normal.z < -0.5:
+                poly.material_index = 2 if back_mat is not None else 1  # Back
             else:
-                poly.material_index = 1  # Sides
-
-        bpy.ops.object.shade_smooth()
-
-        if bevel_width > 0:
-            bev = mesh_obj.modifiers.new(name="Bevel", type="BEVEL")
-            bev.width = bevel_width
-            bev.segments = 3
-            bev.limit_method = "ANGLE"
-            bev.angle_limit = math.radians(35)
-            bev.use_clamp_overlap = True
-            bpy.ops.object.modifier_apply(modifier="Bevel")
+                poly.material_index = 1  # Bevel & Side: Solid 24K Gold!
 
         mesh.update()
         return mesh_obj
@@ -424,92 +441,92 @@ def build_exact_3d():
     created_objects = []
 
     # 1. Solid Shield Base Core
-    # Both Front and Back caps get the rich diamond leather texture (UV-mapped), sides get 24K solid gold
+    # Front and Back caps get the rich diamond leather texture (UV-mapped), sides get 24K solid gold
     obj_shield_base = build_solid_mesh(
         "Shield_Base",
         [shield_outer_loop],
-        extrude=0.007,
+        extrude=0.016,
         z_pos=0.0,
         front_mat=mat_enamel_front,
         side_mat=mat_gold_24k,
         back_mat=mat_enamel_front,
-        bevel_width=0.002,
+        bevel_width=0.0025,
     )
     created_objects.append(obj_shield_base)
 
-    # 2. Shield Gold Rim (Front & Back - slim, elegant bas-relief)
+    # 2. Shield Gold Rim (Front & Back - bold, elevated 3D framing)
     obj_shield_rim_front = build_solid_mesh(
         "Shield_Rim_Front",
         [shield_outer_loop, shield_inner_loop],
-        extrude=0.004,
-        z_pos=0.008,
+        extrude=0.010,
+        z_pos=0.022,
         front_mat=mat_gold_relief,
         side_mat=mat_gold_24k,
-        bevel_width=0.0016,
+        bevel_width=0.002,
     )
     created_objects.append(obj_shield_rim_front)
 
     obj_shield_rim_back = build_solid_mesh(
         "Shield_Rim_Back",
         [shield_outer_loop, shield_inner_loop],
-        extrude=0.004,
-        z_pos=-0.008,
+        extrude=0.010,
+        z_pos=-0.022,
         front_mat=mat_gold_relief,
         side_mat=mat_gold_24k,
-        bevel_width=0.0016,
+        bevel_width=0.002,
         is_back=True,
     )
     created_objects.append(obj_shield_rim_back)
 
-    # 3. AM Monogram (Front & Back - raised chiseled gold)
+    # 3. AM Monogram (Front & Back - bold raised 3D chiseled gold atop shield)
     obj_am_front = build_solid_mesh(
         "AM_Monogram_Front",
         loops_am,
-        extrude=0.005,
-        z_pos=0.009,
+        extrude=0.014,
+        z_pos=0.026,
         front_mat=mat_gold_relief,
         side_mat=mat_gold_24k,
-        bevel_width=0.0015,
+        bevel_width=0.002,
     )
     created_objects.append(obj_am_front)
 
     obj_am_back = build_solid_mesh(
         "AM_Monogram_Back",
         loops_am,
-        extrude=0.005,
-        z_pos=-0.009,
+        extrude=0.014,
+        z_pos=-0.026,
         front_mat=mat_gold_relief,
         side_mat=mat_gold_24k,
-        bevel_width=0.0015,
+        bevel_width=0.002,
         is_back=True,
     )
     created_objects.append(obj_am_back)
 
-    # 4. Laurel Wreath Wings (Solid 3D sculptural leaves - smooth front, sides, and back)
+    # 4. Laurel Wreath Wings (Solid bold 3D sculptural leaves)
     for idx, w_loops in enumerate(wreath_loop_groups):
         obj_w = build_solid_mesh(
             f"Wreath_Leaf_{idx+1}",
             w_loops,
-            extrude=0.007,
+            extrude=0.024,
             z_pos=0.0,
             front_mat=mat_gold_relief,
             side_mat=mat_gold_24k,
             back_mat=mat_gold_24k,
-            bevel_width=0.0018,
+            bevel_width=0.002,
         )
         created_objects.append(obj_w)
 
-    # 5. Letters D, Y, F (Solid 3D sculptural gold letters - watertight, natural bevels)
+    # 5. Letters D, Y, F (Solid bold 3D sculptural gold letters)
     for name_l, loops_l in [("Letter_D", loops_d), ("Letter_Y", loops_y), ("Letter_F", loops_f)]:
         obj_l = build_solid_mesh(
             name_l,
             loops_l,
-            extrude=0.007,
+            extrude=0.026,
             z_pos=0.0,
             front_mat=mat_gold_relief,
             side_mat=mat_gold_24k,
             back_mat=mat_gold_24k,
-            bevel_width=0.0018,
+            bevel_width=0.002,
         )
         created_objects.append(obj_l)
 
