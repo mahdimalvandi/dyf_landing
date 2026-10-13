@@ -70,6 +70,13 @@
 
 
 
+    // بسته شدن منو با فشردن کلید Escape در کیبورد
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mobileDrawer && mobileDrawer.classList.contains('active')) {
+        toggleMenu();
+      }
+    });
+
     // مدیریت ارسال فرم استعلام B2B
     const inquiryForm = document.getElementById('inquiryForm');
     const formSuccessBanner = document.getElementById('formSuccessBanner');
