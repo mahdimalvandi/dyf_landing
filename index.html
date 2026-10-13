@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DYF | Defender Your Foot</title>
+  <title>DYF | تولید و پخش عمده کفش چرم و اسپرت مردانه</title>
   <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -16,10 +16,12 @@
   <header class="site-header">
     <!-- لوگو -->
     <a href="#" class="brand-logo" aria-label="DYF - DEFENDER YOUR FOOT">
-      <img src="logo-1.png" alt="لوگو برند DYF" class="brand-logo-img">
+      <div class="logo-shield" aria-hidden="true">
+        <span class="logo-monogram">DYF</span>
+      </div>
       <div class="logo-text-group">
-        <h1>DYF</h1>
-        <span>DEFENDER YOUR FOOT</span>
+        <span class="logo-brand-name">DYF</span>
+        <span class="logo-brand-sub">DEFENDER YOUR FOOT</span>
       </div>
     </a>
 
@@ -72,17 +74,18 @@
   <section class="hero-section" id="hero">
     <div class="container">
       <div class="hero-layout">
-        <!-- باکس ۱: جایگاه لوگو و نشان رسمی (سمت راست در چیدمان راست‌به‌چپ - آماده بارگذاری لوگو) -->
+        <!-- باکس ۱: نشان رسمی برند و هویت کارگاهی (سمت راست در چیدمان راست‌به‌چپ) -->
         <div class="hero-logo-card" id="heroLogoBox">
-          <div class="logo-empty-frame">
-            <div class="logo-empty-icon-wrap">
-              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-dasharray="3 3"/>
-                <path d="M12 9v6M9 12h6" stroke-linecap="round"/>
-              </svg>
+          <div class="hero-emblem-showcase">
+            <img 
+              src="logo-1.png" 
+              alt="نشان رسمی DEFENDER YOUR FOOT - کارگاه چرم DYF" 
+              class="hero-emblem-img"
+            >
+            <div class="hero-emblem-info">
+              <span class="hero-emblem-title">DEFENDER YOUR FOOT</span>
+              <span class="hero-emblem-subtitle">تولید کارگاهی کفش مردانه چرم و اسپرت</span>
             </div>
-            <div class="logo-empty-label">جایگاه لوگو و نشان تجاری DYF</div>
-            <div class="logo-empty-hint">کادر آماده برای درج نماد رسمی برند و نشان کارگاهی</div>
           </div>
         </div>
 
@@ -90,15 +93,15 @@
         <div class="hero-content-card">
           <div class="hero-content-top">
             <div class="hero-badge">
-              تولید تخصصی B2B | اصالت چرم و سراجی تبریز
+              تولید کارگاهی کفش مردانه — فروش فقط عمده
             </div>
 
             <h1 class="hero-main-title">
-              همراه کسب‌وکارهایی که <span>قدم‌هایشان حساب‌شده است.</span>
+              کفش مردانه چرم و اسپرت — <span>تولید کارگاهی، فروش عمده</span>
             </h1>
 
             <p class="hero-main-desc">
-              <strong>DYF</strong> تولیدکننده کفش مردانه در ایران است؛ با تمرکز بر لاین‌های رسمی، اسپرت و روزمره و همکاری مستقیم با بنکداران، عمده‌فروشان و فروشگاه‌های کفش. از سفارش مدل‌های موجود تا بررسی سفارش‌های اختصاصی، هدف ما ساختن همکاری‌هایی ماندگار و قابل اتکاست.
+              <strong>DYF</strong> همراه کسب‌وکارهایی است که قدم‌هایشان حساب‌شده است؛ تولیدکننده تخصصی کفش مردانه در ایران با تمرکز بر لاین‌های رسمی، اسپرت و روزمره، و همکاری مستقیم با بنکداران، عمده‌فروشان و فروشگاه‌های کفش سراسر کشور. از سفارش مدل‌های موجود تا بررسی سفارش‌های اختصاصی، هدف ما ساختن همکاری‌هایی ماندگار و قابل اتکاست.
             </p>
           </div>
 
@@ -139,17 +142,17 @@
 
           <div class="story-points">
             <div class="story-point-item">
-              <div class="point-index-badge">۰۱</div>
+              <span class="point-accent-bullet" aria-hidden="true"></span>
               <span class="point-label">تجربه در بازار کفش مردانه</span>
             </div>
 
             <div class="story-point-item">
-              <div class="point-index-badge">۰۲</div>
+              <span class="point-accent-bullet" aria-hidden="true"></span>
               <span class="point-label">همکاری با کسب‌وکارهای سراسر ایران</span>
             </div>
 
             <div class="story-point-item">
-              <div class="point-index-badge">۰۳</div>
+              <span class="point-accent-bullet" aria-hidden="true"></span>
               <span class="point-label">ارتباط مستقیم برای بررسی سفارش‌ها</span>
             </div>
           </div>
@@ -205,7 +208,6 @@
                 class="craft-editorial-img craft-img-formal"
                 decoding="async"
               />
-              <span class="craft-photo-tag" aria-hidden="true">FIG. 01 — THE EXECUTIVE • WORKSHOP ARCHIVE</span>
             </div>
           </div>
 
@@ -291,12 +293,11 @@
           <div class="craft-media-col">
             <div class="craft-media-frame">
               <img 
-                src="vans.jpeg" 
-                alt="کارگاه ساخت و اتصال زیره کفش ونس و اسنیکر - لاین اسپرت و کژوال DYF" 
+                src="dyf-sport-line.jpg" 
+                alt="کارگاه ساخت و اتصال زیره کفش اسنیکر - لاین اسپرت و کژوال DYF" 
                 class="craft-editorial-img craft-img-sport"
                 decoding="async"
               />
-              <span class="craft-photo-tag" aria-hidden="true">FIG. 02 — THE MODERN SNEAKER • ATELIER CRAFT</span>
             </div>
           </div>
         </article>
@@ -403,9 +404,9 @@
             <span class="pipeline-number">۱</span>
           </div>
           <div class="pipeline-body">
-            <h3 class="pipeline-step-title">انتخاب مدل</h3>
+            <h3 class="pipeline-step-title">انتخاب مدل از کاتالوگ</h3>
             <p class="pipeline-step-desc">
-              مدل‌های موردنظر برای سفارش را انتخاب کنید.
+              کاتالوگ و لیست قیمت به‌صورت خصوصی برای همکاران ارسال می‌شود.
             </p>
           </div>
         </article>
@@ -416,9 +417,9 @@
             <span class="pipeline-number">۲</span>
           </div>
           <div class="pipeline-body">
-            <h3 class="pipeline-step-title">بررسی جزئیات</h3>
+            <h3 class="pipeline-step-title">ثبت سفارش</h3>
             <p class="pipeline-step-desc">
-              مشخصات و جزئیات سفارش را مرور کنید.
+              از طریق تلفن، واتساپ یا همین فرم؛ با سایزبندی و تعداد هر مدل.
             </p>
           </div>
         </article>
@@ -429,9 +430,9 @@
             <span class="pipeline-number">۳</span>
           </div>
           <div class="pipeline-body">
-            <h3 class="pipeline-step-title">نهایی‌کردن سفارش</h3>
+            <h3 class="pipeline-step-title">تأیید و زمان‌بندی</h3>
             <p class="pipeline-step-desc">
-              جزئیات نهایی همکاری را مشخص کنید.
+              تعداد، زمان تحویل و جزئیات ارسال نهایی می‌شود.
             </p>
           </div>
         </article>
@@ -442,9 +443,9 @@
             <span class="pipeline-number">۴</span>
           </div>
           <div class="pipeline-body">
-            <h3 class="pipeline-step-title">آماده‌سازی و ارسال</h3>
+            <h3 class="pipeline-step-title">ارسال با باربری</h3>
             <p class="pipeline-step-desc">
-              سفارش برای تحویل و ارسال آماده می‌شود.
+              سفارش با باربری معتبر به شهر شما ارسال می‌شود.
             </p>
           </div>
         </article>
@@ -478,32 +479,8 @@
           </h2>
 
           <p class="inquiry-intro-desc">
-            برای بررسی شرایط تأمین، تطبیق تیراژ و دریافت ژورنال فصلی مدل‌ها، مشخصات مجموعه خود را ثبت کنید تا در کوتاه‌ترین زمان با شما در ارتباط باشیم.
+            برای بررسی شرایط تأمین، تطبیق تیراژ و دریافت کاتالوگ مدل‌ها، مشخصات مجموعه خود را ثبت کنید تا در کوتاه‌ترین زمان با شما در ارتباط باشیم.
           </p>
-
-          <div class="inquiry-ledger">
-            <div class="inquiry-ledger-item">
-              <span class="inquiry-ledger-num">۰۱</span>
-              <div class="inquiry-ledger-body">
-                <strong class="inquiry-ledger-title">بررسی درخواست همکاری عمده</strong>
-                <p class="inquiry-ledger-desc">ارزیابی ظرفیت سفارش و تطبیق با بازار هدف</p>
-              </div>
-            </div>
-            <div class="inquiry-ledger-item">
-              <span class="inquiry-ledger-num">۰۲</span>
-              <div class="inquiry-ledger-body">
-                <strong class="inquiry-ledger-title">دریافت اطلاعات مدل‌های موردنظر</strong>
-                <p class="inquiry-ledger-desc">ارسال کاتالوگ تفصیلی، مشخصات فنی و لیست قیمت</p>
-              </div>
-            </div>
-            <div class="inquiry-ledger-item">
-              <span class="inquiry-ledger-num">۰۳</span>
-              <div class="inquiry-ledger-body">
-                <strong class="inquiry-ledger-title">هماهنگی مستقیم برای سفارش</strong>
-                <p class="inquiry-ledger-desc">ارتباط بی‌واسطه با کارگاه جهت تنظیم تیراژ و زمان‌بندی</p>
-              </div>
-            </div>
-          </div>
         </div>
 
         <!-- ستون چپ: پنل معماری فرم استعلام -->
@@ -562,12 +539,20 @@
               </div>
             </div>
 
-            <button type="submit" class="inquiry-submit-btn">
-              ثبت درخواست همکاری
-            </button>
+            <div class="inquiry-form-actions">
+              <button type="submit" class="inquiry-submit-btn">
+                ثبت درخواست همکاری
+              </button>
+              <a href="https://wa.me/989120000000" target="_blank" rel="noopener noreferrer" class="inquiry-whatsapp-btn" aria-label="ارتباط مستقیم در واتساپ">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.42 0-2.82-.37-4.06-1.08l-.29-.17-3.12.82.83-3.04-.19-.3a8.21 8.21 0 0 1-1.26-4.46c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.24-.75-.67-1.25-1.49-1.4-1.74-.14-.25-.02-.39.11-.51.11-.11.25-.29.38-.44.12-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.12.17 1.78 2.71 4.3 3.8.6.26 1.07.41 1.44.53.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.23-.17-.48-.3z"/>
+                </svg>
+                <span>ارتباط مستقیم در واتساپ</span>
+              </a>
+            </div>
 
             <p class="inquiry-privacy-note">
-              اطلاعات فروشگاه و موقعیت جغرافیایی شما محرمانه تلقی شده و صرفاً جهت بررسی حریم انحصار و هماهنگی همکاری استفاده می‌شود.
+              اطلاعات شما فقط برای هماهنگی همکاری استفاده می‌شود و در اختیار هیچ شخص یا مجموعه‌ای قرار نمی‌گیرد.
             </p>
           </form>
 
@@ -580,7 +565,7 @@
             </div>
             <h4 class="inquiry-success-title">درخواست شما با موفقیت ثبت شد</h4>
             <p class="inquiry-success-desc">
-              اطلاعات مدل‌ها و هماهنگی‌های لازم به زودی با شماره ثبت‌شده انجام خواهد شد.
+              درخواست شما ثبت شد. به زودی جهت هماهنگی با شماره واردشده تماس می‌گیریم.
             </p>
             <button type="button" class="inquiry-reset-btn" id="resetFormBtn">
               ثبت استعلام جدید
@@ -614,13 +599,15 @@
         </div>
 
         <div class="footer-col" id="contact">
-          <h4>تماس با ما و تعهدات کارگاهی</h4>
+          <h4>تماس و کانال‌های رسمی</h4>
           <ul class="footer-links">
-            <li><span class="footer-link">کارگاه و دفتر: تبریز / تهران</span></li>
-            <li><span class="footer-link">تماس مستقیم B2B: ۰۹۱۲XXXXXXX</span></li>
-            <li><span class="footer-link">ارتباط واتساپ و مشاوره تیراژ</span></li>
-            <li><span class="footer-link">ضمانت بازگشت و نقص فنی زیره و چرم</span></li>
-            <li><a href="#inquiry" class="footer-link" style="color: var(--gold-light); font-weight: 700;">ثبت فرم درخواست همکاری</a></li>
+            <li><span class="footer-info-item">کارگاه و دفتر: تبریز / تهران</span></li>
+            <li><span class="footer-info-item">تماس مستقیم B2B: ۰۹۱۲XXXXXXX</span></li>
+            <li><a href="https://wa.me/989120000000" target="_blank" rel="noopener noreferrer" class="footer-link">ارتباط در واتساپ و مشاوره تیراژ</a></li>
+            <li><a href="https://t.me/dyf_footwear" target="_blank" rel="noopener noreferrer" class="footer-link">کانال تلگرام DYF</a></li>
+            <li><a href="https://instagram.com/dyf_footwear" target="_blank" rel="noopener noreferrer" class="footer-link">صفحه اینستاگرام DYF</a></li>
+            <li><span class="footer-info-item">ضمانت اصالت چرم و سلامت دوخت</span></li>
+            <li><a href="#inquiry" class="footer-link footer-cta-link">ثبت فرم درخواست همکاری</a></li>
           </ul>
         </div>
       </div>
