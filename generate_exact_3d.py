@@ -307,9 +307,6 @@ def build_exact_3d():
 
         out_node = nodes.new(type="ShaderNodeOutputMaterial")
         bsdf_node = nodes.new(type="ShaderNodeBsdfPrincipled")
-        bsdf_node.inputs["Base Color"].default_value = base_color
-        bsdf_node.inputs["Metallic"].default_value = metallic
-        bsdf_node.inputs["Roughness"].default_value = roughness
 
         if use_tex:
             tex_node = nodes.new(type="ShaderNodeTexImage")
@@ -319,29 +316,20 @@ def build_exact_3d():
             uv_node.uv_map = "UVMap"
             links.new(uv_node.outputs["UV"], tex_node.inputs["Vector"])
             links.new(tex_node.outputs["Color"], bsdf_node.inputs["Base Color"])
-            if "Gold" in name:
-                bsdf_node.inputs["Metallic"].default_value = 0.30
-                bsdf_node.inputs["Roughness"].default_value = 0.20
-                if "Emission Color" in bsdf_node.inputs:
-                    links.new(tex_node.outputs["Color"], bsdf_node.inputs["Emission Color"])
-                    bsdf_node.inputs["Emission Strength"].default_value = 0.15
-            elif "Dark" in name:
-                bsdf_node.inputs["Metallic"].default_value = 0.35
-                bsdf_node.inputs["Roughness"].default_value = 0.30
+            bsdf_node.inputs["Metallic"].default_value = metallic
+            bsdf_node.inputs["Roughness"].default_value = roughness
+        else:
+            bsdf_node.inputs["Base Color"].default_value = base_color
+            bsdf_node.inputs["Metallic"].default_value = metallic
+            bsdf_node.inputs["Roughness"].default_value = roughness
 
         links.new(bsdf_node.outputs["BSDF"], out_node.inputs["Surface"])
         return mat
 
-    mat_gold_solid = make_material("Gold_24K_Solid", (1.0, 0.78, 0.36, 1.0), 1.0, 0.12)
-    mat_gold_front = make_material(
-        "Gold_Relief_Front", (1.0, 0.78, 0.36, 1.0), 0.95, 0.15, use_tex=True
-    )
-    mat_enamel_solid = make_material(
-        "Dark_Enamel_Solid", (0.02, 0.018, 0.015, 1.0), 0.85, 0.22
-    )
-    mat_enamel_front = make_material(
-        "Dark_Enamel_Front", (0.04, 0.035, 0.03, 1.0), 0.70, 0.28, use_tex=True
-    )
+    # Luxurious 24K Imperial Gold (High metallic, satin-polished reflection)
+    mat_gold_24k = make_material("Gold_24K_Solid", (1.0, 0.76, 0.28, 1.0), 1.0, 0.16)
+    mat_gold_relief = make_material("Gold_Relief_Front", (1.0, 0.78, 0.32, 1.0), 0.85, 0.20, use_tex=True)
+    mat_enamel_front = make_material("Dark_Enamel_Front", (0.04, 0.035, 0.03, 1.0), 0.40, 0.30, use_tex=True)
 
     print("--- 4. Building Solid 3D Geometry ---")
 
@@ -389,9 +377,11 @@ def build_exact_3d():
         uv_layer = mesh.uv_layers.new(name="UVMap")
         uv_layer.active = True
         uv_layer.active_render = True
+        thresh = extrude * 0.5
         for l in mesh.loops:
-            vx, vy, _ = mesh.vertices[l.vertex_index].co
-            if is_back:
+            v_co = mesh.vertices[l.vertex_index].co
+            vx, vy, vz = v_co.x, v_co.y, v_co.z
+            if vz < -thresh or is_back:
                 u = (-vx / scale + 512.0) / 1024.0
             else:
                 u = (vx / scale + 512.0) / 1024.0
@@ -405,10 +395,9 @@ def build_exact_3d():
             mesh.materials.append(back_mat)  # Slot 2
 
         # Assign materials based strictly on vertex Z coordinates
-        # Top cap (Z > extrude * 0.5): front_mat (Slot 0)
-        # Bottom cap (Z < -extrude * 0.5): back_mat (Slot 2) or side_mat (Slot 1)
+        # Top cap (Z > thresh): front_mat (Slot 0)
+        # Bottom cap (Z < -thresh): back_mat (Slot 2) or side_mat (Slot 1)
         # Sides/bevels: side_mat (Slot 1)
-        thresh = extrude * 0.5
         for poly in mesh.polygons:
             poly_zs = [mesh.vertices[vi].co.z for vi in poly.vertices]
             if all(z > thresh for z in poly_zs):
@@ -423,9 +412,9 @@ def build_exact_3d():
         if bevel_width > 0:
             bev = mesh_obj.modifiers.new(name="Bevel", type="BEVEL")
             bev.width = bevel_width
-            bev.segments = 2
+            bev.segments = 3
             bev.limit_method = "ANGLE"
-            bev.angle_limit = math.radians(45)
+            bev.angle_limit = math.radians(35)
             bev.use_clamp_overlap = True
             bpy.ops.object.modifier_apply(modifier="Bevel")
 
@@ -435,90 +424,92 @@ def build_exact_3d():
     created_objects = []
 
     # 1. Solid Shield Base Core
-    # Front: Textured enamel, Sides/Bevels: Solid 24K gold, Back: Deep obsidian dark enamel
+    # Both Front and Back caps get the rich diamond leather texture (UV-mapped), sides get 24K solid gold
     obj_shield_base = build_solid_mesh(
         "Shield_Base",
         [shield_outer_loop],
-        extrude=0.016,
+        extrude=0.007,
         z_pos=0.0,
         front_mat=mat_enamel_front,
-        side_mat=mat_gold_solid,
-        back_mat=mat_enamel_solid,
-        bevel_width=0.003,
+        side_mat=mat_gold_24k,
+        back_mat=mat_enamel_front,
+        bevel_width=0.002,
     )
     created_objects.append(obj_shield_base)
 
-    # 2. Shield Gold Rim (Front & Back)
-    obj_shield_rim = build_solid_mesh(
+    # 2. Shield Gold Rim (Front & Back - slim, elegant bas-relief)
+    obj_shield_rim_front = build_solid_mesh(
         "Shield_Rim_Front",
         [shield_outer_loop, shield_inner_loop],
-        extrude=0.010,
-        z_pos=0.022,
-        front_mat=mat_gold_front,
-        side_mat=mat_gold_solid,
-        bevel_width=0.003,
+        extrude=0.004,
+        z_pos=0.008,
+        front_mat=mat_gold_relief,
+        side_mat=mat_gold_24k,
+        bevel_width=0.0016,
     )
-    created_objects.append(obj_shield_rim)
+    created_objects.append(obj_shield_rim_front)
 
     obj_shield_rim_back = build_solid_mesh(
         "Shield_Rim_Back",
         [shield_outer_loop, shield_inner_loop],
-        extrude=0.010,
-        z_pos=-0.022,
-        front_mat=mat_gold_solid,
-        side_mat=mat_gold_solid,
-        bevel_width=0.003,
+        extrude=0.004,
+        z_pos=-0.008,
+        front_mat=mat_gold_relief,
+        side_mat=mat_gold_24k,
+        bevel_width=0.0016,
         is_back=True,
     )
     created_objects.append(obj_shield_rim_back)
 
-    # 3. AM Monogram (Front & Back - correctly oriented and centered on both sides)
-    obj_am = build_solid_mesh(
+    # 3. AM Monogram (Front & Back - raised chiseled gold)
+    obj_am_front = build_solid_mesh(
         "AM_Monogram_Front",
         loops_am,
-        extrude=0.014,
-        z_pos=0.026,
-        front_mat=mat_gold_front,
-        side_mat=mat_gold_solid,
-        bevel_width=0.002,
+        extrude=0.005,
+        z_pos=0.009,
+        front_mat=mat_gold_relief,
+        side_mat=mat_gold_24k,
+        bevel_width=0.0015,
     )
-    created_objects.append(obj_am)
+    created_objects.append(obj_am_front)
 
     obj_am_back = build_solid_mesh(
         "AM_Monogram_Back",
         loops_am,
-        extrude=0.014,
-        z_pos=-0.026,
-        front_mat=mat_gold_solid,
-        side_mat=mat_gold_solid,
-        bevel_width=0.002,
+        extrude=0.005,
+        z_pos=-0.009,
+        front_mat=mat_gold_relief,
+        side_mat=mat_gold_24k,
+        bevel_width=0.0015,
         is_back=True,
     )
     created_objects.append(obj_am_back)
 
-    # 4. Laurel Wreath Wings (Solid 3D sculptural gold leaves)
+    # 4. Laurel Wreath Wings (Solid 3D sculptural leaves - smooth front, sides, and back)
     for idx, w_loops in enumerate(wreath_loop_groups):
         obj_w = build_solid_mesh(
             f"Wreath_Leaf_{idx+1}",
             w_loops,
-            extrude=0.024,
+            extrude=0.007,
             z_pos=0.0,
-            front_mat=mat_gold_front,
-            side_mat=mat_gold_solid,
-            bevel_width=0.002,
+            front_mat=mat_gold_relief,
+            side_mat=mat_gold_24k,
+            back_mat=mat_gold_24k,
+            bevel_width=0.0018,
         )
         created_objects.append(obj_w)
 
-    # 5. Letters D, Y, F (Solid 3D sculptural gold letters)
+    # 5. Letters D, Y, F (Solid 3D sculptural gold letters - watertight, natural bevels)
     for name_l, loops_l in [("Letter_D", loops_d), ("Letter_Y", loops_y), ("Letter_F", loops_f)]:
         obj_l = build_solid_mesh(
             name_l,
             loops_l,
-            extrude=0.026,
+            extrude=0.007,
             z_pos=0.0,
-            front_mat=mat_gold_front,
-            side_mat=mat_gold_solid,
-            bevel_width=0.002,
+            front_mat=mat_gold_relief,
+            side_mat=mat_gold_24k,
+            back_mat=mat_gold_24k,
+            bevel_width=0.0018,
         )
         created_objects.append(obj_l)
 
