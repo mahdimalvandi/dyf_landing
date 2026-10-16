@@ -1,6 +1,8 @@
 // ==========================================================================
-// کنترل تعاملی منوی همبرگری موبایل
+// کنترل تعاملی منوی همبرگری موبایل و پیوند با Lenis
 // ==========================================================================
+let lenisInstance = null;
+
 const hamburgerBtn = document.getElementById('hamburgerBtn');
 const mobileDrawer = document.getElementById('mobileDrawer');
 const mobileOverlay = document.getElementById('mobileOverlay');
@@ -12,6 +14,14 @@ function toggleMenu() {
   mobileDrawer.classList.toggle('active');
   mobileOverlay.classList.toggle('active');
   document.body.style.overflow = isOpen ? 'hidden' : '';
+
+  if (lenisInstance) {
+    if (isOpen) {
+      lenisInstance.stop();
+    } else {
+      lenisInstance.start();
+    }
+  }
 }
 
 if (hamburgerBtn) hamburgerBtn.addEventListener('click', toggleMenu);
@@ -105,6 +115,7 @@ if (heroModelViewer) {
       wheelMultiplier: 0.95,
       touchMultiplier: 1.15,
     });
+    lenisInstance = lenis;
 
     // پیوند رویدادهای اسکرول Lenis با GSAP ScrollTrigger
     if (typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined') {
@@ -213,7 +224,7 @@ if (heroModelViewer) {
   }
 
   // ========================================================================
-  // ۲. ظاهر شدن نرم متن‌ها — Fade Up Reveal (فقط روی عناصر کلیدی، یک‌بار اجرا)
+  // ۲. ظاهر شدن ملایم ورودی‌ها (فقط روی نقاط کلیدی هیرو و فرم استعلام)
   // ========================================================================
   const revealConfigs = [
     {
@@ -222,51 +233,8 @@ if (heroModelViewer) {
       start: 'top 90%',
     },
     {
-      trigger: '.story-text-col',
-      elements: '.story-badge, .story-title, .story-description',
-      start: 'top 85%',
-    },
-    {
-      trigger: '.craft-editorial-header',
-      elements: '.craft-editorial-kicker, .craft-main-title, .craft-main-desc, .craft-curation-badge',
-      start: 'top 85%',
-    },
-    {
-      trigger: '.craft-row-formal',
-      elements: '.craft-row-formal .craft-text-col > *',
-      start: 'top 80%',
-      stagger: 0.07,
-    },
-    {
-      trigger: '.craft-row-sport',
-      elements: '.craft-row-sport .craft-text-col > *',
-      start: 'top 80%',
-      stagger: 0.07,
-    },
-    {
-      trigger: '.defender-showcase-header',
-      elements: '.defender-showcase-kicker, .defender-showcase-title, .defender-showcase-lead',
-      start: 'top 85%',
-    },
-    {
-      trigger: '.pipeline-header',
-      elements: '.pipeline-kicker, .pipeline-title, .pipeline-desc',
-      start: 'top 85%',
-    },
-    {
-      trigger: '.pipeline-timeline',
-      elements: '.pipeline-node',
-      start: 'top 82%',
-      stagger: 0.1,
-    },
-    {
-      trigger: '.inquiry-intro-col',
-      elements: '.inquiry-meta, .inquiry-main-title, .inquiry-intro-desc',
-      start: 'top 85%',
-    },
-    {
       trigger: '.inquiry-form-sector',
-      elements: '.inquiry-form-header, .inquiry-fields-grid, .inquiry-form-actions, .inquiry-privacy-note',
+      elements: '.inquiry-form-header, .inquiry-fields-grid, .inquiry-form-actions',
       start: 'top 85%',
       stagger: 0.08,
     },

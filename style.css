@@ -1,4 +1,30 @@
-:root {
+    /* فونت فارسی خوش‌طبع استعداد (Estedad) برای تیترها */
+    @font-face {
+      font-family: 'Estedad';
+      src: url('https://cdn.jsdelivr.net/gh/aminabedi68/Estedad@master/fonts/webfonts/Estedad-Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Estedad';
+      src: url('https://cdn.jsdelivr.net/gh/aminabedi68/Estedad@master/fonts/webfonts/Estedad-ExtraBold.woff2') format('woff2');
+      font-weight: 800;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Estedad';
+      src: url('https://cdn.jsdelivr.net/gh/aminabedi68/Estedad@master/fonts/webfonts/Estedad-Black.woff2') format('woff2');
+      font-weight: 900;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --font-body: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-title: 'Estedad', 'Vazirmatn', sans-serif;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
       --bg-deep: #141210;
       --leather-caramel: #C29553;
       --leather-dark: #3D2415;
@@ -27,17 +53,49 @@
       font-family: 'Vazirmatn', -apple-system, sans-serif;
     }
 
+    h1, h2, h3, h4, h5, h6,
+    .hero-main-title,
+    .story-title,
+    .craft-main-title,
+    .craft-line-title,
+    .defender-showcase-title,
+    .pipeline-title,
+    .inquiry-main-title,
+    .inquiry-form-title,
+    .faq-title {
+      font-family: var(--font-title);
+      text-wrap: balance;
+    }
+
+    .craft-line-en,
+    .craft-line-num,
+    .inquiry-kicker,
+    .signoff-label,
+    .defender-essence-tag {
+      font-family: var(--font-serif);
+    }
+
+    /* استایل یکنواخت فوکوس کیبورد و دسترس‌پذیری */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    summary:focus-visible,
+    .mobile-nav-link:focus-visible {
+      outline: 2px solid var(--gold-primary);
+      outline-offset: 3px;
+    }
+
     html {
-      scroll-behavior: smooth;
+      overflow-x: clip;
       scroll-padding-top: 85px;
-      overflow-x: hidden;
     }
 
     body {
       position: relative;
       background-color: var(--bg-deep);
       color: var(--text-main);
-      overflow-x: hidden;
       min-height: 100vh;
     }
 
@@ -117,7 +175,7 @@
     }
 
     .logo-brand-sub {
-      font-size: 0.72rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
       letter-spacing: 0.8px;
       display: block;
@@ -538,7 +596,8 @@
     .hero-main-title span {
       color: var(--gold-primary);
       font-weight: 900;
-      display: inline;
+      display: block;
+      margin-top: 0.35rem;
     }
 
     .hero-main-desc {
@@ -1223,7 +1282,7 @@
     }
 
     .caption-index {
-      font-size: 0.72rem;
+      font-size: 0.8rem;
       font-weight: 800;
       color: var(--gold-light);
       letter-spacing: 0.5px;
@@ -1273,7 +1332,7 @@
     }
 
     .signoff-label {
-      font-size: 0.74rem;
+      font-size: 0.8rem;
       font-weight: 700;
       letter-spacing: 2px;
       color: var(--text-muted);
@@ -1505,7 +1564,7 @@
     }
 
     .inquiry-meta-sub {
-      font-size: 0.72rem;
+      font-size: 0.8rem;
       font-weight: 600;
       color: var(--text-muted);
       letter-spacing: 1.8px;
@@ -1648,8 +1707,8 @@
     }
 
     .inquiry-input::placeholder {
-      color: rgba(158, 149, 135, 0.5);
-      font-size: 0.82rem;
+      color: rgba(223, 215, 204, 0.75);
+      font-size: 0.88rem;
     }
 
     .inquiry-input:focus,
@@ -1978,37 +2037,60 @@
       color: #fff;
     }
 
-    /* دکمه شناور واتساپ در موبایل */
-    .floating-whatsapp {
-      position: fixed;
-      bottom: 18px;
-      left: 18px;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: #25D366;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 90;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-      text-decoration: none;
+    /* نوار ثابت ارتباط سریع پایین صفحه در موبایل (تماس | واتساپ) */
+    .mobile-bottom-dock {
+      display: none;
     }
 
-    .floating-whatsapp:hover {
-      transform: scale(1.06);
-      box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
-    }
+    @media (max-width: 992px) {
+      .mobile-bottom-dock {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 120;
+        display: grid;
+        grid-template-columns: 1fr 1.25fr;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px)) 1rem;
+        background: rgba(18, 14, 11, 0.94);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-top: 1px solid rgba(216, 178, 100, 0.24);
+        box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.6);
+      }
 
-    .floating-whatsapp:active {
-      transform: scale(0.96);
-    }
+      .dock-action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        height: 44px;
+        border-radius: var(--r-md);
+        font-size: 0.88rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: transform 0.2s ease, filter 0.2s ease;
+      }
 
-    @media (min-width: 993px) {
-      .floating-whatsapp {
-        display: none;
+      .dock-btn-call {
+        background: rgba(61, 36, 21, 0.88);
+        color: var(--gold-light);
+        border: 1px solid rgba(216, 178, 100, 0.32);
+      }
+
+      .dock-btn-whatsapp {
+        background: #1f7a42;
+        color: #ffffff;
+        border: 1px solid rgba(37, 211, 102, 0.4);
+      }
+
+      .dock-action-btn:active {
+        transform: scale(0.97);
+      }
+
+      body {
+        padding-bottom: calc(65px + env(safe-area-inset-bottom, 0px));
       }
     }
 
@@ -2070,8 +2152,7 @@
       }
       .story-image-col {
         order: 2;
-        max-width: 640px;
-        margin: 0 auto;
+        max-width: none;
         width: 100%;
       }
       .craft-editorial-section {
@@ -2198,7 +2279,7 @@
         font-size: 1.25rem;
       }
       .logo-brand-sub {
-        font-size: 0.68rem;
+        font-size: 0.8rem;
       }
       .hero-section {
         padding: 2.5rem 0.5rem 2rem;
@@ -2327,7 +2408,7 @@
         border: 1px solid rgba(216, 178, 100, 0.28);
         border-radius: var(--r-sm);
         padding: 0.32rem 0.65rem;
-        font-size: 0.72rem;
+        font-size: 0.76rem;
         font-weight: 700;
         color: var(--gold-light);
         white-space: nowrap;
@@ -2426,21 +2507,21 @@
         max-width: calc(100% - 16px);
       }
       .caption-index {
-        font-size: 0.62rem;
+        font-size: 0.8rem;
         padding: 1px 4px;
       }
       .caption-title {
-        font-size: 0.68rem;
+        font-size: 0.8rem;
         overflow: hidden;
         text-overflow: ellipsis;
       }
       .defender-essence-tag {
-        font-size: 0.72rem;
+        font-size: 0.8rem;
         letter-spacing: 2px;
         margin-bottom: 0.6rem;
       }
       .signoff-label {
-        font-size: 0.64rem;
+        font-size: 0.8rem;
         letter-spacing: 1px;
       }
       .defender-brand-signoff {
@@ -2559,7 +2640,7 @@
         white-space: nowrap;
       }
       .inquiry-meta-sub {
-        font-size: 0.64rem;
+        font-size: 0.8rem;
         letter-spacing: 1px;
         margin: 0;
         white-space: nowrap;
@@ -2623,16 +2704,6 @@
         font-size: 0.86rem;
         line-height: 1.7;
       }
-      .floating-whatsapp {
-        width: 50px;
-        height: 50px;
-        bottom: 16px;
-        left: 16px;
-      }
-      .floating-whatsapp svg {
-        width: 26px;
-        height: 26px;
-      }
     }
 
     /* ==========================================================================
@@ -2689,7 +2760,7 @@
       }
 
       .story-grid {
-        align-items: start;
+        align-items: center;
       }
 
       .story-image-col {
