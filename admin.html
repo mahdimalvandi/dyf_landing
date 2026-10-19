@@ -207,8 +207,18 @@
         <a href="#settings" class="dyf-nav-item">
           <div class="dyf-nav-left">
             <svg class="dyf-nav-icon" viewBox="0 0 24 24" fill="none"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-            <span>تنظیمات عمومی</span>
+            <span>تنظیمات و استقرار</span>
           </div>
+        </a>
+
+        <div class="dyf-nav-section-label">مشاهده کاتالوگ</div>
+
+        <a href="catalog.html" target="_blank" class="dyf-nav-item" style="color: var(--gold-light);">
+          <div class="dyf-nav-left">
+            <svg class="dyf-nav-icon" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+            <span>کاتالوگ مشتری (زنده)</span>
+          </div>
+          <span class="dyf-badge dyf-badge-published" style="font-size: 0.65rem;">B2B</span>
         </a>
       </nav>
 
@@ -954,31 +964,55 @@
         <section id="viewSettings" class="dyf-view">
           <div class="dyf-panel-card">
             <div class="dyf-panel-card-header">
-              <h2 class="dyf-panel-card-title">تنظیمات کاتالوگ خصوصی</h2>
+              <h2 class="dyf-panel-card-title">تنظیمات، پایگاه داده و نقشه راه استقرار نهایی (تسک ۷)</h2>
               <a href="#dashboard" class="dyf-btn dyf-btn-outline dyf-btn-sm">بازگشت به پیشخوان</a>
             </div>
-            <div style="padding: 1.5rem; max-width: 680px;">
-              <div class="dyf-form-group">
-                <label class="dyf-form-label">نام تجاری کارگاه</label>
-                <input type="text" class="dyf-input" value="DYF — DEFENDER YOUR FOOT" readonly>
+            <div style="padding: 1.5rem; max-width: 860px;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem;">
+                <div class="dyf-form-group" style="margin: 0;">
+                  <label class="dyf-form-label">نام تجاری کارگاه</label>
+                  <input type="text" class="dyf-input" value="DYF — DEFENDER YOUR FOOT" readonly>
+                </div>
+                <div class="dyf-form-group" style="margin: 0;">
+                  <label class="dyf-form-label">شماره مستقیم تماس همکاران B2B</label>
+                  <input type="text" class="dyf-input" value="09121234567" dir="ltr">
+                </div>
               </div>
-              <div class="dyf-form-group">
-                <label class="dyf-form-label">شماره مستقیم تماس همکاران B2B</label>
-                <input type="text" class="dyf-input" value="09121234567" dir="ltr">
+
+              <!-- چک‌لیست اتصال به بک‌اند واقعی بر اساس Task 7 -->
+              <div style="background: rgba(36, 30, 25, 0.6); border: 1px solid var(--border-medium); border-radius: var(--r-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+                <h3 style="font-family: var(--font-title); font-size: 1rem; font-weight: 800; color: var(--gold-light); margin-bottom: 0.6rem;">
+                  📋 نقشه راه اتصال به سرویس‌های واقعی (Backend Transition Blueprint)
+                </h3>
+                <ul style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.8; padding-right: 1.25rem; margin: 0;">
+                  <li><strong>۱. پایگاه داده و REST API:</strong> انتقال مدل‌های کفش، دسته‌ها، مشتریان و لینک‌ها از LocalStorage به PostgreSQL / MongoDB همراه با ایندکس‌های یکتا.</li>
+                  <li><strong>۲. سامانه پیامک و OTP:</strong> اتصال وب‌سرویس پیامکی (مانند کاوه‌نگار یا فراز اس‌ام‌اس) جهت ارسال کدهای ۵ رقمی با قالب اعتبارسنجی الگو (Pattern OTP).</li>
+                  <li><strong>۳. مدیریت نشست و انقضای تایمر:</strong> ذخیره‌سازی نشست لینک‌ها در Redis با کلیدهای دارای TTL دقیق جهت همگام‌سازی لحظه‌ای میان چند دستگاه مختلف دارنده لینک.</li>
+                  <li><strong>۴. ذخیره‌سازی رسانه ابری (S3 / MinIO):</strong> بارگذاری تصاویر باکیفیت بالا و فایل‌های سه‌بعدی GLB در فضای ذخیره‌سازی ابری همراه با CDN اختصاصی.</li>
+                  <li><strong>۵. توکن‌های امنیتی غیرقابل حدس:</strong> تولید توکن‌های لینک به شیوه UUIDv4 یا کدهای رمزنگاری‌شده HMAC-SHA256 بدون درج مشخصات هویتی مشتری در URL.</li>
+                </ul>
               </div>
-              <div class="dyf-form-group">
-                <label class="dyf-form-label">مدت زمان پیش‌فرض مشاهده لینک اختصاصی</label>
-                <select class="dyf-select">
-                  <option>۱۰ دقیقه پس از اولین ورود</option>
-                  <option selected>۱۵ دقیقه پس از اولین ورود</option>
-                  <option>۳۰ دقیقه پس از اولین ورود</option>
-                  <option>۲۴ ساعت</option>
-                  <option>دسترسی بدون محدودیت زمانی</option>
-                </select>
+
+              <!-- بازنشانی داده‌های آزمایشی به حالت اولیه -->
+              <div style="background: rgba(20, 18, 16, 0.7); border: 1px dashed var(--border-subtle); border-radius: var(--r-md); padding: 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                <div>
+                  <h4 style="font-weight: 700; color: var(--text-ivory); margin-bottom: 0.25rem;">بازنشانی داده‌های نمونه کارگاهی (Factory Reset)</h4>
+                  <p style="font-size: 0.76rem; color: var(--text-dim); margin: 0;">در صورت نیاز به پاکسازی تغییرات تستی و بازگردانی مدل‌ها، مشتریان و لینک‌های پیش‌فرض کارگاه کلیک کنید.</p>
+                </div>
+                <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm" style="color: var(--status-danger); border-color: rgba(224, 86, 74, 0.35); white-space: nowrap;" onclick="if(confirm('آیا از بازنشانی داده‌های آزمایشی پنل به مقادیر پیش‌فرض اطمینان دارید؟')){ localStorage.clear(); location.reload(); }">
+                  بازنشانی کل پایگاه داده
+                </button>
               </div>
-              <button type="button" class="dyf-btn dyf-btn-primary" onclick="window.DYF_Toast.show({type: 'success', title: 'ذخیره تنظیمات', message: 'تغییرات با موفقیت ثبت شد.'})">
-                ذخیره تنظیمات
-              </button>
+
+              <div style="display: flex; gap: 0.75rem;">
+                <button type="button" class="dyf-btn dyf-btn-primary" onclick="window.DYF_Toast.show({type: 'success', title: 'ذخیره تنظیمات', message: 'تنظیمات عمومی سامانه با موفقیت ثبت گردید.'})">
+                  ذخیره تغییرات عمومی
+                </button>
+                <a href="catalog.html" target="_blank" class="dyf-btn dyf-btn-specular">
+                  <span>مشاهده و آزمون کاتالوگ مشتریان</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+                </a>
+              </div>
             </div>
           </div>
         </section>
