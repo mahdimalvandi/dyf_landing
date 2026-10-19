@@ -1,0 +1,423 @@
+/* ==========================================================================
+   DYF Private Catalog (Customer Experience) — Design System v4
+   Atelier Aesthetics & Luxury Craftsmanship
+   ========================================================================== */
+
+/* کانتینر اصلی صفحه ورود کاتالوگ */
+.dyf-cat-login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: radial-gradient(circle at 50% 20%, rgba(61, 36, 21, 0.45) 0%, rgba(20, 18, 16, 0.95) 75%), var(--bg-deep);
+  position: relative;
+  overflow: hidden;
+}
+
+.dyf-cat-login-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(rgba(216, 178, 100, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+.dyf-cat-login-card {
+  width: 100%;
+  max-width: 480px;
+  background: rgba(30, 26, 23, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--r-lg);
+  padding: 2.5rem 2rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(216, 178, 100, 0.08);
+  position: relative;
+  z-index: 10;
+  text-align: center;
+}
+
+.dyf-cat-brand-emblem {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(61, 36, 21, 0.9) 0%, rgba(20, 18, 16, 0.95) 100%);
+  border: 2px solid var(--gold-primary);
+  box-shadow: 0 0 25px var(--gold-glow);
+}
+
+.dyf-cat-brand-emblem img {
+  width: 46px;
+  height: auto;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6));
+}
+
+.dyf-cat-login-title {
+  font-family: var(--font-title);
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: var(--text-ivory);
+  margin-bottom: 0.35rem;
+  letter-spacing: -0.02em;
+}
+
+.dyf-cat-login-subtitle {
+  font-size: 0.84rem;
+  color: var(--leather-caramel);
+  margin-bottom: 1.75rem;
+  line-height: 1.6;
+}
+
+/* هدر کاتالوگ در حالت ورود مجاز */
+.dyf-cat-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(20, 18, 16, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0.85rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.dyf-cat-brand-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.dyf-cat-brand-bar img {
+  height: 38px;
+  width: auto;
+}
+
+.dyf-cat-session-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dyf-cat-timer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(61, 36, 21, 0.6);
+  border: 1px solid var(--gold-primary);
+  border-radius: var(--r-full);
+  padding: 0.35rem 0.95rem;
+  font-family: var(--font-title);
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  box-shadow: 0 0 12px var(--gold-glow);
+}
+
+.dyf-cat-timer-pill.is-warning {
+  border-color: var(--status-danger);
+  color: #ff6b6b;
+  animation: dyfPulseGlow 1.2s infinite;
+}
+
+@keyframes dyfPulseGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(224, 86, 74, 0.4); }
+  50% { box-shadow: 0 0 20px rgba(224, 86, 74, 0.8); }
+}
+
+/* کاتالوگ هیرو بنر */
+.dyf-cat-hero {
+  position: relative;
+  background: linear-gradient(180deg, rgba(36, 30, 25, 0.85) 0%, rgba(20, 18, 16, 0.98) 100%);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 2.75rem 2rem 2.25rem;
+  text-align: center;
+}
+
+.dyf-cat-hero-title {
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  letter-spacing: 0.03em;
+  margin-bottom: 0.35rem;
+}
+
+.dyf-cat-hero-desc {
+  max-width: 620px;
+  margin: 0 auto;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.dyf-cat-badge-greeting {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(216, 178, 100, 0.1);
+  border: 1px solid rgba(216, 178, 100, 0.3);
+  border-radius: var(--r-full);
+  padding: 0.35rem 1rem;
+  font-size: 0.82rem;
+  color: var(--gold-light);
+  margin-bottom: 1rem;
+}
+
+/* نوار فیلتر و جست‌وجوی کاتالوگ */
+.dyf-cat-toolbar {
+  max-width: 1240px;
+  margin: 2rem auto 1.5rem;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.dyf-cat-filter-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.dyf-cat-filter-btn {
+  padding: 0.5rem 1.15rem;
+  border-radius: var(--r-full);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.dyf-cat-filter-btn:hover {
+  border-color: var(--gold-primary);
+  color: var(--text-ivory);
+}
+
+.dyf-cat-filter-btn.is-active {
+  background: rgba(61, 36, 21, 0.85);
+  border-color: var(--gold-primary);
+  color: var(--gold-light);
+  font-weight: 800;
+  box-shadow: 0 0 12px var(--gold-glow);
+}
+
+/* شبکه کارت‌های لوکس کاتالوگ */
+.dyf-cat-grid {
+  max-width: 1240px;
+  margin: 0 auto 3.5rem;
+  padding: 0 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 2rem;
+}
+
+.dyf-cat-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.dyf-cat-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--gold-primary);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), 0 0 30px rgba(216, 178, 100, 0.12);
+}
+
+.dyf-cat-media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: #0f0d0b;
+  overflow: hidden;
+}
+
+.dyf-cat-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.dyf-cat-card:hover .dyf-cat-media img {
+  transform: scale(1.06);
+}
+
+.dyf-cat-media-badges {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  z-index: 2;
+}
+
+.dyf-cat-code-badge {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 0.75rem;
+  background: rgba(15, 13, 11, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--r-sm);
+  padding: 0.2rem 0.6rem;
+  font-family: var(--font-title);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  direction: ltr;
+}
+
+.dyf-cat-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.dyf-cat-title {
+  font-family: var(--font-title);
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: var(--text-ivory);
+  margin-bottom: 0.35rem;
+  line-height: 1.35;
+}
+
+.dyf-cat-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dyf-cat-specs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-sm);
+  padding: 0.75rem 0.85rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.76rem;
+}
+
+.dyf-cat-spec-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.dyf-cat-colors-swatch {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.dyf-cat-color-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: inline-block;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.dyf-cat-footer-actions {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* صفحه قفل انقضای نشست یا خطای دسترسی */
+.dyf-cat-lock-screen {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.dyf-cat-lock-box {
+  max-width: 520px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--r-lg);
+  padding: 3rem 2rem;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+}
+
+.dyf-cat-lock-icon {
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 1.5rem;
+  border-radius: 50%;
+  background: rgba(224, 86, 74, 0.12);
+  border: 2px solid var(--status-danger);
+  color: var(--status-danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* مودال مشاهده جزئیات تخصصی مدل کفش */
+.dyf-cat-dossier-modal {
+  max-width: 860px;
+  width: 100%;
+}
+
+.dyf-cat-dossier-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 2rem;
+  padding: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .dyf-cat-dossier-layout {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .dyf-cat-navbar {
+    padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+  }
+  .dyf-cat-grid {
+    grid-template-columns: 1fr;
+  }
+}

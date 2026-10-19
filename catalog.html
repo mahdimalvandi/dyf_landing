@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>کاتالوگ خصوصی محصولات | آتلیه کفش چرم DYF</title>
+
+  <!-- فونت‌های رسمی دیزاین سیستم DYF v4 -->
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+
+  <!-- فونت تیتر استعداد -->
+  <style>
+    @font-face {
+      font-family: 'Estedad';
+      font-weight: 700;
+      src: url('https://cdn.jsdelivr.net/gh/aminabedi68/Estedad@master/fonts/webfonts/Estedad-Bold.woff2') format('woff2');
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Estedad';
+      font-weight: 800;
+      src: url('https://cdn.jsdelivr.net/gh/aminabedi68/Estedad@master/fonts/webfonts/Estedad-ExtraBold.woff2') format('woff2');
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Estedad';
+      font-weight: 900;
+      src: url('https://cdn.jsdelivr.net/gh/aminabedi68/Estedad@master/fonts/webfonts/Estedad-Black.woff2') format('woff2');
+      font-display: swap;
+    }
+  </style>
+
+  <!-- استایل‌های پایه پنل و کاتالوگ -->
+  <link rel="stylesheet" href="assets/css/admin.css">
+  <link rel="stylesheet" href="assets/css/catalog.css">
+</head>
+<body style="background: var(--bg-deep); color: var(--text-main); font-family: var(--font-body); margin: 0; min-height: 100vh;">
+
+  <!-- ======================================================================
+       ۱. نمای ورود و احراز هویت خریدار (#catLoginView)
+       ====================================================================== -->
+  <div id="catLoginView" class="dyf-cat-login-wrapper">
+    <div class="dyf-cat-login-card">
+      <!-- لوگوی آتلیه DYF -->
+      <div class="dyf-cat-brand-emblem">
+        <img src="assets/images/logo.png" alt="DYF Atelier Logo">
+      </div>
+
+      <h1 class="dyf-cat-login-title" id="catLoginHeaderTitle">کاتالوگ خصوصی DYF</h1>
+      <p class="dyf-cat-login-subtitle" id="catLoginHeaderSub">
+        ویترین انحصاری و محرمانه تولیدات چرم دست‌دوز برای بنکداران و بوتیک‌داران معتبر
+      </p>
+
+      <!-- کارت خطا برای لینک‌های باطل‌شده / منقضی / نامعتبر -->
+      <div id="catTokenErrorBox" style="display: none; background: rgba(224, 86, 74, 0.12); border: 1px solid rgba(224, 86, 74, 0.35); border-radius: var(--r-md); padding: 1.25rem; margin-bottom: 1.5rem; text-align: right;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--status-danger); font-weight: 800; font-size: 0.95rem; margin-bottom: 0.35rem;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+          <span id="catTokenErrorTitle">لینک دسترسی نامعتبر است</span>
+        </div>
+        <p id="catTokenErrorDesc" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; margin: 0;">
+          این لینک منقضی شده یا توسط مدیریت کارگاه غیرفعال گردیده است.
+        </p>
+        <div style="margin-top: 1rem; text-align: center;">
+          <a href="catalog.html" class="dyf-btn dyf-btn-outline dyf-btn-sm">ورود مستقیم همکاران با شماره همراه</a>
+        </div>
+      </div>
+
+      <!-- فرم ورود مرحله اول: شماره تلفن همراه -->
+      <form id="catPhoneForm" style="display: block;">
+        <div class="dyf-form-group" style="text-align: right; margin-bottom: 1.25rem;">
+          <label class="dyf-form-label dyf-form-label-required" id="catPhoneInputLabel">شماره تلفن همراه مجاز</label>
+          <div style="position: relative;">
+            <input type="tel" id="catPhoneInput" class="dyf-input" placeholder="09121112233" style="direction: ltr; font-family: var(--font-title); font-size: 1.05rem; letter-spacing: 0.08em; text-align: center; padding-left: 2.5rem;" required autofocus>
+            <svg style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--gold-primary);" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" x2="12.01" y1="18" y2="18"/></svg>
+          </div>
+          <p class="dyf-form-hint" id="catPhoneHintText" style="text-align: right; margin-top: 0.4rem;">
+            * جهت دریافت کد تایید یک‌بارمصرف (OTP شبیه‌سازی‌شده: ۱۲۳۴۵)
+          </p>
+        </div>
+
+        <button type="submit" id="catSubmitPhoneBtn" class="dyf-btn dyf-btn-primary dyf-btn-lg" style="width: 100%; justify-content: center;">
+          <span>دریافت کد تایید یک‌بارمصرف</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </form>
+
+      <!-- فرم ورود مرحله دوم: کد پیامکی OTP -->
+      <form id="catOtpForm" style="display: none;">
+        <div style="text-align: right; margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.8rem; color: var(--text-dim);">کد ارسال‌شده به:</span>
+            <span id="catOtpTargetPhone" style="font-family: var(--font-title); color: var(--gold-light); direction: ltr; font-weight: 700;">09121112233</span>
+          </div>
+
+          <div style="display: flex; justify-content: center; gap: 0.5rem; direction: ltr; margin: 1rem 0;">
+            <input type="text" id="catOtpInput" class="dyf-input" maxlength="5" placeholder="12345" style="width: 180px; font-family: var(--font-title); font-size: 1.35rem; font-weight: 800; text-align: center; letter-spacing: 0.35em; color: var(--gold-light);" required>
+          </div>
+
+          <p class="dyf-form-hint" style="text-align: center; color: var(--leather-caramel);">
+            (کد شبیه‌سازی‌شده تست: <strong>۱۲۳۴۵</strong>)
+          </p>
+        </div>
+
+        <button type="submit" id="catVerifyOtpBtn" class="dyf-btn dyf-btn-primary dyf-btn-lg" style="width: 100%; justify-content: center; margin-bottom: 0.75rem;">
+          <span>تایید و ورود به کاتالوگ</span>
+        </button>
+
+        <button type="button" id="catBackToPhoneBtn" class="dyf-btn dyf-btn-outline dyf-btn-sm" style="width: 100%; justify-content: center;">
+          <span>تغییر شماره تلفن</span>
+        </button>
+      </form>
+
+      <!-- دکمه ورود فوری برای لینک مستقیم بدون رمز -->
+      <div id="catDirectLinkEntryBox" style="display: none; padding-top: 0.5rem;">
+        <div style="background: rgba(76, 217, 100, 0.1); border: 1px solid rgba(76, 217, 100, 0.3); border-radius: var(--r-md); padding: 1rem; margin-bottom: 1.25rem; font-size: 0.82rem; color: #4cd964; line-height: 1.6; text-align: right;">
+          🛡️ <strong>دسترسی مجاز مستقیم:</strong> شما از طریق لینک اختصاصی معتبر وارد شده‌اید و نیازی به وارد کردن شماره تلفن یا رمز پیامکی ندارید.
+        </div>
+        <button type="button" id="catDirectEnterBtn" class="dyf-btn dyf-btn-primary dyf-btn-lg" style="width: 100%; justify-content: center;">
+          <span>ورود مستقیم به کاتالوگ</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+
+      <div style="margin-top: 2rem; border-top: 1px solid var(--border-subtle); padding-top: 1rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.74rem; color: var(--text-dim);">
+        <span>آتلیه طراحی و تولید کفش DYF</span>
+        <a href="index.html" class="dyf-btn-outline dyf-btn-sm" style="border-radius: var(--r-sm); padding: 0.2rem 0.6rem; color: var(--text-muted); text-decoration: none;">صفحه اصلی برند</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       ۲. نمای اصلی کاتالوگ خریدار (#catAppView)
+       ====================================================================== -->
+  <div id="catAppView" style="display: none; min-height: 100vh; flex-direction: column;">
+    <!-- نوار چسبان ناوبری آتلیه -->
+    <header class="dyf-cat-navbar">
+      <div class="dyf-cat-brand-bar">
+        <a href="catalog.html" style="display: flex; align-items: center; gap: 0.6rem; text-decoration: none;">
+          <img src="assets/images/logo.png" alt="DYF Atelier">
+          <span style="font-family: var(--font-title); font-weight: 900; font-size: 1.15rem; color: var(--gold-light); letter-spacing: 0.05em;">DYF ATELIER</span>
+        </a>
+        <span class="dyf-badge dyf-badge-published" style="font-size: 0.68rem;">PRIVATE B2B</span>
+      </div>
+
+      <div class="dyf-cat-session-meta">
+        <!-- تایمر شمارش معکوس نشست -->
+        <div id="catSessionTimerPill" class="dyf-cat-timer-pill" style="display: none;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>زمان باقی‌مانده: <strong id="catCountdownDisplay">۱۵:۰۰</strong></span>
+        </div>
+
+        <!-- نشان خوش‌آمدگویی خریدار -->
+        <div style="font-size: 0.84rem; color: var(--text-ivory); font-weight: 700; display: flex; align-items: center; gap: 0.4rem;">
+          <span style="color: var(--text-dim); font-weight: 400;">همکار گرامی:</span>
+          <span id="catRecipientGreetingName" style="color: var(--gold-light);">حاج مصطفی کمالی</span>
+        </div>
+
+        <!-- دکمه خروج -->
+        <button type="button" id="catLogoutBtn" class="dyf-btn dyf-btn-outline dyf-btn-sm" title="خروج از حساب کاتالوگ">
+          <span>خروج</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- بنر هیرو آتلیه و خوش‌آمدگویی -->
+    <section class="dyf-cat-hero">
+      <div class="dyf-cat-badge-greeting">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span id="catAccessScopeBadgeText">دسترسی مستقیم همکار تجاری | لاین‌های مجاز منتخب</span>
+      </div>
+      <h1 class="dyf-cat-hero-title">DEFENDER YOUR FOOT — PRIVATE CATALOG</h1>
+      <p class="dyf-cat-hero-desc">
+        مجموعه تولیدات دست‌دوز انحصاری کارگاه DYF. ساخته‌شده از مرغوب‌ترین چرم‌های طبیعی فرانسوی و ایتالیایی با زیره‌های اشپالت و رابر ضدسایش.
+      </p>
+    </section>
+
+    <!-- نوار فیلتر و جست‌وجو -->
+    <section class="dyf-cat-toolbar">
+      <!-- تب‌های دسته‌بندی مجاز -->
+      <div class="dyf-cat-filter-tabs" id="catCategoryFilterTabs">
+        <!-- رندر پویا توسط JS -->
+      </div>
+
+      <!-- جست‌وجو و شمارنده -->
+      <div style="display: flex; align-items: center; gap: 1rem; margin-right: auto;">
+        <div class="dyf-toolbar-search" style="min-width: 260px;">
+          <svg class="dyf-quick-search-icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="catSearchInput" class="dyf-quick-search-input" placeholder="جست‌وجوی مدل، سبک زیره، چرم...">
+        </div>
+        <span id="catModelsCountBadge" class="dyf-badge dyf-badge-active" style="white-space: nowrap;">۱۲ مدل قابل سفارش</span>
+      </div>
+    </section>
+
+    <!-- شبکه کارت‌های کفش -->
+    <main style="flex: 1;">
+      <div id="catShoesGrid" class="dyf-cat-grid">
+        <!-- رندر پویا توسط JS -->
+      </div>
+
+      <!-- وضعیت خالی بدون نتیجه -->
+      <div id="catEmptyState" class="dyf-panel-card dyf-empty-state" style="display: none; max-width: 600px; margin: 3rem auto;">
+        <svg class="dyf-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="m9 9 4 4"/><path d="m13 9-4 4"/></svg>
+        <h3 class="dyf-empty-title">مدلی با این مشخصات یافت نشد</h3>
+        <p class="dyf-empty-desc">لطفاً عبارت جست‌وجو را تغییر داده یا از تب دسته‌بندی دیگری استفاده فرمایید.</p>
+        <button type="button" id="catResetFilterBtn" class="dyf-btn dyf-btn-outline">
+          نمایش همه مدل‌های مجاز
+        </button>
+      </div>
+    </main>
+
+    <!-- فوتر باوقار آتلیه -->
+    <footer style="background: rgba(15, 13, 11, 0.95); border-top: 1px solid var(--border-subtle); padding: 2rem 1.5rem; text-align: center; font-size: 0.8rem; color: var(--text-dim);">
+      <p style="margin-bottom: 0.5rem; color: var(--gold-light); font-weight: 700;">کارگاه تخصصی کفش دست‌دوز DYF (Defender Your Foot)</p>
+      <p style="margin: 0;">کلیه حقوق معنوی طرح‌ها و مدل‌های انحصاری این کاتالوگ محفوظ و مختص همکاران مجاز می‌باشد.</p>
+    </footer>
+  </div>
+
+  <!-- ======================================================================
+       ۳. نمای پایان زمان یا ابطال دسترسی (#catExpiredView)
+       ====================================================================== -->
+  <div id="catExpiredView" class="dyf-cat-lock-screen" style="display: none;">
+    <div class="dyf-cat-lock-box">
+      <div class="dyf-cat-lock-icon">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <h2 style="font-family: var(--font-title); font-size: 1.35rem; font-weight: 900; color: var(--text-ivory); margin-bottom: 0.5rem;" id="catExpiredTitle">
+        زمان مشاهده کاتالوگ به پایان رسید
+      </h2>
+      <p style="font-size: 0.86rem; color: var(--text-muted); line-height: 1.65; margin-bottom: 1.75rem;" id="catExpiredDesc">
+        مدت زمان مجاز برای نشست شما منقضی گردید. جهت تمدید مهلت دسترسی یا استعلام پیش‌فاکتور با مدیریت کارگاه DYF ارتباط برقرار نمایید.
+      </p>
+      <div style="display: flex; justify-content: center; gap: 0.75rem;">
+        <a href="catalog.html" class="dyf-btn dyf-btn-primary">
+          <span>ورود مجدد به سامانه</span>
+        </a>
+        <a href="index.html" class="dyf-btn dyf-btn-outline">
+          <span>بازگشت به سایت اصلی</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       ۴. مودال پرونده تخصصی محصول برای خریدار (#modalShoeDossier)
+       ====================================================================== -->
+  <div id="modalShoeDossier" class="dyf-modal-backdrop" aria-hidden="true">
+    <div class="dyf-modal-card dyf-cat-dossier-modal" style="max-height: 92vh; display: flex; flex-direction: column;">
+      <div class="dyf-modal-header">
+        <div>
+          <h3 class="dyf-modal-title" id="dossierModalTitle">پرونده فنی و شناسنامه مدل</h3>
+          <p style="font-size: 0.76rem; color: var(--text-muted); margin-top: 0.2rem;" id="dossierModalSubtitle">کد انحصاری و دسته‌بندی</p>
+        </div>
+        <button type="button" class="dyf-modal-close" data-close>&times;</button>
+      </div>
+
+      <div class="dyf-modal-body" style="flex: 1; overflow-y: auto; padding: 0;">
+        <div class="dyf-cat-dossier-layout">
+          <!-- تصویر اصلی و گالری -->
+          <div>
+            <div style="border-radius: var(--r-md); overflow: hidden; border: 1px solid var(--border-medium); background: #0f0d0b; margin-bottom: 0.75rem; aspect-ratio: 4/3;">
+              <img id="dossierMainImage" src="assets/images/craft-formal.jpeg" alt="نمای محصول" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.25rem;" id="dossierThumbnailsWrap">
+              <!-- رندر ریزتصاویر توسط JS -->
+            </div>
+          </div>
+
+          <!-- مشخصات فنی و شناسنامه کارگاهی -->
+          <div style="display: flex; flex-direction: column;">
+            <h2 id="dossierShoeTitle" style="font-family: var(--font-title); font-size: 1.25rem; font-weight: 800; color: var(--text-ivory); margin-bottom: 0.35rem;">
+              نام مدل کفش
+            </h2>
+            <div id="dossierCategoryPill" style="margin-bottom: 1rem;">
+              <span class="dyf-badge dyf-badge-active">لاین رسمی و مجلسی</span>
+            </div>
+
+            <p id="dossierShoeDesc" style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.65; margin-bottom: 1.25rem;">
+              توضیحات و ویژگی‌های طراحی کفش...
+            </p>
+
+            <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--r-sm); padding: 1rem; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.78rem;">
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-dim);">نوع چرم رویه:</span>
+                <span id="dossierLeatherType" style="font-weight: 700; color: var(--gold-light);">چرم طبیعی گوساله فرانسوی</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-dim);">نوع زیره و ساختار:</span>
+                <span id="dossierSoleType" style="font-weight: 700; color: var(--text-ivory);">چرم گاومیش اشپالت (Goodyear Welted)</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-dim);">محدوده سایزبندی:</span>
+                <span id="dossierSizes" style="direction: ltr; font-weight: 700; color: var(--gold-light);">40, 41, 42, 43, 44, 45</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-dim);">رنگ‌های قابل سفارش:</span>
+                <span id="dossierColors" style="color: var(--text-main);">مشکی واکس‌خورده، قهوه‌ای تیره</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-dim);">ظرفیت تولید هفتگی:</span>
+                <span style="color: #4cd964; font-weight: 700;">حداکثر ۱۲۰ جفت در هر بچ</span>
+              </div>
+            </div>
+
+            <div style="margin-top: auto; padding: 0.85rem; background: rgba(61, 36, 21, 0.4); border-radius: var(--r-sm); border: 1px dashed var(--border-medium); font-size: 0.76rem; color: var(--leather-caramel); line-height: 1.5;">
+              💼 <strong>استعلام ثبت سفارش تجاری:</strong> جهت ثبت سفارش بنکداری یا استعلام زمان‌بندی تحویل بچ تیراژ، با آتلیه تماس بگیرید یا از طریق مدیر فروش اقدام فرمایید.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dyf-modal-footer">
+        <button type="button" class="dyf-btn dyf-btn-outline" data-close>بستن پرونده</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- کانتینر اعلان‌های شناور Toast -->
+  <div id="dyfToastContainer" class="dyf-toast-container" aria-live="polite"></div>
+
+  <!-- جاوااسکریپت اختصاصی کاتالوگ مشتری -->
+  <script src="assets/js/catalog.js"></script>
+</body>
+</html>
