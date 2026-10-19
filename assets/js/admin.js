@@ -281,6 +281,81 @@
     },
   ];
 
+  const DEFAULT_CUSTOMERS = [
+    {
+      id: 101,
+      code: 'CUST-101',
+      nameFa: 'حاج مصطفی کمالی',
+      nameEn: 'Haj Mostafa Kamali',
+      shop: 'بنکداری و پخش کمالی (بازار تهران)',
+      phone: '09121112233',
+      status: 'active',
+      directAccess: {
+        enabled: true,
+        categories: ['لاین رسمی و اداری', 'لاین چرم لوکس دست‌دوز'],
+        addModels: [102],
+        excludeModels: [104],
+        duration: '15m',
+        deadline: '5d',
+        lastLogin: 'دیروز ۱۶:۲۰',
+      },
+    },
+    {
+      id: 102,
+      code: 'CUST-102',
+      nameFa: 'مهندس امید شمس',
+      nameEn: 'Omid Shams',
+      shop: 'بازرگانی کفش امید (تبریز)',
+      phone: '09142223344',
+      status: 'active',
+      directAccess: {
+        enabled: true,
+        categories: ['لاین رسمی و اداری', 'لاین اسپرت و کژوال', 'لاین چرم لوکس دست‌دوز'],
+        addModels: [],
+        excludeModels: [],
+        duration: 'unlimited',
+        deadline: 'none',
+        lastLogin: '۳ روز پیش',
+      },
+    },
+    {
+      id: 103,
+      code: 'CUST-103',
+      nameFa: 'سپهر نوری‌زاده',
+      nameEn: 'Sepehr Nourizadeh',
+      shop: 'گالری کفش سپهر (شیراز)',
+      phone: '09173334455',
+      status: 'active',
+      directAccess: {
+        enabled: false,
+        categories: ['لاین اسپرت و کژوال'],
+        addModels: [],
+        excludeModels: [],
+        duration: '30m',
+        deadline: '2d',
+        lastLogin: '-',
+      },
+    },
+    {
+      id: 104,
+      code: 'CUST-104',
+      nameFa: 'آرتین قوامی',
+      nameEn: 'Artin Ghavami',
+      shop: 'بوتیک لوکس آرتین (اصفهان)',
+      phone: '09134445566',
+      status: 'active',
+      directAccess: {
+        enabled: true,
+        categories: ['لاین چرم لوکس دست‌دوز', 'نیم‌بوت و پوتین کلاسیک'],
+        addModels: [101],
+        excludeModels: [],
+        duration: '1h',
+        deadline: '7d',
+        lastLogin: 'هفته گذشته',
+      },
+    },
+  ];
+
   const DYF_DATA = {
     admin: {
       name: 'مهدی مالوندی',
@@ -2624,6 +2699,680 @@
   window.CategoriesController = CategoriesController;
 
   // ==========================================================================
+  // ۱۰. ماژول مدیریت مشتریان و دسترسی مستقیم (Task 4: Customers & Direct Access)
+  // ==========================================================================
+  const CustomersController = {
+    customers: [],
+    searchQuery: '',
+    selectedStatus: 'all', // 'all', 'active', 'inactive'
+    viewMode: 'grid', // 'grid' or 'table'
+    currentViewingCustomerId: null,
+
+    init() {
+      this.loadCustomers();
+      this.bindEvents();
+      this.render();
+      this.updateGlobalCounters();
+    },
+
+    loadCustomers() {
+      try {
+        const saved = localStorage.getItem('dyf_admin_customers_v1');
+        if (saved) {
+          this.customers = JSON.parse(saved);
+        } else {
+          this.customers = [...DEFAULT_CUSTOMERS];
+          this.saveCustomers(false);
+        }
+      } catch (e) {
+        this.customers = [...DEFAULT_CUSTOMERS];
+      }
+    },
+
+    saveCustomers(showToast = true) {
+      try {
+        localStorage.setItem('dyf_admin_customers_v1', JSON.stringify(this.customers));
+        this.updateGlobalCounters();
+        if (showToast) {
+          DYF_Toast.show({
+            type: 'success',
+            title: 'به‌روزرسانی مشتریان',
+            message: 'اطلاعات مشتریان و تنظیمات دسترسی مستقیم با موفقیت ذخیره شد.',
+          });
+        }
+      } catch (e) {
+        console.error('Error saving customers:', e);
+      }
+    },
+
+    bindEvents() {
+      // جست‌وجوی زنده مشتریان
+      const searchInput = document.getElementById('customerSearchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          this.searchQuery = e.target.value.trim().toLowerCase();
+          this.render();
+        });
+      }
+
+      // فیلتر وضعیت
+      document.querySelectorAll('[data-cust-status]').forEach((tab) => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('[data-cust-status]').forEach((t) => t.classList.remove('is-active'));
+          tab.classList.add('is-active');
+          this.selectedStatus = tab.getAttribute('data-cust-status') || 'all';
+          this.render();
+        });
+      });
+
+      // سوئیچ گرید / جدول
+      const gridBtn = document.getElementById('customersViewGridBtn');
+      const tableBtn = document.getElementById('customersViewTableBtn');
+      if (gridBtn && tableBtn) {
+        gridBtn.addEventListener('click', () => {
+          this.viewMode = 'grid';
+          gridBtn.classList.add('is-active');
+          tableBtn.classList.remove('is-active');
+          this.render();
+        });
+        tableBtn.addEventListener('click', () => {
+          this.viewMode = 'table';
+          tableBtn.classList.add('is-active');
+          gridBtn.classList.remove('is-active');
+          this.render();
+        });
+      }
+
+      // دکمه بازنشانی فیلترها
+      const resetBtn = document.getElementById('resetCustomerFiltersBtn');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          this.searchQuery = '';
+          this.selectedStatus = 'all';
+          if (searchInput) searchInput.value = '';
+          document.querySelectorAll('[data-cust-status]').forEach((t) => {
+            t.classList.toggle('is-active', t.getAttribute('data-cust-status') === 'all');
+          });
+          this.render();
+        });
+      }
+
+      // باز کردن مودال ثبت مشتری
+      const openAddBtn = document.getElementById('openAddCustomerModalBtn');
+      if (openAddBtn) {
+        openAddBtn.addEventListener('click', () => this.openCreateModal());
+      }
+
+      // ذخیره فرم مشتری
+      const saveBtn = document.getElementById('saveCustomerBtn');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', () => this.handleSaveForm());
+      }
+
+      // سوئیچ فعال/غیرفعال‌سازی دسترسی مستقیم درون مودال جزئیات
+      const directToggle = document.getElementById('directAccessToggle');
+      if (directToggle) {
+        directToggle.addEventListener('change', (e) => {
+          const isEnabled = e.target.checked;
+          const label = document.getElementById('directAccessStatusLabel');
+          const controls = document.getElementById('directAccessControlsWrap');
+          if (label) {
+            label.textContent = isEnabled ? 'دسترسی فعال' : 'دسترسی غیرفعال';
+            label.style.color = isEnabled ? 'var(--gold-primary)' : 'var(--text-muted)';
+          }
+          if (controls) {
+            controls.style.opacity = isEnabled ? '1' : '0.45';
+            controls.style.pointerEvents = isEnabled ? 'all' : 'none';
+          }
+        });
+      }
+
+      // ذخیره تنظیمات دسترسی مستقیم
+      const saveDirectBtn = document.getElementById('saveDirectAccessBtn');
+      if (saveDirectBtn) {
+        saveDirectBtn.addEventListener('click', () => this.handleSaveDirectAccess());
+      }
+    },
+
+    openCreateModal() {
+      const modeInput = document.getElementById('customerFormMode');
+      const idInput = document.getElementById('customerFormId');
+      const nameFa = document.getElementById('customerFormNameFa');
+      const nameEn = document.getElementById('customerFormNameEn');
+      const shop = document.getElementById('customerFormShop');
+      const phone = document.getElementById('customerFormPhone');
+      const modalTitle = document.getElementById('customerFormModalTitle');
+
+      if (modeInput) modeInput.value = 'create';
+      if (modalTitle) modalTitle.textContent = 'ثبت مشتری و همکار جدید';
+
+      const maxId = this.customers.reduce((max, c) => Math.max(max, c.id || 0), 100);
+      const nextId = maxId + 1;
+      if (idInput) idInput.value = `CUST-${nextId}`;
+
+      if (nameFa) nameFa.value = '';
+      if (nameEn) nameEn.value = '';
+      if (shop) shop.value = '';
+      if (phone) phone.value = '';
+
+      const activeRadio = document.querySelector('input[name="customerStatus"][value="active"]');
+      if (activeRadio) activeRadio.checked = true;
+
+      DYF_Modal.open('modalCustomerForm');
+      if (nameFa) setTimeout(() => nameFa.focus(), 200);
+    },
+
+    openEditModal(id) {
+      const cust = this.customers.find((c) => c.id === id);
+      if (!cust) return;
+
+      const modeInput = document.getElementById('customerFormMode');
+      const idInput = document.getElementById('customerFormId');
+      const nameFa = document.getElementById('customerFormNameFa');
+      const nameEn = document.getElementById('customerFormNameEn');
+      const shop = document.getElementById('customerFormShop');
+      const phone = document.getElementById('customerFormPhone');
+      const modalTitle = document.getElementById('customerFormModalTitle');
+
+      if (modeInput) modeInput.value = 'edit';
+      if (modalTitle) modalTitle.textContent = `ویرایش مشخصات مشتری (${cust.code})`;
+      if (idInput) idInput.value = cust.code || `CUST-${cust.id}`;
+
+      if (nameFa) nameFa.value = cust.nameFa || '';
+      if (nameEn) nameEn.value = cust.nameEn || '';
+      if (shop) shop.value = cust.shop || '';
+      if (phone) phone.value = cust.phone || '';
+
+      const statusRadio = document.querySelector(`input[name="customerStatus"][value="${cust.status}"]`);
+      if (statusRadio) statusRadio.checked = true;
+
+      DYF_Modal.open('modalCustomerForm');
+      if (nameFa) setTimeout(() => nameFa.focus(), 200);
+    },
+
+    handleSaveForm() {
+      const mode = document.getElementById('customerFormMode')?.value || 'create';
+      const code = document.getElementById('customerFormId')?.value;
+      const nameFa = document.getElementById('customerFormNameFa')?.value.trim();
+      const nameEn = document.getElementById('customerFormNameEn')?.value.trim();
+      const shop = document.getElementById('customerFormShop')?.value.trim();
+      const phone = document.getElementById('customerFormPhone')?.value.trim();
+      const status = document.querySelector('input[name="customerStatus"]:checked')?.value || 'active';
+
+      if (!nameFa) {
+        DYF_Toast.show({ type: 'error', title: 'نام مشتری الزامی است', message: 'لطفاً نام و نام خانوادگی فارسی مشتری را وارد کنید.' });
+        document.getElementById('customerFormNameFa')?.focus();
+        return;
+      }
+
+      if (!nameEn) {
+        DYF_Toast.show({ type: 'error', title: 'نام انگلیسی الزامی است', message: 'لطفاً نام و نام خانوادگی انگلیسی مشتری را وارد کنید.' });
+        document.getElementById('customerFormNameEn')?.focus();
+        return;
+      }
+
+      if (!phone || !phone.match(/^09\d{9}$/)) {
+        DYF_Toast.show({ type: 'error', title: 'شماره تلفن نامعتبر', message: 'شماره تلفن همراه باید با ۰۹ شروع شده و ۱۱ رقم باشد.' });
+        document.getElementById('customerFormPhone')?.focus();
+        return;
+      }
+
+      if (mode === 'create') {
+        const id = parseInt(code.replace(/\D/g, ''), 10) || (Date.now() % 10000);
+        const existsPhone = this.customers.some((c) => c.phone === phone);
+        if (existsPhone) {
+          DYF_Toast.show({ type: 'error', title: 'شماره تکراری', message: 'مشتری دیگری با این شماره تلفن قبلاً در سامانه ثبت شده است.' });
+          return;
+        }
+
+        const newCust = {
+          id,
+          code,
+          nameFa,
+          nameEn,
+          shop: shop || 'فروشگاه آزاد',
+          phone,
+          status,
+          directAccess: {
+            enabled: false,
+            categories: ['لاین رسمی و اداری'],
+            addModels: [],
+            excludeModels: [],
+            duration: '30m',
+            deadline: 'none',
+            lastLogin: '-',
+          },
+        };
+
+        this.customers.push(newCust);
+        this.saveCustomers();
+        DYF_Toast.show({
+          type: 'success',
+          title: 'مشتری ثبت شد',
+          message: `پروفایل «${nameFa}» با شناسه ${code} با موفقیت ایجاد گردید.`,
+        });
+      } else {
+        const id = parseInt(code.replace(/\D/g, ''), 10);
+        const cust = this.customers.find((c) => c.id === id || c.code === code);
+        if (cust) {
+          cust.nameFa = nameFa;
+          cust.nameEn = nameEn;
+          cust.shop = shop;
+          cust.phone = phone;
+          cust.status = status;
+          this.saveCustomers();
+          DYF_Toast.show({
+            type: 'success',
+            title: 'ویرایش موفق',
+            message: `مشخصات مشتری «${nameFa}» به‌روزرسانی شد.`,
+          });
+        }
+      }
+
+      DYF_Modal.close('modalCustomerForm');
+      this.render();
+    },
+
+    openDirectAccessModal(id) {
+      const cust = this.customers.find((c) => c.id === id);
+      if (!cust) return;
+
+      this.currentViewingCustomerId = id;
+
+      const initials = cust.nameFa.split(' ').map((p) => p[0]).slice(0, 2).join('‌') || 'م';
+      const avatarEl = document.getElementById('custDetailsAvatar');
+      const nameFaEl = document.getElementById('custDetailsNameFa');
+      const nameEnEl = document.getElementById('custDetailsNameEn');
+      const shopEl = document.getElementById('custDetailsShop');
+      const idEl = document.getElementById('custDetailsId');
+      const phoneEl = document.getElementById('custDetailsPhone');
+      const badgeEl = document.getElementById('custDetailsAccountBadge');
+
+      if (avatarEl) avatarEl.textContent = initials || 'م';
+      if (nameFaEl) nameFaEl.textContent = cust.nameFa;
+      if (nameEnEl) nameEnEl.textContent = cust.nameEn;
+      if (shopEl) shopEl.textContent = cust.shop || '-';
+      if (idEl) idEl.textContent = cust.code;
+      if (phoneEl) phoneEl.textContent = cust.phone;
+      if (badgeEl) {
+        badgeEl.innerHTML =
+          cust.status === 'active'
+            ? `<span class="dyf-badge dyf-badge-active">حساب فعال</span>`
+            : `<span class="dyf-badge dyf-badge-disabled">حساب مسدود</span>`;
+      }
+
+      const da = cust.directAccess || {
+        enabled: false,
+        categories: [],
+        addModels: [],
+        excludeModels: [],
+        duration: 'unlimited',
+        deadline: 'none',
+      };
+
+      const toggle = document.getElementById('directAccessToggle');
+      const label = document.getElementById('directAccessStatusLabel');
+      const controls = document.getElementById('directAccessControlsWrap');
+      const durSelect = document.getElementById('directAccessDurationSelect');
+      const ddlSelect = document.getElementById('directAccessDeadlineSelect');
+
+      if (toggle) toggle.checked = da.enabled;
+      if (label) {
+        label.textContent = da.enabled ? 'دسترسی فعال' : 'دسترسی غیرفعال';
+        label.style.color = da.enabled ? 'var(--gold-primary)' : 'var(--text-muted)';
+      }
+      if (controls) {
+        controls.style.opacity = da.enabled ? '1' : '0.45';
+        controls.style.pointerEvents = da.enabled ? 'all' : 'none';
+      }
+      if (durSelect) durSelect.value = da.duration || 'unlimited';
+      if (ddlSelect) ddlSelect.value = da.deadline || 'none';
+
+      // ۱. رندر دسته‌بندی‌های مجاز
+      const catWrap = document.getElementById('directAccessCategoriesWrap');
+      if (catWrap) {
+        const allCats = CategoriesController.categories || DEFAULT_CATEGORIES;
+        catWrap.innerHTML = allCats
+          .map((cat) => {
+            const isChecked = (da.categories || []).includes(cat.name);
+            return `
+              <label class="dyf-chip-checkbox">
+                <input type="checkbox" name="daCategory" value="${cat.name}" ${isChecked ? 'checked' : ''}>
+                <span class="dyf-chip-pill">${cat.name}</span>
+              </label>
+            `;
+          })
+          .join('');
+      }
+
+      // ۲. رندر افزودن مدل‌های خاص
+      const addWrap = document.getElementById('directAccessAddModelsWrap');
+      if (addWrap) {
+        const allShoes = ShoesController.models || DEFAULT_SHOES;
+        addWrap.innerHTML = allShoes
+          .filter((s) => s.status === 'published')
+          .map((shoe) => {
+            const isChecked = (da.addModels || []).includes(shoe.id);
+            return `
+              <label class="dyf-chip-checkbox">
+                <input type="checkbox" name="daAddModel" value="${shoe.id}" ${isChecked ? 'checked' : ''}>
+                <span class="dyf-chip-pill">+ DYF-${shoe.id}: ${shoe.title.substring(0, 28)}...</span>
+              </label>
+            `;
+          })
+          .join('');
+      }
+
+      // ۳. رندر مستثناکردن مدل‌های خاص
+      const excWrap = document.getElementById('directAccessExcludeModelsWrap');
+      if (excWrap) {
+        const allShoes = ShoesController.models || DEFAULT_SHOES;
+        excWrap.innerHTML = allShoes
+          .filter((s) => s.status === 'published')
+          .map((shoe) => {
+            const isChecked = (da.excludeModels || []).includes(shoe.id);
+            return `
+              <label class="dyf-chip-checkbox">
+                <input type="checkbox" name="daExcludeModel" value="${shoe.id}" ${isChecked ? 'checked' : ''}>
+                <span class="dyf-chip-pill" style="border-color: rgba(224, 86, 74, 0.35);">🚫 DYF-${shoe.id}: ${shoe.title.substring(0, 26)}...</span>
+              </label>
+            `;
+          })
+          .join('');
+      }
+
+      DYF_Modal.open('modalCustomerDetails');
+    },
+
+    handleSaveDirectAccess() {
+      const id = this.currentViewingCustomerId;
+      const cust = this.customers.find((c) => c.id === id);
+      if (!cust) return;
+
+      const enabled = document.getElementById('directAccessToggle')?.checked || false;
+      const duration = document.getElementById('directAccessDurationSelect')?.value || 'unlimited';
+      const deadline = document.getElementById('directAccessDeadlineSelect')?.value || 'none';
+
+      const selectedCats = [];
+      document.querySelectorAll('input[name="daCategory"]:checked').forEach((chk) => selectedCats.push(chk.value));
+
+      const addModels = [];
+      document.querySelectorAll('input[name="daAddModel"]:checked').forEach((chk) => addModels.push(parseInt(chk.value, 10)));
+
+      const excludeModels = [];
+      document.querySelectorAll('input[name="daExcludeModel"]:checked').forEach((chk) => excludeModels.push(parseInt(chk.value, 10)));
+
+      cust.directAccess = {
+        enabled,
+        categories: selectedCats,
+        addModels,
+        excludeModels,
+        duration,
+        deadline,
+        lastLogin: cust.directAccess?.lastLogin || '-',
+      };
+
+      this.saveCustomers();
+      this.render();
+      DYF_Modal.close('modalCustomerDetails');
+
+      DYF_Toast.show({
+        type: 'success',
+        title: 'تنظیمات دسترسی مستقیم ذخیره شد',
+        message: `قواعد کاتالوگ مستقیم برای «${cust.nameFa}» با موفقیت اعمال شد.`,
+      });
+    },
+
+    changeStatus(id, newStatus) {
+      const cust = this.customers.find((c) => c.id === id);
+      if (!cust) return;
+
+      if (newStatus === 'inactive') {
+        DYF_Modal.confirm({
+          title: 'غیرفعال‌سازی حساب مشتری',
+          message: `
+            آیا از غیرفعال‌سازی حساب <strong>«${cust.nameFa}»</strong> اطمینان دارید؟<br><br>
+            <div style="background: rgba(36, 30, 25, 0.6); padding: 0.85rem; border-radius: var(--r-sm); font-size: 0.82rem; color: var(--leather-caramel);">
+              ⚠️ <strong>پیامد عملیات:</strong> ورود مستقیم پیامکی و دسترسی این مشتری به کاتالوگ مسدود می‌شود؛ اما سوابق سفارشات و اطلاعات حساب حفظ خواهد شد.
+            </div>
+          `,
+          confirmText: 'غیرفعال‌سازی مشتری',
+          cancelText: 'انصراف',
+          onConfirm: () => {
+            cust.status = 'inactive';
+            this.saveCustomers();
+            this.render();
+            DYF_Toast.show({
+              type: 'info',
+              title: 'حساب مسدود شد',
+              message: `حساب کاربری «${cust.nameFa}» غیرفعال گردید.`,
+            });
+          },
+        });
+      } else {
+        cust.status = 'active';
+        this.saveCustomers();
+        this.render();
+        DYF_Toast.show({
+          type: 'success',
+          title: 'حساب فعال شد',
+          message: `حساب کاربری «${cust.nameFa}» مجدداً فعال گردید.`,
+        });
+      }
+    },
+
+    updateGlobalCounters() {
+      const allCount = this.customers.length;
+      const activeCount = this.customers.filter((c) => c.status === 'active').length;
+      const inactiveCount = this.customers.filter((c) => c.status === 'inactive').length;
+
+      const elAll = document.getElementById('countAllCustomers');
+      const elAct = document.getElementById('countActiveCustomers');
+      const elInact = document.getElementById('countInactiveCustomers');
+      const badge = document.getElementById('customersCountSummaryBadge');
+
+      if (elAll) elAll.textContent = allCount;
+      if (elAct) elAct.textContent = activeCount;
+      if (elInact) elInact.textContent = inactiveCount;
+      if (badge) badge.textContent = `${activeCount} مشتری فعال (${allCount} کل)`;
+
+      // سایدبار
+      const navCounter = document.querySelector('a[href="#customers"] .dyf-nav-counter');
+      if (navCounter) navCounter.textContent = allCount;
+
+      // داشبورد
+      const dashStat = document.querySelectorAll('.dyf-stat-card .dyf-stat-value')[1];
+      if (dashStat) dashStat.innerHTML = `${activeCount} <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted);">مشتری</span>`;
+    },
+
+    getFilteredCustomers() {
+      return this.customers.filter((c) => {
+        if (this.searchQuery) {
+          const matchFa = (c.nameFa || '').toLowerCase().includes(this.searchQuery);
+          const matchEn = (c.nameEn || '').toLowerCase().includes(this.searchQuery);
+          const matchShop = (c.shop || '').toLowerCase().includes(this.searchQuery);
+          const matchPhone = (c.phone || '').includes(this.searchQuery);
+          const matchCode = (c.code || '').toLowerCase().includes(this.searchQuery);
+          if (!matchFa && !matchEn && !matchShop && !matchPhone && !matchCode) return false;
+        }
+
+        if (this.selectedStatus !== 'all') {
+          if (c.status !== this.selectedStatus) return false;
+        }
+
+        return true;
+      });
+    },
+
+    render() {
+      const filtered = this.getFilteredCustomers();
+      const gridContainer = document.getElementById('customersGridContainer');
+      const tableContainer = document.getElementById('customersTableContainer');
+      const tableBody = document.getElementById('customersTableBody');
+      const emptyState = document.getElementById('customersEmptyState');
+
+      this.updateGlobalCounters();
+
+      if (!filtered.length) {
+        if (gridContainer) gridContainer.style.display = 'none';
+        if (tableContainer) tableContainer.style.display = 'none';
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+      }
+
+      if (emptyState) emptyState.style.display = 'none';
+
+      if (this.viewMode === 'grid') {
+        if (tableContainer) tableContainer.style.display = 'none';
+        if (gridContainer) {
+          gridContainer.style.display = 'grid';
+          gridContainer.innerHTML = filtered.map((c) => this.renderCardHtml(c)).join('');
+          this.bindCardActions(gridContainer);
+        }
+      } else {
+        if (gridContainer) gridContainer.style.display = 'none';
+        if (tableContainer && tableBody) {
+          tableContainer.style.display = 'block';
+          tableBody.innerHTML = filtered.map((c) => this.renderTableRowHtml(c)).join('');
+          this.bindCardActions(tableBody);
+        }
+      }
+    },
+
+    renderCardHtml(cust) {
+      const initials = cust.nameFa.split(' ').map((p) => p[0]).slice(0, 2).join('‌') || 'م';
+      const isDirectActive = cust.directAccess?.enabled;
+
+      return `
+        <article class="dyf-customer-card" data-id="${cust.id}">
+          <div class="dyf-customer-header">
+            <div style="display: flex; align-items: center; gap: 0.85rem;">
+              <div class="dyf-customer-avatar">${initials}</div>
+              <div>
+                <h3 class="dyf-customer-title">${cust.nameFa}</h3>
+                <span class="dyf-customer-en">${cust.nameEn}</span>
+              </div>
+            </div>
+            <div>
+              <span class="dyf-badge ${cust.status === 'active' ? 'dyf-badge-active' : 'dyf-badge-disabled'}">
+                ${cust.status === 'active' ? 'فعال' : 'مسدود'}
+              </span>
+            </div>
+          </div>
+
+          <div class="dyf-customer-shop">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>${cust.shop || 'فروشگاه آزاد'}</span>
+          </div>
+
+          <div class="dyf-customer-info-box">
+            <div class="dyf-customer-info-row">
+              <span style="color: var(--text-dim);">شناسه سیستمی:</span>
+              <span style="font-family: var(--font-title); font-weight: 700; color: var(--gold-light); direction: ltr;">${cust.code}</span>
+            </div>
+            <div class="dyf-customer-info-row">
+              <span style="color: var(--text-dim);">شماره تلفن ورود:</span>
+              <span style="font-family: var(--font-title); font-weight: 600; color: var(--text-main); direction: ltr;">${cust.phone}</span>
+            </div>
+            <div class="dyf-customer-info-row" style="padding-top: 0.35rem; border-top: 1px solid var(--border-subtle);">
+              <span style="color: var(--text-dim);">دسترسی مستقیم کاتالوگ:</span>
+              <span class="dyf-badge ${isDirectActive ? 'dyf-badge-published' : 'dyf-badge-archived'}" style="font-size: 0.68rem;">
+                ${isDirectActive ? 'فعال (OTP مستقیم)' : 'غیرفعال'}
+              </span>
+            </div>
+          </div>
+
+          <div class="dyf-customer-actions">
+            <div style="display: flex; gap: 0.4rem;">
+              <button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-access-cust" data-id="${cust.id}">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>دسترسی مستقیم</span>
+              </button>
+              <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-edit-cust" data-id="${cust.id}">
+                <span>ویرایش</span>
+              </button>
+            </div>
+
+            <div>
+              ${
+                cust.status === 'active'
+                  ? `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-toggle-cust" data-id="${cust.id}" data-action="inactive" style="color: var(--status-danger); border-color: rgba(224, 86, 74, 0.35);">مسدود</button>`
+                  : `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-toggle-cust" data-id="${cust.id}" data-action="active" style="color: #4cd964; border-color: rgba(76, 217, 100, 0.35);">فعال</button>`
+              }
+            </div>
+          </div>
+        </article>
+      `;
+    },
+
+    renderTableRowHtml(cust) {
+      const isDirectActive = cust.directAccess?.enabled;
+
+      return `
+        <tr data-id="${cust.id}">
+          <td style="font-family: var(--font-title); font-weight: 700; color: var(--gold-light); direction: ltr; text-align: right;">${cust.code}</td>
+          <td>
+            <div style="font-weight: 700; color: var(--text-ivory);">${cust.nameFa}</div>
+            <div style="font-size: 0.72rem; color: var(--text-dim); font-family: var(--font-title);">${cust.nameEn}</div>
+          </td>
+          <td style="font-size: 0.82rem; color: var(--text-muted);">${cust.shop || '-'}</td>
+          <td style="font-family: var(--font-title); direction: ltr; text-align: right; color: var(--text-main);">${cust.phone}</td>
+          <td>
+            <span class="dyf-badge ${cust.status === 'active' ? 'dyf-badge-active' : 'dyf-badge-disabled'}">
+              ${cust.status === 'active' ? 'فعال' : 'مسدود'}
+            </span>
+          </td>
+          <td>
+            <span class="dyf-badge ${isDirectActive ? 'dyf-badge-published' : 'dyf-badge-archived'}">
+              ${isDirectActive ? 'مستقیم فعال' : 'غیرفعال'}
+            </span>
+          </td>
+          <td>
+            <div style="display: flex; gap: 0.35rem; align-items: center;">
+              <button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-access-cust" data-id="${cust.id}">دسترسی</button>
+              <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-edit-cust" data-id="${cust.id}">ویرایش</button>
+              ${
+                cust.status === 'active'
+                  ? `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-toggle-cust" data-id="${cust.id}" data-action="inactive" style="color: var(--status-danger);">مسدود</button>`
+                  : `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-toggle-cust" data-id="${cust.id}" data-action="active" style="color: #4cd964;">فعال</button>`
+              }
+            </div>
+          </td>
+        </tr>
+      `;
+    },
+
+    bindCardActions(container) {
+      container.querySelectorAll('.js-edit-cust').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(btn.getAttribute('data-id'), 10);
+          this.openEditModal(id);
+        });
+      });
+
+      container.querySelectorAll('.js-access-cust').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(btn.getAttribute('data-id'), 10);
+          this.openDirectAccessModal(id);
+        });
+      });
+
+      container.querySelectorAll('.js-toggle-cust').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(btn.getAttribute('data-id'), 10);
+          const action = btn.getAttribute('data-action');
+          this.changeStatus(id, action);
+        });
+      });
+    },
+  };
+
+  window.CustomersController = CustomersController;
+
+  // ==========================================================================
   // ۹. کنترلر نمایش و تست آزمایشگاهی کامپوننت‌ها (Component Kitchen-Sink)
   // ==========================================================================
   const ComponentDemoController = {
@@ -2711,6 +3460,7 @@
     DashboardController.init();
     ShoesController.init();
     CategoriesController.init();
+    CustomersController.init();
     ComponentDemoController.init();
   });
 })();
