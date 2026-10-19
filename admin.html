@@ -759,16 +759,94 @@
              ویو ۵: مدیریت لینک‌های اختصاصی (#access-links — تسک ۵)
              ================================================================== -->
         <section id="viewAccessLinks" class="dyf-view">
-          <div class="dyf-panel-card">
-            <div class="dyf-panel-card-header">
-              <h2 class="dyf-panel-card-title">مدیریت لینک‌های دسترسی اختصاصی (تسک ۵ در نوبت توسعه)</h2>
-              <a href="#dashboard" class="dyf-btn dyf-btn-outline dyf-btn-sm">بازگشت به پیشخوان</a>
+          <!-- هدر سکشن لینک‌ها -->
+          <div class="dyf-dashboard-hero" style="margin-bottom: 1.5rem; padding: 1.4rem 1.8rem;">
+            <div class="dyf-dashboard-hero-text">
+              <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.35rem;">
+                <h1>مدیریت لینک‌های دسترسی اختصاصی کاتالوگ</h1>
+                <span id="linksCountSummaryBadge" class="dyf-badge dyf-badge-active" style="font-size: 0.75rem;">۲ لینک فعال</span>
+              </div>
+              <p>صدور و رصد لینک‌های توکن‌دار، تعیین مهلت ورود، مدت مشاهده و تعریف قلمرو محصولات مجاز برای هر همکار</p>
             </div>
-            <div class="dyf-empty-state">
-              <svg class="dyf-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-              <h3 class="dyf-empty-title">ویزارد ۵ مرحله‌ای صدور لینک اختصاصی</h3>
-              <p class="dyf-empty-desc">تعیین مهلت شروع، مدت مشاهده، انتخاب دسته‌بندی‌ها و مدل‌های مجاز یا مستثنا در تسک ۵ افزوده خواهد شد.</p>
+            <div class="dyf-dashboard-hero-meta">
+              <button type="button" id="openCreateLinkWizardBtn" class="dyf-btn dyf-btn-primary dyf-btn-lg">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                <span>+ صدور لینک جدید (ویزارد)</span>
+              </button>
             </div>
+          </div>
+
+          <!-- نوار ابزار جست‌وجو و فیلتر لینک‌ها -->
+          <div class="dyf-toolbar">
+            <!-- جست‌وجو در نام گیرنده، مشتری، توکن -->
+            <div class="dyf-toolbar-search">
+              <svg class="dyf-quick-search-icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="linkSearchInput" class="dyf-quick-search-input" placeholder="جست‌وجو با نام گیرنده، مشتری، شماره یا توکن لینک...">
+            </div>
+
+            <!-- فیلتر روش احراز هویت -->
+            <div style="min-width: 190px;">
+              <select id="linkAuthFilter" class="dyf-select" style="height: 38px; padding-top: 0.4rem; padding-bottom: 0.4rem;">
+                <option value="all">همه روش‌های ورود</option>
+                <option value="direct">لینک مستقیم (بدون OTP)</option>
+                <option value="otp">تأیید پیامکی (با OTP)</option>
+              </select>
+            </div>
+
+            <!-- تب‌های فیلتر وضعیت -->
+            <div class="dyf-filter-tabs">
+              <button type="button" class="dyf-filter-tab is-active" data-link-status="all">همه (<span id="countAllLinks">۴</span>)</button>
+              <button type="button" class="dyf-filter-tab" data-link-status="active">فعال (<span id="countActiveLinks">۲</span>)</button>
+              <button type="button" class="dyf-filter-tab" data-link-status="pending">در انتظار (<span id="countPendingLinks">۱</span>)</button>
+              <button type="button" class="dyf-filter-tab" data-link-status="expired">منقضی (<span id="countExpiredLinks">۱</span>)</button>
+            </div>
+
+            <!-- سوئیچ گرید / جدول -->
+            <div class="dyf-view-toggle">
+              <button type="button" id="linksViewGridBtn" class="dyf-view-btn is-active" title="نمایش کارتی">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+              </button>
+              <button type="button" id="linksViewTableBtn" class="dyf-view-btn" title="نمایش جدولی">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" x2="21" y1="6" y2="6"/><line x1="3" x2="21" y1="12" y2="12"/><line x1="3" x2="21" y1="18" y2="18"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- گرید کارت‌های لینک‌های اختصاصی -->
+          <div id="linksGridContainer" class="dyf-links-grid">
+            <!-- رندر پویا توسط JS -->
+          </div>
+
+          <!-- جدول داده‌های لینک‌های اختصاصی -->
+          <div id="linksTableContainer" class="dyf-panel-card" style="display: none;">
+            <div class="dyf-table-container">
+              <table class="dyf-table">
+                <thead>
+                  <tr>
+                    <th>شناسه و توکن</th>
+                    <th>نام گیرنده و مشتری</th>
+                    <th>روش ورود</th>
+                    <th>مهلت شروع</th>
+                    <th>مدت مشاهده</th>
+                    <th>وضعیت</th>
+                    <th>عملیات</th>
+                  </tr>
+                </thead>
+                <tbody id="linksTableBody">
+                  <!-- رندر پویا توسط JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- وضعیت بدون نتیجه لینک‌ها -->
+          <div id="linksEmptyState" class="dyf-panel-card dyf-empty-state" style="display: none;">
+            <svg class="dyf-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="m9 9 4 4"/><path d="m13 9-4 4"/></svg>
+            <h3 class="dyf-empty-title">لینکی با مشخصات انتخابی پیدا نشد</h3>
+            <p class="dyf-empty-desc">می‌توانید فیلترها را بازنشانی کرده یا با استفاده از ویزارد، لینک جدیدی صادر فرمایید.</p>
+            <button type="button" id="resetLinkFiltersBtn" class="dyf-btn dyf-btn-outline">
+              بازنشانی جست‌وجو
+            </button>
           </div>
         </section>
 
@@ -1369,6 +1447,287 @@
         <button type="button" id="saveDirectAccessBtn" class="dyf-btn dyf-btn-primary">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           <span>ذخیره تنظیمات دسترسی مستقیم</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       ۸. مودال ویزارد ۵ مرحله‌ای صدور لینک اختصاصی (Task 5: Link Wizard Modal)
+       ====================================================================== -->
+  <div id="modalCreateLinkWizard" class="dyf-modal-backdrop" aria-hidden="true">
+    <div class="dyf-modal-card" style="max-width: 760px; max-height: 92vh; display: flex; flex-direction: column;">
+      <div class="dyf-modal-header" style="border-bottom: none; padding-bottom: 0.5rem;">
+        <div>
+          <h3 class="dyf-modal-title">صدور لینک اختصاصی کاتالوگ (ویزارد)</h3>
+          <p style="font-size: 0.76rem; color: var(--text-muted); margin-top: 0.2rem;">پیکربندی هویت گیرنده، شیوه ورود، محصولات مجاز و زمان‌بندی</p>
+        </div>
+        <button type="button" class="dyf-modal-close" data-close>&times;</button>
+      </div>
+
+      <!-- نوار استپ‌های ویزارد -->
+      <div class="dyf-wizard-steps" id="linkWizardStepsBar">
+        <div class="dyf-wizard-step is-active" data-step="1">
+          <div class="dyf-wizard-step-circle">۱</div>
+          <span>مشخصات گیرنده</span>
+        </div>
+        <div class="dyf-wizard-step" data-step="2">
+          <div class="dyf-wizard-step-circle">۲</div>
+          <span>روش ورود</span>
+        </div>
+        <div class="dyf-wizard-step" data-step="3">
+          <div class="dyf-wizard-step-circle">۳</div>
+          <span>محصولات مجاز</span>
+        </div>
+        <div class="dyf-wizard-step" data-step="4">
+          <div class="dyf-wizard-step-circle">۴</div>
+          <span>زمان و اعتبار</span>
+        </div>
+        <div class="dyf-wizard-step" data-step="5">
+          <div class="dyf-wizard-step-circle">۵</div>
+          <span>بازبینی و صدور</span>
+        </div>
+      </div>
+
+      <!-- محتوای مراحل -->
+      <div style="flex: 1; overflow-y: auto;">
+        <!-- مرحله اول: مشخصات گیرنده -->
+        <div class="dyf-wizard-panel is-active" id="wizardPanel1">
+          <div style="margin-bottom: 1.25rem;">
+            <label class="dyf-form-label">نوع گیرنده لینک</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+              <label class="dyf-status-radio-label">
+                <input type="radio" name="wizardRecipientType" value="existing" checked>
+                <div class="dyf-status-radio-card" style="padding: 0.75rem;">
+                  <div style="font-weight: 700; color: var(--gold-light);">انتخاب از مشتریان ثبت‌شده</div>
+                  <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">تکمیل خودکار نام، شماره و اتصال به پروفایل</div>
+                </div>
+              </label>
+
+              <label class="dyf-status-radio-label">
+                <input type="radio" name="wizardRecipientType" value="custom">
+                <div class="dyf-status-radio-card" style="padding: 0.75rem;">
+                  <div style="font-weight: 700; color: var(--gold-light);">گیرنده جدید / همکار موقت</div>
+                  <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">ورود دستی نام و مشخصات مستقل</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- انتخاب مشتری ثبت‌شده -->
+          <div class="dyf-form-group" id="wizardCustomerSelectGroup">
+            <label class="dyf-form-label">انتخاب مشتری</label>
+            <select id="wizardCustomerSelect" class="dyf-select">
+              <!-- رندر پویا توسط JS -->
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+            <div class="dyf-form-group" style="margin: 0;">
+              <label class="dyf-form-label dyf-form-label-required">نام و نام خانوادگی گیرنده (فارسی)</label>
+              <input type="text" id="wizardRecipientFa" class="dyf-input" placeholder="مثال: حاج مصطفی کمالی" required>
+            </div>
+            <div class="dyf-form-group" style="margin: 0;">
+              <label class="dyf-form-label dyf-form-label-required">نام و نام خانوادگی گیرنده (انگلیسی)</label>
+              <input type="text" id="wizardRecipientEn" class="dyf-input" placeholder="e.g. Mostafa Kamali" style="direction: ltr;" required>
+            </div>
+          </div>
+
+          <div class="dyf-form-group">
+            <label class="dyf-form-label" id="wizardPhoneLabel">شماره تلفن همراه گیرنده</label>
+            <input type="tel" id="wizardRecipientPhone" class="dyf-input" placeholder="09121112233" style="direction: ltr; font-family: var(--font-title);">
+            <p class="dyf-form-hint">در صورت انتخاب روش ورود با تایید پیامکی، این فیلد الزامی است.</p>
+          </div>
+        </div>
+
+        <!-- مرحله دوم: انتخاب روش ورود -->
+        <div class="dyf-wizard-panel" id="wizardPanel2">
+          <div style="margin-bottom: 1rem; font-size: 0.86rem; color: var(--text-main);">
+            لطفاً نحوه احراز هویت دارنده لینک را مشخص کنید:
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+            <label class="dyf-status-radio-label">
+              <input type="radio" name="wizardAuthType" value="direct" checked>
+              <div class="dyf-status-radio-card" style="padding: 1.25rem; text-align: right; height: 100%;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                  <span class="dyf-badge dyf-badge-published">روش الف</span>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--gold-primary);"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                </div>
+                <h4 style="font-size: 0.96rem; font-weight: 800; color: var(--text-ivory); margin-bottom: 0.4rem;">لینک مستقیم (Direct Token)</h4>
+                <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.55;">
+                  ورود آنی بدون نیاز به شماره تلفن یا کد پیامکی. دسترسی صرفاً بر پایه داشتن توکن یکتای لینک فراهم می‌گردد.
+                </p>
+                <div style="margin-top: 0.75rem; font-size: 0.72rem; color: var(--text-dim);">
+                  ⚠️ در رابط کاتالوگ مشخص خواهد بود که هویت از طریق تلفن اثبات نشده است.
+                </div>
+              </div>
+            </label>
+
+            <label class="dyf-status-radio-label">
+              <input type="radio" name="wizardAuthType" value="otp">
+              <div class="dyf-status-radio-card" style="padding: 1.25rem; text-align: right; height: 100%;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                  <span class="dyf-badge dyf-badge-active">روش ب</span>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #4cd964;"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" x2="12.01" y1="18" y2="18"/></svg>
+                </div>
+                <h4 style="font-size: 0.96rem; font-weight: 800; color: var(--text-ivory); margin-bottom: 0.4rem;">تأیید شماره همراه (Phone OTP)</h4>
+                <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.55;">
+                  پس از باز کردن لینک، گیرنده باید شماره تلفن مجاز تعریف‌شده را وارد نموده و کد تأیید پیامکی یک‌بارمصرف را ثبت نماید.
+                </p>
+                <div style="margin-top: 0.75rem; font-size: 0.72rem; color: #4cd964;">
+                  🛡️ بالاترین سطح امنیت؛ ورود شماره‌های نامرتبط امکان دسترسی ایجاد نمی‌کند.
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- مرحله سوم: تعیین محصولات مجاز -->
+        <div class="dyf-wizard-panel" id="wizardPanel3">
+          <div style="padding: 0.85rem 1rem; background: rgba(36, 30, 25, 0.4); border-radius: var(--r-sm); border: 1px solid var(--border-subtle); margin-bottom: 1.25rem; font-size: 0.78rem;">
+            <strong>فرمول نمایش کاتالوگ:</strong>
+            <span style="color: var(--gold-light); font-weight: 700;"> (مدل‌های منتشرشده در دسته‌های مجاز + مدل‌های افزوده دستی) - مدل‌های مستثناشده</span>
+          </div>
+
+          <!-- دسته‌بندی‌های مجاز -->
+          <div class="dyf-form-group">
+            <label class="dyf-form-label">دسته‌بندی‌ها و لاین‌های مجاز</label>
+            <div class="dyf-chips-selector" id="wizardCategoriesWrap">
+              <!-- رندر پویا -->
+            </div>
+          </div>
+
+          <!-- افزودن مدل‌های خاص -->
+          <div class="dyf-form-group">
+            <label class="dyf-form-label">افزودن مدل‌های خاص (Add Models)</label>
+            <div class="dyf-chips-selector" id="wizardAddModelsWrap">
+              <!-- رندر پویا -->
+            </div>
+            <p class="dyf-form-hint">مدل‌هایی که حتی اگر در دسته‌بندی بالا نباشند، به کاتالوگ این لینک اضافه می‌شوند.</p>
+          </div>
+
+          <!-- مستثناکردن مدل‌های خاص -->
+          <div class="dyf-form-group">
+            <label class="dyf-form-label" style="color: var(--status-danger);">مستثناکردن مدل‌های خاص (Exclude Models)</label>
+            <div class="dyf-chips-selector" id="wizardExcludeModelsWrap">
+              <!-- رندر پویا -->
+            </div>
+            <p class="dyf-form-hint" style="color: var(--status-danger);">
+              * اولویت استثنا بر انتخاب دسته‌ها حاکم است و این مدل‌ها قطعا پنهان خواهند ماند.
+            </p>
+          </div>
+        </div>
+
+        <!-- مرحله چهارم: زمان و اعتبار -->
+        <div class="dyf-wizard-panel" id="wizardPanel4">
+          <div style="background: rgba(36, 30, 25, 0.5); border: 1px solid var(--border-medium); border-radius: var(--r-md); padding: 1.25rem; margin-bottom: 1.25rem;">
+            <div style="font-weight: 700; color: var(--gold-light); margin-bottom: 0.4rem;">تفکیک دو مفهوم حیاتی زمان‌بندی:</div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.6;">
+              در سیستم کاتالوگ خصوصی DYF، <strong>مهلت شروع دسترسی</strong> و <strong>مدت زمان مشاهده</strong> دو مفهوم کاملاً مجزا هستند و نباید یکسان در نظر گرفته شوند.
+            </p>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+            <div class="dyf-form-group">
+              <label class="dyf-form-label dyf-form-label-required">۱. مهلت شروع دسترسی (انقضای ورود اول)</label>
+              <select id="wizardStartDeadline" class="dyf-select">
+                <option value="24h">۲۴ ساعت از زمان صدور</option>
+                <option value="3d" selected>۳ روز آینده</option>
+                <option value="7d">۱ هفته آینده</option>
+                <option value="30d">۱ ماه آینده</option>
+                <option value="unlimited">نامحدود (بدون انقضای ورود)</option>
+              </select>
+              <p class="dyf-form-hint">آخرین زمانی که گیرنده می‌تواند برای اولین بار روی لینک کلیک کند.</p>
+            </div>
+
+            <div class="dyf-form-group">
+              <label class="dyf-form-label dyf-form-label-required">۲. مدت مشاهده کاتالوگ (پس از اولین ورود)</label>
+              <select id="wizardViewingDuration" class="dyf-select">
+                <option value="10m">۱۰ دقیقه پس از اولین ورود</option>
+                <option value="15m" selected>۱۵ دقیقه پس از اولین ورود</option>
+                <option value="30m">۳۰ دقیقه پس از اولین ورود</option>
+                <option value="2h">۲ ساعت پس از اولین ورود</option>
+                <option value="24h">۲۴ ساعت پس از اولین ورود</option>
+                <option value="unlimited">نامحدود (مشاهده دائم)</option>
+              </select>
+              <p class="dyf-form-hint">تایمر مشاهده از لحظه اولین ورود موفق آغاز می‌گردد.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- مرحله پنجم: بازبینی و صدور -->
+        <div class="dyf-wizard-panel" id="wizardPanel5">
+          <div id="wizardReviewBox">
+            <h4 style="font-size: 0.96rem; font-weight: 800; color: var(--gold-light); margin-bottom: 0.85rem;">خلاصه مشخصات لینک پیش از صدور:</h4>
+            
+            <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--r-md); padding: 1.25rem; font-size: 0.82rem; display: flex; flex-direction: column; gap: 0.65rem;" id="wizardSummaryDetails">
+              <!-- رندر پویا توسط JS -->
+            </div>
+          </div>
+
+          <!-- بخش نتیجه پس از صدور موفق لینک -->
+          <div id="wizardSuccessResult" style="display: none; text-align: center; padding: 1rem 0;">
+            <div style="width: 54px; height: 54px; border-radius: 50%; background: rgba(76, 217, 100, 0.2); border: 2px solid #4cd964; color: #4cd964; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h3 style="font-family: var(--font-title); font-size: 1.2rem; font-weight: 800; color: var(--text-ivory); margin-bottom: 0.35rem;">لینک اختصاصی با موفقیت صادر شد!</h3>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.25rem;">این لینک را کپی کرده و در اختیار خریدار یا بنکدار موردنظر قرار دهید.</p>
+
+            <div class="dyf-link-url-box" style="margin-bottom: 1rem; padding: 0.75rem 1rem;">
+              <span id="wizardGeneratedUrl" class="dyf-link-url-text" style="font-size: 0.82rem;">https://dyf-atelier.ir/catalog.html?token=...</span>
+              <button type="button" id="wizardCopyBtn" class="dyf-btn dyf-btn-primary dyf-btn-sm">
+                <span>کپی لینک</span>
+              </button>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 0.75rem; margin-top: 1.25rem;">
+              <a id="wizardOpenTestLink" href="#" target="_blank" class="dyf-btn dyf-btn-specular dyf-btn-sm">
+                <span>تست بازکردن کاتالوگ (پیش‌نمایش)</span>
+              </a>
+              <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm" data-close>
+                <span>بستن و بازگشت به فهرست</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dyf-modal-footer" id="wizardModalFooter">
+        <button type="button" id="wizardPrevBtn" class="dyf-btn dyf-btn-outline" style="display: none;">مرحله قبل</button>
+        <div style="margin-right: auto; display: flex; gap: 0.5rem;">
+          <button type="button" class="dyf-btn dyf-btn-outline" data-close>انصراف</button>
+          <button type="button" id="wizardNextBtn" class="dyf-btn dyf-btn-primary">مرحله بعد</button>
+          <button type="button" id="wizardGenerateBtn" class="dyf-btn dyf-btn-primary" style="display: none;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            <span>صدور قطعی لینک</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       ۹. مودال جزئیات لینک اختصاصی (Task 5: Link Details Modal)
+       ====================================================================== -->
+  <div id="modalLinkDetails" class="dyf-modal-backdrop" aria-hidden="true">
+    <div class="dyf-modal-card" style="max-width: 650px; max-height: 90vh; overflow-y: auto;">
+      <div class="dyf-modal-header">
+        <div>
+          <h3 class="dyf-modal-title" id="linkDetailsModalTitle">جزئیات و مشخصات لینک</h3>
+          <p style="font-size: 0.76rem; color: var(--text-muted); margin-top: 0.2rem;" id="linkDetailsModalSubtitle">توکن و روش احراز هویت</p>
+        </div>
+        <button type="button" class="dyf-modal-close" data-close>&times;</button>
+      </div>
+
+      <div class="dyf-modal-body" id="linkDetailsBody" style="padding: 1.5rem;">
+        <!-- رندر پویا توسط JS -->
+      </div>
+
+      <div class="dyf-modal-footer">
+        <button type="button" class="dyf-btn dyf-btn-outline" data-close>بستن</button>
+        <button type="button" id="linkDetailsCopyBtn" class="dyf-btn dyf-btn-primary">
+          <span>کپی نشانی لینک</span>
         </button>
       </div>
     </div>

@@ -356,6 +356,89 @@
     },
   ];
 
+  const DEFAULT_ACCESS_LINKS = [
+    {
+      id: 'LNK-9081',
+      token: 'c8f2a91e',
+      recipientFa: 'حاج مصطفی کمالی',
+      recipientEn: 'Haj Mostafa Kamali',
+      customer: 'بنکداری کمالی (بازار تهران)',
+      customerId: 101,
+      phone: '09121112233',
+      authType: 'otp',
+      categories: ['لاین رسمی و اداری', 'لاین چرم لوکس دست‌دوز'],
+      addModels: [],
+      excludeModels: [104],
+      startDeadline: '3d',
+      viewingDuration: '15m',
+      createdAt: '۱۴۰۵/۰۷/۲۸',
+      status: 'active',
+      reason: null,
+      views: 3,
+      url: 'catalog.html?token=c8f2a91e',
+    },
+    {
+      id: 'LNK-9082',
+      token: '9b44fa71',
+      recipientFa: 'مهندس امید شمس',
+      recipientEn: 'Omid Shams',
+      customer: 'بازرگانی کفش امید (تبریز)',
+      customerId: 102,
+      phone: '09142223344',
+      authType: 'direct',
+      categories: ['لاین رسمی و اداری', 'لاین اسپرت و کژوال', 'لاین چرم لوکس دست‌دوز'],
+      addModels: [101],
+      excludeModels: [],
+      startDeadline: '7d',
+      viewingDuration: 'unlimited',
+      createdAt: '۱۴۰۵/۰۷/۲۵',
+      status: 'active',
+      reason: null,
+      views: 8,
+      url: 'catalog.html?token=9b44fa71',
+    },
+    {
+      id: 'LNK-9083',
+      token: 'e110b5c4',
+      recipientFa: 'سپهر نوری‌زاده',
+      recipientEn: 'Sepehr Nourizadeh',
+      customer: 'گالری کفش سپهر (شیراز)',
+      customerId: 103,
+      phone: '09173334455',
+      authType: 'otp',
+      categories: ['لاین اسپرت و کژوال'],
+      addModels: [],
+      excludeModels: [],
+      startDeadline: '24h',
+      viewingDuration: '15m',
+      createdAt: '۱۴۰۵/۰۷/۲۷',
+      status: 'pending',
+      reason: 'در انتظار اولین ورود خریدار',
+      views: 0,
+      url: 'catalog.html?token=e110b5c4',
+    },
+    {
+      id: 'LNK-9084',
+      token: '77fa33d2',
+      recipientFa: 'آرتین قوامی',
+      recipientEn: 'Artin Ghavami',
+      customer: 'بوتیک لوکس آرتین (اصفهان)',
+      customerId: 104,
+      phone: '09134445566',
+      authType: 'direct',
+      categories: ['لاین رسمی و اداری'],
+      addModels: [],
+      excludeModels: [],
+      startDeadline: '24h',
+      viewingDuration: '10m',
+      createdAt: '۱۴۰۵/۰۷/۲۲',
+      status: 'expired',
+      reason: 'پایان مهلت شروع دسترسی (عدم مراجعه در مهلت ۲۴ ساعته)',
+      views: 0,
+      url: 'catalog.html?token=77fa33d2',
+    },
+  ];
+
   const DYF_DATA = {
     admin: {
       name: 'مهدی مالوندی',
@@ -3373,6 +3456,1026 @@
   window.CustomersController = CustomersController;
 
   // ==========================================================================
+  // ۱۱. ماژول مدیریت لینک‌های اختصاصی و ویزارد ۵ مرحله‌ای (Task 5: Access Links)
+  // ==========================================================================
+  const AccessLinksController = {
+    links: [],
+    searchQuery: '',
+    selectedStatus: 'all', // 'all', 'active', 'pending', 'expired', 'deactivated'
+    selectedAuth: 'all', // 'all', 'direct', 'otp'
+    viewMode: 'grid', // 'grid' or 'table'
+    currentStep: 1,
+    currentDetailLink: null,
+    wizardDraft: {
+      recipientType: 'existing',
+      customerId: null,
+      customer: '',
+      recipientFa: '',
+      recipientEn: '',
+      phone: '',
+      authType: 'direct',
+      categories: [],
+      addModels: [],
+      excludeModels: [],
+      startDeadline: '3d',
+      viewingDuration: '15m',
+    },
+
+    init() {
+      this.loadLinks();
+      this.bindEvents();
+      this.render();
+      this.updateGlobalCounters();
+    },
+
+    loadLinks() {
+      try {
+        const saved = localStorage.getItem('dyf_admin_links_v1');
+        if (saved) {
+          this.links = JSON.parse(saved);
+        } else {
+          this.links = [...DEFAULT_ACCESS_LINKS];
+          this.saveLinks(false);
+        }
+      } catch (e) {
+        this.links = [...DEFAULT_ACCESS_LINKS];
+      }
+    },
+
+    saveLinks(showToast = true) {
+      try {
+        localStorage.setItem('dyf_admin_links_v1', JSON.stringify(this.links));
+        this.updateGlobalCounters();
+        if (showToast) {
+          DYF_Toast.show({
+            type: 'success',
+            title: 'به‌روزرسانی لینک‌ها',
+            message: 'تغییرات لینک‌های دسترسی اختصاصی با موفقیت ذخیره شد.',
+          });
+        }
+      } catch (e) {
+        console.error('Error saving links:', e);
+      }
+    },
+
+    bindEvents() {
+      // جست‌وجوی زنده
+      const searchInput = document.getElementById('linkSearchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          this.searchQuery = e.target.value.trim().toLowerCase();
+          this.render();
+        });
+      }
+
+      // فیلتر شیوه ورود
+      const authFilter = document.getElementById('linkAuthFilter');
+      if (authFilter) {
+        authFilter.addEventListener('change', (e) => {
+          this.selectedAuth = e.target.value;
+          this.render();
+        });
+      }
+
+      // فیلتر وضعیت
+      document.querySelectorAll('[data-link-status]').forEach((tab) => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('[data-link-status]').forEach((t) => t.classList.remove('is-active'));
+          tab.classList.add('is-active');
+          this.selectedStatus = tab.getAttribute('data-link-status') || 'all';
+          this.render();
+        });
+      });
+
+      // سوئیچ گرید / جدول
+      const gridBtn = document.getElementById('linksViewGridBtn');
+      const tableBtn = document.getElementById('linksViewTableBtn');
+      if (gridBtn && tableBtn) {
+        gridBtn.addEventListener('click', () => {
+          this.viewMode = 'grid';
+          gridBtn.classList.add('is-active');
+          tableBtn.classList.remove('is-active');
+          this.render();
+        });
+        tableBtn.addEventListener('click', () => {
+          this.viewMode = 'table';
+          tableBtn.classList.add('is-active');
+          gridBtn.classList.remove('is-active');
+          this.render();
+        });
+      }
+
+      // بازنشانی فیلترها
+      const resetBtn = document.getElementById('resetLinkFiltersBtn');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          this.searchQuery = '';
+          this.selectedStatus = 'all';
+          this.selectedAuth = 'all';
+          if (searchInput) searchInput.value = '';
+          if (authFilter) authFilter.value = 'all';
+          document.querySelectorAll('[data-link-status]').forEach((t) => {
+            t.classList.toggle('is-active', t.getAttribute('data-link-status') === 'all');
+          });
+          this.render();
+        });
+      }
+
+      // بازکردن ویزارد
+      const openWizardBtn = document.getElementById('openCreateLinkWizardBtn');
+      if (openWizardBtn) {
+        openWizardBtn.addEventListener('click', () => this.openWizard());
+      }
+
+      // دکمه‌های ناوبری ویزارد
+      const nextBtn = document.getElementById('wizardNextBtn');
+      const prevBtn = document.getElementById('wizardPrevBtn');
+      const genBtn = document.getElementById('wizardGenerateBtn');
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => this.handleWizardNext());
+      }
+      if (prevBtn) {
+        prevBtn.addEventListener('click', () => this.goToStep(this.currentStep - 1));
+      }
+      if (genBtn) {
+        genBtn.addEventListener('click', () => this.generateLink());
+      }
+
+      // تغییر نوع گیرنده در ویزارد
+      document.querySelectorAll('input[name="wizardRecipientType"]').forEach((radio) => {
+        radio.addEventListener('change', (e) => {
+          this.wizardDraft.recipientType = e.target.value;
+          const group = document.getElementById('wizardCustomerSelectGroup');
+          if (group) group.style.display = e.target.value === 'existing' ? 'block' : 'none';
+          if (e.target.value === 'existing') {
+            this.syncCustomerSelect();
+          } else {
+            this.wizardDraft.customerId = null;
+            this.wizardDraft.customer = 'همکار موقت';
+            const fa = document.getElementById('wizardRecipientFa');
+            const en = document.getElementById('wizardRecipientEn');
+            const ph = document.getElementById('wizardRecipientPhone');
+            if (fa) fa.value = '';
+            if (en) en.value = '';
+            if (ph) ph.value = '';
+          }
+        });
+      });
+
+      // تغییر انتخاب مشتری در ویزارد
+      const custSelect = document.getElementById('wizardCustomerSelect');
+      if (custSelect) {
+        custSelect.addEventListener('change', () => this.syncCustomerSelect());
+      }
+
+      // کپی لینک صادرشده در ویزارد
+      const copyGenBtn = document.getElementById('wizardCopyBtn');
+      if (copyGenBtn) {
+        copyGenBtn.addEventListener('click', () => {
+          const url = document.getElementById('wizardGeneratedUrl')?.textContent;
+          if (url) this.copyLinkToClipboard(url);
+        });
+      }
+
+      // کپی در مودال جزئیات
+      const detailsCopyBtn = document.getElementById('linkDetailsCopyBtn');
+      if (detailsCopyBtn) {
+        detailsCopyBtn.addEventListener('click', () => {
+          if (this.currentDetailLink) {
+            const fullUrl = this.getAbsoluteLinkUrl(this.currentDetailLink.token);
+            this.copyLinkToClipboard(fullUrl);
+          }
+        });
+      }
+    },
+
+    getAbsoluteLinkUrl(token) {
+      const origin = window.location.origin;
+      const pathname = window.location.pathname.replace(/admin\.html.*$/, '');
+      return `${origin}${pathname}catalog.html?token=${token}`;
+    },
+
+    copyLinkToClipboard(url) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+          DYF_Toast.show({
+            type: 'success',
+            title: 'کپی موفق لینک',
+            message: 'نشانی لینک اختصاصی کاتالوگ با موفقیت در کلیپ‌بورد کپی شد.',
+          });
+        }).catch(() => this.fallbackCopy(url));
+      } else {
+        this.fallbackCopy(url);
+      }
+    },
+
+    fallbackCopy(text) {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-9999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        DYF_Toast.show({
+          type: 'success',
+          title: 'کپی موفق لینک',
+          message: 'نشانی لینک اختصاصی در کلیپ‌بورد کپی شد.',
+        });
+      } catch (err) {
+        DYF_Toast.show({
+          type: 'error',
+          title: 'خطا در کپی',
+          message: 'لطفاً نشانی لینک را به‌صورت دستی انتخاب و کپی فرمایید.',
+        });
+      }
+      document.body.removeChild(textArea);
+    },
+
+    openWizard() {
+      this.currentStep = 1;
+      this.wizardDraft = {
+        recipientType: 'existing',
+        customerId: null,
+        customer: '',
+        recipientFa: '',
+        recipientEn: '',
+        phone: '',
+        authType: 'direct',
+        categories: ['لاین رسمی و اداری'],
+        addModels: [],
+        excludeModels: [],
+        startDeadline: '3d',
+        viewingDuration: '15m',
+      };
+
+      // بازیابی نمایش اصلی ویزارد (در صورتی که قبلاً به صفحه موفقیت رفته بود)
+      const reviewBox = document.getElementById('wizardReviewBox');
+      const successResult = document.getElementById('wizardSuccessResult');
+      const footer = document.getElementById('wizardModalFooter');
+      if (reviewBox) reviewBox.style.display = 'block';
+      if (successResult) successResult.style.display = 'none';
+      if (footer) footer.style.display = 'flex';
+
+      // مقداردهی دراپ‌داون مشتریان
+      const custSelect = document.getElementById('wizardCustomerSelect');
+      if (custSelect) {
+        const customers = (window.CustomersController && window.CustomersController.customers) || DEFAULT_CUSTOMERS;
+        custSelect.innerHTML = customers
+          .map((c) => `<option value="${c.id}">${c.nameFa} (${c.shop || c.code})</option>`)
+          .join('');
+      }
+
+      // نوع گیرنده: پیش‌فرض مشتری ثبت‌شده
+      const existingRadio = document.querySelector('input[name=\"wizardRecipientType\"][value=\"existing\"]');
+      if (existingRadio) existingRadio.checked = true;
+      const custGroup = document.getElementById('wizardCustomerSelectGroup');
+      if (custGroup) custGroup.style.display = 'block';
+
+      this.syncCustomerSelect();
+
+      // شیوه احراز هویت پیش‌فرض
+      const directRadio = document.querySelector('input[name=\"wizardAuthType\"][value=\"direct\"]');
+      if (directRadio) directRadio.checked = true;
+
+      // رندر دسته‌ها و مدل‌ها برای مرحله ۳
+      this.renderWizardProductPickers();
+
+      // زمان‌بندی مرحله ۴
+      const dlSelect = document.getElementById('wizardStartDeadline');
+      const durSelect = document.getElementById('wizardViewingDuration');
+      if (dlSelect) dlSelect.value = '3d';
+      if (durSelect) durSelect.value = '15m';
+
+      this.goToStep(1);
+      DYF_Modal.open('modalCreateLinkWizard');
+    },
+
+    syncCustomerSelect() {
+      const custSelect = document.getElementById('wizardCustomerSelect');
+      if (!custSelect) return;
+      const custId = parseInt(custSelect.value, 10);
+      const customers = (window.CustomersController && window.CustomersController.customers) || DEFAULT_CUSTOMERS;
+      const cust = customers.find((c) => c.id === custId);
+      if (cust) {
+        this.wizardDraft.customerId = cust.id;
+        this.wizardDraft.customer = cust.shop || cust.nameFa;
+        this.wizardDraft.recipientFa = cust.nameFa;
+        this.wizardDraft.recipientEn = cust.nameEn;
+        this.wizardDraft.phone = cust.phone;
+
+        const fa = document.getElementById('wizardRecipientFa');
+        const en = document.getElementById('wizardRecipientEn');
+        const ph = document.getElementById('wizardRecipientPhone');
+        if (fa) fa.value = cust.nameFa;
+        if (en) en.value = cust.nameEn;
+        if (ph) ph.value = cust.phone;
+      }
+    },
+
+    renderWizardProductPickers() {
+      const catWrap = document.getElementById('wizardCategoriesWrap');
+      if (catWrap) {
+        const allCats = (window.CategoriesController && window.CategoriesController.categories) || DEFAULT_CATEGORIES;
+        catWrap.innerHTML = allCats
+          .map((cat, idx) => `
+            <label class=\"dyf-chip-checkbox\">
+              <input type=\"checkbox\" name=\"wizCategory\" value=\"${cat.name}\" ${idx === 0 ? 'checked' : ''}>
+              <span class=\"dyf-chip-pill\">${cat.name}</span>
+            </label>
+          `)
+          .join('');
+      }
+
+      const addWrap = document.getElementById('wizardAddModelsWrap');
+      const excWrap = document.getElementById('wizardExcludeModelsWrap');
+      const allShoes = (window.ShoesController && window.ShoesController.models) || DEFAULT_SHOES;
+      const publishedShoes = allShoes.filter((s) => s.status === 'published');
+
+      if (addWrap) {
+        addWrap.innerHTML = publishedShoes
+          .map((s) => `
+            <label class=\"dyf-chip-checkbox\">
+              <input type=\"checkbox\" name=\"wizAddModel\" value=\"${s.id}\">
+              <span class=\"dyf-chip-pill\">+ DYF-${s.id}: ${s.title.substring(0, 26)}...</span>
+            </label>
+          `)
+          .join('');
+      }
+
+      if (excWrap) {
+        excWrap.innerHTML = publishedShoes
+          .map((s) => `
+            <label class=\"dyf-chip-checkbox\">
+              <input type=\"checkbox\" name=\"wizExcludeModel\" value=\"${s.id}\">
+              <span class=\"dyf-chip-pill\" style=\"border-color: rgba(224, 86, 74, 0.35);\">🚫 DYF-${s.id}: ${s.title.substring(0, 24)}...</span>
+            </label>
+          `)
+          .join('');
+      }
+    },
+
+    handleWizardNext() {
+      // اعتبارسنجی در هر مرحله
+      if (this.currentStep === 1) {
+        const fa = document.getElementById('wizardRecipientFa')?.value.trim();
+        const en = document.getElementById('wizardRecipientEn')?.value.trim();
+        const phone = document.getElementById('wizardRecipientPhone')?.value.trim();
+
+        if (!fa) {
+          DYF_Toast.show({ type: 'error', title: 'نام گیرنده الزامی است', message: 'لطفاً نام و نام خانوادگی فارسی گیرنده را وارد فرمایید.' });
+          document.getElementById('wizardRecipientFa')?.focus();
+          return;
+        }
+        if (!en) {
+          DYF_Toast.show({ type: 'error', title: 'نام انگلیسی الزامی است', message: 'لطفاً نام و نام خانوادگی انگلیسی گیرنده را وارد فرمایید.' });
+          document.getElementById('wizardRecipientEn')?.focus();
+          return;
+        }
+
+        this.wizardDraft.recipientFa = fa;
+        this.wizardDraft.recipientEn = en;
+        this.wizardDraft.phone = phone;
+        this.goToStep(2);
+      } else if (this.currentStep === 2) {
+        const auth = document.querySelector('input[name=\"wizardAuthType\"]:checked')?.value || 'direct';
+        this.wizardDraft.authType = auth;
+
+        if (auth === 'otp') {
+          if (!this.wizardDraft.phone || !this.wizardDraft.phone.match(/^09\d{9}$/)) {
+            DYF_Toast.show({
+              type: 'error',
+              title: 'شماره تلفن معتبر الزامی است',
+              message: 'برای شیوه ورود با تایید پیامکی (OTP)، ثبت شماره تلفن همراه ۱۱ رقمی معتبر الزامی است. لطفاً به مرحله ۱ بازگردید یا شماره را تصحیح فرمایید.',
+            });
+            this.goToStep(1);
+            document.getElementById('wizardRecipientPhone')?.focus();
+            return;
+          }
+        }
+        this.goToStep(3);
+      } else if (this.currentStep === 3) {
+        const cats = [];
+        document.querySelectorAll('input[name=\"wizCategory\"]:checked').forEach((chk) => cats.push(chk.value));
+        const adds = [];
+        document.querySelectorAll('input[name=\"wizAddModel\"]:checked').forEach((chk) => adds.push(parseInt(chk.value, 10)));
+        const excs = [];
+        document.querySelectorAll('input[name=\"wizExcludeModel\"]:checked').forEach((chk) => excs.push(parseInt(chk.value, 10)));
+
+        if (!cats.length && !adds.length) {
+          DYF_Toast.show({
+            type: 'error',
+            title: 'حداقل یک محصول انتخاب شود',
+            message: 'لطفاً حداقل یک دسته‌بندی یا یک مدل مشخص به کاتالوگ این لینک اختصاص دهید.',
+          });
+          return;
+        }
+
+        this.wizardDraft.categories = cats;
+        this.wizardDraft.addModels = adds;
+        this.wizardDraft.excludeModels = excs;
+        this.goToStep(4);
+      } else if (this.currentStep === 4) {
+        const dl = document.getElementById('wizardStartDeadline')?.value || '3d';
+        const dur = document.getElementById('wizardViewingDuration')?.value || '15m';
+        this.wizardDraft.startDeadline = dl;
+        this.wizardDraft.viewingDuration = dur;
+
+        this.renderWizardReview();
+        this.goToStep(5);
+      }
+    },
+
+    goToStep(step) {
+      this.currentStep = step;
+
+      // نوار مراحل
+      document.querySelectorAll('#linkWizardStepsBar .dyf-wizard-step').forEach((el) => {
+        const s = parseInt(el.getAttribute('data-step'), 10);
+        el.classList.toggle('is-active', s === step);
+        el.classList.toggle('is-done', s < step);
+      });
+
+      // پنل‌ها
+      document.querySelectorAll('.dyf-wizard-panel').forEach((panel, idx) => {
+        panel.classList.toggle('is-active', idx + 1 === step);
+      });
+
+      // دکمه‌ها
+      const prevBtn = document.getElementById('wizardPrevBtn');
+      const nextBtn = document.getElementById('wizardNextBtn');
+      const genBtn = document.getElementById('wizardGenerateBtn');
+
+      if (prevBtn) prevBtn.style.display = step > 1 ? 'block' : 'none';
+      if (nextBtn) nextBtn.style.display = step < 5 ? 'block' : 'none';
+      if (genBtn) genBtn.style.display = step === 5 ? 'flex' : 'none';
+    },
+
+    renderWizardReview() {
+      const sumEl = document.getElementById('wizardSummaryDetails');
+      if (!sumEl) return;
+
+      const d = this.wizardDraft;
+      const allShoes = (window.ShoesController && window.ShoesController.models) || DEFAULT_SHOES;
+      const publishedShoes = allShoes.filter((s) => s.status === 'published');
+
+      // محاسبه فرمول کاتالوگ
+      const eligibleShoes = publishedShoes.filter((shoe) => {
+        if (d.excludeModels.includes(shoe.id)) return false;
+        if (d.addModels.includes(shoe.id)) return true;
+        const matchesCategory = (shoe.categories || []).some((c) => d.categories.includes(c));
+        return matchesCategory;
+      });
+
+      const deadlineLabels = {
+        '24h': '۲۴ ساعت از زمان صدور',
+        '3d': '۳ روز آینده',
+        '7d': '۱ هفته آینده',
+        '30d': '۱ ماه آینده',
+        'unlimited': 'نامحدود (بدون انقضای ورود)',
+      };
+
+      const durationLabels = {
+        '10m': '۱۰ دقیقه پس از اولین ورود',
+        '15m': '۱۵ دقیقه پس از اولین ورود',
+        '30m': '۳۰ دقیقه پس از اولین ورود',
+        '2h': '۲ ساعت پس از اولین ورود',
+        '24h': '۲۴ ساعت پس از اولین ورود',
+        'unlimited': 'نامحدود (مشاهده دائم)',
+      };
+
+      sumEl.innerHTML = `
+        <div style=\"display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;\">
+          <span style=\"color: var(--text-dim);\">گیرنده و همکار:</span>
+          <span style=\"font-weight: 700; color: var(--gold-light);\">${d.recipientFa} (${d.recipientEn})</span>
+        </div>
+        <div style=\"display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;\">
+          <span style=\"color: var(--text-dim);\">شماره همراه ورود:</span>
+          <span style=\"font-family: var(--font-title); direction: ltr; color: var(--text-main);\">${d.phone || 'بدون شماره (ورود مستقیم)'}</span>
+        </div>
+        <div style=\"display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;\">
+          <span style=\"color: var(--text-dim);\">روش احراز هویت:</span>
+          <span class=\"dyf-badge ${d.authType === 'otp' ? 'dyf-badge-active' : 'dyf-badge-published'}\">
+            ${d.authType === 'otp' ? 'ورود با تایید پیامکی (OTP)' : 'لینک مستقیم بدون رمز'}
+          </span>
+        </div>
+        <div style=\"display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;\">
+          <span style=\"color: var(--text-dim);\">دسته‌بندی‌های مجاز:</span>
+          <span style=\"color: var(--text-ivory); text-align: left;\">${d.categories.join('، ') || 'ندارد'}</span>
+        </div>
+        <div style=\"display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;\">
+          <span style=\"color: var(--text-dim);\">مدل‌های افزوده / مستثنا:</span>
+          <span style=\"color: var(--text-muted); direction: ltr;\">
+            +${d.addModels.length} مدل | -${d.excludeModels.length} استثنا
+          </span>
+        </div>
+        <div style=\"display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;\">
+          <span style=\"color: var(--text-dim);\">محصولات نهایی قابل مشاهده:</span>
+          <span style=\"font-weight: 800; color: #4cd964;\">${eligibleShoes.length} مدل کفش لوکس</span>
+        </div>
+        <div style=\"display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;\">
+          <span style=\"color: var(--text-dim);\">مهلت شروع دسترسی:</span>
+          <span style=\"color: var(--gold-primary); font-weight: 600;\">${deadlineLabels[d.startDeadline] || d.startDeadline}</span>
+        </div>
+        <div style=\"display: flex; justify-content: space-between;\">
+          <span style=\"color: var(--text-dim);\">مدت مشاهده کاتالوگ:</span>
+          <span style=\"color: var(--gold-light); font-weight: 700;\">${durationLabels[d.viewingDuration] || d.viewingDuration}</span>
+        </div>
+      `;
+    },
+
+    generateLink() {
+      const d = this.wizardDraft;
+      const hex = Math.random().toString(36).substring(2, 6) + Math.random().toString(36).substring(2, 6);
+      const token = hex.toLowerCase();
+      const nextIdNum = 9080 + this.links.length + 1;
+      const linkId = `LNK-${nextIdNum}`;
+
+      const today = new Date();
+      const createdDate = `${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()}`;
+
+      const newLink = {
+        id: linkId,
+        token,
+        recipientFa: d.recipientFa,
+        recipientEn: d.recipientEn,
+        customer: d.customer || (d.customerId ? 'مشتری ثبت‌شده' : 'همکار آزاد'),
+        customerId: d.customerId,
+        phone: d.phone,
+        authType: d.authType,
+        categories: [...d.categories],
+        addModels: [...d.addModels],
+        excludeModels: [...d.excludeModels],
+        startDeadline: d.startDeadline,
+        viewingDuration: d.viewingDuration,
+        createdAt: createdDate,
+        status: 'active',
+        reason: null,
+        views: 0,
+        url: `catalog.html?token=${token}`,
+      };
+
+      this.links.unshift(newLink);
+      this.saveLinks(false);
+      this.render();
+
+      // انتقال به صفحه نتیجه و صدور لینک
+      const reviewBox = document.getElementById('wizardReviewBox');
+      const successResult = document.getElementById('wizardSuccessResult');
+      const footer = document.getElementById('wizardModalFooter');
+      const urlText = document.getElementById('wizardGeneratedUrl');
+      const testLink = document.getElementById('wizardOpenTestLink');
+
+      const absoluteUrl = this.getAbsoluteLinkUrl(token);
+
+      if (reviewBox) reviewBox.style.display = 'none';
+      if (successResult) successResult.style.display = 'block';
+      if (footer) footer.style.display = 'none';
+      if (urlText) urlText.textContent = absoluteUrl;
+      if (testLink) testLink.href = `catalog.html?token=${token}`;
+
+      DYF_Toast.show({
+        type: 'success',
+        title: 'لینک صادر شد',
+        message: `لینک اختصاصی ${linkId} با توکن ${token} برای «${d.recipientFa}» با موفقیت ایجاد گردید.`,
+      });
+    },
+
+    openDetailsModal(id) {
+      const link = this.links.find((l) => l.id === id);
+      if (!link) return;
+
+      this.currentDetailLink = link;
+
+      const titleEl = document.getElementById('linkDetailsModalTitle');
+      const subEl = document.getElementById('linkDetailsModalSubtitle');
+      const bodyEl = document.getElementById('linkDetailsBody');
+
+      if (titleEl) titleEl.textContent = `جزئیات لینک اختصاصی (${link.id})`;
+      if (subEl) subEl.textContent = `توکن امنیتی: ${link.token} | شیوه ورود: ${link.authType === 'otp' ? 'پیامکی' : 'مستقیم'}`;
+
+      const absoluteUrl = this.getAbsoluteLinkUrl(link.token);
+      const allShoes = (window.ShoesController && window.ShoesController.models) || DEFAULT_SHOES;
+      const publishedShoes = allShoes.filter((s) => s.status === 'published');
+
+      const matchingShoes = publishedShoes.filter((shoe) => {
+        if ((link.excludeModels || []).includes(shoe.id)) return false;
+        if ((link.addModels || []).includes(shoe.id)) return true;
+        return (shoe.categories || []).some((c) => (link.categories || []).includes(c));
+      });
+
+      if (bodyEl) {
+        bodyEl.innerHTML = `
+          <!-- هدر لینک و وضعیت -->
+          <div style=\"background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--r-md); padding: 1.25rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center;\">
+            <div>
+              <div style=\"font-size: 1.15rem; font-weight: 800; color: var(--text-ivory); margin-bottom: 0.25rem;\">
+                ${link.recipientFa}
+              </div>
+              <div style=\"font-size: 0.78rem; color: var(--text-dim); font-family: var(--font-title);\">
+                ${link.recipientEn} | ${link.customer || '-'}
+              </div>
+            </div>
+            <div style=\"text-align: left;\">
+              <span class=\"dyf-badge ${
+                link.status === 'active'
+                  ? 'dyf-badge-active'
+                  : link.status === 'pending'
+                  ? 'dyf-badge-pending'
+                  : link.status === 'expired'
+                  ? 'dyf-badge-archived'
+                  : 'dyf-badge-disabled'
+              }\">
+                ${
+                  link.status === 'active'
+                    ? 'فعال و آماده ورود'
+                    : link.status === 'pending'
+                    ? 'در انتظار ورود خریدار'
+                    : link.status === 'expired'
+                    ? 'منقضی‌شده'
+                    : 'غیرفعال توسط مدیر'
+                }
+              </span>
+              <div style=\"font-size: 0.72rem; color: var(--text-muted); margin-top: 0.35rem;\">
+                تعداد دفعات ورود: <strong>${link.views} مرتبه</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- جعبه نشانی URL و توکن -->
+          <div class=\"dyf-link-url-box\" style=\"padding: 0.75rem 1rem; margin-bottom: 1.25rem;\">
+            <span class=\"dyf-link-url-text\" style=\"font-size: 0.8rem;\">${absoluteUrl}</span>
+            <button type=\"button\" class=\"dyf-btn dyf-btn-primary dyf-btn-sm js-copy-url\" data-url=\"${absoluteUrl}\">
+              <span>کپی نشانی</span>
+            </button>
+          </div>
+
+          <!-- متاداده و تنظیمات -->
+          <div class=\"dyf-link-meta-grid\" style=\"margin-bottom: 1.25rem;\">
+            <div class=\"dyf-link-meta-item\">
+              <span style=\"color: var(--text-dim);\">روش احراز هویت:</span>
+              <span style=\"font-weight: 700; color: var(--gold-light);\">
+                ${link.authType === 'otp' ? 'تأیید شماره تلفن و کد یک‌بارمصرف (OTP)' : 'لینک مستقیم بدون تایید هویت'}
+              </span>
+            </div>
+            <div class=\"dyf-link-meta-item\">
+              <span style=\"color: var(--text-dim);\">شماره تلفن مجاز:</span>
+              <span style=\"font-family: var(--font-title); direction: ltr; text-align: right; color: var(--text-main);\">
+                ${link.phone || 'بدون شماره (ورود مستقیم)'}
+              </span>
+            </div>
+            <div class=\"dyf-link-meta-item\">
+              <span style=\"color: var(--text-dim);\">مهلت شروع دسترسی:</span>
+              <span style=\"color: var(--gold-primary); font-weight: 600;\">${link.startDeadline}</span>
+            </div>
+            <div class=\"dyf-link-meta-item\">
+              <span style=\"color: var(--text-dim);\">مدت زمان مشاهده:</span>
+              <span style=\"color: var(--gold-light); font-weight: 700;\">${link.viewingDuration}</span>
+            </div>
+            <div class=\"dyf-link-meta-item\">
+              <span style=\"color: var(--text-dim);\">تاریخ صدور لینک:</span>
+              <span style=\"direction: ltr; text-align: right;\">${link.createdAt}</span>
+            </div>
+            <div class=\"dyf-link-meta-item\">
+              <span style=\"color: var(--text-dim);\">تعداد مدل‌های در دسترس:</span>
+              <span style=\"font-weight: 800; color: #4cd964;\">${matchingShoes.length} مدل کفش</span>
+            </div>
+          </div>
+
+          <!-- لاین‌ها و مدل‌های مجاز -->
+          <div style=\"background: rgba(36, 30, 25, 0.4); border: 1px solid var(--border-subtle); border-radius: var(--r-sm); padding: 1rem; font-size: 0.8rem; margin-bottom: 1.25rem;\">
+            <div style=\"font-weight: 700; color: var(--gold-light); margin-bottom: 0.35rem;\">قلمرو محصولات مجاز:</div>
+            <div style=\"color: var(--text-muted); margin-bottom: 0.3rem;\">
+              دسته‌بندی‌ها: <strong>${(link.categories || []).join('، ') || 'هیچ'}</strong>
+            </div>
+            <div style=\"color: var(--text-dim); font-size: 0.74rem;\">
+              استثناها: ${(link.excludeModels || []).length} مدل | افزوده‌ها: ${(link.addModels || []).length} مدل
+            </div>
+          </div>
+
+          ${
+            link.reason
+              ? `
+              <div style=\"padding: 0.75rem 1rem; background: rgba(224, 86, 74, 0.1); border: 1px solid rgba(224, 86, 74, 0.3); border-radius: var(--r-sm); font-size: 0.78rem; color: var(--status-danger); margin-bottom: 1rem;\">
+                ⚠️ <strong>علت وضعیت:</strong> ${link.reason}
+              </div>
+            `
+              : ''
+          }
+
+          <div style=\"display: flex; gap: 0.75rem;\">
+            <a href=\"catalog.html?token=${link.token}\" target=\"_blank\" class=\"dyf-btn dyf-btn-specular dyf-btn-sm\" style=\"flex: 1; justify-content: center;\">
+              <svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><polyline points=\"15 3 21 3 21 9\"/><line x1=\"10\" x2=\"21\" y1=\"14\" y2=\"3\"/></svg>
+              <span>مشاهده و تست ورود کاتالوگ این لینک</span>
+            </a>
+          </div>
+        `;
+
+        bodyEl.querySelector('.js-copy-url')?.addEventListener('click', () => {
+          this.copyLinkToClipboard(absoluteUrl);
+        });
+      }
+
+      DYF_Modal.open('modalLinkDetails');
+    },
+
+    changeStatus(id, action) {
+      const link = this.links.find((l) => l.id === id);
+      if (!link) return;
+
+      if (action === 'deactivate') {
+        DYF_Modal.confirm({
+          title: 'غیرفعال‌سازی لینک اختصاصی',
+          message: `
+            آیا از غیرفعال‌سازی لینک <strong>«${link.id}»</strong> متعلق به <strong>«${link.recipientFa}»</strong> اطمینان دارید؟<br><br>
+            <div style=\"background: rgba(36, 30, 25, 0.6); padding: 0.85rem; border-radius: var(--r-sm); font-size: 0.82rem; color: var(--leather-caramel); line-height: 1.5;\">
+              💡 <strong>استقلال لینک‌ها:</strong> این اقدام صرفاً همین لینک موقت را باطل می‌کند. سایر لینک‌های این مشتری یا دسترسی مستقیم او فعال باقی خواهند ماند.
+            </div>
+          `,
+          confirmText: 'غیرفعال‌سازی لینک',
+          cancelText: 'انصراف',
+          onConfirm: () => {
+            link.status = 'deactivated';
+            link.reason = 'توسط مدیر غیرفعال شد';
+            this.saveLinks();
+            this.render();
+            DYF_Toast.show({
+              type: 'info',
+              title: 'لینک غیرفعال شد',
+              message: `لینک ${link.id} مسدود گردید و امکان ورود با توکن آن وجود ندارد.`,
+            });
+          },
+        });
+      } else if (action === 'activate') {
+        DYF_Modal.confirm({
+          title: 'فعال‌سازی مجدد لینک',
+          message: `
+            آیا از فعال‌سازی مجدد لینک <strong>«${link.id}»</strong> اطمینان دارید؟<br><br>
+            <div style=\"background: rgba(36, 30, 25, 0.6); padding: 0.85rem; border-radius: var(--r-sm); font-size: 0.82rem; color: #4cd964; line-height: 1.5;\">
+              ⚠️ <strong>توجه امنیتی:</strong> با تایید شما، توکن قبلی مجدداً قابل استفاده خواهد شد و دارنده لینک قادر به مشاهده کاتالوگ خواهد بود.
+            </div>
+          `,
+          confirmText: 'فعال‌سازی مجدد',
+          cancelText: 'انصراف',
+          onConfirm: () => {
+            link.status = 'active';
+            link.reason = null;
+            this.saveLinks();
+            this.render();
+            DYF_Toast.show({
+              type: 'success',
+              title: 'لینک فعال شد',
+              message: `لینک ${link.id} مجدداً در دسترس قرار گرفت.`,
+            });
+          },
+        });
+      }
+    },
+
+    updateGlobalCounters() {
+      const allCount = this.links.length;
+      const activeCount = this.links.filter((l) => l.status === 'active').length;
+      const pendingCount = this.links.filter((l) => l.status === 'pending').length;
+      const expiredCount = this.links.filter((l) => l.status === 'expired' || l.status === 'deactivated').length;
+
+      const elAll = document.getElementById('countAllLinks');
+      const elAct = document.getElementById('countActiveLinks');
+      const elPen = document.getElementById('countPendingLinks');
+      const elExp = document.getElementById('countExpiredLinks');
+      const badge = document.getElementById('linksCountSummaryBadge');
+
+      if (elAll) elAll.textContent = allCount;
+      if (elAct) elAct.textContent = activeCount;
+      if (elPen) elPen.textContent = pendingCount;
+      if (elExp) elExp.textContent = expiredCount;
+      if (badge) badge.textContent = `${activeCount} لینک فعال (${allCount} کل)`;
+
+      // سایدبار
+      const navCounter = document.querySelector('a[href=\"#access-links\"] .dyf-nav-counter');
+      if (navCounter) navCounter.textContent = activeCount;
+
+      // داشبورد کارت لینک‌ها
+      const dashStat = document.querySelectorAll('.dyf-stat-card .dyf-stat-value')[2];
+      if (dashStat) dashStat.innerHTML = `${activeCount} <span style=\"font-size: 0.95rem; font-weight: 500; color: var(--text-muted);\">لینک</span>`;
+    },
+
+    getFilteredLinks() {
+      return this.links.filter((l) => {
+        if (this.searchQuery) {
+          const matchFa = (l.recipientFa || '').toLowerCase().includes(this.searchQuery);
+          const matchEn = (l.recipientEn || '').toLowerCase().includes(this.searchQuery);
+          const matchCust = (l.customer || '').toLowerCase().includes(this.searchQuery);
+          const matchPhone = (l.phone || '').includes(this.searchQuery);
+          const matchToken = (l.token || '').toLowerCase().includes(this.searchQuery);
+          const matchId = (l.id || '').toLowerCase().includes(this.searchQuery);
+          if (!matchFa && !matchEn && !matchCust && !matchPhone && !matchToken && !matchId) return false;
+        }
+
+        if (this.selectedAuth !== 'all') {
+          if (l.authType !== this.selectedAuth) return false;
+        }
+
+        if (this.selectedStatus !== 'all') {
+          if (this.selectedStatus === 'expired') {
+            if (l.status !== 'expired' && l.status !== 'deactivated') return false;
+          } else if (l.status !== this.selectedStatus) {
+            return false;
+          }
+        }
+
+        return true;
+      });
+    },
+
+    render() {
+      const filtered = this.getFilteredLinks();
+      const gridContainer = document.getElementById('linksGridContainer');
+      const tableContainer = document.getElementById('linksTableContainer');
+      const tableBody = document.getElementById('linksTableBody');
+      const emptyState = document.getElementById('linksEmptyState');
+
+      this.updateGlobalCounters();
+
+      if (!filtered.length) {
+        if (gridContainer) gridContainer.style.display = 'none';
+        if (tableContainer) tableContainer.style.display = 'none';
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+      }
+
+      if (emptyState) emptyState.style.display = 'none';
+
+      if (this.viewMode === 'grid') {
+        if (tableContainer) tableContainer.style.display = 'none';
+        if (gridContainer) {
+          gridContainer.style.display = 'grid';
+          gridContainer.innerHTML = filtered.map((l) => this.renderCardHtml(l)).join('');
+          this.bindCardActions(gridContainer);
+        }
+      } else {
+        if (gridContainer) gridContainer.style.display = 'none';
+        if (tableContainer && tableBody) {
+          tableContainer.style.display = 'block';
+          tableBody.innerHTML = filtered.map((l) => this.renderTableRowHtml(l)).join('');
+          this.bindCardActions(tableBody);
+        }
+      }
+    },
+
+    renderCardHtml(link) {
+      const isOtp = link.authType === 'otp';
+      const fullUrl = this.getAbsoluteLinkUrl(link.token);
+
+      const statusBadge =
+        link.status === 'active'
+          ? '<span class=\"dyf-badge dyf-badge-active\">فعال</span>'
+          : link.status === 'pending'
+          ? '<span class=\"dyf-badge dyf-badge-pending\">در انتظار</span>'
+          : link.status === 'expired'
+          ? '<span class=\"dyf-badge dyf-badge-archived\">منقضی</span>'
+          : '<span class=\"dyf-badge dyf-badge-disabled\">غیرفعال</span>';
+
+      return `
+        <article class=\"dyf-link-card\" data-id=\"${link.id}\">
+          <div class=\"dyf-link-header\">
+            <div>
+              <div style=\"display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;\">
+                <span style=\"font-family: var(--font-title); font-weight: 800; color: var(--gold-light); font-size: 0.92rem; direction: ltr;\">${link.id}</span>
+                <span class=\"dyf-badge ${isOtp ? 'dyf-badge-active' : 'dyf-badge-published'}\" style=\"font-size: 0.68rem;\">
+                  ${isOtp ? 'با تایید OTP' : 'لینک مستقیم'}
+                </span>
+              </div>
+              <h3 style=\"font-family: var(--font-title); font-size: 1.05rem; font-weight: 800; color: var(--text-ivory);\">${link.recipientFa}</h3>
+              <span style=\"font-size: 0.74rem; color: var(--text-dim); font-family: var(--font-title); direction: ltr; display: block;\">${link.recipientEn}</span>
+            </div>
+            <div>${statusBadge}</div>
+          </div>
+
+          <div class=\"dyf-link-url-box\">
+            <span class=\"dyf-link-url-text\">token=${link.token}</span>
+            <button type=\"button\" class=\"dyf-btn dyf-btn-outline dyf-btn-sm js-copy-link\" data-url=\"${fullUrl}\" title=\"کپی لینک\">
+              <svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/></svg>
+              <span>کپی</span>
+            </button>
+          </div>
+
+          <div class=\"dyf-link-meta-grid\">
+            <div class=\"dyf-link-meta-item\">
+              <span style=\"color: var(--text-dim); font-size: 0.7rem;\">مشتری / بنکداری:</span>
+              <span style=\"font-weight: 600; color: var(--text-main); text-overflow: ellipsis; overflow: hidden; white-space: nowrap;\">${link.customer || '-'}</span>
+            </div>
+            <div class=\"dyf-link-meta-item\">
+              <span style=\"color: var(--text-dim); font-size: 0.7rem;\">مهلت شروع:</span>
+              <span style=\"color: var(--gold-primary); font-weight: 600;\">${link.startDeadline}</span>
+            </div>
+            <div class=\"dyf-link-meta-item\">
+              <span style=\"color: var(--text-dim); font-size: 0.7rem;\">مدت مشاهده:</span>
+              <span style=\"color: var(--gold-light); font-weight: 600;\">${link.viewingDuration}</span>
+            </div>
+            <div class=\"dyf-link-meta-item\">
+              <span style=\"color: var(--text-dim); font-size: 0.7rem;\">تعداد ورود:</span>
+              <span style=\"color: var(--text-muted); font-family: var(--font-title);\">${link.views} مرتبه</span>
+            </div>
+          </div>
+
+          <div style=\"display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); margin-top: auto;\">
+            <div style=\"display: flex; gap: 0.35rem;\">
+              <button type=\"button\" class=\"dyf-btn dyf-btn-primary dyf-btn-sm js-view-link\" data-id=\"${link.id}\">
+                <span>جزئیات و تست</span>
+              </button>
+            </div>
+            <div>
+              ${
+                link.status === 'active' || link.status === 'pending'
+                  ? `<button type=\"button\" class=\"dyf-btn dyf-btn-outline dyf-btn-sm js-status-link\" data-id=\"${link.id}\" data-action=\"deactivate\" style=\"color: var(--status-danger); border-color: rgba(224, 86, 74, 0.35);\">ابطال لینک</button>`
+                  : `<button type=\"button\" class=\"dyf-btn dyf-btn-outline dyf-btn-sm js-status-link\" data-id=\"${link.id}\" data-action=\"activate\" style=\"color: #4cd964; border-color: rgba(76, 217, 100, 0.35);\">فعال‌سازی</button>`
+              }
+            </div>
+          </div>
+        </article>
+      `;
+    },
+
+    renderTableRowHtml(link) {
+      const isOtp = link.authType === 'otp';
+      const fullUrl = this.getAbsoluteLinkUrl(link.token);
+
+      const statusBadge =
+        link.status === 'active'
+          ? '<span class=\"dyf-badge dyf-badge-active\">فعال</span>'
+          : link.status === 'pending'
+          ? '<span class=\"dyf-badge dyf-badge-pending\">در انتظار</span>'
+          : link.status === 'expired'
+          ? '<span class=\"dyf-badge dyf-badge-archived\">منقضی</span>'
+          : '<span class=\"dyf-badge dyf-badge-disabled\">غیرفعال</span>';
+
+      return `
+        <tr data-id=\"${link.id}\">
+          <td>
+            <div style=\"font-family: var(--font-title); font-weight: 700; color: var(--gold-light); direction: ltr; text-align: right;\">${link.id}</div>
+            <div style=\"font-family: var(--font-title); font-size: 0.72rem; color: var(--text-dim); direction: ltr; text-align: right;\">token: ${link.token}</div>
+          </td>
+          <td>
+            <div style=\"font-weight: 700; color: var(--text-ivory);\">${link.recipientFa}</div>
+            <div style=\"font-size: 0.72rem; color: var(--text-dim); font-family: var(--font-title);\">${link.recipientEn} ${link.customer ? `| ${link.customer}` : ''}</div>
+          </td>
+          <td>
+            <span class=\"dyf-badge ${isOtp ? 'dyf-badge-active' : 'dyf-badge-published'}\" style=\"font-size: 0.7rem;\">
+              ${isOtp ? 'پیامکی (OTP)' : 'مستقیم'}
+            </span>
+          </td>
+          <td style=\"font-size: 0.8rem; color: var(--gold-primary); font-weight: 600;\">${link.startDeadline}</td>
+          <td style=\"font-size: 0.8rem; color: var(--gold-light); font-weight: 600;\">${link.viewingDuration}</td>
+          <td>${statusBadge}</td>
+          <td>
+            <div style=\"display: flex; gap: 0.35rem; align-items: center;\">
+              <button type=\"button\" class=\"dyf-btn dyf-btn-primary dyf-btn-sm js-view-link\" data-id=\"${link.id}\">جزئیات</button>
+              <button type=\"button\" class=\"dyf-btn dyf-btn-outline dyf-btn-sm js-copy-link\" data-url=\"${fullUrl}\">کپی</button>
+              ${
+                link.status === 'active' || link.status === 'pending'
+                  ? `<button type=\"button\" class=\"dyf-btn dyf-btn-outline dyf-btn-sm js-status-link\" data-id=\"${link.id}\" data-action=\"deactivate\" style=\"color: var(--status-danger);\">ابطال</button>`
+                  : `<button type=\"button\" class=\"dyf-btn dyf-btn-outline dyf-btn-sm js-status-link\" data-id=\"${link.id}\" data-action=\"activate\" style=\"color: #4cd964;\">فعال‌سازی</button>`
+              }
+            </div>
+          </td>
+        </tr>
+      `;
+    },
+
+    bindCardActions(container) {
+      container.querySelectorAll('.js-copy-link').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const url = btn.getAttribute('data-url');
+          if (url) this.copyLinkToClipboard(url);
+        });
+      });
+
+      container.querySelectorAll('.js-view-link').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = btn.getAttribute('data-id');
+          this.openDetailsModal(id);
+        });
+      });
+
+      container.querySelectorAll('.js-status-link').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = btn.getAttribute('data-id');
+          const action = btn.getAttribute('data-action');
+          this.changeStatus(id, action);
+        });
+      });
+    },
+  };
+
+  window.AccessLinksController = AccessLinksController;
+
+  // ==========================================================================
   // ۹. کنترلر نمایش و تست آزمایشگاهی کامپوننت‌ها (Component Kitchen-Sink)
   // ==========================================================================
   const ComponentDemoController = {
@@ -3461,6 +4564,7 @@
     ShoesController.init();
     CategoriesController.init();
     CustomersController.init();
+    AccessLinksController.init();
     ComponentDemoController.init();
   });
 })();
