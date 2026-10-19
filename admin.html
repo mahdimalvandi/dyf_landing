@@ -552,6 +552,29 @@
             </div>
           </div>
 
+          <!-- نوار صفحه‌بندی محصولات (Pagination) -->
+          <div id="shoesPagination" class="dyf-pagination-container">
+            <div class="dyf-pagination-info" id="shoesPaginationInfo">
+              نمایش <span id="shoesPageStart">۱</span> تا <span id="shoesPageEnd">۶</span> از <span id="shoesTotalCount">۱۸</span> مدل کفش
+            </div>
+
+            <div class="dyf-pagination-actions">
+              <div class="dyf-pagination-size">
+                <label for="shoesPageSizeSelect" style="font-size: 0.78rem; color: var(--text-dim);">تعداد در صفحه:</label>
+                <select id="shoesPageSizeSelect" class="dyf-select" style="width: auto; height: 32px; padding: 0.2rem 1.6rem 0.2rem 0.6rem; font-size: 0.78rem;">
+                  <option value="6" selected>۶ مدل</option>
+                  <option value="9">۹ مدل</option>
+                  <option value="12">۱۲ مدل</option>
+                  <option value="24">۲۴ مدل</option>
+                </select>
+              </div>
+
+              <div class="dyf-pagination-pages" id="shoesPaginationPages">
+                <!-- رندر دکمه‌های شماره صفحه توسط JS -->
+              </div>
+            </div>
+          </div>
+
           <!-- وضعیت بدون نتیجه (Empty Search/Filter State) -->
           <div id="shoesEmptyState" class="dyf-panel-card dyf-empty-state" style="display: none;">
             <svg class="dyf-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="m9 9 4 4"/><path d="m13 9-4 4"/></svg>

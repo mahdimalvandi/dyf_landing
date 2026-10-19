@@ -1975,3 +1975,211 @@ textarea:focus-visible {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
+/* کامپوننت صفحه‌بندی استاندارد (Pagination Component) */
+.dyf-pagination-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+.dyf-pagination-info {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.dyf-pagination-info span {
+  font-weight: 700;
+  color: var(--gold-light);
+}
+
+.dyf-pagination-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.dyf-pagination-size {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dyf-pagination-pages {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.dyf-pagination-btn {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 0.5rem;
+  border-radius: var(--r-sm);
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.dyf-pagination-btn:hover:not(:disabled) {
+  border-color: var(--border-medium);
+  color: var(--text-ivory);
+  background: rgba(61, 36, 21, 0.45);
+}
+
+.dyf-pagination-btn.is-active {
+  background: rgba(61, 36, 21, 0.9);
+  border-color: var(--gold-primary);
+  color: var(--gold-light);
+  font-weight: 800;
+  box-shadow: 0 2px 8px var(--gold-glow);
+}
+
+.dyf-pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: var(--border-subtle);
+}
+
+.dyf-pagination-dots {
+  color: var(--text-dim);
+  padding: 0 0.25rem;
+  font-size: 0.85rem;
+}
+
+/* ==========================================================================
+   ۱۲. استایل‌های مدیریت دسته‌بندی‌ها (Task 3: Categories Management)
+   ========================================================================== */
+
+.dyf-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.dyf-category-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.dyf-category-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold-primary), transparent);
+  opacity: 0.4;
+  transition: opacity var(--transition-fast);
+}
+
+.dyf-category-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+
+.dyf-category-card:hover::before {
+  opacity: 1;
+}
+
+.dyf-category-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.dyf-category-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-sm);
+  background: rgba(61, 36, 21, 0.6);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-primary);
+  flex-shrink: 0;
+}
+
+.dyf-category-title {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-ivory);
+  margin-bottom: 0.25rem;
+  line-height: 1.35;
+}
+
+.dyf-category-slug {
+  font-family: var(--font-title);
+  font-size: 0.74rem;
+  color: var(--text-dim);
+  direction: ltr;
+  display: inline-block;
+}
+
+.dyf-category-desc {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  flex: 1;
+}
+
+.dyf-category-meta-box {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-sm);
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.dyf-category-models-count {
+  font-size: 0.82rem;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.dyf-category-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+

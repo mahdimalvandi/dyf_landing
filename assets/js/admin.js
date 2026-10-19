@@ -997,6 +997,8 @@
     selectedCategory: 'all',
     selectedStatus: 'all',
     viewMode: 'grid', // 'grid' or 'table'
+    currentPage: 1,
+    pageSize: 6,
     currentEditingMedia: [],
 
     presetImages: [
@@ -1050,6 +1052,7 @@
       if (searchInput) {
         searchInput.addEventListener('input', (e) => {
           this.searchQuery = e.target.value.trim().toLowerCase();
+          this.currentPage = 1;
           this.render();
         });
       }
@@ -1059,6 +1062,7 @@
       if (catFilter) {
         catFilter.addEventListener('change', (e) => {
           this.selectedCategory = e.target.value;
+          this.currentPage = 1;
           this.render();
         });
       }
@@ -1069,6 +1073,7 @@
           document.querySelectorAll('.dyf-filter-tab').forEach((t) => t.classList.remove('is-active'));
           tab.classList.add('is-active');
           this.selectedStatus = tab.getAttribute('data-status') || 'all';
+          this.currentPage = 1;
           this.render();
         });
       });
@@ -1091,6 +1096,16 @@
         });
       }
 
+      // تغییر تعداد در هر صفحه
+      const pageSizeSelect = document.getElementById('shoesPageSizeSelect');
+      if (pageSizeSelect) {
+        pageSizeSelect.addEventListener('change', (e) => {
+          this.pageSize = parseInt(e.target.value, 10) || 6;
+          this.currentPage = 1;
+          this.render();
+        });
+      }
+
       // دکمه بازنشانی فیلترها
       const resetBtn = document.getElementById('resetShoesFiltersBtn');
       if (resetBtn) {
@@ -1098,6 +1113,7 @@
           this.searchQuery = '';
           this.selectedCategory = 'all';
           this.selectedStatus = 'all';
+          this.currentPage = 1;
           if (searchInput) searchInput.value = '';
           if (catFilter) catFilter.value = 'all';
           document.querySelectorAll('.dyf-filter-tab').forEach((t) => {
@@ -1652,33 +1668,131 @@
       const tableContainer = document.getElementById('shoesTableContainer');
       const tableBody = document.getElementById('shoesTableBody');
       const emptyState = document.getElementById('shoesEmptyState');
+      const paginationContainer = document.getElementById('shoesPagination');
 
       this.updateGlobalCounters();
 
       if (!filtered.length) {
         if (gridContainer) gridContainer.style.display = 'none';
         if (tableContainer) tableContainer.style.display = 'none';
+        if (paginationContainer) paginationContainer.style.display = 'none';
         if (emptyState) emptyState.style.display = 'block';
         return;
       }
 
       if (emptyState) emptyState.style.display = 'none';
 
+      // محاسبه بازه داده‌های صفحه جاری (Pagination Slicing)
+      const totalItems = filtered.length;
+      const totalPages = Math.ceil(totalItems / this.pageSize) || 1;
+      if (this.currentPage > totalPages) this.currentPage = totalPages;
+      if (this.currentPage < 1) this.currentPage = 1;
+
+      const startIdx = (this.currentPage - 1) * this.pageSize;
+      const endIdx = Math.min(startIdx + this.pageSize, totalItems);
+      const paginated = filtered.slice(startIdx, endIdx);
+
       if (this.viewMode === 'grid') {
         if (tableContainer) tableContainer.style.display = 'none';
         if (gridContainer) {
           gridContainer.style.display = 'grid';
-          gridContainer.innerHTML = filtered.map((m) => this.renderCardHtml(m)).join('');
+          gridContainer.innerHTML = paginated.map((m) => this.renderCardHtml(m)).join('');
           this.bindCardActions(gridContainer);
         }
       } else {
         if (gridContainer) gridContainer.style.display = 'none';
         if (tableContainer && tableBody) {
           tableContainer.style.display = 'block';
-          tableBody.innerHTML = filtered.map((m) => this.renderTableRowHtml(m)).join('');
+          tableBody.innerHTML = paginated.map((m) => this.renderTableRowHtml(m)).join('');
           this.bindCardActions(tableBody);
         }
       }
+
+      // رندر المان‌ها و کنترل‌های صفحه‌بندی
+      this.renderPagination(totalItems);
+    },
+
+    renderPagination(totalItems) {
+      const paginationEl = document.getElementById('shoesPagination');
+      const pagesContainer = document.getElementById('shoesPaginationPages');
+      const startEl = document.getElementById('shoesPageStart');
+      const endEl = document.getElementById('shoesPageEnd');
+      const totalEl = document.getElementById('shoesTotalCount');
+
+      if (!paginationEl) return;
+
+      if (totalItems === 0) {
+        paginationEl.style.display = 'none';
+        return;
+      }
+
+      paginationEl.style.display = 'flex';
+
+      const totalPages = Math.ceil(totalItems / this.pageSize) || 1;
+      const startIdx = (this.currentPage - 1) * this.pageSize + 1;
+      const endIdx = Math.min(this.currentPage * this.pageSize, totalItems);
+
+      if (startEl) startEl.textContent = startIdx;
+      if (endEl) endEl.textContent = endIdx;
+      if (totalEl) totalEl.textContent = totalItems;
+
+      if (!pagesContainer) return;
+
+      let html = '';
+
+      // دکمه قبلی
+      html += `
+        <button type="button" class="dyf-pagination-btn js-page-prev" ${this.currentPage === 1 ? 'disabled' : ''} title="صفحه قبلی">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      `;
+
+      // شماره صفحات
+      for (let p = 1; p <= totalPages; p++) {
+        if (totalPages <= 5 || p === 1 || p === totalPages || (p >= this.currentPage - 1 && p <= this.currentPage + 1)) {
+          html += `
+            <button type="button" class="dyf-pagination-btn ${p === this.currentPage ? 'is-active' : ''} js-page-num" data-page="${p}">
+              ${p}
+            </button>
+          `;
+        } else if (p === this.currentPage - 2 || p === this.currentPage + 2) {
+          html += `<span class="dyf-pagination-dots">...</span>`;
+        }
+      }
+
+      // دکمه بعدی
+      html += `
+        <button type="button" class="dyf-pagination-btn js-page-next" ${this.currentPage === totalPages ? 'disabled' : ''} title="صفحه بعدی">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+      `;
+
+      pagesContainer.innerHTML = html;
+
+      // رویدادهای دکمه‌ها
+      pagesContainer.querySelector('.js-page-prev')?.addEventListener('click', () => {
+        if (this.currentPage > 1) {
+          this.currentPage--;
+          this.render();
+        }
+      });
+
+      pagesContainer.querySelector('.js-page-next')?.addEventListener('click', () => {
+        if (this.currentPage < totalPages) {
+          this.currentPage++;
+          this.render();
+        }
+      });
+
+      pagesContainer.querySelectorAll('.js-page-num').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const p = parseInt(btn.getAttribute('data-page'), 10);
+          if (p && p !== this.currentPage) {
+            this.currentPage = p;
+            this.render();
+          }
+        });
+      });
     },
 
     renderCardHtml(model) {
