@@ -238,6 +238,49 @@
     }
   ];
 
+  const DEFAULT_CATEGORIES = [
+    {
+      id: 'cat-formal',
+      name: 'لاین رسمی و اداری',
+      slug: 'formal',
+      desc: 'کفش‌های کلاسیک آکسفورد، دربی، مونک‌استراپ و هورس واکس مناسب بازرگانان، جلسات رسمی و کارهای اداری.',
+      status: 'active',
+      icon: 'briefcase',
+    },
+    {
+      id: 'cat-sport',
+      name: 'لاین اسپرت و کژوال',
+      slug: 'sport-casual',
+      desc: 'اسنیکرها و کتانی‌های شهری چرم طبیعی، کفی طبی و تزریق فوم سرد، سبک و مقاوم جهت پیاده‌روی روزانه.',
+      status: 'active',
+      icon: 'zap',
+    },
+    {
+      id: 'cat-handmade',
+      name: 'لاین چرم لوکس دست‌دوز',
+      slug: 'luxury-handmade',
+      desc: 'آثار نفیس سراجی کارگاه با دوخت‌های دست‌دوز، زیره چرم طبیعی و دباغی گیاهی درجه یک تبریز.',
+      status: 'active',
+      icon: 'award',
+    },
+    {
+      id: 'cat-boots',
+      name: 'نیم‌بوت و پوتین کلاسیک',
+      slug: 'classic-boots',
+      desc: 'بوت‌های زمستانه چلسی و پوتین‌های ساق‌دار چرم الگانت با یراق‌آلات استیل و زیره‌های ضدلغزش.',
+      status: 'active',
+      icon: 'shield',
+    },
+    {
+      id: 'cat-leather-goods',
+      name: 'اکسسوری و کیف سراجی',
+      slug: 'accessories',
+      desc: 'محصولات دست‌ساز مکمل شامل کیف‌های اداری چرم طبیعی، کمربند و جاکارتی هماهنگ با کفش‌ها.',
+      status: 'inactive',
+      icon: 'briefcase',
+    },
+  ];
+
   const DYF_DATA = {
     admin: {
       name: 'مهدی مالوندی',
@@ -1034,6 +1077,10 @@
       try {
         localStorage.setItem('dyf_admin_shoes_v1', JSON.stringify(this.models));
         this.updateGlobalCounters();
+        if (window.CategoriesController) {
+          window.CategoriesController.updateGlobalCounters();
+          window.CategoriesController.render();
+        }
         if (showToast) {
           DYF_Toast.show({
             type: 'success',
@@ -1313,10 +1360,14 @@
       if (descInput) descInput.value = '';
       if (colorsInput) colorsInput.value = 'مشکی کلاسیک، عسلی کاراملی';
 
-      // انتخاب پیش‌فرض دسته‌ها
-      document.querySelectorAll('#shoeFormCategoriesWrap input').forEach((chk, i) => {
-        chk.checked = i === 0;
-      });
+      // انتخاب پیش‌فرض دسته‌ها بر اساس دسته‌بندی‌های فعال سیستم
+      if (window.CategoriesController) {
+        window.CategoriesController.renderCategoryCheckboxes();
+      } else {
+        document.querySelectorAll('#shoeFormCategoriesWrap input').forEach((chk, i) => {
+          chk.checked = i === 0;
+        });
+      }
 
       // انتخاب پیش‌فرض سایزها
       document.querySelectorAll('#shoeFormSizesWrap input').forEach((chk) => {
@@ -1356,9 +1407,13 @@
       if (colorsInput) colorsInput.value = (model.colors || []).join('، ');
 
       // تیک دسته‌بندی‌ها
-      document.querySelectorAll('#shoeFormCategoriesWrap input').forEach((chk) => {
-        chk.checked = (model.categories || []).includes(chk.value);
-      });
+      if (window.CategoriesController) {
+        window.CategoriesController.renderCategoryCheckboxes(model.categories || []);
+      } else {
+        document.querySelectorAll('#shoeFormCategoriesWrap input').forEach((chk) => {
+          chk.checked = (model.categories || []).includes(chk.value);
+        });
+      }
 
       // تیک سایزها
       document.querySelectorAll('#shoeFormSizesWrap input').forEach((chk) => {
@@ -1954,6 +2009,621 @@
   window.ShoesController = ShoesController;
 
   // ==========================================================================
+  // ۹. ماژول مدیریت دسته‌بندی‌ها و لاین‌های محصول (Task 3: Categories Controller)
+  // ==========================================================================
+  const CategoriesController = {
+    categories: [],
+    searchQuery: '',
+    selectedStatus: 'all', // 'all', 'active', 'inactive'
+    viewMode: 'grid', // 'grid' or 'table'
+
+    iconsMap: {
+      briefcase: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`,
+      zap: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+      award: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`,
+      shield: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+    },
+
+    init() {
+      this.loadCategories();
+      this.bindEvents();
+      this.render();
+      this.syncWithShoeFilters();
+      this.updateGlobalCounters();
+    },
+
+    loadCategories() {
+      try {
+        const saved = localStorage.getItem('dyf_admin_categories_v1');
+        if (saved) {
+          this.categories = JSON.parse(saved);
+        } else {
+          this.categories = [...DEFAULT_CATEGORIES];
+          this.saveCategories(false);
+        }
+      } catch (e) {
+        this.categories = [...DEFAULT_CATEGORIES];
+      }
+    },
+
+    saveCategories(showToast = true) {
+      try {
+        localStorage.setItem('dyf_admin_categories_v1', JSON.stringify(this.categories));
+        this.updateGlobalCounters();
+        this.syncWithShoeFilters();
+        if (showToast) {
+          DYF_Toast.show({
+            type: 'success',
+            title: 'به‌روزرسانی دسته‌بندی‌ها',
+            message: 'تغییرات لاین‌های محصول در حافظه سامانه ذخیره شد.',
+          });
+        }
+      } catch (e) {
+        console.error('Error saving categories:', e);
+      }
+    },
+
+    getModelCountForCategory(categoryName) {
+      const models = ShoesController.models || [];
+      return models.filter((m) => (m.categories || []).includes(categoryName)).length;
+    },
+
+    syncWithShoeFilters() {
+      // ۱. به‌روزرسانی دراپ‌داون فیلتر دسته‌بندی در نوار ابزار کفش‌ها
+      const shoeFilterSelect = document.getElementById('shoesCategoryFilter');
+      if (shoeFilterSelect) {
+        const currentVal = shoeFilterSelect.value;
+        let optionsHtml = '<option value="all">همه دسته‌بندی‌ها</option>';
+        this.categories.forEach((cat) => {
+          const count = this.getModelCountForCategory(cat.name);
+          const isInactive = cat.status === 'inactive';
+          optionsHtml += `
+            <option value="${cat.name}" ${currentVal === cat.name ? 'selected' : ''}>
+              ${cat.name} (${count} مدل) ${isInactive ? '— غیرفعال' : ''}
+            </option>
+          `;
+        });
+        shoeFilterSelect.innerHTML = optionsHtml;
+      }
+
+      // ۲. به‌روزرسانی چک‌باکس‌های دسته‌بندی در مودال ثبت/ویرایش مدل کفش
+      this.renderCategoryCheckboxes();
+    },
+
+    renderCategoryCheckboxes(selectedNames = null) {
+      const wrap = document.getElementById('shoeFormCategoriesWrap');
+      if (!wrap) return;
+
+      const activeCategories = this.categories.filter((c) => c.status === 'active' || (selectedNames && selectedNames.includes(c.name)));
+
+      wrap.innerHTML = activeCategories
+        .map((c, idx) => {
+          const isChecked = selectedNames !== null ? selectedNames.includes(c.name) : idx === 0;
+          return `
+            <label class="dyf-switch-label" style="background: var(--bg-surface-elevated); padding: 0.45rem 0.85rem; border: 1px solid var(--border-subtle); border-radius: var(--r-sm);">
+              <input type="checkbox" name="shoeCategories" value="${c.name}" ${isChecked ? 'checked' : ''}>
+              <span style="font-size: 0.82rem;">${c.name}</span>
+            </label>
+          `;
+        })
+        .join('');
+    },
+
+    bindEvents() {
+      // جست‌وجوی زنده دسته‌بندی‌ها
+      const searchInput = document.getElementById('categorySearchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          this.searchQuery = e.target.value.trim().toLowerCase();
+          this.render();
+        });
+      }
+
+      // تب‌های فیلتر وضعیت
+      document.querySelectorAll('[data-cat-status]').forEach((tab) => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('[data-cat-status]').forEach((t) => t.classList.remove('is-active'));
+          tab.classList.add('is-active');
+          this.selectedStatus = tab.getAttribute('data-cat-status') || 'all';
+          this.render();
+        });
+      });
+
+      // سوئیچ گرید / جدول
+      const gridBtn = document.getElementById('categoriesViewGridBtn');
+      const tableBtn = document.getElementById('categoriesViewTableBtn');
+      if (gridBtn && tableBtn) {
+        gridBtn.addEventListener('click', () => {
+          this.viewMode = 'grid';
+          gridBtn.classList.add('is-active');
+          tableBtn.classList.remove('is-active');
+          this.render();
+        });
+        tableBtn.addEventListener('click', () => {
+          this.viewMode = 'table';
+          tableBtn.classList.add('is-active');
+          gridBtn.classList.remove('is-active');
+          this.render();
+        });
+      }
+
+      // دکمه بازنشانی فیلتر
+      const resetBtn = document.getElementById('resetCategoryFiltersBtn');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          this.searchQuery = '';
+          this.selectedStatus = 'all';
+          if (searchInput) searchInput.value = '';
+          document.querySelectorAll('[data-cat-status]').forEach((t) => {
+            t.classList.toggle('is-active', t.getAttribute('data-cat-status') === 'all');
+          });
+          this.render();
+        });
+      }
+
+      // باز کردن مودال ثبت دسته‌بندی
+      const openAddBtn = document.getElementById('openAddCategoryModalBtn');
+      if (openAddBtn) {
+        openAddBtn.addEventListener('click', () => this.openCreateModal());
+      }
+
+      // ذخیره فرم دسته‌بندی
+      const saveBtn = document.getElementById('saveCategoryBtn');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', () => this.handleSaveForm());
+      }
+    },
+
+    openCreateModal() {
+      const modeInput = document.getElementById('categoryFormMode');
+      const idInput = document.getElementById('categoryFormId');
+      const nameInput = document.getElementById('categoryFormName');
+      const slugInput = document.getElementById('categoryFormSlug');
+      const descInput = document.getElementById('categoryFormDesc');
+      const modalTitle = document.getElementById('categoryFormModalTitle');
+
+      if (modeInput) modeInput.value = 'create';
+      if (idInput) idInput.value = '';
+      if (modalTitle) modalTitle.textContent = 'ایجاد دسته‌بندی / لاین جدید';
+
+      if (nameInput) nameInput.value = '';
+      if (slugInput) slugInput.value = '';
+      if (descInput) descInput.value = '';
+
+      const activeRadio = document.querySelector('input[name="categoryStatus"][value="active"]');
+      if (activeRadio) activeRadio.checked = true;
+
+      const firstIconRadio = document.querySelector('input[name="categoryIcon"][value="briefcase"]');
+      if (firstIconRadio) firstIconRadio.checked = true;
+
+      DYF_Modal.open('modalCategoryForm');
+      if (nameInput) setTimeout(() => nameInput.focus(), 200);
+    },
+
+    openEditModal(id) {
+      const cat = this.categories.find((c) => c.id === id);
+      if (!cat) return;
+
+      const modeInput = document.getElementById('categoryFormMode');
+      const idInput = document.getElementById('categoryFormId');
+      const nameInput = document.getElementById('categoryFormName');
+      const slugInput = document.getElementById('categoryFormSlug');
+      const descInput = document.getElementById('categoryFormDesc');
+      const modalTitle = document.getElementById('categoryFormModalTitle');
+
+      if (modeInput) modeInput.value = 'edit';
+      if (idInput) idInput.value = cat.id;
+      if (modalTitle) modalTitle.textContent = `ویرایش دسته‌بندی «${cat.name}»`;
+
+      if (nameInput) nameInput.value = cat.name || '';
+      if (slugInput) slugInput.value = cat.slug || '';
+      if (descInput) descInput.value = cat.desc || '';
+
+      const statusRadio = document.querySelector(`input[name="categoryStatus"][value="${cat.status}"]`);
+      if (statusRadio) statusRadio.checked = true;
+
+      const iconRadio = document.querySelector(`input[name="categoryIcon"][value="${cat.icon || 'briefcase'}"]`);
+      if (iconRadio) iconRadio.checked = true;
+
+      DYF_Modal.open('modalCategoryForm');
+      if (nameInput) setTimeout(() => nameInput.focus(), 200);
+    },
+
+    handleSaveForm() {
+      const mode = document.getElementById('categoryFormMode')?.value || 'create';
+      const id = document.getElementById('categoryFormId')?.value;
+      const name = document.getElementById('categoryFormName')?.value.trim();
+      const slug = document.getElementById('categoryFormSlug')?.value.trim();
+      const desc = document.getElementById('categoryFormDesc')?.value.trim();
+      const status = document.querySelector('input[name="categoryStatus"]:checked')?.value || 'active';
+      const icon = document.querySelector('input[name="categoryIcon"]:checked')?.value || 'briefcase';
+
+      if (!name) {
+        DYF_Toast.show({
+          type: 'error',
+          title: 'نام دسته‌بندی الزامی است',
+          message: 'لطفاً عنوان کامل لاین محصول را وارد کنید.',
+        });
+        document.getElementById('categoryFormName')?.focus();
+        return;
+      }
+
+      if (!slug) {
+        DYF_Toast.show({
+          type: 'error',
+          title: 'شناسه انگلیسی الزامی است',
+          message: 'لطفاً شناسه لاتین (Slug) دسته‌بندی را وارد کنید.',
+        });
+        document.getElementById('categoryFormSlug')?.focus();
+        return;
+      }
+
+      if (mode === 'create') {
+        const exists = this.categories.some(
+          (c) => c.name.toLowerCase() === name.toLowerCase() || c.slug.toLowerCase() === slug.toLowerCase()
+        );
+        if (exists) {
+          DYF_Toast.show({
+            type: 'error',
+            title: 'دسته‌بندی تکراری',
+            message: 'دسته‌بندی دیگری با همین نام یا شناسه انگلیسی قبلاً ثبت شده است.',
+          });
+          return;
+        }
+
+        const newCat = {
+          id: `cat-${Date.now()}`,
+          name,
+          slug,
+          desc: desc || 'توضیحات تکمیلی این لاین کارگاهی به زودی درج خواهد شد.',
+          status,
+          icon,
+        };
+
+        this.categories.push(newCat);
+        this.saveCategories();
+        DYF_Toast.show({
+          type: 'success',
+          title: 'دسته‌بندی ایجاد شد',
+          message: `دسته‌بندی «${name}» با موفقیت افزوده شد.`,
+        });
+      } else {
+        const cat = this.categories.find((c) => c.id === id);
+        if (cat) {
+          const oldName = cat.name;
+          cat.name = name;
+          cat.slug = slug;
+          cat.desc = desc;
+          cat.status = status;
+          cat.icon = icon;
+
+          // به‌روزرسانی مدل‌های متصل در صورت تغییر عنوان دسته‌بندی
+          if (oldName !== name && ShoesController.models) {
+            let updatedCount = 0;
+            ShoesController.models.forEach((m) => {
+              if (m.categories && m.categories.includes(oldName)) {
+                m.categories = m.categories.map((c) => (c === oldName ? name : c));
+                updatedCount++;
+              }
+            });
+            if (updatedCount > 0) {
+              ShoesController.saveModels(false);
+              ShoesController.render();
+            }
+          }
+
+          this.saveCategories();
+          DYF_Toast.show({
+            type: 'success',
+            title: 'ویرایش دسته‌بندی',
+            message: `مشخصات دسته‌بندی «${name}» با موفقیت به‌روزرسانی شد.`,
+          });
+        }
+      }
+
+      DYF_Modal.close('modalCategoryForm');
+      this.render();
+      ShoesController.render();
+    },
+
+    changeStatus(id, newStatus) {
+      const cat = this.categories.find((c) => c.id === id);
+      if (!cat) return;
+
+      const modelCount = this.getModelCountForCategory(cat.name);
+
+      if (newStatus === 'inactive') {
+        DYF_Modal.confirm({
+          title: 'غیرفعال‌سازی دسته‌بندی',
+          message: `
+            آیا از غیرفعال‌سازی دسته‌بندی <strong>«${cat.name}»</strong> اطمینان دارید؟<br><br>
+            <div style="background: rgba(36, 30, 25, 0.6); padding: 0.85rem; border-radius: var(--r-sm); font-size: 0.82rem; color: var(--leather-caramel);">
+              ⚠️ <strong>پیامد عملیات:</strong> این دسته دارای <strong>${modelCount} مدل مرتبط</strong> است. مدل‌ها در سیستم باقی می‌مانند اما این لاین در کاتالوگ عمومی پنهان می‌گردد.
+            </div>
+          `,
+          confirmText: 'غیرفعال‌سازی لاین',
+          cancelText: 'انصراف',
+          onConfirm: () => {
+            cat.status = 'inactive';
+            this.saveCategories();
+            this.render();
+            ShoesController.render();
+            DYF_Toast.show({
+              type: 'info',
+              title: 'لاین غیرفعال شد',
+              message: `دسته‌بندی «${cat.name}» به حالت غیرفعال تغییر یافت.`,
+            });
+          },
+        });
+      } else {
+        cat.status = 'active';
+        this.saveCategories();
+        this.render();
+        ShoesController.render();
+        DYF_Toast.show({
+          type: 'success',
+          title: 'لاین فعال شد',
+          message: `دسته‌بندی «${cat.name}» مجدداً فعال گردید.`,
+        });
+      }
+    },
+
+    deleteCategory(id) {
+      const cat = this.categories.find((c) => c.id === id);
+      if (!cat) return;
+
+      const modelCount = this.getModelCountForCategory(cat.name);
+
+      DYF_Modal.confirm({
+        title: 'حذف دائمی دسته‌بندی',
+        message: `
+          آیا از حذف دسته‌بندی <strong>«${cat.name}»</strong> اطمینان دارید؟<br><br>
+          <div style="background: rgba(58, 26, 26, 0.45); border: 1px solid rgba(224, 86, 74, 0.4); padding: 0.85rem; border-radius: var(--r-sm); font-size: 0.82rem; color: #ffb4a9;">
+            🚨 <strong>توجه به مدل‌های متصل:</strong> این دسته‌بندی در حال حاضر به <strong>${modelCount} مدل کفش</strong> منتسب است. با حذف این دسته، مدل‌های کفش حذف فیزیکی نمی‌شوند اما انتساب این لاین از آن‌ها سلب خواهد شد.
+          </div>
+        `,
+        confirmText: 'تأیید و حذف دسته‌بندی',
+        cancelText: 'انصراف',
+        onConfirm: () => {
+          if (ShoesController.models) {
+            ShoesController.models.forEach((m) => {
+              if (m.categories && m.categories.includes(cat.name)) {
+                m.categories = m.categories.filter((c) => c !== cat.name);
+              }
+            });
+            ShoesController.saveModels(false);
+            ShoesController.render();
+          }
+
+          this.categories = this.categories.filter((c) => c.id !== id);
+          this.saveCategories();
+          this.render();
+          ShoesController.render();
+          DYF_Toast.show({
+            type: 'info',
+            title: 'دسته‌بندی حذف شد',
+            message: `دسته‌بندی «${cat.name}» حذف و پیوند آن با مدل‌ها آزاد شد.`,
+          });
+        },
+      });
+    },
+
+    viewCategoryShoes(categoryName) {
+      window.location.hash = '#shoes';
+      const shoeFilterSelect = document.getElementById('shoesCategoryFilter');
+      if (shoeFilterSelect) {
+        shoeFilterSelect.value = categoryName;
+        shoeFilterSelect.dispatchEvent(new Event('change'));
+      }
+    },
+
+    updateGlobalCounters() {
+      const allCount = this.categories.length;
+      const activeCount = this.categories.filter((c) => c.status === 'active').length;
+      const inactiveCount = this.categories.filter((c) => c.status === 'inactive').length;
+
+      const elAll = document.getElementById('countAllCategories');
+      const elAct = document.getElementById('countActiveCategories');
+      const elInact = document.getElementById('countInactiveCategories');
+      const badge = document.getElementById('categoriesCountSummaryBadge');
+
+      if (elAll) elAll.textContent = allCount;
+      if (elAct) elAct.textContent = activeCount;
+      if (elInact) elInact.textContent = inactiveCount;
+      if (badge) badge.textContent = `${activeCount} لاین فعال (${allCount} کل)`;
+
+      // شمارنده در سایدبار
+      const navCounter = document.querySelector('a[href="#categories"] .dyf-nav-counter');
+      if (navCounter) navCounter.textContent = allCount;
+    },
+
+    getFilteredCategories() {
+      return this.categories.filter((c) => {
+        if (this.searchQuery) {
+          const matchName = (c.name || '').toLowerCase().includes(this.searchQuery);
+          const matchSlug = (c.slug || '').toLowerCase().includes(this.searchQuery);
+          const matchDesc = (c.desc || '').toLowerCase().includes(this.searchQuery);
+          if (!matchName && !matchSlug && !matchDesc) return false;
+        }
+
+        if (this.selectedStatus !== 'all') {
+          if (c.status !== this.selectedStatus) return false;
+        }
+
+        return true;
+      });
+    },
+
+    render() {
+      const filtered = this.getFilteredCategories();
+      const gridContainer = document.getElementById('categoriesGridContainer');
+      const tableContainer = document.getElementById('categoriesTableContainer');
+      const tableBody = document.getElementById('categoriesTableBody');
+      const emptyState = document.getElementById('categoriesEmptyState');
+
+      this.updateGlobalCounters();
+
+      if (!filtered.length) {
+        if (gridContainer) gridContainer.style.display = 'none';
+        if (tableContainer) tableContainer.style.display = 'none';
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+      }
+
+      if (emptyState) emptyState.style.display = 'none';
+
+      if (this.viewMode === 'grid') {
+        if (tableContainer) tableContainer.style.display = 'none';
+        if (gridContainer) {
+          gridContainer.style.display = 'grid';
+          gridContainer.innerHTML = filtered.map((c) => this.renderCardHtml(c)).join('');
+          this.bindCardActions(gridContainer);
+        }
+      } else {
+        if (gridContainer) gridContainer.style.display = 'none';
+        if (tableContainer && tableBody) {
+          tableContainer.style.display = 'block';
+          tableBody.innerHTML = filtered.map((c) => this.renderTableRowHtml(c)).join('');
+          this.bindCardActions(tableBody);
+        }
+      }
+    },
+
+    renderCardHtml(cat) {
+      const modelCount = this.getModelCountForCategory(cat.name);
+      const iconSvg = this.iconsMap[cat.icon] || this.iconsMap.briefcase;
+      const statusBadge =
+        cat.status === 'active'
+          ? `<span class="dyf-badge dyf-badge-active">فعال</span>`
+          : `<span class="dyf-badge dyf-badge-archived">غیرفعال</span>`;
+
+      return `
+        <article class="dyf-category-card" data-id="${cat.id}">
+          <div class="dyf-category-header">
+            <div style="display: flex; align-items: center; gap: 0.85rem;">
+              <div class="dyf-category-icon-box">${iconSvg}</div>
+              <div>
+                <h3 class="dyf-category-title">${cat.name}</h3>
+                <span class="dyf-category-slug">slug: ${cat.slug}</span>
+              </div>
+            </div>
+            <div>${statusBadge}</div>
+          </div>
+
+          <p class="dyf-category-desc">${cat.desc || '-'}</p>
+
+          <div class="dyf-category-meta-box">
+            <div class="dyf-category-models-count">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14l3-6 4 2 5-4 4 8H4z"/></svg>
+              <span><strong>${modelCount}</strong> مدل منتسب</span>
+            </div>
+            <button type="button" class="dyf-btn dyf-btn-specular dyf-btn-sm js-view-cat-shoes" data-name="${cat.name}">
+              مشاهده مدل‌ها
+            </button>
+          </div>
+
+          <div class="dyf-category-actions">
+            <div style="display: flex; gap: 0.4rem;">
+              <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-edit-cat" data-id="${cat.id}">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                <span>ویرایش</span>
+              </button>
+              <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-delete-cat" data-id="${cat.id}" style="color: var(--status-danger); border-color: rgba(224, 86, 74, 0.3);">
+                <span>حذف</span>
+              </button>
+            </div>
+
+            <div>
+              ${
+                cat.status === 'active'
+                  ? `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-toggle-cat" data-id="${cat.id}" data-action="inactive" style="color: var(--text-muted);">غیرفعال‌سازی</button>`
+                  : `<button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-toggle-cat" data-id="${cat.id}" data-action="active">فعال‌سازی</button>`
+              }
+            </div>
+          </div>
+        </article>
+      `;
+    },
+
+    renderTableRowHtml(cat) {
+      const modelCount = this.getModelCountForCategory(cat.name);
+      const iconSvg = this.iconsMap[cat.icon] || this.iconsMap.briefcase;
+      const statusBadge =
+        cat.status === 'active'
+          ? `<span class="dyf-badge dyf-badge-active">فعال</span>`
+          : `<span class="dyf-badge dyf-badge-archived">غیرفعال</span>`;
+
+      return `
+        <tr data-id="${cat.id}">
+          <td style="font-weight: 700; color: var(--text-ivory);">
+            <div style="display: flex; align-items: center; gap: 0.65rem;">
+              <div class="dyf-category-icon-box" style="width: 32px; height: 32px;">${iconSvg}</div>
+              <span>${cat.name}</span>
+            </div>
+          </td>
+          <td style="font-family: var(--font-title); color: var(--gold-light); direction: ltr; text-align: right;">${cat.slug}</td>
+          <td style="max-width: 280px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">${cat.desc || '-'}</td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 0.45rem;">
+              <span class="dyf-badge dyf-badge-info">${modelCount} مدل</span>
+              <button type="button" class="dyf-btn dyf-btn-specular dyf-btn-sm js-view-cat-shoes" data-name="${cat.name}">مشاهده</button>
+            </div>
+          </td>
+          <td>${statusBadge}</td>
+          <td>
+            <div style="display: flex; gap: 0.35rem; align-items: center;">
+              <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-edit-cat" data-id="${cat.id}">ویرایش</button>
+              ${
+                cat.status === 'active'
+                  ? `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-toggle-cat" data-id="${cat.id}" data-action="inactive">غیرفعال</button>`
+                  : `<button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-toggle-cat" data-id="${cat.id}" data-action="active">فعال</button>`
+              }
+              <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-delete-cat" data-id="${cat.id}" style="color: var(--status-danger);">حذف</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    },
+
+    bindCardActions(container) {
+      container.querySelectorAll('.js-edit-cat').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = btn.getAttribute('data-id');
+          this.openEditModal(id);
+        });
+      });
+
+      container.querySelectorAll('.js-delete-cat').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = btn.getAttribute('data-id');
+          this.deleteCategory(id);
+        });
+      });
+
+      container.querySelectorAll('.js-toggle-cat').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = btn.getAttribute('data-id');
+          const action = btn.getAttribute('data-action');
+          this.changeStatus(id, action);
+        });
+      });
+
+      container.querySelectorAll('.js-view-cat-shoes').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const name = btn.getAttribute('data-name');
+          this.viewCategoryShoes(name);
+        });
+      });
+    },
+  };
+
+  window.CategoriesController = CategoriesController;
+
+  // ==========================================================================
   // ۹. کنترلر نمایش و تست آزمایشگاهی کامپوننت‌ها (Component Kitchen-Sink)
   // ==========================================================================
   const ComponentDemoController = {
@@ -2040,6 +2710,7 @@
     SidebarController.init();
     DashboardController.init();
     ShoesController.init();
+    CategoriesController.init();
     ComponentDemoController.init();
   });
 })();
