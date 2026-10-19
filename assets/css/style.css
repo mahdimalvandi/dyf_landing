@@ -429,7 +429,7 @@
         ),
         radial-gradient(circle at 75% 25%, rgba(216, 178, 100, 0.22) 0%, transparent 60%),
         radial-gradient(circle at 25% 75%, rgba(194, 149, 83, 0.12) 0%, transparent 55%),
-        url('2T04ndvjSbkxPxkuVAuDxhTEGCYF8vOKrvdxq47aDFVDyu9NSnlrBv5Vl57zbZlMcRgpWZjOhCXmZzhf2n08d4K1xOlVB9QuY7jf3wbQHV1XLrzgNpUHfhuSUQDZB5w3UcG123-qmqgwb9Gu7KumtC__cpy2gSPYfWdMvQCH6ZNyXAaMakesLqqK2OiduWGG.jpeg');
+        url('../images/hero-bg.jpeg');
       background-size: cover;
       background-position: center center;
       background-repeat: no-repeat;
@@ -1146,7 +1146,7 @@
       padding: 7.5rem 0 6.5rem;
       background: linear-gradient(180deg, rgba(18, 15, 12, 0.84) 0%, rgba(24, 19, 15, 0.76) 50%, rgba(18, 15, 12, 0.88) 100%),
                   radial-gradient(circle at 80% 20%, rgba(216, 178, 100, 0.12) 0%, transparent 65%),
-                  url('background.jpeg') center/cover no-repeat;
+                  url('../images/defender-bg.jpeg') center/cover no-repeat;
       border-top: 1px solid rgba(216, 178, 100, 0.14);
       border-bottom: 1px solid rgba(216, 178, 100, 0.14);
       position: relative;
