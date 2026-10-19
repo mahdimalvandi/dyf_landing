@@ -1531,12 +1531,447 @@ textarea:focus-visible {
   }
 }
 
-/* کاهش موشن در تنظیمات سیستم‌عامل */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+/* ==========================================================================
+   ۱۱. استایل‌های مدیریت مدل‌های کفش (Task 2: Shoes & Media Manager)
+   ========================================================================== */
+
+/* نوار ابزار و فیلترهای محصولات */
+.dyf-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  padding: 1rem 1.25rem;
 }
+
+.dyf-toolbar-search {
+  flex: 1;
+  min-width: 240px;
+  position: relative;
+}
+
+.dyf-toolbar-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* تب‌های فیلتر وضعیت */
+.dyf-filter-tabs {
+  display: flex;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-sm);
+  padding: 0.25rem;
+  gap: 0.25rem;
+}
+
+.dyf-filter-tab {
+  background: none;
+  border: none;
+  padding: 0.4rem 0.85rem;
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.dyf-filter-tab:hover {
+  color: var(--text-ivory);
+}
+
+.dyf-filter-tab.is-active {
+  background: rgba(61, 36, 21, 0.85);
+  color: var(--gold-light);
+  border: 1px solid var(--border-medium);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* سوئیچ نحوه نمایش (گرید / جدول) */
+.dyf-view-toggle {
+  display: flex;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-sm);
+  padding: 0.2rem;
+}
+
+.dyf-view-btn {
+  background: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.dyf-view-btn:hover {
+  color: var(--text-ivory);
+}
+
+.dyf-view-btn.is-active {
+  background: var(--leather-dark);
+  color: var(--gold-primary);
+  border: 1px solid var(--border-medium);
+}
+
+/* گرید تصویری محصولات (Catalog Cards Grid) */
+.dyf-product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.dyf-product-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.dyf-product-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+}
+
+/* تصویر شاخص کارت */
+.dyf-product-thumb-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background: #100e0c;
+  overflow: hidden;
+}
+
+.dyf-product-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.dyf-product-card:hover .dyf-product-thumb {
+  transform: scale(1.04);
+}
+
+.dyf-product-thumb-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(20, 18, 16, 0.2) 0%, rgba(20, 18, 16, 0.75) 100%);
+  pointer-events: none;
+}
+
+.dyf-product-badge-top {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  z-index: 2;
+}
+
+.dyf-product-id-badge {
+  position: absolute;
+  top: 0.85rem;
+  left: 0.85rem;
+  z-index: 2;
+  background: rgba(20, 18, 16, 0.8);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--border-subtle);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-family: var(--font-title);
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  direction: ltr;
+}
+
+.dyf-product-media-count {
+  position: absolute;
+  bottom: 0.65rem;
+  left: 0.85rem;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  border-radius: 12px;
+  padding: 0.15rem 0.55rem;
+  font-size: 0.7rem;
+  color: var(--text-ivory);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* بدنه محتوای کارت محصول */
+.dyf-product-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.dyf-product-title {
+  font-family: var(--font-title);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-ivory);
+  margin-bottom: 0.5rem;
+  line-height: 1.35;
+}
+
+.dyf-product-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+}
+
+.dyf-category-pill {
+  font-size: 0.72rem;
+  padding: 0.15rem 0.55rem;
+  background: rgba(61, 36, 21, 0.45);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-sm);
+  color: var(--leather-caramel);
+}
+
+.dyf-product-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-bottom: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* مشخصات رنگ و سایز در کارت */
+.dyf-product-specs-row {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(216, 178, 100, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.76rem;
+  color: var(--text-dim);
+}
+
+.dyf-color-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.dyf-color-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.dyf-product-actions-footer {
+  padding: 0.85rem 1.25rem;
+  border-top: 1px solid var(--border-subtle);
+  background: rgba(20, 18, 16, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* آپلودر و مدیریت رسانه (Media Manager in Modal) */
+.dyf-media-uploader {
+  border: 2px dashed var(--border-medium);
+  border-radius: var(--r-md);
+  padding: 1.5rem;
+  text-align: center;
+  background: rgba(36, 30, 25, 0.35);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-bottom: 1.25rem;
+}
+
+.dyf-media-uploader:hover {
+  border-color: var(--gold-primary);
+  background: rgba(36, 30, 25, 0.65);
+}
+
+.dyf-media-uploader-icon {
+  width: 42px;
+  height: 42px;
+  margin: 0 auto 0.75rem;
+  color: var(--gold-primary);
+}
+
+.dyf-media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.dyf-media-item {
+  position: relative;
+  aspect-ratio: 1;
+  background: #1a1614;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dyf-media-item.is-primary {
+  border: 2px solid var(--gold-primary);
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
+.dyf-media-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dyf-media-primary-tag {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: var(--gold-primary);
+  color: #141210;
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  z-index: 2;
+}
+
+.dyf-media-actions {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 18, 16, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.dyf-media-item:hover .dyf-media-actions {
+  opacity: 1;
+}
+
+.dyf-media-btn {
+  background: rgba(36, 30, 25, 0.9);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  color: var(--text-ivory);
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.dyf-media-btn:hover {
+  background: var(--leather-dark);
+  color: var(--gold-light);
+  border-color: var(--gold-primary);
+}
+
+.dyf-media-btn-danger:hover {
+  background: var(--status-danger);
+  border-color: var(--status-danger);
+  color: #fff;
+}
+
+/* چک‌باکس‌های انتخاب سایز */
+.dyf-sizes-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.dyf-size-checkbox-label {
+  cursor: pointer;
+}
+
+.dyf-size-checkbox-label input {
+  display: none;
+}
+
+.dyf-size-box {
+  width: 42px;
+  height: 36px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-sm);
+  background: var(--bg-surface-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+}
+
+.dyf-size-checkbox-label input:checked + .dyf-size-box {
+  background: rgba(61, 36, 21, 0.85);
+  border-color: var(--gold-primary);
+  color: var(--gold-light);
+  box-shadow: 0 2px 8px var(--gold-glow);
+}
+
+/* وضعیت‌های سه‌گانه رادیویی */
+.dyf-status-radio-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.dyf-status-radio-label {
+  cursor: pointer;
+}
+
+.dyf-status-radio-label input {
+  display: none;
+}
+
+.dyf-status-radio-card {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-sm);
+  background: var(--bg-surface-elevated);
+  padding: 0.75rem;
+  text-align: center;
+  transition: all var(--transition-fast);
+}
+
+.dyf-status-radio-label input:checked + .dyf-status-radio-card {
+  border-color: var(--gold-primary);
+  background: rgba(61, 36, 21, 0.65);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+

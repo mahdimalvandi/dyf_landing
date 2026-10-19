@@ -11,6 +11,233 @@
   // ==========================================================================
   // ۱. داده‌های اولیه و شبیه‌سازی‌شده (Mock Data Store)
   // ==========================================================================
+  const DEFAULT_SHOES = [
+    {
+      id: 101,
+      title: 'کفش رسمی آکسفورد تمام‌چرم دست‌دوز تبریز',
+      categories: ['لاین رسمی و اداری', 'لاین چرم لوکس دست‌دوز'],
+      colors: ['مشکی زغالی', 'قهوه‌ای سوخته'],
+      sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
+      status: 'published',
+      description: 'رویه تمام چرم گاوی دباغی گیاهی درجه یک تبریز، آستر چرم بزی طبیعی ضدتعریق، زیره دایکست میکرولایت با پرداخت واکس دست‌ساز سراجی.',
+      media: [
+        { url: 'assets/images/shoes.jpeg', type: 'image', isPrimary: true },
+        { url: 'assets/images/bag.jpeg', type: 'image', isPrimary: false },
+        { url: 'assets/images/bag2.jpeg', type: 'image', isPrimary: false }
+      ]
+    },
+    {
+      id: 102,
+      title: 'اسنیکر چرم کژوال دیفندر سری اسپرت',
+      categories: ['لاین اسپرت و کژوال'],
+      colors: ['عسلی کاراملی', 'سفید عاجی'],
+      sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴', '۴۵'],
+      status: 'published',
+      description: 'طراحی ارگونومیک برای ساعات طولانی پیاده‌روی، زیره سبک ترمو با گریپ ضدلغزش، کفی طبی تزریق فوم سرد با روکش چرم طبیعی.',
+      media: [
+        { url: 'assets/images/craft-sport.jpg', type: 'image', isPrimary: true },
+        { url: 'assets/images/bag2.jpeg', type: 'image', isPrimary: false }
+      ]
+    },
+    {
+      id: 103,
+      title: 'نیم‌بوت چلسی چرم گاوی هورس واکس',
+      categories: ['لاین رسمی و اداری', 'لاین چرم لوکس دست‌دوز'],
+      colors: ['مشکی مات', 'عسلی روغنی'],
+      sizes: ['۴۰', '۴۱', '۴۲', '۴۳'],
+      status: 'published',
+      description: 'قالب اختصاصی کلاسیک تبریز با کش دوبل کشسانی بالا، دوخت سراجی تقویت‌شده و پاشنه چرم طبیعی لایه‌ای مناسب جلسات رسمی.',
+      media: [
+        { url: 'assets/images/craft-formal.jpeg', type: 'image', isPrimary: true },
+        { url: 'assets/images/shoes.jpeg', type: 'image', isPrimary: false }
+      ]
+    },
+    {
+      id: 104,
+      title: 'کفش دربی کلاسیک پنجه ارگونومیک',
+      categories: ['لاین رسمی و اداری'],
+      colors: ['قهوه‌ای هاوانا', 'مشکی'],
+      sizes: ['۴۱', '۴۲', '۴۳', '۴۴', '۴۵'],
+      status: 'draft',
+      description: 'نمونه در حال بررسی آزمایشگاهی کارگاه؛ بهینه‌سازی فرم سرپنجه برای پای پهن بازار داخلی با آستر آنتی‌باکتریال.',
+      media: [
+        { url: 'assets/images/shoes.jpeg', type: 'image', isPrimary: true }
+      ]
+    },
+    {
+      id: 105,
+      title: 'لوفر سراجی چرم کروکو هورس',
+      categories: ['لاین چرم لوکس دست‌دوز'],
+      colors: ['عسلی بافتی', 'شکلاتی تیره'],
+      sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
+      status: 'published',
+      description: 'رویه چرم گاوی امباس کروکو دست‌چین، سگک برنجی مات با آبکاری کهنه‌کاری، بدون نیاز به بند و فوق‌العاده راحت.',
+      media: [
+        { url: 'assets/images/bag.jpeg', type: 'image', isPrimary: true },
+        { url: 'assets/images/bag2.jpeg', type: 'image', isPrimary: false }
+      ]
+    },
+    {
+      id: 106,
+      title: 'کتانی شهری دست‌دوز زیره سبک پی‌یو',
+      categories: ['لاین اسپرت و کژوال'],
+      colors: ['سفید-طوسی', 'مشکی'],
+      sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
+      status: 'archived',
+      description: 'مدل فصل گذشته؛ تولید موقتاً متوقف گردیده و جهت حفظ سابقه سفارشات به بخش بایگانی منتقل شده است.',
+      media: [
+        { url: 'assets/images/craft-sport.jpg', type: 'image', isPrimary: true }
+      ]
+    },
+    {
+      id: 107,
+      title: 'کفش رسمی مونک‌استراپ دو سگک برنجی',
+      categories: ['لاین رسمی و اداری', 'لاین چرم لوکس دست‌دوز'],
+      colors: ['قهوه‌ای فندقی', 'مشکی'],
+      sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
+      status: 'published',
+      description: 'طراحی پرستیژ ایتالیایی با دو سگک قابل تنظیم، لبه‌های پولیش‌خورده دستی و زیره ترکیبی چرم و لاستیک ضدسایش.',
+      media: [
+        { url: 'assets/images/craft-formal.jpeg', type: 'image', isPrimary: true },
+        { url: 'assets/images/bag.jpeg', type: 'image', isPrimary: false }
+      ]
+    },
+    {
+      id: 108,
+      title: 'اسنیکر ساق‌کوتاه چرم طبیعی ناپا',
+      categories: ['لاین اسپرت و کژوال'],
+      colors: ['سرمه‌ای تیره', 'مشکی'],
+      sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴', '۴۵'],
+      status: 'published',
+      description: 'چرم بسیار نرم ناپا با پرداخت مات، دوردوخت کامل زیره به رویه با نخ موم‌زده ترک، بدون جداشدگی لبه در استفاده طولانی.',
+      media: [
+        { url: 'assets/images/craft-sport.jpg', type: 'image', isPrimary: true }
+      ]
+    },
+    {
+      id: 109,
+      title: 'صندل ارگونومیک تابستانه چرم تخت',
+      categories: ['لاین چرم لوکس دست‌دوز'],
+      colors: ['عسلی کاراملی'],
+      sizes: ['۴۰', '۴۱', '۴۲', '۴۳'],
+      status: 'draft',
+      description: 'طرح مفهومی فصل جدید جهت بررسی تیراژ سری در بنکداری‌های جنوب کشور.',
+      media: [
+        { url: 'assets/images/bag2.jpeg', type: 'image', isPrimary: true }
+      ]
+    },
+    {
+      id: 110,
+      title: 'کفش فرمال بروگ سرپنجه گلدار تبریز',
+      categories: ['لاین رسمی و اداری'],
+      colors: ['قهوه‌ای سوخته', 'مشکی زغالی'],
+      sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
+      status: 'published',
+      description: 'حکاکی پانچ سوراخ‌کاری دستی بروگ با ظرافت استادکاران کهنه‌کار تبریز، رنگ‌آمیزی پاتینای دستی رویه.',
+      media: [
+        { url: 'assets/images/shoes.jpeg', type: 'image', isPrimary: true },
+        { url: 'assets/images/craft-formal.jpeg', type: 'image', isPrimary: false }
+      ]
+    },
+    {
+      id: 111,
+      title: 'کفش کژوال روزمره کفی طبی آناتومیک',
+      categories: ['لاین اسپرت و کژوال'],
+      colors: ['خاکی روشن', 'مشکی'],
+      sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
+      status: 'published',
+      description: 'وزن سبک ۴۲۰ گرم برای هر لنگه، قوس طبی استاندارد برای گودی کف پا و مناسب مشاغل با ایستادن ممتد.',
+      media: [
+        { url: 'assets/images/craft-sport.jpg', type: 'image', isPrimary: true }
+      ]
+    },
+    {
+      id: 112,
+      title: 'پوتین کلاسیک ساق‌بلند دست‌دوز زمستانه',
+      categories: ['لاین رسمی و اداری', 'لاین چرم لوکس دست‌دوز'],
+      colors: ['قهوه‌ای تیره', 'مشکی'],
+      sizes: ['۴۱', '۴۲', '۴۳', '۴۴', '۴۵'],
+      status: 'published',
+      description: 'رویه ضخیم ضدآب ۲ میلی‌متری، آستر پشم طبیعی لطیف و عایق سرما، زیره رابر با عاج‌های عمیق برفی.',
+      media: [
+        { url: 'assets/images/craft-formal.jpeg', type: 'image', isPrimary: true }
+      ]
+    },
+    {
+      id: 113,
+      title: 'لوفر رسمی قایقی چرم جیر طبیعی',
+      categories: ['لاین رسمی و اداری'],
+      colors: ['سرمه‌ای', 'طوسی تیره', 'عسلی'],
+      sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
+      status: 'published',
+      description: 'جیر طبیعی دباغی‌شده صادراتی، بند چرمی دور یقه و سگک مخفی، فوق‌العاده شیک با شلوارهای کتان و پارچه‌ای.',
+      media: [
+        { url: 'assets/images/shoes.jpeg', type: 'image', isPrimary: true }
+      ]
+    },
+    {
+      id: 114,
+      title: 'کتانی رانینگ اسپرت چرم و برزنت کارگاهی',
+      categories: ['لاین اسپرت و کژوال'],
+      colors: ['مشکی-طوسی', 'سبز زیتونی'],
+      sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴', '۴۵'],
+      status: 'published',
+      description: 'تلفیق چرم گاوی هورس و پارچه برزنت تنفس‌پذیر ارتشی، ساختار منعطف با تست ۲۰۰ هزار خمش زیره بدون شکستگی.',
+      media: [
+        { url: 'assets/images/craft-sport.jpg', type: 'image', isPrimary: true }
+      ]
+    },
+    {
+      id: 115,
+      title: 'کفش اداری سبک بدون‌بند تمام‌کش',
+      categories: ['لاین رسمی و اداری'],
+      colors: ['مشکی براق', 'قهوه‌ای'],
+      sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
+      status: 'published',
+      description: 'پوشیدن سریع، رویه بدون ترک‌خوردگی، زیره تزریق مستقیم پی‌یو نشکن همراه با گارانتی کارگاهی DYF.',
+      media: [
+        { url: 'assets/images/shoes.jpeg', type: 'image', isPrimary: true }
+      ]
+    },
+    {
+      id: 116,
+      title: 'نیم‌بوت زیپ‌دار چرم الگانت مجلسی',
+      categories: ['لاین رسمی و اداری'],
+      colors: ['مشکی واکس‌خورده'],
+      sizes: ['۴۱', '۴۲', '۴۳', '۴۴'],
+      status: 'draft',
+      description: 'زیپ YKK استیل ضدزنگ، قالب کشیده اروپایی، در حال نهایی‌سازی نمونه‌برداری جهت افزودن به کاتالوگ زمستانه.',
+      media: [
+        { url: 'assets/images/craft-formal.jpeg', type: 'image', isPrimary: true }
+      ]
+    },
+    {
+      id: 117,
+      title: 'اسنیکر کفی فوم سرد دست‌دوز',
+      categories: ['لاین اسپرت و کژوال'],
+      colors: ['سفید کاراملی', 'مشکی'],
+      sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
+      status: 'published',
+      description: 'طراحی مینیمال مونوکروم، لبه‌های پدگذاری‌شده ضدتاول، منتخب فروشگاه‌های لوکس کفش تهران و شیراز.',
+      media: [
+        { url: 'assets/images/craft-sport.jpg', type: 'image', isPrimary: true }
+      ]
+    },
+    {
+      id: 118,
+      title: 'کفش رسمی بنددار دوخت مخفی سراجی',
+      categories: ['لاین رسمی و اداری', 'لاین چرم لوکس دست‌دوز'],
+      colors: ['مشکی', 'قهوه‌ای تیره'],
+      sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
+      status: 'published',
+      description: 'الگوی برش یک‌تکه Wholecut بدون درز اضافه، ظرافت فوق‌العاده در خط دوخت، نماد اصالت برند DYF.',
+      media: [
+        { url: 'assets/images/shoes.jpeg', type: 'image', isPrimary: true },
+        { url: 'assets/images/bag2.jpeg', type: 'image', isPrimary: false }
+      ]
+    }
+  ];
+
   const DYF_DATA = {
     admin: {
       name: 'مهدی مالوندی',
@@ -762,7 +989,858 @@
   };
 
   // ==========================================================================
-  // ۸. کنترلر نمایش و تست آزمایشگاهی کامپوننت‌ها (Component Kitchen-Sink)
+  // ۸. ماژول مدیریت مدل‌های کفش (Task 2: Shoes & Media Controller)
+  // ==========================================================================
+  const ShoesController = {
+    models: [],
+    searchQuery: '',
+    selectedCategory: 'all',
+    selectedStatus: 'all',
+    viewMode: 'grid', // 'grid' or 'table'
+    currentEditingMedia: [],
+
+    presetImages: [
+      'assets/images/shoes.jpeg',
+      'assets/images/craft-formal.jpeg',
+      'assets/images/craft-sport.jpg',
+      'assets/images/bag.jpeg',
+      'assets/images/bag2.jpeg'
+    ],
+
+    init() {
+      this.loadModels();
+      this.bindEvents();
+      this.render();
+      this.updateGlobalCounters();
+    },
+
+    loadModels() {
+      try {
+        const saved = localStorage.getItem('dyf_admin_shoes_v1');
+        if (saved) {
+          this.models = JSON.parse(saved);
+        } else {
+          this.models = [...DEFAULT_SHOES];
+          this.saveModels(false);
+        }
+      } catch (e) {
+        this.models = [...DEFAULT_SHOES];
+      }
+    },
+
+    saveModels(showToast = true) {
+      try {
+        localStorage.setItem('dyf_admin_shoes_v1', JSON.stringify(this.models));
+        this.updateGlobalCounters();
+        if (showToast) {
+          DYF_Toast.show({
+            type: 'success',
+            title: 'ذخیره پایگاه داده',
+            message: 'اطلاعات مدل‌های کفش در حافظه محلی سیستم به‌روزرسانی شد.'
+          });
+        }
+      } catch (e) {
+        console.error('Error saving shoes:', e);
+      }
+    },
+
+    bindEvents() {
+      // جست‌وجوی زنده بر اساس عنوان و شناسه عددی
+      const searchInput = document.getElementById('shoesSearchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          this.searchQuery = e.target.value.trim().toLowerCase();
+          this.render();
+        });
+      }
+
+      // فیلتر دسته‌بندی
+      const catFilter = document.getElementById('shoesCategoryFilter');
+      if (catFilter) {
+        catFilter.addEventListener('change', (e) => {
+          this.selectedCategory = e.target.value;
+          this.render();
+        });
+      }
+
+      // تب‌های فیلتر وضعیت
+      document.querySelectorAll('.dyf-filter-tab').forEach((tab) => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.dyf-filter-tab').forEach((t) => t.classList.remove('is-active'));
+          tab.classList.add('is-active');
+          this.selectedStatus = tab.getAttribute('data-status') || 'all';
+          this.render();
+        });
+      });
+
+      // سوئیچ نحوه نمایش (گرید / جدول)
+      const gridBtn = document.getElementById('shoesViewGridBtn');
+      const tableBtn = document.getElementById('shoesViewTableBtn');
+      if (gridBtn && tableBtn) {
+        gridBtn.addEventListener('click', () => {
+          this.viewMode = 'grid';
+          gridBtn.classList.add('is-active');
+          tableBtn.classList.remove('is-active');
+          this.render();
+        });
+        tableBtn.addEventListener('click', () => {
+          this.viewMode = 'table';
+          tableBtn.classList.add('is-active');
+          gridBtn.classList.remove('is-active');
+          this.render();
+        });
+      }
+
+      // دکمه بازنشانی فیلترها
+      const resetBtn = document.getElementById('resetShoesFiltersBtn');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          this.searchQuery = '';
+          this.selectedCategory = 'all';
+          this.selectedStatus = 'all';
+          if (searchInput) searchInput.value = '';
+          if (catFilter) catFilter.value = 'all';
+          document.querySelectorAll('.dyf-filter-tab').forEach((t) => {
+            t.classList.toggle('is-active', t.getAttribute('data-status') === 'all');
+          });
+          this.render();
+        });
+      }
+
+      // دکمه باز کردن مودال ثبت مدل جدید
+      const openAddBtn = document.getElementById('openAddShoeModalBtn');
+      if (openAddBtn) {
+        openAddBtn.addEventListener('click', () => this.openCreateModal());
+      }
+
+      // دکمه انتخاب فایل و آپلودر
+      const triggerFileBtn = document.getElementById('triggerFileSelectBtn');
+      const fileInput = document.getElementById('shoeFileInput');
+      const dropzone = document.getElementById('shoeMediaDropzone');
+
+      if (triggerFileBtn && fileInput) {
+        triggerFileBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          fileInput.click();
+        });
+      }
+
+      if (dropzone && fileInput) {
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        dropzone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          dropzone.style.borderColor = 'var(--gold-primary)';
+          dropzone.style.background = 'rgba(61, 36, 21, 0.5)';
+        });
+
+        dropzone.addEventListener('dragleave', () => {
+          dropzone.style.borderColor = '';
+          dropzone.style.background = '';
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          dropzone.style.borderColor = '';
+          dropzone.style.background = '';
+          if (e.dataTransfer.files && e.dataTransfer.files.length) {
+            this.handleUploadedFiles(e.dataTransfer.files);
+          }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+          if (e.target.files && e.target.files.length) {
+            this.handleUploadedFiles(e.target.files);
+          }
+        });
+      }
+
+      // افزودن تصویر نمونه کارگاه DYF
+      const addPresetBtn = document.getElementById('addPresetImagesBtn');
+      if (addPresetBtn) {
+        addPresetBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const randomPreset = this.presetImages[Math.floor(Math.random() * this.presetImages.length)];
+          this.currentEditingMedia.push({
+            url: randomPreset,
+            type: 'image',
+            isPrimary: this.currentEditingMedia.length === 0,
+          });
+          this.renderMediaGrid();
+          DYF_Toast.show({
+            type: 'info',
+            title: 'تصویر نمونه افزوده شد',
+            message: 'تصویر واقعی عکاسی کارگاه به گالری مدل پیوست شد.',
+          });
+        });
+      }
+
+      // ذخیره مدل
+      const saveBtn = document.getElementById('saveShoeBtn');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', () => this.handleSaveForm());
+      }
+
+      // دکمه ویرایش درون مودال شناسنامه
+      const dossierEditBtn = document.getElementById('dossierEditBtn');
+      if (dossierEditBtn) {
+        dossierEditBtn.addEventListener('click', () => {
+          const id = parseInt(dossierEditBtn.getAttribute('data-id'), 10);
+          DYF_Modal.close('modalShoeDossier');
+          if (id) this.openEditModal(id);
+        });
+      }
+    },
+
+    handleUploadedFiles(fileList) {
+      Array.from(fileList).forEach((file) => {
+        const isVideo = file.type.startsWith('video');
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          this.currentEditingMedia.push({
+            url: event.target.result,
+            type: isVideo ? 'video' : 'image',
+            isPrimary: this.currentEditingMedia.length === 0,
+          });
+          this.renderMediaGrid();
+        };
+        reader.readAsDataURL(file);
+      });
+
+      DYF_Toast.show({
+        type: 'success',
+        title: 'پیش‌نمایش رسانه',
+        message: `${fileList.length} فایل جدید با موفقیت در فرم بارگذاری شد.`,
+      });
+    },
+
+    renderMediaGrid() {
+      const container = document.getElementById('shoeMediaGrid');
+      if (!container) return;
+
+      if (!this.currentEditingMedia || !this.currentEditingMedia.length) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 1rem; color: var(--text-dim); font-size: 0.82rem;">
+            هنوز تصویری انتخاب نشده است. لطفاً حداقل یک تصویر برای مدل بارگذاری کنید.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = this.currentEditingMedia
+        .map((item, index) => {
+          const isPrimary = item.isPrimary;
+          return `
+          <div class="dyf-media-item ${isPrimary ? 'is-primary' : ''}">
+            ${
+              item.type === 'video'
+                ? `<video src="${item.url}" class="dyf-media-thumb" muted></video>`
+                : `<img src="${item.url}" alt="پیش‌نمایش" class="dyf-media-thumb">`
+            }
+            ${isPrimary ? `<span class="dyf-media-primary-tag">تصویر اصلی</span>` : ''}
+            <div class="dyf-media-actions">
+              ${
+                !isPrimary
+                  ? `<button type="button" class="dyf-media-btn js-set-cover" data-index="${index}">انتخاب کاور</button>`
+                  : ''
+              }
+              <button type="button" class="dyf-media-btn dyf-media-btn-danger js-remove-media" data-index="${index}">حذف</button>
+            </div>
+          </div>
+        `;
+        })
+        .join('');
+
+      // رویداد تنظیم به عنوان کاور
+      container.querySelectorAll('.js-set-cover').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const idx = parseInt(btn.getAttribute('data-index'), 10);
+          this.currentEditingMedia.forEach((m, i) => (m.isPrimary = i === idx));
+          this.renderMediaGrid();
+          DYF_Toast.show({ type: 'info', title: 'کاور اصلی', message: 'تصویر اصلی مدل انتخاب شد.' });
+        });
+      });
+
+      // رویداد حذف رسانه
+      container.querySelectorAll('.js-remove-media').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const idx = parseInt(btn.getAttribute('data-index'), 10);
+          const wasPrimary = this.currentEditingMedia[idx]?.isPrimary;
+          this.currentEditingMedia.splice(idx, 1);
+          if (wasPrimary && this.currentEditingMedia.length > 0) {
+            this.currentEditingMedia[0].isPrimary = true;
+          }
+          this.renderMediaGrid();
+        });
+      });
+    },
+
+    openCreateModal() {
+      const modeInput = document.getElementById('shoeFormMode');
+      const idInput = document.getElementById('shoeFormId');
+      const titleInput = document.getElementById('shoeFormTitle');
+      const descInput = document.getElementById('shoeFormDesc');
+      const colorsInput = document.getElementById('shoeFormColors');
+      const modalTitle = document.getElementById('shoeFormModalTitle');
+
+      if (modeInput) modeInput.value = 'create';
+      if (modalTitle) modalTitle.textContent = 'ثبت مدل کفش جدید';
+
+      // محاسبه شناسه خودکار بعدی
+      const maxId = this.models.reduce((max, m) => Math.max(max, m.id || 0), 100);
+      const nextId = maxId + 1;
+      if (idInput) idInput.value = nextId;
+
+      if (titleInput) titleInput.value = '';
+      if (descInput) descInput.value = '';
+      if (colorsInput) colorsInput.value = 'مشکی کلاسیک، عسلی کاراملی';
+
+      // انتخاب پیش‌فرض دسته‌ها
+      document.querySelectorAll('#shoeFormCategoriesWrap input').forEach((chk, i) => {
+        chk.checked = i === 0;
+      });
+
+      // انتخاب پیش‌فرض سایزها
+      document.querySelectorAll('#shoeFormSizesWrap input').forEach((chk) => {
+        chk.checked = ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'].includes(chk.value);
+      });
+
+      // وضعیت پیش‌فرض: منتشرشده
+      const pubRadio = document.querySelector('input[name="shoeStatus"][value="published"]');
+      if (pubRadio) pubRadio.checked = true;
+
+      // افزودن یک تصویر نمونه کارگاه به عنوان کاور اولیه
+      this.currentEditingMedia = [
+        { url: 'assets/images/shoes.jpeg', type: 'image', isPrimary: true },
+      ];
+      this.renderMediaGrid();
+
+      DYF_Modal.open('modalShoeForm');
+      if (titleInput) setTimeout(() => titleInput.focus(), 200);
+    },
+
+    openEditModal(id) {
+      const model = this.models.find((m) => m.id === id);
+      if (!model) return;
+
+      const modeInput = document.getElementById('shoeFormMode');
+      const idInput = document.getElementById('shoeFormId');
+      const titleInput = document.getElementById('shoeFormTitle');
+      const descInput = document.getElementById('shoeFormDesc');
+      const colorsInput = document.getElementById('shoeFormColors');
+      const modalTitle = document.getElementById('shoeFormModalTitle');
+
+      if (modeInput) modeInput.value = 'edit';
+      if (modalTitle) modalTitle.textContent = `ویرایش مدل کفش #${model.id}`;
+      if (idInput) idInput.value = model.id;
+      if (titleInput) titleInput.value = model.title || '';
+      if (descInput) descInput.value = model.description || '';
+      if (colorsInput) colorsInput.value = (model.colors || []).join('، ');
+
+      // تیک دسته‌بندی‌ها
+      document.querySelectorAll('#shoeFormCategoriesWrap input').forEach((chk) => {
+        chk.checked = (model.categories || []).includes(chk.value);
+      });
+
+      // تیک سایزها
+      document.querySelectorAll('#shoeFormSizesWrap input').forEach((chk) => {
+        chk.checked = (model.sizes || []).includes(chk.value);
+      });
+
+      // وضعیت
+      const statusRadio = document.querySelector(`input[name="shoeStatus"][value="${model.status}"]`);
+      if (statusRadio) statusRadio.checked = true;
+
+      // کپی رسانه‌ها
+      this.currentEditingMedia = JSON.parse(JSON.stringify(model.media || []));
+      if (!this.currentEditingMedia.some((m) => m.isPrimary) && this.currentEditingMedia.length > 0) {
+        this.currentEditingMedia[0].isPrimary = true;
+      }
+      this.renderMediaGrid();
+
+      DYF_Modal.open('modalShoeForm');
+    },
+
+    handleSaveForm() {
+      const mode = document.getElementById('shoeFormMode')?.value || 'create';
+      const id = parseInt(document.getElementById('shoeFormId')?.value, 10);
+      const title = document.getElementById('shoeFormTitle')?.value.trim();
+      const desc = document.getElementById('shoeFormDesc')?.value.trim();
+      const colorsRaw = document.getElementById('shoeFormColors')?.value.trim();
+      const status = document.querySelector('input[name="shoeStatus"]:checked')?.value || 'published';
+
+      if (!title) {
+        DYF_Toast.show({
+          type: 'error',
+          title: 'عنوان الزامی است',
+          message: 'لطفاً عنوان کامل مدل کفش را وارد کنید.',
+        });
+        document.getElementById('shoeFormTitle')?.focus();
+        return;
+      }
+
+      // استخراج دسته‌بندی‌ها
+      const categories = [];
+      document.querySelectorAll('#shoeFormCategoriesWrap input:checked').forEach((c) => {
+        categories.push(c.value);
+      });
+
+      if (!categories.length) {
+        DYF_Toast.show({
+          type: 'error',
+          title: 'دسته‌بندی الزامی است',
+          message: 'حداقل یک دسته‌بندی برای این مدل باید انتخاب شود.',
+        });
+        return;
+      }
+
+      // اعتبارسنجی رسانه برای حالت منتشرشده
+      if (!this.currentEditingMedia.length && status === 'published') {
+        DYF_Toast.show({
+          type: 'error',
+          title: 'تصویر مدل الزامی است',
+          message: 'برای انتشار مدل در کاتالوگ، حداقل یک تصویر الزامی است.',
+        });
+        return;
+      }
+
+      // اطمینان از وجود یک کاور اصلی
+      if (this.currentEditingMedia.length > 0 && !this.currentEditingMedia.some((m) => m.isPrimary)) {
+        this.currentEditingMedia[0].isPrimary = true;
+      }
+
+      const colors = colorsRaw
+        ? colorsRaw.split(/[,،]/).map((c) => c.trim()).filter(Boolean)
+        : ['مشکی کلاسیک'];
+
+      const sizes = [];
+      document.querySelectorAll('#shoeFormSizesWrap input:checked').forEach((s) => sizes.push(s.value));
+
+      if (mode === 'create') {
+        const newModel = {
+          id,
+          title,
+          categories,
+          colors,
+          sizes: sizes.length ? sizes : ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
+          status,
+          description: desc || 'توضیحات فنی کارگاهی این مدل به زودی افزوده خواهد شد.',
+          media: this.currentEditingMedia,
+        };
+        this.models.unshift(newModel);
+        this.saveModels();
+        DYF_Toast.show({
+          type: 'success',
+          title: 'مدل جدید ثبت شد',
+          message: `مدل «${title}» با شناسه DYF-${id} با موفقیت در سامانه ذخیره شد.`,
+        });
+      } else {
+        const idx = this.models.findIndex((m) => m.id === id);
+        if (idx !== -1) {
+          this.models[idx] = {
+            ...this.models[idx],
+            title,
+            categories,
+            colors,
+            sizes: sizes.length ? sizes : this.models[idx].sizes,
+            status,
+            description: desc,
+            media: this.currentEditingMedia,
+          };
+          this.saveModels();
+          DYF_Toast.show({
+            type: 'success',
+            title: 'ویرایش موفق',
+            message: `مشخصات مدل «${title}» به‌روزرسانی شد.`,
+          });
+        }
+      }
+
+      DYF_Modal.close('modalShoeForm');
+      this.render();
+    },
+
+    openDossierModal(id) {
+      const model = this.models.find((m) => m.id === id);
+      if (!model) return;
+
+      const titleEl = document.getElementById('dossierTitle');
+      const badgeEl = document.getElementById('dossierStatusBadge');
+      const bodyEl = document.getElementById('dossierBody');
+      const editBtn = document.getElementById('dossierEditBtn');
+
+      if (titleEl) titleEl.textContent = `${model.title} (DYF-${model.id})`;
+      if (editBtn) editBtn.setAttribute('data-id', model.id);
+
+      const statusMap = {
+        published: `<span class="dyf-badge dyf-badge-published">منتشرشده در کاتالوگ</span>`,
+        draft: `<span class="dyf-badge dyf-badge-draft">پیش‌نویس کارگاه</span>`,
+        archived: `<span class="dyf-badge dyf-badge-archived">بایگانی‌شده</span>`,
+      };
+
+      if (badgeEl) badgeEl.innerHTML = statusMap[model.status] || '';
+
+      const coverMedia = (model.media || []).find((m) => m.isPrimary) || (model.media && model.media[0]) || { url: 'assets/images/shoes.jpeg' };
+
+      const thumbnailsHtml = (model.media || [])
+        .map(
+          (m, idx) => `
+        <img 
+          src="${m.url}" 
+          alt="عکس ${idx + 1}" 
+          style="width: 58px; height: 58px; object-fit: cover; border-radius: var(--r-sm); border: 1px solid ${m.isPrimary ? 'var(--gold-primary)' : 'var(--border-subtle)'}; cursor: pointer;"
+          onclick="document.getElementById('dossierMasterImg').src = '${m.url}'"
+        >
+      `
+        )
+        .join('');
+
+      if (bodyEl) {
+        bodyEl.innerHTML = `
+          <div style="display: grid; grid-template-columns: 240px 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+            <div>
+              <div style="width: 100%; aspect-ratio: 1; border-radius: var(--r-md); overflow: hidden; background: #0e0c0a; border: 1px solid var(--border-medium); margin-bottom: 0.75rem;">
+                <img id="dossierMasterImg" src="${coverMedia.url}" alt="${model.title}" style="width: 100%; height: 100%; object-fit: cover;">
+              </div>
+              <div style="display: flex; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.4rem;">
+                ${thumbnailsHtml}
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.88rem;">
+              <div>
+                <span style="color: var(--text-dim); font-size: 0.78rem;">دسته‌بندی‌های لاین:</span>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.25rem;">
+                  ${(model.categories || []).map((c) => `<span class="dyf-category-pill">${c}</span>`).join('')}
+                </div>
+              </div>
+
+              <div>
+                <span style="color: var(--text-dim); font-size: 0.78rem;">شناسنامه و متریال کارگاه:</span>
+                <p style="color: var(--text-main); line-height: 1.7; margin-top: 0.25rem;">${model.description || '-'}</p>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle);">
+                <div>
+                  <span style="color: var(--text-dim); font-size: 0.78rem;">رنگ‌های موجود:</span>
+                  <div style="font-weight: 700; color: var(--gold-light); margin-top: 0.2rem;">${(model.colors || []).join('، ')}</div>
+                </div>
+                <div>
+                  <span style="color: var(--text-dim); font-size: 0.78rem;">سایزبندی سری:</span>
+                  <div style="font-weight: 700; color: var(--text-ivory); margin-top: 0.2rem;">${(model.sizes || []).join('، ')}</div>
+                </div>
+              </div>
+
+              <div style="padding: 0.85rem; background: rgba(36, 30, 25, 0.45); border-radius: var(--r-sm); border: 1px dashed var(--border-subtle); font-size: 0.78rem; color: var(--text-muted);">
+                <strong>شرایط تیراژ عمده B2B:</strong> حداقل سفارش ۱ سری (۱۰ جفت) با بسته‌بندی ویژه جعبه دو رنگ DYF. ارسال مستقیم از کارگاه تبریز یا انبار مرکزی بازار تهران.
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      DYF_Modal.open('modalShoeDossier');
+    },
+
+    changeStatus(id, newStatus) {
+      const model = this.models.find((m) => m.id === id);
+      if (!model) return;
+
+      if (newStatus === 'archived') {
+        DYF_Modal.confirm({
+          title: 'انتقال مدل به بایگانی کارگاه',
+          message: `
+            آیا از انتقال مدل <strong>«${model.title}»</strong> به بایگانی اطمینان دارید؟<br><br>
+            <div style="background: rgba(36, 30, 25, 0.6); padding: 0.85rem; border-radius: var(--r-sm); font-size: 0.82rem; color: var(--leather-caramel);">
+              ⚠️ <strong>پیامد عملیات:</strong> این مدل بلافاصله از تمام لینک‌های فعال و کاتالوگ مشتریان پنهان می‌شود؛ اما سوابق آن در پنل شما حفظ خواهد شد.
+            </div>
+          `,
+          confirmText: 'انتقال به بایگانی',
+          cancelText: 'انصراف',
+          onConfirm: () => {
+            model.status = 'archived';
+            this.saveModels();
+            DYF_Toast.show({
+              type: 'info',
+              title: 'مدل بایگانی شد',
+              message: `مدل «${model.title}» به بایگانی منتقل شد.`,
+            });
+            this.render();
+          },
+        });
+      } else if (newStatus === 'published') {
+        model.status = 'published';
+        this.saveModels();
+        DYF_Toast.show({
+          type: 'success',
+          title: 'مدل منتشر شد',
+          message: `مدل «${model.title}» در کاتالوگ مجاز همکاران فعال گردید.`,
+        });
+        this.render();
+      } else {
+        model.status = 'draft';
+        this.saveModels();
+        DYF_Toast.show({
+          type: 'info',
+          title: 'تغییر به پیش‌نویس',
+          message: `مدل «${model.title}» به حالت پیش‌نویس تغییر یافت.`,
+        });
+        this.render();
+      }
+    },
+
+    updateGlobalCounters() {
+      const allCount = this.models.length;
+      const pubCount = this.models.filter((m) => m.status === 'published').length;
+      const draftCount = this.models.filter((m) => m.status === 'draft').length;
+      const archCount = this.models.filter((m) => m.status === 'archived').length;
+
+      // به‌روزرسانی شمارنده‌های هدر تب‌ها
+      const elAll = document.getElementById('countAllModels');
+      const elPub = document.getElementById('countPublishedModels');
+      const elDraft = document.getElementById('countDraftModels');
+      const elArch = document.getElementById('countArchivedModels');
+      const badge = document.getElementById('shoesCountSummaryBadge');
+
+      if (elAll) elAll.textContent = allCount;
+      if (elPub) elPub.textContent = pubCount;
+      if (elDraft) elDraft.textContent = draftCount;
+      if (elArch) elArch.textContent = archCount;
+      if (badge) badge.textContent = `${allCount} مدل کل (${pubCount} فعال)`;
+
+      // به‌روزرسانی شمارنده سایدبار
+      const navCounter = document.querySelector('a[href="#shoes"] .dyf-nav-counter');
+      if (navCounter) navCounter.textContent = allCount;
+
+      // به‌روزرسانی کارت داشبورد
+      const dashStat = document.querySelector('.dyf-stat-card .dyf-stat-value');
+      if (dashStat) dashStat.innerHTML = `${allCount} <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted);">مدل</span>`;
+    },
+
+    getFilteredModels() {
+      return this.models.filter((m) => {
+        // فیلتر جست‌وجو (عنوان و شناسه عددی)
+        if (this.searchQuery) {
+          const matchTitle = (m.title || '').toLowerCase().includes(this.searchQuery);
+          const matchId = String(m.id).includes(this.searchQuery) || `dyf-${m.id}`.includes(this.searchQuery);
+          if (!matchTitle && !matchId) return false;
+        }
+
+        // فیلتر دسته‌بندی
+        if (this.selectedCategory !== 'all') {
+          if (!m.categories || !m.categories.includes(this.selectedCategory)) {
+            return false;
+          }
+        }
+
+        // فیلتر وضعیت
+        if (this.selectedStatus !== 'all') {
+          if (m.status !== this.selectedStatus) {
+            return false;
+          }
+        }
+
+        return true;
+      });
+    },
+
+    render() {
+      const filtered = this.getFilteredModels();
+      const gridContainer = document.getElementById('shoesGridContainer');
+      const tableContainer = document.getElementById('shoesTableContainer');
+      const tableBody = document.getElementById('shoesTableBody');
+      const emptyState = document.getElementById('shoesEmptyState');
+
+      this.updateGlobalCounters();
+
+      if (!filtered.length) {
+        if (gridContainer) gridContainer.style.display = 'none';
+        if (tableContainer) tableContainer.style.display = 'none';
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+      }
+
+      if (emptyState) emptyState.style.display = 'none';
+
+      if (this.viewMode === 'grid') {
+        if (tableContainer) tableContainer.style.display = 'none';
+        if (gridContainer) {
+          gridContainer.style.display = 'grid';
+          gridContainer.innerHTML = filtered.map((m) => this.renderCardHtml(m)).join('');
+          this.bindCardActions(gridContainer);
+        }
+      } else {
+        if (gridContainer) gridContainer.style.display = 'none';
+        if (tableContainer && tableBody) {
+          tableContainer.style.display = 'block';
+          tableBody.innerHTML = filtered.map((m) => this.renderTableRowHtml(m)).join('');
+          this.bindCardActions(tableBody);
+        }
+      }
+    },
+
+    renderCardHtml(model) {
+      const primaryMedia = (model.media || []).find((m) => m.isPrimary) || (model.media && model.media[0]) || { url: 'assets/images/shoes.jpeg' };
+      const mediaCount = (model.media || []).length;
+
+      const statusBadges = {
+        published: `<span class="dyf-badge dyf-badge-published">منتشرشده</span>`,
+        draft: `<span class="dyf-badge dyf-badge-draft">پیش‌نویس</span>`,
+        archived: `<span class="dyf-badge dyf-badge-archived">بایگانی</span>`,
+      };
+
+      const categoriesHtml = (model.categories || [])
+        .map((c) => `<span class="dyf-category-pill">${c}</span>`)
+        .join('');
+
+      return `
+        <article class="dyf-product-card" data-id="${model.id}">
+          <div class="dyf-product-thumb-wrap">
+            <img src="${primaryMedia.url}" alt="${model.title}" class="dyf-product-thumb" loading="lazy">
+            <div class="dyf-product-thumb-overlay"></div>
+            <div class="dyf-product-badge-top">
+              ${statusBadges[model.status] || ''}
+            </div>
+            <div class="dyf-product-id-badge">DYF-${model.id}</div>
+            <div class="dyf-product-media-count">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+              <span>${mediaCount} رسانه</span>
+            </div>
+          </div>
+
+          <div class="dyf-product-body">
+            <h3 class="dyf-product-title">${model.title}</h3>
+            <div class="dyf-product-categories">${categoriesHtml}</div>
+            <p class="dyf-product-desc">${model.description || '-'}</p>
+
+            <div class="dyf-product-specs-row">
+              <div style="display: flex; align-items: center; gap: 0.35rem;">
+                <span>رنگ‌ها:</span>
+                <span style="color: var(--text-main); font-weight: 600;">${(model.colors || []).join('، ')}</span>
+              </div>
+              <div>
+                <span>سایزها:</span>
+                <span style="color: var(--gold-light); font-weight: 700;">${(model.sizes || []).join(' ')}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dyf-product-actions-footer">
+            <div style="display: flex; gap: 0.4rem;">
+              <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-edit-shoe" data-id="${model.id}">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                <span>ویرایش</span>
+              </button>
+              <button type="button" class="dyf-btn dyf-btn-specular dyf-btn-sm js-dossier-shoe" data-id="${model.id}">
+                <span>شناسنامه</span>
+              </button>
+            </div>
+
+            <div>
+              ${
+                model.status === 'published'
+                  ? `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-archive-shoe" data-id="${model.id}" title="انتقال به بایگانی" style="color: var(--text-muted); border-color: transparent;">بایگانی</button>`
+                  : model.status === 'archived'
+                  ? `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-publish-shoe" data-id="${model.id}" title="انتشار مجدد" style="color: var(--gold-primary);">انتشار</button>`
+                  : `<button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-publish-shoe" data-id="${model.id}">انتشار</button>`
+              }
+            </div>
+          </div>
+        </article>
+      `;
+    },
+
+    renderTableRowHtml(model) {
+      const primaryMedia = (model.media || []).find((m) => m.isPrimary) || (model.media && model.media[0]) || { url: 'assets/images/shoes.jpeg' };
+
+      const statusBadges = {
+        published: `<span class="dyf-badge dyf-badge-published">منتشرشده</span>`,
+        draft: `<span class="dyf-badge dyf-badge-draft">پیش‌نویس</span>`,
+        archived: `<span class="dyf-badge dyf-badge-archived">بایگانی</span>`,
+      };
+
+      return `
+        <tr data-id="${model.id}">
+          <td style="width: 60px;">
+            <img src="${primaryMedia.url}" alt="${model.title}" style="width: 48px; height: 48px; object-fit: cover; border-radius: var(--r-sm); border: 1px solid var(--border-subtle);">
+          </td>
+          <td style="font-family: var(--font-title); font-weight: 700; color: var(--gold-light); direction: ltr; text-align: right;">
+            DYF-${model.id}
+          </td>
+          <td>
+            <div style="font-weight: 700; color: var(--text-ivory);">${model.title}</div>
+            <div style="font-size: 0.74rem; color: var(--text-muted);">${(model.media || []).length} تصویر و ویدئو</div>
+          </td>
+          <td>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">
+              ${(model.categories || []).map((c) => `<span class="dyf-category-pill" style="font-size: 0.68rem;">${c}</span>`).join('')}
+            </div>
+          </td>
+          <td>
+            <div style="font-size: 0.78rem; color: var(--text-main);">${(model.colors || []).join('، ')}</div>
+            <div style="font-size: 0.72rem; color: var(--gold-primary); font-weight: 600;">سایز: ${(model.sizes || []).join(' ')}</div>
+          </td>
+          <td>${statusBadges[model.status] || model.status}</td>
+          <td>
+            <div style="display: flex; gap: 0.35rem; align-items: center;">
+              <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-edit-shoe" data-id="${model.id}">ویرایش</button>
+              <button type="button" class="dyf-btn dyf-btn-specular dyf-btn-sm js-dossier-shoe" data-id="${model.id}">شناسنامه</button>
+              ${
+                model.status === 'published'
+                  ? `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-archive-shoe" data-id="${model.id}" title="بایگانی">بایگانی</button>`
+                  : `<button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-publish-shoe" data-id="${model.id}">انتشار</button>`
+              }
+            </div>
+          </td>
+        </tr>
+      `;
+    },
+
+    bindCardActions(container) {
+      // ویرایش
+      container.querySelectorAll('.js-edit-shoe').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(btn.getAttribute('data-id'), 10);
+          this.openEditModal(id);
+        });
+      });
+
+      // شناسنامه فنی
+      container.querySelectorAll('.js-dossier-shoe').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(btn.getAttribute('data-id'), 10);
+          this.openDossierModal(id);
+        });
+      });
+
+      // انتقال به بایگانی
+      container.querySelectorAll('.js-archive-shoe').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(btn.getAttribute('data-id'), 10);
+          this.changeStatus(id, 'archived');
+        });
+      });
+
+      // انتشار
+      container.querySelectorAll('.js-publish-shoe').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(btn.getAttribute('data-id'), 10);
+          this.changeStatus(id, 'published');
+        });
+      });
+    },
+  };
+
+  window.ShoesController = ShoesController;
+
+  // ==========================================================================
+  // ۹. کنترلر نمایش و تست آزمایشگاهی کامپوننت‌ها (Component Kitchen-Sink)
   // ==========================================================================
   const ComponentDemoController = {
     init() {
@@ -841,12 +1919,13 @@
   };
 
   // ==========================================================================
-  // ۹. اجرای اولیه پس از آماده شدن DOM
+  // ۱۰. اجرای اولیه پس از آماده شدن DOM
   // ==========================================================================
   document.addEventListener('DOMContentLoaded', () => {
     AuthController.init();
     SidebarController.init();
     DashboardController.init();
+    ShoesController.init();
     ComponentDemoController.init();
   });
 })();
