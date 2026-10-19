@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پنل مدیریت کاتالوگ خصوصی | برند DYF (Defender Your Foot)</title>
+
+  <!-- فونت‌های رسمی دیزاین سیستم DYF v4 -->
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+
+  <!-- فونت تیتر استعداد -->
+  <style>
+    @font-face {
+      font-family: 'Estedad';
+      font-weight: 700;
+      src: url('https://cdn.jsdelivr.net/gh/aminabedi68/Estedad@master/fonts/webfonts/Estedad-Bold.woff2') format('woff2');
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Estedad';
+      font-weight: 800;
+      src: url('https://cdn.jsdelivr.net/gh/aminabedi68/Estedad@master/fonts/webfonts/Estedad-ExtraBold.woff2') format('woff2');
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Estedad';
+      font-weight: 900;
+      src: url('https://cdn.jsdelivr.net/gh/aminabedi68/Estedad@master/fonts/webfonts/Estedad-Black.woff2') format('woff2');
+      font-display: swap;
+    }
+  </style>
+
+  <!-- استایل‌شیت رسمی پنل مدیریت -->
+  <link rel="stylesheet" href="assets/css/admin.css?v=1">
+</head>
+<body>
+
+  <!-- نوار دوخت سراجی استیکی بالای صفحه (امضای برند DYF) -->
+  <div class="admin-saddle-stitch" aria-hidden="true"></div>
+
+  <!-- ======================================================================
+       ۱. صفحه ورود مدیر (Auth View — شماره تلفن + کد یک‌بارمصرف OTP)
+       ====================================================================== -->
+  <div id="authView" class="dyf-auth-view">
+    <div class="dyf-auth-card">
+      <div class="dyf-auth-brand">
+        <img src="assets/images/logo.png" alt="لوگو برند DYF" class="dyf-auth-logo">
+        <h1 class="dyf-auth-title">ورود به پنل مدیریت</h1>
+        <p class="dyf-auth-subtitle">کاتالوگ خصوصی محصولات چرمی کارگاه DYF</p>
+      </div>
+
+      <!-- مرحله اول: ورود شماره موبایل -->
+      <div id="authStepPhone" class="dyf-auth-step">
+        <p class="dyf-auth-note">
+          جهت ورود به پنل مدیریت، شماره موبایل ثبت‌شده خود را وارد نمایید تا کد تأیید ارسال گردد.
+        </p>
+
+        <div class="dyf-form-group">
+          <label for="adminPhoneInput" class="dyf-form-label dyf-form-label-required">شماره تلفن همراه مدیر</label>
+          <div class="dyf-input-wrap">
+            <input 
+              type="tel" 
+              id="adminPhoneInput" 
+              class="dyf-input" 
+              placeholder="09121234567" 
+              dir="ltr" 
+              maxlength="11" 
+              autocomplete="tel"
+              value="09121234567"
+            >
+          </div>
+          <p class="dyf-form-hint">شماره باید با ۰۹ آغاز شده و ۱۱ رقم باشد.</p>
+        </div>
+
+        <button type="button" id="sendOtpBtn" class="dyf-btn dyf-btn-primary dyf-btn-lg" style="width: 100%;">
+          <span>ارسال کد تأیید یک‌بارمصرف</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+
+        <!-- نوار راهنمای تست سریع -->
+        <div class="dyf-auth-simulation-bar">
+          <div><strong>حالت شبیه‌سازی پروتوتایپ:</strong></div>
+          <div>برای تست آسان، شماره تستی پیش‌فرض بارگذاری شده است.</div>
+          <div class="dyf-auth-simulation-actions">
+            <button type="button" id="testQuickFillBtn" class="dyf-auth-quick-fill">⚡ ورود سریع با داده تستی</button>
+            <a href="index.html" class="dyf-auth-quick-fill" style="text-decoration: none;">بازگشت به لندینگ اصلی</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- مرحله دوم: ورود کد ۵ رقمی OTP -->
+      <div id="authStepOtp" class="dyf-auth-step is-hidden">
+        <p class="dyf-auth-note">
+          کد تأیید ۵ رقمی به شماره <span id="otpPhoneDisplay" class="dyf-auth-phone-display">09121234567</span> پیامک شد.
+        </p>
+
+        <div class="dyf-otp-grid">
+          <input type="text" maxlength="1" inputmode="numeric" class="dyf-otp-digit" autocomplete="one-time-code">
+          <input type="text" maxlength="1" inputmode="numeric" class="dyf-otp-digit">
+          <input type="text" maxlength="1" inputmode="numeric" class="dyf-otp-digit">
+          <input type="text" maxlength="1" inputmode="numeric" class="dyf-otp-digit">
+          <input type="text" maxlength="1" inputmode="numeric" class="dyf-otp-digit">
+        </div>
+
+        <div class="dyf-otp-timer-wrap">
+          <div>زمان اعتبار کد: <span id="otpCountdown" class="dyf-otp-timer">01:00</span></div>
+          <button type="button" id="resendOtpBtn" class="dyf-otp-resend" disabled>ارسال مجدد کد</button>
+        </div>
+
+        <button type="button" id="verifyOtpBtn" class="dyf-btn dyf-btn-primary dyf-btn-lg" style="width: 100%; margin-bottom: 0.85rem;">
+          <span>تأیید و ورود به پیشخوان</span>
+        </button>
+
+        <button type="button" id="changePhoneBtn" class="dyf-btn dyf-btn-outline" style="width: 100%; font-size: 0.82rem;">
+          ویرایش شماره موبایل
+        </button>
+
+        <!-- ابزار تست خطای OTP و ورود سریع -->
+        <div class="dyf-auth-simulation-bar">
+          <div><strong>راهنمای تست ارزیابی:</strong> کد صحیح تستی: <code style="color: var(--gold-light); font-weight: 700;">12345</code></div>
+          <div class="dyf-auth-simulation-actions">
+            <button type="button" id="testErrorOtpBtn" class="dyf-auth-quick-fill">❌ تست خطای کد نادرست</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       ۲. پوسته اصلی پنل مدیریت (Admin Panel Shell)
+       ====================================================================== -->
+  <div id="adminApp" class="dyf-admin-app is-hidden">
+    
+    <!-- لایه تاریک پشت سایدبار در موبایل -->
+    <div id="sidebarOverlay" class="dyf-sidebar-overlay" aria-hidden="true"></div>
+
+    <!-- ۲.۱. سایدبار ناوبری راست‌چین -->
+    <aside id="adminSidebar" class="dyf-admin-sidebar">
+      <!-- هدر سایدبار -->
+      <div class="dyf-sidebar-header">
+        <img src="assets/images/logo.png" alt="لوگو برند DYF" class="dyf-sidebar-logo">
+        <div>
+          <div class="dyf-sidebar-brand-name">DYF ATELIER</div>
+          <div class="dyf-sidebar-badge">PRIVATE CATALOG ADMIN</div>
+        </div>
+      </div>
+
+      <!-- منوی ناوبری -->
+      <nav class="dyf-sidebar-nav" aria-label="منوی اصلی پنل">
+        <div class="dyf-nav-section-label">پیشخوان و نظارت</div>
+
+        <a href="#dashboard" class="dyf-nav-item is-active">
+          <div class="dyf-nav-left">
+            <svg class="dyf-nav-icon" viewBox="0 0 24 24" fill="none"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+            <span>داشبورد تحلیلی</span>
+          </div>
+        </a>
+
+        <div class="dyf-nav-section-label">محصولات و دسته‌ها</div>
+
+        <a href="#shoes" class="dyf-nav-item">
+          <div class="dyf-nav-left">
+            <svg class="dyf-nav-icon" viewBox="0 0 24 24" fill="none"><path d="M4 18h16"/><path d="M4 14l3-6 4 2 5-4 4 8H4z"/></svg>
+            <span>مدل‌های کفش</span>
+          </div>
+          <span class="dyf-nav-counter">۱۸</span>
+        </a>
+
+        <a href="#categories" class="dyf-nav-item">
+          <div class="dyf-nav-left">
+            <svg class="dyf-nav-icon" viewBox="0 0 24 24" fill="none"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>دسته‌بندی‌ها</span>
+          </div>
+          <span class="dyf-nav-counter">۳</span>
+        </a>
+
+        <div class="dyf-nav-section-label">دسترسی و مشتریان</div>
+
+        <a href="#customers" class="dyf-nav-item">
+          <div class="dyf-nav-left">
+            <svg class="dyf-nav-icon" viewBox="0 0 24 24" fill="none"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>مشتریان و بنکداران</span>
+          </div>
+          <span class="dyf-nav-counter">۲۴</span>
+        </a>
+
+        <a href="#access-links" class="dyf-nav-item">
+          <div class="dyf-nav-left">
+            <svg class="dyf-nav-icon" viewBox="0 0 24 24" fill="none"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            <span>لینک‌های اختصاصی</span>
+          </div>
+          <span class="dyf-nav-counter">۹</span>
+        </a>
+
+        <div class="dyf-nav-section-label">توسعه و استانداردها</div>
+
+        <a href="#components" class="dyf-nav-item">
+          <div class="dyf-nav-left">
+            <svg class="dyf-nav-icon" viewBox="0 0 24 24" fill="none"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            <span>کیت کامپوننت‌های پایه</span>
+          </div>
+        </a>
+
+        <a href="#settings" class="dyf-nav-item">
+          <div class="dyf-nav-left">
+            <svg class="dyf-nav-icon" viewBox="0 0 24 24" fill="none"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>تنظیمات عمومی</span>
+          </div>
+        </a>
+      </nav>
+
+      <!-- پروفایل و دکمه خروج در پایین سایدبار -->
+      <div class="dyf-sidebar-footer">
+        <div class="dyf-admin-profile-snippet">
+          <div class="dyf-admin-avatar">م‌م</div>
+          <div class="dyf-admin-info">
+            <div class="dyf-admin-name">مهدی مالوندی</div>
+            <div class="dyf-admin-role">مدیر ارشد کارگاه</div>
+          </div>
+        </div>
+        <button type="button" class="dyf-icon-btn js-admin-logout" title="خروج از حساب">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ۲.۲. فضای اصلی (Header + Content Views) -->
+    <div class="dyf-admin-main-wrap">
+      
+      <!-- هدر بالای پنل -->
+      <header class="dyf-admin-header">
+        <div class="dyf-header-right">
+          <!-- دکمه همبرگری موبایل -->
+          <button type="button" id="hamburgerToggle" class="dyf-hamburger-toggle" aria-label="باز کردن منو">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+          </button>
+
+          <!-- مسیر موقعیت کاربر (Breadcrumbs) -->
+          <nav class="dyf-breadcrumbs" aria-label="مسیر جاری">
+            <a href="#dashboard" class="dyf-breadcrumb-root">پنل مدیریت DYF</a>
+            <span class="dyf-breadcrumb-sep">/</span>
+            <span id="dyfBreadcrumbActive" class="dyf-breadcrumb-active">داشبورد تحلیلی</span>
+          </nav>
+        </div>
+
+        <div class="dyf-header-left">
+          <!-- نوار جست‌وجوی سریع با کلید میانبر / -->
+          <div class="dyf-quick-search-box">
+            <svg class="dyf-quick-search-icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="quickSearchInput" class="dyf-quick-search-input" placeholder="جست‌وجوی مدل یا مشتری...">
+            <kbd class="dyf-quick-search-kbd">/</kbd>
+          </div>
+
+          <!-- دکمه رفتن به سایت عمومی لندینگ -->
+          <a href="index.html" target="_blank" class="dyf-icon-btn" title="مشاهده وب‌سایت عمومی DYF">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+
+          <!-- اعلان‌ها -->
+          <button type="button" class="dyf-icon-btn" title="اعلان‌های سیستم">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            <span class="dyf-icon-btn-badge"></span>
+          </button>
+
+          <!-- دکمه اقدام سریع ایجاد لینک -->
+          <a href="#access-links" class="dyf-btn dyf-btn-primary dyf-btn-sm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            <span>+ ایجاد لینک اختصاصی</span>
+          </a>
+        </div>
+      </header>
+
+      <!-- ناحیه محتوای پویای صفحات بر اساس Router -->
+      <main class="dyf-admin-content">
+
+        <!-- ==================================================================
+             ویو ۱: داشبورد تحلیلی اصلی (#dashboard)
+             ================================================================== -->
+        <section id="viewDashboard" class="dyf-view is-active">
+          <!-- بنر خوش‌آمدگویی هیرو -->
+          <div class="dyf-dashboard-hero">
+            <div class="dyf-dashboard-hero-text">
+              <h1>پیشخوان مدیریت کاتالوگ خصوصی DYF</h1>
+              <p>کنترل متمرکز مدل‌های کارگاهی، مجوزهای دسترسی بنکداران و نظارت بر لینک‌های فعال</p>
+            </div>
+            <div class="dyf-dashboard-hero-meta">
+              <div class="dyf-date-pill">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                <span>دوشنبه ۲۸ مهر ۱۴۰۵ — ساعت ۱۰:۳۰</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- گرید ۴ کارت شاخص KPI -->
+          <div class="dyf-stats-grid">
+            <div class="dyf-stat-card">
+              <div class="dyf-stat-header">
+                <span class="dyf-stat-title">مدل‌های فعال در کاتالوگ</span>
+                <div class="dyf-stat-icon-wrap">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18h16"/><path d="M4 14l3-6 4 2 5-4 4 8H4z"/></svg>
+                </div>
+              </div>
+              <div class="dyf-stat-value">۱۸ <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted);">مدل</span></div>
+              <div class="dyf-stat-footer">
+                <span class="dyf-stat-trend">۱۴ منتشرشده</span>
+                <span>• ۳ پیش‌نویس • ۱ بایگانی</span>
+              </div>
+            </div>
+
+            <div class="dyf-stat-card">
+              <div class="dyf-stat-header">
+                <span class="dyf-stat-title">مشتریان و بنکداران همکار</span>
+                <div class="dyf-stat-icon-wrap">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                </div>
+              </div>
+              <div class="dyf-stat-value">۲۴ <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted);">مشتری</span></div>
+              <div class="dyf-stat-footer">
+                <span class="dyf-stat-trend">۲۱ فعال</span>
+                <span>• بازار تهران، تبریز، شیراز و اصفهان</span>
+              </div>
+            </div>
+
+            <div class="dyf-stat-card">
+              <div class="dyf-stat-header">
+                <span class="dyf-stat-title">لینک‌های اختصاصی معتبر</span>
+                <div class="dyf-stat-icon-wrap">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                </div>
+              </div>
+              <div class="dyf-stat-value">۹ <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted);">لینک فعال</span></div>
+              <div class="dyf-stat-footer">
+                <span style="color: var(--leather-caramel); font-weight: 700;">۳ لینک</span>
+                <span>در انتظار اولین ورود گیرنده</span>
+              </div>
+            </div>
+
+            <div class="dyf-stat-card">
+              <div class="dyf-stat-header">
+                <span class="dyf-stat-title">مشاهده کاتالوگ (۷ روز اخیر)</span>
+                <div class="dyf-stat-icon-wrap">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                </div>
+              </div>
+              <div class="dyf-stat-value">۱۴۲ <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted);">بازدید</span></div>
+              <div class="dyf-stat-footer">
+                <span class="dyf-stat-trend">↑ ۱۸٪ رشد</span>
+                <span>نسبت به هفته پیشین</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- چیدمان دو ستونه داشبورد -->
+          <div class="dyf-dashboard-grid">
+            
+            <!-- ستون سمت راست: جدول لینک‌های اختصاصی اخیر -->
+            <div>
+              <div class="dyf-panel-card">
+                <div class="dyf-panel-card-header">
+                  <h2 class="dyf-panel-card-title">آخرین لینک‌های دسترسی اختصاصی</h2>
+                  <div class="dyf-panel-card-actions">
+                    <button type="button" id="demoTableToggleEmpty" class="dyf-btn dyf-btn-outline dyf-btn-sm" title="تست حالت بدون داده">
+                      تغییر حالت خالی/دیتا
+                    </button>
+                    <a href="#access-links" class="dyf-btn dyf-btn-primary dyf-btn-sm">
+                      <span>مشاهده همه</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                    </a>
+                  </div>
+                </div>
+
+                <!-- جدول داده‌ها -->
+                <div class="dyf-table-container">
+                  <table class="dyf-table">
+                    <thead>
+                      <tr>
+                        <th>گیرنده لینک</th>
+                        <th>مشتری / دسته‌های مجاز</th>
+                        <th>روش احراز</th>
+                        <th>وضعیت</th>
+                        <th>اعتبار و مهلت</th>
+                        <th>عملیات</th>
+                      </tr>
+                    </thead>
+                    <tbody id="recentLinksTableBody">
+                      <!-- با JS رندر می‌شود -->
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- وضعیت خالی جدول (Empty State) -->
+                <div id="tableEmptyState" class="dyf-empty-state" style="display: none;">
+                  <svg class="dyf-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                  <h3 class="dyf-empty-title">هیچ لینک فعالی یافت نشد</h3>
+                  <p class="dyf-empty-desc">در حال حاضر هیچ لینک دسترسی اختصاصی برای همکاران ایجاد نشده است. می‌توانید با کلیک بر دکمه زیر اولین لینک را صادر کنید.</p>
+                  <a href="#access-links" class="dyf-btn dyf-btn-primary">
+                    <span>+ ایجاد اولین لینک دسترسی</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- ستون سمت چپ: وضعیت لاین‌ها و ابزارهای سریع -->
+            <div>
+              <!-- توزیع مدل‌ها در دسته‌بندی‌ها -->
+              <div class="dyf-panel-card">
+                <div class="dyf-panel-card-header">
+                  <h3 class="dyf-panel-card-title">توزیع مدل‌ها در لاین‌ها</h3>
+                </div>
+                <div style="padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem;">
+                  <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.84rem; margin-bottom: 0.35rem;">
+                      <span style="font-weight: 700; color: var(--text-ivory);">لاین رسمی و اداری (Formal)</span>
+                      <span style="color: var(--gold-light);">۸ مدل (۴۴٪)</span>
+                    </div>
+                    <div style="height: 6px; background: rgba(36, 30, 25, 0.8); border-radius: 3px; overflow: hidden;">
+                      <div style="width: 44%; height: 100%; background: var(--gold-primary); border-radius: 3px;"></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.84rem; margin-bottom: 0.35rem;">
+                      <span style="font-weight: 700; color: var(--text-ivory);">لاین اسپرت و کژوال (Sport)</span>
+                      <span style="color: var(--leather-caramel);">۶ مدل (۳۳٪)</span>
+                    </div>
+                    <div style="height: 6px; background: rgba(36, 30, 25, 0.8); border-radius: 3px; overflow: hidden;">
+                      <div style="width: 33%; height: 100%; background: var(--leather-caramel); border-radius: 3px;"></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.84rem; margin-bottom: 0.35rem;">
+                      <span style="font-weight: 700; color: var(--text-ivory);">لاین چرم لوکس دست‌دوز (Atelier)</span>
+                      <span style="color: #4cd964;">۴ مدل (۲۳٪)</span>
+                    </div>
+                    <div style="height: 6px; background: rgba(36, 30, 25, 0.8); border-radius: 3px; overflow: hidden;">
+                      <div style="width: 23%; height: 100%; background: #4cd964; border-radius: 3px;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- کارت دسترسی سریع به عملیات -->
+              <div class="dyf-panel-card">
+                <div class="dyf-panel-card-header">
+                  <h3 class="dyf-panel-card-title">عملیات سریع</h3>
+                </div>
+                <div style="padding: 1.25rem; display: flex; flex-direction: column; gap: 0.65rem;">
+                  <a href="#shoes" class="dyf-btn dyf-btn-outline" style="justify-content: flex-start;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                    <span>ثبت مدل کفش جدید (تسک ۲)</span>
+                  </a>
+                  <a href="#customers" class="dyf-btn dyf-btn-outline" style="justify-content: flex-start;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    <span>تعریف بنکدار جدید (تسک ۴)</span>
+                  </a>
+                  <a href="#components" class="dyf-btn dyf-btn-specular" style="justify-content: flex-start;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                    <span>مشاهده کیت کامپوننت‌های پایه (تسک ۱)</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             ویو ۲: مدیریت مدل‌های کفش (#shoes — تسک ۲)
+             ================================================================== -->
+        <section id="viewShoes" class="dyf-view">
+          <div class="dyf-panel-card">
+            <div class="dyf-panel-card-header">
+              <h2 class="dyf-panel-card-title">مدیریت مدل‌های کفش (تسک ۲ در نوبت توسعه)</h2>
+              <a href="#dashboard" class="dyf-btn dyf-btn-outline dyf-btn-sm">بازگشت به پیشخوان</a>
+            </div>
+            <div class="dyf-empty-state">
+              <svg class="dyf-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 18h16"/><path d="M4 14l3-6 4 2 5-4 4 8H4z"/></svg>
+              <h3 class="dyf-empty-title">پایگاه مدیریت مدل‌های کفش</h3>
+              <p class="dyf-empty-desc">
+                این بخش مربوط به <strong>تسک ۲</strong> است و شامل گالری رسانه‌ها، آپلود تصاویر واقعی کارگاه، مدیریت پیش‌نویس، انتشار و بایگانی خواهد بود که بر بستر پوسته حاضر توسعه می‌یابد.
+              </p>
+              <a href="#components" class="dyf-btn dyf-btn-primary">بررسی کامپوننت‌های پایه</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             ویو ۳: مدیریت دسته‌بندی‌ها (#categories — تسک ۳)
+             ================================================================== -->
+        <section id="viewCategories" class="dyf-view">
+          <div class="dyf-panel-card">
+            <div class="dyf-panel-card-header">
+              <h2 class="dyf-panel-card-title">مدیریت دسته‌بندی‌ها (تسک ۳ در نوبت توسعه)</h2>
+              <a href="#dashboard" class="dyf-btn dyf-btn-outline dyf-btn-sm">بازگشت به پیشخوان</a>
+            </div>
+            <div class="dyf-empty-state">
+              <svg class="dyf-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+              <h3 class="dyf-empty-title">لاین‌ها و دسته‌بندی‌های کارگاه</h3>
+              <p class="dyf-empty-desc">لاین‌های فعلی: رسمی، اسپرت و دست‌دوز. مدیریت افزودن، ویرایش و انتساب چندگانه مدل‌ها در تسک ۳ پیاده‌سازی خواهد شد.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             ویو ۴: مدیریت مشتریان (#customers — تسک ۴)
+             ================================================================== -->
+        <section id="viewCustomers" class="dyf-view">
+          <div class="dyf-panel-card">
+            <div class="dyf-panel-card-header">
+              <h2 class="dyf-panel-card-title">مشتریان و همکاران (تسک ۴ در نوبت توسعه)</h2>
+              <a href="#dashboard" class="dyf-btn dyf-btn-outline dyf-btn-sm">بازگشت به پیشخوان</a>
+            </div>
+            <div class="dyf-empty-state">
+              <svg class="dyf-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              <h3 class="dyf-empty-title">فهرست و مشخصات بنکداران و بوتیک‌داران</h3>
+              <p class="dyf-empty-desc">پروفایل مشتریان شناخته‌شده، شماره‌های تماس مجاز و تنظیم دسترسی مستقیم در تسک ۴ متصل می‌گردد.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             ویو ۵: مدیریت لینک‌های اختصاصی (#access-links — تسک ۵)
+             ================================================================== -->
+        <section id="viewAccessLinks" class="dyf-view">
+          <div class="dyf-panel-card">
+            <div class="dyf-panel-card-header">
+              <h2 class="dyf-panel-card-title">مدیریت لینک‌های دسترسی اختصاصی (تسک ۵ در نوبت توسعه)</h2>
+              <a href="#dashboard" class="dyf-btn dyf-btn-outline dyf-btn-sm">بازگشت به پیشخوان</a>
+            </div>
+            <div class="dyf-empty-state">
+              <svg class="dyf-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              <h3 class="dyf-empty-title">ویزارد ۵ مرحله‌ای صدور لینک اختصاصی</h3>
+              <p class="dyf-empty-desc">تعیین مهلت شروع، مدت مشاهده، انتخاب دسته‌بندی‌ها و مدل‌های مجاز یا مستثنا در تسک ۵ افزوده خواهد شد.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             ویو ۶: آزمایشگاه کامپوننت‌های مشترک (#components — تسک ۱)
+             ================================================================== -->
+        <section id="viewComponents" class="dyf-view">
+          <div class="dyf-panel-card">
+            <div class="dyf-panel-card-header">
+              <div>
+                <h2 class="dyf-panel-card-title">کیت کامپوننت‌های پایه و مشترک دیزاین سیستم DYF</h2>
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.2rem;">
+                  تمام المان‌های زیر با استانداردهای Design System v4 توسعه داده شده و آماده استفاده در تسک‌های ۲ تا ۷ هستند.
+                </p>
+              </div>
+            </div>
+
+            <div style="padding: 1.5rem;">
+              
+              <!-- ۱. دکمه‌ها -->
+              <div class="dyf-demo-section">
+                <h3 class="dyf-demo-title">۱. دکمه‌های کنترلی و اکشن‌ها (Buttons)</h3>
+                <div class="dyf-demo-row">
+                  <button type="button" class="dyf-btn dyf-btn-primary">دکمه طلایی اصلی (Primary)</button>
+                  <button type="button" class="dyf-btn dyf-btn-specular">دکمه چرم تیره (Specular)</button>
+                  <button type="button" class="dyf-btn dyf-btn-outline">دکمه آوت‌لاین (Outline)</button>
+                  <button type="button" class="dyf-btn dyf-btn-danger">دکمه حذف/هشدار (Danger)</button>
+                  <button type="button" class="dyf-btn dyf-btn-primary" disabled>دکمه غیرفعال (Disabled)</button>
+                  <button type="button" id="demoBtnLoading" class="dyf-btn dyf-btn-primary">تست لودینگ دکمه</button>
+                </div>
+              </div>
+
+              <!-- ۲. ورودی‌های فرم و کنترل‌ها -->
+              <div class="dyf-demo-section">
+                <h3 class="dyf-demo-title">۲. ورودی‌های فرم و سلکت‌باکس (Form Controls)</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem;">
+                  <div class="dyf-form-group" style="margin: 0;">
+                    <label class="dyf-form-label dyf-form-label-required">عنوان مدل کفش</label>
+                    <input type="text" class="dyf-input" placeholder="مثال: کفش رسمی دربی چرم طبیعی" value="دیفندر هورس واکس دست‌دوز">
+                    <p class="dyf-form-hint">نام رسمی محصول جهت نمایش به بنکدار</p>
+                  </div>
+
+                  <div class="dyf-form-group" style="margin: 0;">
+                    <label class="dyf-form-label">دسته‌بندی مدل</label>
+                    <select class="dyf-select">
+                      <option>لاین رسمی و اداری (Formal & Dress)</option>
+                      <option>لاین اسپرت و کژوال (Sport & Casual)</option>
+                      <option>لاین چرم لوکس دست‌دوز (Handmade)</option>
+                    </select>
+                  </div>
+
+                  <div class="dyf-form-group" style="margin: 0;">
+                    <label class="dyf-form-label">حالت خطا (Validation Error)</label>
+                    <input type="text" class="dyf-input dyf-input-error" value="کد غیرمجاز">
+                    <p class="dyf-form-hint dyf-form-hint-error">شناسه واردشده قبلاً ثبت گردیده است.</p>
+                  </div>
+                </div>
+
+                <div class="dyf-demo-row" style="margin-top: 1.25rem;">
+                  <label class="dyf-switch-label">
+                    <input type="checkbox" class="dyf-switch-input" checked>
+                    <span class="dyf-switch-toggle"></span>
+                    <span>وضعیت انتشار در کاتالوگ عمومی همکاران</span>
+                  </label>
+
+                  <label class="dyf-switch-label" style="margin-right: 1.5rem;">
+                    <input type="checkbox" class="dyf-switch-input">
+                    <span class="dyf-switch-toggle"></span>
+                    <span>الزام ورود با پیامک کد تأیید (OTP)</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- ۳. برچسب‌های وضعیت -->
+              <div class="dyf-demo-section">
+                <h3 class="dyf-demo-title">۳. برچسب‌های وضعیت داده (Status Badges)</h3>
+                <div class="dyf-demo-row">
+                  <span class="dyf-badge dyf-badge-published">منتشرشده (Published)</span>
+                  <span class="dyf-badge dyf-badge-draft">پیش‌نویس کارگاه (Draft)</span>
+                  <span class="dyf-badge dyf-badge-archived">بایگانی‌شده (Archived)</span>
+                  <span class="dyf-badge dyf-badge-expired">منقضی‌شده (Expired)</span>
+                  <span class="dyf-badge dyf-badge-info">دسترسی مستقیم (Direct)</span>
+                </div>
+              </div>
+
+              <!-- ۴. اعلان‌ها و دیالوگ تأیید -->
+              <div class="dyf-demo-section">
+                <h3 class="dyf-demo-title">۴. اعلان‌های سیستم و دیالوگ تأیید (Toasts & Modals)</h3>
+                <div class="dyf-demo-row">
+                  <button type="button" id="demoToastSuccess" class="dyf-btn dyf-btn-outline dyf-btn-sm">تست اعلان موفقیت</button>
+                  <button type="button" id="demoToastError" class="dyf-btn dyf-btn-outline dyf-btn-sm">تست اعلان خطا</button>
+                  <button type="button" id="demoToastWarning" class="dyf-btn dyf-btn-outline dyf-btn-sm">تست اعلان هشدار</button>
+                  <button type="button" id="demoToastInfo" class="dyf-btn dyf-btn-outline dyf-btn-sm">تست اعلان اطلاعات</button>
+                  <button type="button" id="demoConfirmModal" class="dyf-btn dyf-btn-danger dyf-btn-sm">تست دیالوگ تأیید عملیات حساس</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             ویو ۷: تنظیمات عمومی (#settings)
+             ================================================================== -->
+        <section id="viewSettings" class="dyf-view">
+          <div class="dyf-panel-card">
+            <div class="dyf-panel-card-header">
+              <h2 class="dyf-panel-card-title">تنظیمات کاتالوگ خصوصی</h2>
+              <a href="#dashboard" class="dyf-btn dyf-btn-outline dyf-btn-sm">بازگشت به پیشخوان</a>
+            </div>
+            <div style="padding: 1.5rem; max-width: 680px;">
+              <div class="dyf-form-group">
+                <label class="dyf-form-label">نام تجاری کارگاه</label>
+                <input type="text" class="dyf-input" value="DYF — DEFENDER YOUR FOOT" readonly>
+              </div>
+              <div class="dyf-form-group">
+                <label class="dyf-form-label">شماره مستقیم تماس همکاران B2B</label>
+                <input type="text" class="dyf-input" value="09121234567" dir="ltr">
+              </div>
+              <div class="dyf-form-group">
+                <label class="dyf-form-label">مدت زمان پیش‌فرض مشاهده لینک اختصاصی</label>
+                <select class="dyf-select">
+                  <option>۱۰ دقیقه پس از اولین ورود</option>
+                  <option selected>۱۵ دقیقه پس از اولین ورود</option>
+                  <option>۳۰ دقیقه پس از اولین ورود</option>
+                  <option>۲۴ ساعت</option>
+                  <option>دسترسی بدون محدودیت زمانی</option>
+                </select>
+              </div>
+              <button type="button" class="dyf-btn dyf-btn-primary" onclick="window.DYF_Toast.show({type: 'success', title: 'ذخیره تنظیمات', message: 'تغییرات با موفقیت ثبت شد.'})">
+                ذخیره تنظیمات
+              </button>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- کانتینر اعلان‌های شناور Toast -->
+  <div id="dyfToastContainer" class="dyf-toast-container" aria-live="polite"></div>
+
+  <!-- اسکریپت رسمی منطق و تعاملات پنل مدیریت -->
+  <script src="assets/js/admin.js?v=1"></script>
+</body>
+</html>
