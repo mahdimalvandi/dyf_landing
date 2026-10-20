@@ -1042,6 +1042,7 @@
     sidebar: document.getElementById('adminSidebar'),
     overlay: document.getElementById('sidebarOverlay'),
     toggleBtn: document.getElementById('hamburgerToggle'),
+    closeBtn: document.getElementById('sidebarCloseBtn'),
 
     init() {
       if (this.toggleBtn) {
@@ -1049,6 +1050,9 @@
       }
       if (this.overlay) {
         this.overlay.addEventListener('click', () => this.closeMobileSidebar());
+      }
+      if (this.closeBtn) {
+        this.closeBtn.addEventListener('click', () => this.closeMobileSidebar());
       }
     },
 
@@ -1720,7 +1724,7 @@
 
       if (bodyEl) {
         bodyEl.innerHTML = `
-          <div style="display: grid; grid-template-columns: 310px 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+          <div class="dyf-dossier-grid" style="display: grid; grid-template-columns: 310px 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
             <div>
               <div 
                 style="position: relative; width: 100%; aspect-ratio: 1; border-radius: var(--r-md); overflow: hidden; background: #0e0c0a; border: 1px solid var(--border-medium); margin-bottom: 0.75rem; cursor: zoom-in;" 
@@ -1751,7 +1755,7 @@
                 <p style="color: var(--text-main); line-height: 1.7; margin-top: 0.25rem;">${model.description || '-'}</p>
               </div>
 
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle);">
+              <div class="dyf-dossier-specs-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle);">
                 <div>
                   <span style="color: var(--text-dim); font-size: 0.78rem;">رنگ‌های موجود:</span>
                   <div style="font-weight: 700; color: var(--gold-light); margin-top: 0.2rem;">${(model.colors || []).join('، ')}</div>
@@ -3863,7 +3867,7 @@
       if (bodyEl) {
         bodyEl.innerHTML = `
           <!-- هدر لینک و وضعیت -->
-          <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--r-md); padding: 1.25rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+          <div class="dyf-link-details-summary" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--r-md); padding: 1.25rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
             <div>
               <div style="font-size: 1.15rem; font-weight: 800; color: var(--text-ivory); margin-bottom: 0.25rem;">
                 ${link.recipientFa}
@@ -4163,7 +4167,7 @@
             </div>
           </div>
 
-          <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); margin-top: auto;">
+          <div class="dyf-link-actions-footer" style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); margin-top: auto;">
             <div style="display: flex; gap: 0.35rem;">
               <button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-view-link" data-id="${link.id}">
                 <span>جزئیات</span>

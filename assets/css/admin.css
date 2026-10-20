@@ -1450,20 +1450,10 @@ textarea:focus-visible {
 }
 
 /* ==========================================================================
-   ۱۰. طراحی واکنش‌گرا و رسپانسیو (Responsive Breakpoints)
+   ۱۰. پوسته اصلی دراور سایدبار در موبایل (Mobile Drawer Shell)
+   * استایل‌های کامل رسپانسیو در بخش ۱۶ (انتهای فایل) تجمیع شده‌اند.
    ========================================================================== */
 
-/* تبلت (≤ 1024px) */
-@media (max-width: 1024px) {
-  .dyf-stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .dyf-dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* تبلت کوچک و موبایل (≤ 880px) */
 @media (max-width: 880px) {
   :root {
     --sidebar-width: 270px;
@@ -1471,7 +1461,7 @@ textarea:focus-visible {
 
   .dyf-admin-sidebar {
     transform: translateX(100%);
-    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.8);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.85);
   }
 
   .dyf-admin-sidebar.is-open {
@@ -1504,32 +1494,6 @@ textarea:focus-visible {
 
   .dyf-quick-search-box {
     display: none;
-  }
-
-  .dyf-admin-content {
-    padding: 1.25rem;
-  }
-
-  .dyf-dashboard-hero {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1.4rem;
-  }
-
-  .dyf-stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .dyf-toast-container {
-    left: 1rem;
-    right: 1rem;
-    bottom: 1rem;
-  }
-
-  .dyf-toast {
-    min-width: auto;
-    width: 100%;
   }
 }
 
@@ -2606,6 +2570,803 @@ textarea:focus-visible {
   flex-direction: column;
   gap: 0.2rem;
 }
+
+/* ==========================================================================
+   ۱۵.۱. کلاس‌های تکمیلی و کمکی المان‌ها (Helper & Component Utilities)
+   ========================================================================== */
+
+/* دکمه بستن سایدبار در موبایل */
+.dyf-sidebar-close-btn {
+  display: none;
+  background: rgba(36, 30, 25, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-sm);
+  color: var(--text-muted);
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.dyf-sidebar-close-btn:hover {
+  color: var(--gold-light);
+  border-color: var(--gold-primary);
+  background: rgba(61, 36, 21, 0.6);
+}
+
+/* کانتینر فیلتر سلکت در نوار ابزار */
+.dyf-toolbar-filter-wrap {
+  min-width: 200px;
+}
+
+/* کلاس‌های کمکی گرید فرم‌ها در مودال‌ها */
+.dyf-form-row-grid {
+  display: grid;
+}
+
+.dyf-form-row-2col {
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.dyf-form-row-shoe-id {
+  grid-template-columns: 140px 1fr;
+  gap: 1rem;
+}
+
+.dyf-form-row-status-cards {
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+/* گرید شناسنامه کفش در مودال */
+.dyf-dossier-grid {
+  display: grid;
+  grid-template-columns: 310px 1fr;
+  gap: 1.5rem;
+}
+
+.dyf-dossier-specs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+/* کارت هویتی در مودال مشخصات مشتری */
+.dyf-cust-details-identity-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* کارت خلاصه لینک در مودال جزئیات لینک */
+.dyf-link-details-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* فوتر دکمه‌های عملیات کارت لینک */
+.dyf-link-actions-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* ==========================================================================
+   ۱۶. سیستم جامع و یکپارچه طراحی واکنش‌گرا (Complete Responsive System)
+   * بهینه‌سازی شده برای تمام سایزها با تمرکز حداکثری بر کارایی در گوشی‌های هوشمند (Mobile-First)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   الف. تبلت‌های افقی و لپ‌تاپ‌های کوچک (≤ 1024px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .dyf-admin-content {
+    padding: 1.5rem;
+  }
+
+  .dyf-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .dyf-dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .dyf-product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .dyf-customers-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .dyf-links-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   ب. تبلت‌های عمودی و صفحات تا عرض ۸۸۰ پیکسل (≤ 880px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 880px) {
+  :root {
+    --sidebar-width: 270px;
+    --header-height: 60px;
+  }
+
+  body, html {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  .dyf-admin-app {
+    overflow-x: hidden;
+  }
+
+  .dyf-admin-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(290px, 85vw);
+    transform: translateX(100%);
+    box-shadow: -15px 0 35px rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+  }
+
+  .dyf-admin-sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .dyf-sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 995;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-fast);
+  }
+
+  .dyf-sidebar-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .dyf-admin-main-wrap {
+    margin-right: 0 !important;
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .dyf-hamburger-toggle {
+    display: inline-flex;
+  }
+
+  .dyf-sidebar-close-btn {
+    display: inline-flex;
+  }
+
+  .dyf-quick-search-box {
+    display: none;
+  }
+
+  .dyf-admin-header {
+    padding: 0 1rem;
+    height: 60px;
+  }
+
+  .dyf-admin-content {
+    padding: 1.25rem 1rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .dyf-dashboard-hero {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 1.35rem 1.25rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .dyf-dashboard-hero-meta {
+    width: 100%;
+  }
+
+  .dyf-dashboard-hero-meta button,
+  .dyf-dashboard-hero-meta a {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .dyf-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
+  }
+
+  .dyf-toolbar {
+    padding: 0.85rem 1rem;
+    gap: 0.75rem;
+  }
+
+  .dyf-toolbar-search {
+    min-width: 0;
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .dyf-toolbar-filter-wrap {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .dyf-product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+
+  .dyf-customers-grid {
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 1rem;
+  }
+
+  .dyf-links-grid {
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 1rem;
+  }
+
+  .dyf-dossier-grid {
+    grid-template-columns: 260px 1fr;
+    gap: 1.25rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   ج. موبایل‌های هوشمند استاندارد (≤ 640px) — تمرکز حداکثری بر لمس انگشت و دسترسی سریع
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  /* جلوگیری قطعی از زوم ناخواسته در مرورگرهای iOS Safari با تعیین فونت ۱۶ پیکسل */
+  .dyf-input,
+  .dyf-select,
+  .dyf-textarea,
+  .dyf-quick-search-input {
+    font-size: 16px !important;
+  }
+
+  /* تنظیم هدر پنل در موبایل */
+  .dyf-admin-header {
+    padding: 0 0.75rem;
+    height: 56px;
+  }
+
+  .dyf-header-right {
+    gap: 0.5rem;
+  }
+
+  /* پنهان‌سازی بخش ریشه Breadcrumb جهت آزادسازی فضا برای تیتر فعال */
+  .dyf-breadcrumbs .dyf-breadcrumb-root,
+  .dyf-breadcrumbs .dyf-breadcrumb-sep {
+    display: none;
+  }
+
+  .dyf-breadcrumbs .dyf-breadcrumb-active {
+    font-size: 0.95rem;
+  }
+
+  .dyf-header-left {
+    gap: 0.35rem;
+  }
+
+  .dyf-header-create-link-btn {
+    padding: 0.4rem 0.65rem;
+    font-size: 0.78rem;
+  }
+
+  /* فضای اصلی محتوا */
+  .dyf-admin-content {
+    padding: 0.95rem 0.65rem;
+  }
+
+  /* بنر بالای صفحات */
+  .dyf-dashboard-hero {
+    padding: 1.15rem 0.9rem !important;
+    border-radius: var(--r-md);
+    margin-bottom: 1rem !important;
+  }
+
+  .dyf-dashboard-hero-text h1 {
+    font-size: 1.25rem;
+  }
+
+  .dyf-dashboard-hero-text p {
+    font-size: 0.8rem;
+    line-height: 1.55;
+  }
+
+  .dyf-date-pill {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.65rem;
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* کارت‌های شاخص KPI در داشبورد */
+  .dyf-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.65rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .dyf-stat-card {
+    padding: 0.95rem 0.8rem;
+    border-radius: var(--r-md);
+  }
+
+  .dyf-stat-title {
+    font-size: 0.74rem;
+  }
+
+  .dyf-stat-icon-wrap {
+    width: 32px;
+    height: 32px;
+  }
+
+  .dyf-stat-value {
+    font-size: 1.45rem;
+    margin: 0.4rem 0;
+  }
+
+  .dyf-stat-footer {
+    font-size: 0.72rem;
+  }
+
+  /* نوار ابزار فیلتر و جست‌وجو */
+  .dyf-toolbar {
+    padding: 0.75rem;
+    border-radius: var(--r-md);
+    margin-bottom: 1rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+  }
+
+  .dyf-toolbar-search {
+    width: 100%;
+    min-width: 0;
+    flex: 1 1 100%;
+  }
+
+  .dyf-toolbar-filter-wrap {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .dyf-quick-search-input {
+    height: 40px;
+    padding-right: 2.2rem;
+  }
+
+  /* تب‌های افقی فیلتر با قابلیت اسکرول نرم لمسی بدون اسکرول‌بار اضافه */
+  .dyf-filter-tabs {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0.35rem;
+    width: 100%;
+    padding-bottom: 2px;
+  }
+
+  .dyf-filter-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dyf-filter-tab {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 0.78rem;
+    padding: 0.4rem 0.75rem;
+  }
+
+  .dyf-view-toggle {
+    align-self: flex-end;
+  }
+
+  /* تبدیل تمام گریدها به حالت ۱ ستونه تمام‌عرض برای موبایل */
+  .dyf-product-grid,
+  .dyf-categories-grid,
+  .dyf-customers-grid,
+  .dyf-links-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .dyf-product-card,
+  .dyf-customer-card,
+  .dyf-link-card,
+  .dyf-category-card {
+    padding: 1rem 0.85rem;
+    border-radius: var(--r-md);
+  }
+
+  .dyf-product-body {
+    padding: 1rem 0.85rem;
+  }
+
+  .dyf-product-actions-footer {
+    padding: 0.75rem 0.85rem;
+  }
+
+  /* فوتر اکشن‌های کارت مشتری و لینک */
+  .dyf-customer-actions {
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .dyf-customer-actions > div {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+
+  .dyf-link-actions-footer {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .dyf-link-actions-footer > div {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+
+  .dyf-link-url-box {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .dyf-link-url-text {
+    flex: 1 1 180px;
+    min-width: 0;
+  }
+
+  /* جدول‌های داده با اسکرول افقی روان لمسی */
+  .dyf-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+
+  .dyf-table {
+    min-width: 560px;
+    font-size: 0.78rem;
+  }
+
+  .dyf-table th,
+  .dyf-table td {
+    padding: 0.65rem 0.75rem;
+  }
+
+  /* کامپوننت انتخابگر سلسله‌مراتبی محصولات (DYF_ProductSelector) */
+  .dyf-products-selector-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    padding: 0.65rem 0.75rem;
+  }
+
+  .dyf-products-selector-actions {
+    width: 100%;
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .dyf-products-selector-actions button {
+    flex: 1;
+    justify-content: center;
+    font-size: 0.76rem;
+    padding: 0.35rem 0.5rem;
+  }
+
+  .dyf-products-selector-summary {
+    width: 100%;
+    justify-content: space-between;
+    font-size: 0.76rem;
+  }
+
+  .dyf-products-selector-body {
+    max-height: 240px;
+    padding: 0.5rem;
+  }
+
+  .dyf-category-shoes-grid {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+    padding: 0.45rem;
+  }
+
+  .dyf-shoe-item-select {
+    padding: 0.55rem 0.65rem;
+    font-size: 0.82rem;
+  }
+
+  .dyf-shoe-item-select input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* استپر ویزارد ایجاد لینک */
+  .dyf-wizard-steps {
+    padding: 0.65rem 0.75rem;
+    gap: 0.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+  }
+
+  .dyf-wizard-steps::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dyf-wizard-step {
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    gap: 0.45rem;
+  }
+
+  .dyf-wizard-step-circle {
+    width: 24px;
+    height: 24px;
+    font-size: 0.72rem;
+  }
+
+  .dyf-wizard-panel {
+    padding: 1rem 0.85rem;
+  }
+
+  .dyf-wizard-footer {
+    padding: 0.75rem 0.85rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .dyf-wizard-footer .dyf-btn {
+    flex: 1 1 calc(50% - 0.25rem);
+    height: 42px;
+    justify-content: center;
+  }
+
+  /* سیستم مودال‌ها در موبایل (الگوی مدرن Bottom Sheet / Near-Fullscreen) */
+  .dyf-modal-backdrop {
+    padding: 0.4rem;
+    align-items: flex-end;
+  }
+
+  .dyf-modal-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 94vh !important;
+    border-radius: var(--r-lg) var(--r-lg) 0 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    margin: 0;
+  }
+
+  .dyf-modal-header {
+    padding: 0.85rem 1rem !important;
+    flex-shrink: 0;
+  }
+
+  .dyf-modal-title {
+    font-size: 1.05rem;
+  }
+
+  .dyf-modal-close {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+  }
+
+  .dyf-modal-body,
+  .dyf-modal-card > form {
+    padding: 1rem 0.85rem !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    flex: 1 1 auto;
+  }
+
+  .dyf-modal-footer {
+    padding: 0.75rem 1rem !important;
+    flex-shrink: 0;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .dyf-modal-footer .dyf-btn {
+    flex: 1 1 calc(50% - 0.25rem);
+    height: 42px;
+    justify-content: center;
+  }
+
+  /* شکستن تمام ردیف‌های دو ستونه فرم‌ها به تک ستونه در موبایل */
+  .dyf-form-row-grid,
+  .dyf-form-row-2col,
+  .dyf-form-row-shoe-id,
+  .dyf-form-row-status-cards {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+
+  /* شناسنامه مدل کفش در مودال */
+  .dyf-dossier-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  .dyf-dossier-specs-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+
+  /* کارت هویتی مشتری در مودال مشخصات */
+  .dyf-cust-details-identity-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .dyf-cust-details-identity-card > div:last-child {
+    text-align: right;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* خلاصه لینک در مودال جزئیات لینک */
+  .dyf-link-details-summary {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .dyf-link-details-summary > div:last-child {
+    text-align: right;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* کارت‌های آپلود رسانه و ابعاد */
+  .dyf-media-uploader {
+    padding: 1.15rem 0.85rem;
+  }
+
+  .dyf-media-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 0.65rem;
+  }
+
+  /* اعلان‌های سیستم */
+  .dyf-toast-container {
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+  }
+
+  .dyf-toast {
+    min-width: auto;
+    width: 100%;
+    padding: 0.85rem 1rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   د. موبایل‌های کوچک و باریک (≤ 480px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .dyf-admin-content {
+    padding: 0.85rem 0.5rem;
+  }
+
+  .dyf-admin-header {
+    padding: 0 0.5rem;
+  }
+
+  /* پنهان کردن متن دکمه هدر در موبایل‌های کوچک و نگه‌داشتن آیکون */
+  .dyf-header-btn-text {
+    display: none;
+  }
+
+  .dyf-header-create-link-btn {
+    padding: 0.45rem 0.6rem;
+  }
+
+  .dyf-stat-card {
+    padding: 0.85rem 0.7rem;
+  }
+
+  .dyf-stat-value {
+    font-size: 1.3rem;
+  }
+
+  .dyf-link-meta-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    padding: 0.65rem;
+    font-size: 0.72rem;
+  }
+
+  /* بهینه‌سازی فرم لاگین */
+  .dyf-auth-card {
+    padding: 1.5rem 1rem;
+    border-radius: var(--r-md);
+  }
+
+  .dyf-auth-title {
+    font-size: 1.35rem;
+  }
+
+  .dyf-otp-grid {
+    gap: 0.35rem;
+  }
+
+  .dyf-otp-digit {
+    height: 48px;
+    font-size: 1.3rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   هـ. موبایل‌های خیلی کوچک (≤ 360px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 360px) {
+  .dyf-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+
+  .dyf-link-meta-grid {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+
+  .dyf-modal-footer .dyf-btn {
+    flex: 1 1 100%;
+  }
+
+  .dyf-wizard-footer .dyf-btn {
+    flex: 1 1 100%;
+  }
+}
+
 
 
 
