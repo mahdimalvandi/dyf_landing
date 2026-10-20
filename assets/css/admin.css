@@ -517,13 +517,13 @@ textarea:focus-visible {
 /* هدر بالای پنل */
 .dyf-admin-header {
   height: var(--header-height);
-  background: rgba(20, 18, 16, 0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(20, 18, 16, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border-subtle);
   position: sticky;
   top: 3px; /* زیر خط دوخت استیکی */
-  z-index: 90;
+  z-index: 900;
   padding: 0 2rem;
   display: flex;
   align-items: center;
@@ -1278,6 +1278,71 @@ textarea:focus-visible {
   align-items: center;
   justify-content: flex-end;
   gap: 0.75rem;
+}
+
+/* مودال لایت‌باکس بزرگنمایی تصویر کفش (همیشه متمرکز در عمود و افق) */
+.dyf-lightbox-backdrop {
+  background: rgba(6, 5, 4, 0.96) !important;
+  z-index: 10005 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1rem !important;
+}
+
+.dyf-lightbox-wrap {
+  position: relative;
+  max-width: 92vw;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+}
+
+.dyf-lightbox-img {
+  max-width: min(90vw, 760px);
+  max-height: 72vh;
+  object-fit: contain;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border-medium);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95);
+}
+
+.dyf-lightbox-caption {
+  margin-top: 0.85rem;
+  color: var(--text-ivory);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: center;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.dyf-lightbox-close {
+  position: fixed !important;
+  top: 1.25rem !important;
+  left: 1.25rem !important;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  background: rgba(36, 30, 25, 0.92) !important;
+  border: 1px solid var(--border-medium) !important;
+  color: var(--gold-light) !important;
+  font-size: 1.8rem !important;
+  line-height: 1;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer;
+  z-index: 10010 !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+  transition: all var(--transition-fast);
+}
+
+.dyf-lightbox-close:hover {
+  background: var(--bg-surface-hover) !important;
+  border-color: var(--gold-primary) !important;
+  transform: scale(1.05);
 }
 
 /* ==========================================================================
@@ -2575,27 +2640,6 @@ textarea:focus-visible {
    ۱۵.۱. کلاس‌های تکمیلی و کمکی المان‌ها (Helper & Component Utilities)
    ========================================================================== */
 
-/* دکمه بستن سایدبار در موبایل */
-.dyf-sidebar-close-btn {
-  display: none;
-  background: rgba(36, 30, 25, 0.7);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--r-sm);
-  color: var(--text-muted);
-  width: 34px;
-  height: 34px;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.dyf-sidebar-close-btn:hover {
-  color: var(--gold-light);
-  border-color: var(--gold-primary);
-  background: rgba(61, 36, 21, 0.6);
-}
-
 /* کانتینر فیلتر سلکت در نوار ابزار */
 .dyf-toolbar-filter-wrap {
   min-width: 200px;
@@ -2707,12 +2751,12 @@ textarea:focus-visible {
   }
 
   body, html {
-    overflow-x: hidden;
+    overflow-x: clip;
     max-width: 100vw;
   }
 
   .dyf-admin-app {
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   .dyf-admin-sidebar {
@@ -2751,14 +2795,10 @@ textarea:focus-visible {
     margin-right: 0 !important;
     width: 100%;
     min-width: 0;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   .dyf-hamburger-toggle {
-    display: inline-flex;
-  }
-
-  .dyf-sidebar-close-btn {
     display: inline-flex;
   }
 
@@ -2871,12 +2911,37 @@ textarea:focus-visible {
   }
 
   .dyf-header-left {
-    gap: 0.35rem;
+    gap: 0.5rem;
+    align-items: center;
   }
 
+  .dyf-header-btn-text {
+    display: none !important;
+  }
+
+  .dyf-icon-btn,
   .dyf-header-create-link-btn {
-    padding: 0.4rem 0.65rem;
-    font-size: 0.78rem;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    max-width: 38px !important;
+    max-height: 38px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: var(--r-sm) !important;
+    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .dyf-icon-btn svg,
+  .dyf-header-create-link-btn svg {
+    width: 18px !important;
+    height: 18px !important;
+    display: block !important;
+    margin: 0 !important;
   }
 
   /* فضای اصلی محتوا */
@@ -3161,6 +3226,13 @@ textarea:focus-visible {
     align-items: flex-end;
   }
 
+  /* مودال لایت‌باکس بزرگنمایی تصویر همیشه در مرکز عمودی و افقی صفحه */
+  #modalShoeLightbox.dyf-modal-backdrop {
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 1rem !important;
+  }
+
   .dyf-modal-card {
     width: 100% !important;
     max-width: 100% !important;
@@ -3274,17 +3346,114 @@ textarea:focus-visible {
     gap: 0.65rem;
   }
 
-  /* اعلان‌های سیستم */
+  /* پنهان‌سازی ستون‌های تکمیلی جداول در موبایل جهت جلوگیری از سرریز افقی و خلاصه شدن اطلاعات */
+  .dyf-col-customer,
+  .dyf-col-auth,
+  .dyf-col-deadline,
+  .dyf-col-duration {
+    display: none !important;
+  }
+
+  .dyf-table th,
+  .dyf-table td {
+    padding: 0.75rem 0.65rem !important;
+    font-size: 0.82rem !important;
+  }
+
+  .dyf-table-actions {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+  }
+
+  /* اعلان‌های سیستم در موبایل — کپسول شناور بالا و مینیمال (عدم انسداد محتوا) */
   .dyf-toast-container {
-    left: 0.75rem;
-    right: 0.75rem;
-    bottom: 0.75rem;
+    position: fixed !important;
+    top: 1rem !important;
+    bottom: auto !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: auto !important;
+    max-width: calc(100vw - 2rem) !important;
+    z-index: 10005 !important;
+    gap: 0.4rem !important;
+    align-items: center !important;
+    pointer-events: none !important;
   }
 
   .dyf-toast {
-    min-width: auto;
-    width: 100%;
-    padding: 0.85rem 1rem;
+    min-width: 0 !important;
+    width: auto !important;
+    max-width: 100% !important;
+    padding: 0.55rem 0.95rem !important;
+    border-radius: var(--r-full) !important;
+    align-items: center !important;
+    gap: 0.55rem !important;
+    background: rgba(27, 23, 20, 0.96) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.7) !important;
+    border: 1px solid var(--border-medium) !important;
+    animation: toastMobileSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  }
+
+  .dyf-toast.is-leaving {
+    animation: toastMobileSlideOut 0.2s ease forwards !important;
+  }
+
+  .dyf-toast-icon {
+    width: 17px !important;
+    height: 17px !important;
+    margin-top: 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .dyf-toast-content {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    line-height: 1.3 !important;
+    overflow: hidden !important;
+  }
+
+  .dyf-toast-title {
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .dyf-toast-message {
+    font-size: 0.72rem !important;
+    color: var(--text-muted) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 190px !important;
+  }
+
+  .dyf-toast-progress {
+    display: none !important;
+  }
+}
+
+@keyframes toastMobileSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastMobileSlideOut {
+  to {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.94);
   }
 }
 
@@ -3300,13 +3469,35 @@ textarea:focus-visible {
     padding: 0 0.5rem;
   }
 
-  /* پنهان کردن متن دکمه هدر در موبایل‌های کوچک و نگه‌داشتن آیکون */
+  /* پنهان کردن متن دکمه هدر در موبایل‌های کوچک و یکسان‌سازی دقیق ابعاد */
   .dyf-header-btn-text {
-    display: none;
+    display: none !important;
   }
 
+  .dyf-icon-btn,
   .dyf-header-create-link-btn {
-    padding: 0.45rem 0.6rem;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+    max-width: 36px !important;
+    max-height: 36px !important;
+    padding: 0 !important;
+  }
+
+  /* خلاصه‌سازی بیشتر جداول در صفحات کوچک */
+  .dyf-col-expires {
+    display: none !important;
+  }
+
+  .dyf-btn-text-responsive {
+    display: none !important;
+  }
+
+  .dyf-table th,
+  .dyf-table td {
+    padding: 0.65rem 0.45rem !important;
+    font-size: 0.78rem !important;
   }
 
   .dyf-stat-card {

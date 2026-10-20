@@ -538,6 +538,9 @@
     show({ type = 'info', title = '', message = '', duration = 4000 }) {
       this.init();
 
+      const isMobile = typeof window !== 'undefined' && window.innerWidth <= 640;
+      const effectiveDuration = isMobile ? Math.min(duration, 2400) : duration;
+
       const icons = {
         success: `<svg class="dyf-toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>`,
         error: `<svg class="dyf-toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>`,
@@ -553,7 +556,7 @@
           ${title ? `<div class="dyf-toast-title">${title}</div>` : ''}
           <div class="dyf-toast-message">${message}</div>
         </div>
-        <div class="dyf-toast-progress" style="transition: width ${duration}ms linear; width: 100%;"></div>
+        <div class="dyf-toast-progress" style="transition: width ${effectiveDuration}ms linear; width: 100%;"></div>
       `;
 
       this.container.appendChild(toast);
@@ -566,7 +569,7 @@
 
       const timer = setTimeout(() => {
         this.dismiss(toast);
-      }, duration);
+      }, effectiveDuration);
 
       toast.addEventListener('click', () => {
         clearTimeout(timer);
@@ -1042,7 +1045,6 @@
     sidebar: document.getElementById('adminSidebar'),
     overlay: document.getElementById('sidebarOverlay'),
     toggleBtn: document.getElementById('hamburgerToggle'),
-    closeBtn: document.getElementById('sidebarCloseBtn'),
 
     init() {
       if (this.toggleBtn) {
@@ -1051,9 +1053,13 @@
       if (this.overlay) {
         this.overlay.addEventListener('click', () => this.closeMobileSidebar());
       }
-      if (this.closeBtn) {
-        this.closeBtn.addEventListener('click', () => this.closeMobileSidebar());
-      }
+      // بستن سایدبار با کلیک روی هر نقطه خارج از منو در موبایل
+      document.addEventListener('click', (e) => {
+        if (!this.sidebar || !this.sidebar.classList.contains('is-open')) return;
+        if (!this.sidebar.contains(e.target) && !this.toggleBtn?.contains(e.target)) {
+          this.closeMobileSidebar();
+        }
+      });
     },
 
     toggleMobileSidebar() {
@@ -1110,23 +1116,23 @@
             <div style="font-weight: 700; color: var(--text-ivory);">${lnk.recipientFa}</div>
             <div style="font-size: 0.74rem; color: var(--text-dim); font-family: var(--font-serif);">${lnk.recipientEn}</div>
           </td>
-          <td>
+          <td class="dyf-col-customer">
             <div style="font-size: 0.86rem; color: var(--text-main); font-weight: 600;">${lnk.customer}</div>
           </td>
-          <td>${authBadges[lnk.authType] || '-'}</td>
+          <td class="dyf-col-auth">${authBadges[lnk.authType] || '-'}</td>
           <td>${statusBadges[lnk.status] || lnk.status}</td>
-          <td>
+          <td class="dyf-col-expires">
             <div style="font-size: 0.8rem; color: var(--text-muted);">${lnk.expiresAt}</div>
             <div style="font-size: 0.7rem; color: var(--text-dim);">${lnk.duration}</div>
           </td>
           <td>
-            <div style="display: flex; gap: 0.4rem; align-items: center;">
+            <div class="dyf-table-actions">
               <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-copy-link" data-url="${lnk.url}" title="کپی لینک اختصاصی">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                <span>کپی</span>
+                <span class="dyf-btn-text-responsive">کپی</span>
               </button>
               <button type="button" class="dyf-btn dyf-btn-specular dyf-btn-sm js-view-link-detail" data-id="${lnk.id}" title="مشاهده جزئیات">
-                <span>جزئیات</span>
+                <span class="dyf-btn-text-responsive">جزئیات</span>
               </button>
             </div>
           </td>
@@ -2742,14 +2748,27 @@
     customers: [],
     searchQuery: '',
     selectedStatus: 'all', // 'all', 'active', 'inactive'
-    viewMode: 'table', // 'grid' or 'table'
+    viewMode: (typeof window !== 'undefined' && window.innerWidth <= 880) ? 'grid' : 'table', // پیش‌فرض کارتی در موبایل
     currentViewingCustomerId: null,
 
     init() {
+      if (typeof window !== 'undefined' && window.innerWidth <= 880) {
+        this.viewMode = 'grid';
+      }
       this.loadCustomers();
       this.bindEvents();
+      this.updateViewModeButtons();
       this.render();
       this.updateGlobalCounters();
+    },
+
+    updateViewModeButtons() {
+      const gridBtn = document.getElementById('customersViewGridBtn');
+      const tableBtn = document.getElementById('customersViewTableBtn');
+      if (gridBtn && tableBtn) {
+        gridBtn.classList.toggle('is-active', this.viewMode === 'grid');
+        tableBtn.classList.toggle('is-active', this.viewMode === 'table');
+      }
     },
 
     loadCustomers() {
@@ -2815,14 +2834,12 @@
       if (gridBtn && tableBtn) {
         gridBtn.addEventListener('click', () => {
           this.viewMode = 'grid';
-          gridBtn.classList.add('is-active');
-          tableBtn.classList.remove('is-active');
+          this.updateViewModeButtons();
           this.render();
         });
         tableBtn.addEventListener('click', () => {
           this.viewMode = 'table';
-          tableBtn.classList.add('is-active');
-          gridBtn.classList.remove('is-active');
+          this.updateViewModeButtons();
           this.render();
         });
       }
@@ -3373,6 +3390,30 @@
       this.updateGlobalCounters();
     },
 
+    formatDuration(dur) {
+      if (!dur || dur === 'unlimited') return 'نامحدود';
+      const map = {
+        '10m': '۱۰ دقیقه',
+        '15m': '۱۵ دقیقه',
+        '30m': '۳۰ دقیقه',
+        '60m': '۱ ساعت',
+        '2h': '۲ ساعت',
+        '1d': '۱ روز',
+      };
+      return map[dur] || dur;
+    },
+
+    formatDeadline(dl) {
+      if (!dl || dl === 'unlimited') return 'نامحدود';
+      const map = {
+        '24h': '۲۴ ساعت',
+        '48h': '۴۸ ساعت',
+        '3d': '۳ روز',
+        '7d': '۷ روز',
+      };
+      return map[dl] || dl;
+    },
+
     loadLinks() {
       try {
         const saved = localStorage.getItem('dyf_admin_links_v1');
@@ -3918,11 +3959,11 @@
             </div>
             <div class="dyf-link-meta-item">
               <span style="color: var(--text-dim);">مهلت شروع دسترسی:</span>
-              <span style="color: var(--gold-primary); font-weight: 600;">${link.startDeadline}</span>
+              <span style="color: var(--gold-primary); font-weight: 600;">${this.formatDeadline(link.startDeadline)}</span>
             </div>
             <div class="dyf-link-meta-item">
               <span style="color: var(--text-dim);">مدت زمان مشاهده:</span>
-              <span style="color: var(--gold-light); font-weight: 700;">${link.viewingDuration}</span>
+              <span style="color: var(--gold-light); font-weight: 700;">${this.formatDuration(link.viewingDuration)}</span>
             </div>
             <div class="dyf-link-meta-item">
               <span style="color: var(--text-dim);">تاریخ صدور لینک:</span>
@@ -4151,11 +4192,11 @@
           <div class="dyf-link-meta-grid">
             <div class="dyf-link-meta-item">
               <span style="color: var(--text-dim); font-size: 0.7rem;">مهلت شروع:</span>
-              <span style="color: var(--gold-primary); font-weight: 600;">${link.startDeadline}</span>
+              <span style="color: var(--gold-primary); font-weight: 600;">${this.formatDeadline(link.startDeadline)}</span>
             </div>
             <div class="dyf-link-meta-item">
               <span style="color: var(--text-dim); font-size: 0.7rem;">مدت مشاهده:</span>
-              <span style="color: var(--gold-light); font-weight: 600;">${link.viewingDuration}</span>
+              <span style="color: var(--gold-light); font-weight: 600;">${this.formatDuration(link.viewingDuration)}</span>
             </div>
             <div class="dyf-link-meta-item">
               <span style="color: var(--text-dim); font-size: 0.7rem;">تعداد مدل‌ها:</span>
@@ -4209,11 +4250,11 @@
           <td>
             <div style="font-weight: 700; color: var(--text-ivory);">${link.recipientFa}</div>
           </td>
-          <td style="font-size: 0.8rem; color: var(--gold-primary); font-weight: 600;">${link.startDeadline}</td>
-          <td style="font-size: 0.8rem; color: var(--gold-light); font-weight: 600;">${link.viewingDuration}</td>
+          <td class="dyf-col-deadline" style="font-size: 0.8rem; color: var(--gold-primary); font-weight: 600;">${this.formatDeadline(link.startDeadline)}</td>
+          <td class="dyf-col-duration" style="font-size: 0.8rem; color: var(--gold-light); font-weight: 600;">${this.formatDuration(link.viewingDuration)}</td>
           <td>${statusBadge}</td>
           <td>
-            <div style="display: flex; gap: 0.35rem; align-items: center;">
+            <div class="dyf-table-actions">
               <button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-view-link" data-id="${link.id}">جزئیات</button>
               <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-edit-link" data-id="${link.id}">ویرایش</button>
               <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-copy-link" data-url="${fullUrl}">کپی</button>

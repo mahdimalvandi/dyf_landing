@@ -127,9 +127,6 @@
             <div class="dyf-sidebar-badge">مدیریت کاتالوگ</div>
           </div>
         </div>
-        <button type="button" id="sidebarCloseBtn" class="dyf-sidebar-close-btn" aria-label="بستن منو">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
       </div>
 
       <!-- منوی ناوبری -->
@@ -226,13 +223,13 @@
 
         <div class="dyf-header-left">
           <!-- دکمه رفتن به سایت عمومی لندینگ -->
-          <a href="index.html" target="_blank" class="dyf-icon-btn" title="مشاهده وب‌سایت عمومی DYF">
+          <a href="index.html" target="_blank" class="dyf-icon-btn dyf-header-landing-btn" title="مشاهده وب‌سایت عمومی DYF">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
           </a>
 
           <!-- دکمه اقدام سریع ایجاد لینک -->
           <a href="#access-links" class="dyf-btn dyf-btn-primary dyf-btn-sm dyf-header-create-link-btn" title="ایجاد لینک اختصاصی جدید">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
             <span class="dyf-header-btn-text">ایجاد لینک اختصاصی</span>
           </a>
         </div>
@@ -336,10 +333,10 @@
                     <thead>
                       <tr>
                         <th>گیرنده لینک</th>
-                        <th>مشتری / فروشگاه</th>
-                        <th>روش احراز</th>
+                        <th class="dyf-col-customer">مشتری / فروشگاه</th>
+                        <th class="dyf-col-auth">روش احراز</th>
                         <th>وضعیت</th>
-                        <th>اعتبار و مهلت</th>
+                        <th class="dyf-col-expires">اعتبار و مهلت</th>
                         <th>عملیات</th>
                       </tr>
                     </thead>
@@ -689,8 +686,8 @@
                   <tr>
                     <th>شناسه و توکن</th>
                     <th>نام گیرنده</th>
-                    <th>مهلت شروع</th>
-                    <th>مدت مشاهده</th>
+                    <th class="dyf-col-deadline">مهلت شروع</th>
+                    <th class="dyf-col-duration">مدت مشاهده</th>
                     <th>وضعیت</th>
                     <th>عملیات</th>
                   </tr>
@@ -943,11 +940,11 @@
   </div>
 
     <!-- مودال لایت‌باکس بزرگنمایی تصویر کفش -->
-    <div id="modalShoeLightbox" class="dyf-modal-backdrop" aria-hidden="true" style="background: rgba(6, 5, 4, 0.95); z-index: 10000;">
-      <div style="position: relative; max-width: 92vw; max-height: 92vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-        <button type="button" class="dyf-modal-close" data-close style="position: absolute; top: -45px; left: 0; font-size: 1.8rem; color: var(--gold-light); background: rgba(36, 30, 25, 0.9); border: 1px solid var(--border-medium); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">&times;</button>
-        <img id="lightboxImg" src="" alt="تصویر بزرگنمایی مدل کفش" style="max-width: 90vw; max-height: 84vh; object-fit: contain; border-radius: var(--r-md); border: 1px solid var(--border-medium); box-shadow: 0 25px 70px rgba(0,0,0,0.95);">
-        <div id="lightboxCaption" style="margin-top: 0.75rem; color: var(--text-ivory); font-weight: 700; font-size: 0.95rem; text-align: center;"></div>
+    <div id="modalShoeLightbox" class="dyf-modal-backdrop dyf-lightbox-backdrop" aria-hidden="true">
+      <button type="button" class="dyf-lightbox-close" data-close aria-label="بستن تصویر">&times;</button>
+      <div class="dyf-lightbox-wrap">
+        <img id="lightboxImg" src="" alt="تصویر بزرگنمایی مدل کفش" class="dyf-lightbox-img">
+        <div id="lightboxCaption" class="dyf-lightbox-caption"></div>
       </div>
     </div>
 
