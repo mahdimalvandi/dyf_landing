@@ -8,6 +8,23 @@
 (function () {
   'use strict';
 
+  // تابع تبدیل ارقام فارسی و عربی به انگلیسی
+  function toEnglishDigits(str) {
+    if (!str && str !== 0) return '';
+    return String(str)
+      .replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+      .replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+  }
+
+  // لایت‌باکس بزرگنمایی تصویر کفش
+  window.openShoeLightbox = function (url, title) {
+    const lbImg = document.getElementById('lightboxImg');
+    const lbCaption = document.getElementById('lightboxCaption');
+    if (lbImg) lbImg.src = url;
+    if (lbCaption) lbCaption.textContent = title || '';
+    if (window.DYF_Modal) window.DYF_Modal.open('modalShoeLightbox');
+  };
+
   // ==========================================================================
   // ۱. داده‌های اولیه و شبیه‌سازی‌شده (Mock Data Store)
   // ==========================================================================
@@ -15,7 +32,7 @@
     {
       id: 101,
       title: 'کفش رسمی آکسفورد تمام‌چرم دست‌دوز تبریز',
-      categories: ['لاین رسمی و اداری', 'لاین چرم لوکس دست‌دوز'],
+      categories: ['کفش رسمی و اداری', 'چرم لوکس دست‌دوز'],
       colors: ['مشکی زغالی', 'قهوه‌ای سوخته'],
       sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
       status: 'published',
@@ -29,7 +46,7 @@
     {
       id: 102,
       title: 'اسنیکر چرم کژوال دیفندر سری اسپرت',
-      categories: ['لاین اسپرت و کژوال'],
+      categories: ['کفش اسپرت و کژوال'],
       colors: ['عسلی کاراملی', 'سفید عاجی'],
       sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴', '۴۵'],
       status: 'published',
@@ -42,7 +59,7 @@
     {
       id: 103,
       title: 'نیم‌بوت چلسی چرم گاوی هورس واکس',
-      categories: ['لاین رسمی و اداری', 'لاین چرم لوکس دست‌دوز'],
+      categories: ['کفش رسمی و اداری', 'چرم لوکس دست‌دوز'],
       colors: ['مشکی مات', 'عسلی روغنی'],
       sizes: ['۴۰', '۴۱', '۴۲', '۴۳'],
       status: 'published',
@@ -55,7 +72,7 @@
     {
       id: 104,
       title: 'کفش دربی کلاسیک پنجه ارگونومیک',
-      categories: ['لاین رسمی و اداری'],
+      categories: ['کفش رسمی و اداری'],
       colors: ['قهوه‌ای هاوانا', 'مشکی'],
       sizes: ['۴۱', '۴۲', '۴۳', '۴۴', '۴۵'],
       status: 'published',
@@ -67,7 +84,7 @@
     {
       id: 105,
       title: 'لوفر سراجی چرم کروکو هورس',
-      categories: ['لاین چرم لوکس دست‌دوز'],
+      categories: ['چرم لوکس دست‌دوز'],
       colors: ['عسلی بافتی', 'شکلاتی تیره'],
       sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
       status: 'published',
@@ -80,7 +97,7 @@
     {
       id: 106,
       title: 'کتانی شهری دست‌دوز زیره سبک پی‌یو',
-      categories: ['لاین اسپرت و کژوال'],
+      categories: ['کفش اسپرت و کژوال'],
       colors: ['سفید-طوسی', 'مشکی'],
       sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
       status: 'published',
@@ -92,7 +109,7 @@
     {
       id: 107,
       title: 'کفش رسمی مونک‌استراپ دو سگک برنجی',
-      categories: ['لاین رسمی و اداری', 'لاین چرم لوکس دست‌دوز'],
+      categories: ['کفش رسمی و اداری', 'چرم لوکس دست‌دوز'],
       colors: ['قهوه‌ای فندقی', 'مشکی'],
       sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
       status: 'published',
@@ -105,7 +122,7 @@
     {
       id: 108,
       title: 'اسنیکر ساق‌کوتاه چرم طبیعی ناپا',
-      categories: ['لاین اسپرت و کژوال'],
+      categories: ['کفش اسپرت و کژوال'],
       colors: ['سرمه‌ای تیره', 'مشکی'],
       sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴', '۴۵'],
       status: 'published',
@@ -117,7 +134,7 @@
     {
       id: 109,
       title: 'صندل ارگونومیک تابستانه چرم تخت',
-      categories: ['لاین چرم لوکس دست‌دوز'],
+      categories: ['چرم لوکس دست‌دوز'],
       colors: ['عسلی کاراملی'],
       sizes: ['۴۰', '۴۱', '۴۲', '۴۳'],
       status: 'published',
@@ -129,7 +146,7 @@
     {
       id: 110,
       title: 'کفش فرمال بروگ سرپنجه گلدار تبریز',
-      categories: ['لاین رسمی و اداری'],
+      categories: ['کفش رسمی و اداری'],
       colors: ['قهوه‌ای سوخته', 'مشکی زغالی'],
       sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
       status: 'published',
@@ -142,7 +159,7 @@
     {
       id: 111,
       title: 'کفش کژوال روزمره کفی طبی آناتومیک',
-      categories: ['لاین اسپرت و کژوال'],
+      categories: ['کفش اسپرت و کژوال'],
       colors: ['خاکی روشن', 'مشکی'],
       sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
       status: 'published',
@@ -154,7 +171,7 @@
     {
       id: 112,
       title: 'پوتین کلاسیک ساق‌بلند دست‌دوز زمستانه',
-      categories: ['لاین رسمی و اداری', 'لاین چرم لوکس دست‌دوز'],
+      categories: ['کفش رسمی و اداری', 'چرم لوکس دست‌دوز'],
       colors: ['قهوه‌ای تیره', 'مشکی'],
       sizes: ['۴۱', '۴۲', '۴۳', '۴۴', '۴۵'],
       status: 'published',
@@ -166,7 +183,7 @@
     {
       id: 113,
       title: 'لوفر رسمی قایقی چرم جیر طبیعی',
-      categories: ['لاین رسمی و اداری'],
+      categories: ['کفش رسمی و اداری'],
       colors: ['سرمه‌ای', 'طوسی تیره', 'عسلی'],
       sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
       status: 'published',
@@ -178,7 +195,7 @@
     {
       id: 114,
       title: 'کتانی رانینگ اسپرت چرم و برزنت کارگاهی',
-      categories: ['لاین اسپرت و کژوال'],
+      categories: ['کفش اسپرت و کژوال'],
       colors: ['مشکی-طوسی', 'سبز زیتونی'],
       sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴', '۴۵'],
       status: 'published',
@@ -190,7 +207,7 @@
     {
       id: 115,
       title: 'کفش اداری سبک بدون‌بند تمام‌کش',
-      categories: ['لاین رسمی و اداری'],
+      categories: ['کفش رسمی و اداری'],
       colors: ['مشکی براق', 'قهوه‌ای'],
       sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
       status: 'published',
@@ -202,7 +219,7 @@
     {
       id: 116,
       title: 'نیم‌بوت زیپ‌دار چرم الگانت مجلسی',
-      categories: ['لاین رسمی و اداری'],
+      categories: ['کفش رسمی و اداری'],
       colors: ['مشکی واکس‌خورده'],
       sizes: ['۴۱', '۴۲', '۴۳', '۴۴'],
       status: 'published',
@@ -214,7 +231,7 @@
     {
       id: 117,
       title: 'اسنیکر کفی فوم سرد دست‌دوز',
-      categories: ['لاین اسپرت و کژوال'],
+      categories: ['کفش اسپرت و کژوال'],
       colors: ['سفید کاراملی', 'مشکی'],
       sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
       status: 'published',
@@ -226,7 +243,7 @@
     {
       id: 118,
       title: 'کفش رسمی بنددار دوخت مخفی سراجی',
-      categories: ['لاین رسمی و اداری', 'لاین چرم لوکس دست‌دوز'],
+      categories: ['کفش رسمی و اداری', 'چرم لوکس دست‌دوز'],
       colors: ['مشکی', 'قهوه‌ای تیره'],
       sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
       status: 'published',
@@ -241,43 +258,28 @@
   const DEFAULT_CATEGORIES = [
     {
       id: 'cat-formal',
-      name: 'لاین رسمی و اداری',
-      slug: 'formal',
-      desc: 'کفش‌های کلاسیک آکسفورد، دربی، مونک‌استراپ و هورس واکس مناسب بازرگانان، جلسات رسمی و کارهای اداری.',
+      name: 'کفش رسمی و اداری',
       status: 'active',
-      icon: 'briefcase',
     },
     {
       id: 'cat-sport',
-      name: 'لاین اسپرت و کژوال',
-      slug: 'sport-casual',
-      desc: 'اسنیکرها و کتانی‌های شهری چرم طبیعی، کفی طبی و تزریق فوم سرد، سبک و مقاوم جهت پیاده‌روی روزانه.',
+      name: 'کفش اسپرت و کژوال',
       status: 'active',
-      icon: 'zap',
     },
     {
       id: 'cat-handmade',
-      name: 'لاین چرم لوکس دست‌دوز',
-      slug: 'luxury-handmade',
-      desc: 'آثار نفیس سراجی کارگاه با دوخت‌های دست‌دوز، زیره چرم طبیعی و دباغی گیاهی درجه یک تبریز.',
+      name: 'چرم لوکس دست‌دوز',
       status: 'active',
-      icon: 'award',
     },
     {
       id: 'cat-boots',
       name: 'نیم‌بوت و پوتین کلاسیک',
-      slug: 'classic-boots',
-      desc: 'بوت‌های زمستانه چلسی و پوتین‌های ساق‌دار چرم الگانت با یراق‌آلات استیل و زیره‌های ضدلغزش.',
       status: 'active',
-      icon: 'shield',
     },
     {
       id: 'cat-leather-goods',
       name: 'اکسسوری و کیف سراجی',
-      slug: 'accessories',
-      desc: 'محصولات دست‌ساز مکمل شامل کیف‌های اداری چرم طبیعی، کمربند و جاکارتی هماهنگ با کفش‌ها.',
       status: 'active',
-      icon: 'briefcase',
     },
   ];
 
@@ -292,7 +294,7 @@
       status: 'active',
       directAccess: {
         enabled: true,
-        categories: ['لاین رسمی و اداری', 'لاین چرم لوکس دست‌دوز'],
+        categories: ['کفش رسمی و اداری', 'چرم لوکس دست‌دوز'],
         addModels: [102],
         excludeModels: [104],
         duration: '15m',
@@ -310,7 +312,7 @@
       status: 'active',
       directAccess: {
         enabled: true,
-        categories: ['لاین رسمی و اداری', 'لاین اسپرت و کژوال', 'لاین چرم لوکس دست‌دوز'],
+        categories: ['کفش رسمی و اداری', 'کفش اسپرت و کژوال', 'چرم لوکس دست‌دوز'],
         addModels: [],
         excludeModels: [],
         duration: 'unlimited',
@@ -328,7 +330,7 @@
       status: 'active',
       directAccess: {
         enabled: false,
-        categories: ['لاین اسپرت و کژوال'],
+        categories: ['کفش اسپرت و کژوال'],
         addModels: [],
         excludeModels: [],
         duration: '30m',
@@ -346,7 +348,7 @@
       status: 'active',
       directAccess: {
         enabled: true,
-        categories: ['لاین چرم لوکس دست‌دوز', 'نیم‌بوت و پوتین کلاسیک'],
+        categories: ['چرم لوکس دست‌دوز', 'نیم‌بوت و پوتین کلاسیک'],
         addModels: [101],
         excludeModels: [],
         duration: '1h',
@@ -366,7 +368,7 @@
       customerId: 101,
       phone: '09121112233',
       authType: 'otp',
-      categories: ['لاین رسمی و اداری', 'لاین چرم لوکس دست‌دوز'],
+      categories: ['کفش رسمی و اداری', 'چرم لوکس دست‌دوز'],
       addModels: [],
       excludeModels: [104],
       startDeadline: '3d',
@@ -386,7 +388,7 @@
       customerId: 102,
       phone: '09142223344',
       authType: 'direct',
-      categories: ['لاین رسمی و اداری', 'لاین اسپرت و کژوال', 'لاین چرم لوکس دست‌دوز'],
+      categories: ['کفش رسمی و اداری', 'کفش اسپرت و کژوال', 'چرم لوکس دست‌دوز'],
       addModels: [101],
       excludeModels: [],
       startDeadline: '7d',
@@ -406,7 +408,7 @@
       customerId: 103,
       phone: '09173334455',
       authType: 'otp',
-      categories: ['لاین اسپرت و کژوال'],
+      categories: ['کفش اسپرت و کژوال'],
       addModels: [],
       excludeModels: [],
       startDeadline: '24h',
@@ -426,7 +428,7 @@
       customerId: 104,
       phone: '09134445566',
       authType: 'direct',
-      categories: ['لاین رسمی و اداری'],
+      categories: ['کفش رسمی و اداری'],
       addModels: [],
       excludeModels: [],
       startDeadline: '24h',
@@ -468,7 +470,7 @@
         recipientEn: 'Haj Mostafa Kamali',
         customer: 'بنکداری کمالی (بازار تهران)',
         authType: 'otp', // otp or direct
-        categories: ['لاین رسمی و اداری', 'لاین دست‌دوز'],
+        categories: ['کفش رسمی و اداری', 'چرم دست‌دوز'],
         status: 'active', // active, expired, pending
         expiresAt: '۲ روز دیگر (۳۰ مهر ۱۴۰۵)',
         duration: '۱۰ دقیقه پس از ورود',
@@ -494,7 +496,7 @@
         recipientEn: 'Sepehr Nourizadeh',
         customer: 'گالری کفش سپهر (شیراز)',
         authType: 'otp',
-        categories: ['لاین اسپرت و کژوال'],
+        categories: ['کفش اسپرت و کژوال'],
         status: 'pending',
         expiresAt: '۱ روز دیگر (۲۹ مهر ۱۴۰۵)',
         duration: '۱۵ دقیقه پس از ورود',
@@ -507,7 +509,7 @@
         recipientEn: 'Artin Ghavami',
         customer: 'بوتیک آرتین (اصفهان)',
         authType: 'direct',
-        categories: ['لاین رسمی و اداری'],
+        categories: ['کفش رسمی و اداری'],
         status: 'expired',
         expiresAt: 'منقضی شده (دیروز)',
         duration: 'پایان مهلت شروع دسترسی',
@@ -713,13 +715,16 @@
 
     bindEvents() {
       // مرحله ۱: ارسال شماره تلفن
-      if (this.sendOtpBtn) {
-        this.sendOtpBtn.addEventListener('click', () => this.handleSendPhone());
-      }
       if (this.phoneInput) {
+        this.phoneInput.addEventListener('input', (e) => {
+          e.target.value = toEnglishDigits(e.target.value).replace(/\D/g, '');
+        });
         this.phoneInput.addEventListener('keydown', (e) => {
           if (e.key === 'Enter') this.handleSendPhone();
         });
+      }
+      if (this.sendOtpBtn) {
+        this.sendOtpBtn.addEventListener('click', () => this.handleSendPhone());
       }
 
       // تغییر شماره تلفن و بازگشت به مرحله ۱
@@ -739,16 +744,17 @@
           DYF_Toast.show({
             type: 'info',
             title: 'ارسال مجدد کد',
-            message: `کد ۵ رقمی آزمایشی جدید (${this.testCode}) به شماره شما ارسال شد.`,
+            message: 'کد ۵ رقمی تأیید مجدداً به شماره شما ارسال شد.',
           });
         });
       }
 
-      // ورودی‌های ۵ رقمی کد یک‌بارمصرف
+      // ورودی‌های ۵ رقمی کد یک‌بارمصرف (پشتیبانی خودکار از صفحه کلید فارسی و انگلیسی)
       this.otpDigits.forEach((digit, index) => {
         digit.addEventListener('input', (e) => {
-          const val = e.target.value;
-          if (val) {
+          const raw = toEnglishDigits(e.target.value).replace(/\D/g, '');
+          e.target.value = raw ? raw.slice(-1) : '';
+          if (e.target.value) {
             digit.classList.add('is-filled');
             if (index < this.otpDigits.length - 1) {
               this.otpDigits[index + 1].focus();
@@ -767,12 +773,13 @@
           }
         });
 
-        // پشتیبانی از Paste متن کد ۵ رقمی
+        // پشتیبانی از Paste متن کد ۵ رقمی (انگلیسی یا فارسی)
         digit.addEventListener('paste', (e) => {
           e.preventDefault();
-          const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
-          if (/^\d{5}$/.test(pasteData)) {
-            pasteData.split('').forEach((char, i) => {
+          const raw = (e.clipboardData || window.clipboardData).getData('text').trim();
+          const pasteData = toEnglishDigits(raw).replace(/\D/g, '');
+          if (pasteData.length >= 5) {
+            pasteData.slice(0, 5).split('').forEach((char, i) => {
               if (this.otpDigits[i]) {
                 this.otpDigits[i].value = char;
                 this.otpDigits[i].classList.add('is-filled');
@@ -786,29 +793,6 @@
       // دکمه تأیید کد
       if (this.verifyOtpBtn) {
         this.verifyOtpBtn.addEventListener('click', () => this.handleVerifyOtp());
-      }
-
-      // ابزارهای تست سریع در صفحه ورود
-      if (this.testQuickFillBtn) {
-        this.testQuickFillBtn.addEventListener('click', () => {
-          if (this.phoneInput) this.phoneInput.value = '09121234567';
-          this.handleSendPhone();
-          setTimeout(() => {
-            this.fillOtpCode('12345');
-            DYF_Toast.show({
-              type: 'success',
-              title: 'تکمیل خودکار تستی',
-              message: 'شماره و کد پیش‌فرض تستی وارد شدند.',
-            });
-          }, 300);
-        });
-      }
-
-      if (this.testErrorOtpBtn) {
-        this.testErrorOtpBtn.addEventListener('click', () => {
-          this.fillOtpCode('99999');
-          this.handleVerifyOtp();
-        });
       }
 
       // خروج از پنل (دکمه‌های هدر و سایدبار)
@@ -837,7 +821,8 @@
     },
 
     handleSendPhone() {
-      const phone = this.phoneInput ? this.phoneInput.value.trim() : '';
+      const phone = toEnglishDigits(this.phoneInput ? this.phoneInput.value.trim() : '').replace(/\D/g, '');
+      if (this.phoneInput) this.phoneInput.value = phone;
       const phoneRegex = /^09[0-9]{9}$/;
 
       if (!phoneRegex.test(phone)) {
@@ -867,16 +852,16 @@
 
         DYF_Toast.show({
           type: 'success',
-          title: 'کد یک‌بارمصرف ارسال شد',
-          message: `کد ۵ رقمی آزمایشی ورود: ${this.testCode}`,
-          duration: 6000,
+          title: 'کد تأیید ارسال شد',
+          message: 'کد ۵ رقمی تأیید برای شماره شما ارسال شد.',
+          duration: 4000,
         });
       }, 550);
     },
 
     handleVerifyOtp() {
       let code = '';
-      this.otpDigits.forEach((d) => (code += d.value.trim()));
+      this.otpDigits.forEach((d) => (code += toEnglishDigits(d.value.trim())));
 
       if (code.length < 5) {
         DYF_Toast.show({
@@ -1122,8 +1107,7 @@
             <div style="font-size: 0.74rem; color: var(--text-dim); font-family: var(--font-serif);">${lnk.recipientEn}</div>
           </td>
           <td>
-            <div style="font-size: 0.82rem; color: var(--text-main);">${lnk.customer}</div>
-            <div style="font-size: 0.72rem; color: var(--gold-primary);">${lnk.categories.join('، ')}</div>
+            <div style="font-size: 0.86rem; color: var(--text-main); font-weight: 600;">${lnk.customer}</div>
           </td>
           <td>${authBadges[lnk.authType] || '-'}</td>
           <td>${statusBadges[lnk.status] || lnk.status}</td>
@@ -1245,7 +1229,10 @@
         this.models = [...DEFAULT_SHOES];
       }
       if (this.models) {
-        this.models.forEach((m) => { m.status = 'published'; });
+        this.models.forEach((m) => {
+          m.status = 'published';
+          m.categories = (m.categories || []).map((c) => c.replace(/^لاین\s+/, ''));
+        });
       }
     },
 
@@ -1716,14 +1703,16 @@
 
       const coverMedia = (model.media || []).find((m) => m.isPrimary) || (model.media && model.media[0]) || { url: 'assets/images/shoes.jpeg' };
 
+      const safeTitle = (model.title || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
       const thumbnailsHtml = (model.media || [])
         .map(
           (m, idx) => `
         <img 
           src="${m.url}" 
           alt="عکس ${idx + 1}" 
-          style="width: 58px; height: 58px; object-fit: cover; border-radius: var(--r-sm); border: 1px solid ${m.isPrimary ? 'var(--gold-primary)' : 'var(--border-subtle)'}; cursor: pointer;"
-          onclick="document.getElementById('dossierMasterImg').src = '${m.url}'"
+          style="width: 64px; height: 64px; object-fit: cover; border-radius: var(--r-sm); border: 1px solid ${m.isPrimary ? 'var(--gold-primary)' : 'var(--border-subtle)'}; cursor: pointer; transition: all 0.2s ease;"
+          onclick="document.getElementById('dossierMasterImg').src = '${m.url}'; this.parentElement.querySelectorAll('img').forEach(img => img.style.borderColor = 'var(--border-subtle)'); this.style.borderColor = 'var(--gold-primary)';"
+          title="مشاهده این تصویر"
         >
       `
         )
@@ -1731,19 +1720,27 @@
 
       if (bodyEl) {
         bodyEl.innerHTML = `
-          <div style="display: grid; grid-template-columns: 240px 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+          <div style="display: grid; grid-template-columns: 310px 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
             <div>
-              <div style="width: 100%; aspect-ratio: 1; border-radius: var(--r-md); overflow: hidden; background: #0e0c0a; border: 1px solid var(--border-medium); margin-bottom: 0.75rem;">
-                <img id="dossierMasterImg" src="${coverMedia.url}" alt="${model.title}" style="width: 100%; height: 100%; object-fit: cover;">
+              <div 
+                style="position: relative; width: 100%; aspect-ratio: 1; border-radius: var(--r-md); overflow: hidden; background: #0e0c0a; border: 1px solid var(--border-medium); margin-bottom: 0.75rem; cursor: zoom-in;" 
+                title="برای بزرگنمایی و مشاهده تمام‌صفحه کلیک کنید"
+                onclick="window.openShoeLightbox(document.getElementById('dossierMasterImg').src, '${safeTitle}')"
+              >
+                <img id="dossierMasterImg" src="${coverMedia.url}" alt="${model.title}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
+                <div style="position: absolute; bottom: 10px; left: 10px; background: rgba(14, 12, 10, 0.8); backdrop-filter: blur(4px); padding: 0.3rem 0.65rem; border-radius: 6px; font-size: 0.74rem; color: var(--gold-light); display: flex; align-items: center; gap: 0.35rem; border: 1px solid var(--border-subtle); pointer-events: none;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>
+                  <span>مشاهده تمام‌صفحه</span>
+                </div>
               </div>
-              <div style="display: flex; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.4rem;">
+              <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.4rem;">
                 ${thumbnailsHtml}
               </div>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.88rem;">
+            <div style="display: flex; flex-direction: column; gap: 0.95rem; font-size: 0.88rem;">
               <div>
-                <span style="color: var(--text-dim); font-size: 0.78rem;">دسته‌بندی‌های لاین:</span>
+                <span style="color: var(--text-dim); font-size: 0.78rem;">دسته‌بندی‌ها:</span>
                 <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.25rem;">
                   ${(model.categories || []).map((c) => `<span class="dyf-category-pill">${c}</span>`).join('')}
                 </div>
@@ -1763,10 +1760,6 @@
                   <span style="color: var(--text-dim); font-size: 0.78rem;">سایزبندی سری:</span>
                   <div style="font-weight: 700; color: var(--text-ivory); margin-top: 0.2rem;">${(model.sizes || []).join('، ')}</div>
                 </div>
-              </div>
-
-              <div style="padding: 0.85rem; background: rgba(36, 30, 25, 0.45); border-radius: var(--r-sm); border: 1px dashed var(--border-subtle); font-size: 0.78rem; color: var(--text-muted);">
-                <strong>شرایط تیراژ عمده B2B:</strong> حداقل سفارش ۱ سری (۱۰ جفت) با بسته‌بندی ویژه جعبه دو رنگ DYF. ارسال مستقیم از کارگاه تبریز یا انبار مرکزی بازار تهران.
               </div>
             </div>
           </div>
@@ -1964,12 +1957,7 @@
         <article class="dyf-product-card" data-id="${model.id}">
           <div class="dyf-product-thumb-wrap">
             <img src="${primaryMedia.url}" alt="${model.title}" class="dyf-product-thumb" loading="lazy">
-            <div class="dyf-product-thumb-overlay"></div>
             <div class="dyf-product-id-badge">DYF-${model.id}</div>
-            <div class="dyf-product-media-count">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-              <span>${mediaCount} رسانه</span>
-            </div>
           </div>
 
           <div class="dyf-product-body">
@@ -2087,31 +2075,43 @@
 
     loadCategories() {
       try {
-        const saved = localStorage.getItem('dyf_admin_categories_v1');
+        const saved = localStorage.getItem('dyf_admin_categories_v2');
         if (saved) {
           this.categories = JSON.parse(saved);
         } else {
-          this.categories = [...DEFAULT_CATEGORIES];
+          const old = localStorage.getItem('dyf_admin_categories_v1');
+          if (old) {
+            this.categories = JSON.parse(old).map((c) => ({
+              id: c.id,
+              name: (c.name || '').replace(/^لاین\s+/, ''),
+              status: 'active',
+            }));
+          } else {
+            this.categories = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
+          }
           this.saveCategories(false);
         }
       } catch (e) {
-        this.categories = [...DEFAULT_CATEGORIES];
+        this.categories = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
       }
       if (this.categories) {
-        this.categories.forEach((c) => { c.status = 'active'; });
+        this.categories.forEach((c) => {
+          c.name = (c.name || '').replace(/^لاین\s+/, '');
+          c.status = 'active';
+        });
       }
     },
 
     saveCategories(showToast = true) {
       try {
-        localStorage.setItem('dyf_admin_categories_v1', JSON.stringify(this.categories));
+        localStorage.setItem('dyf_admin_categories_v2', JSON.stringify(this.categories));
         this.updateGlobalCounters();
         this.syncWithShoeFilters();
         if (showToast) {
           DYF_Toast.show({
             type: 'success',
             title: 'به‌روزرسانی دسته‌بندی‌ها',
-            message: 'تغییرات لاین‌های محصول در حافظه سامانه ذخیره شد.',
+            message: 'تغییرات دسته‌بندی‌ها با موفقیت ذخیره شد.',
           });
         }
       } catch (e) {
@@ -2210,20 +2210,12 @@
       const modeInput = document.getElementById('categoryFormMode');
       const idInput = document.getElementById('categoryFormId');
       const nameInput = document.getElementById('categoryFormName');
-      const slugInput = document.getElementById('categoryFormSlug');
-      const descInput = document.getElementById('categoryFormDesc');
       const modalTitle = document.getElementById('categoryFormModalTitle');
 
       if (modeInput) modeInput.value = 'create';
       if (idInput) idInput.value = '';
-      if (modalTitle) modalTitle.textContent = 'ایجاد دسته‌بندی / لاین جدید';
-
+      if (modalTitle) modalTitle.textContent = 'ایجاد دسته‌بندی جدید';
       if (nameInput) nameInput.value = '';
-      if (slugInput) slugInput.value = '';
-      if (descInput) descInput.value = '';
-
-      const firstIconRadio = document.querySelector('input[name="categoryIcon"][value="briefcase"]');
-      if (firstIconRadio) firstIconRadio.checked = true;
 
       DYF_Modal.open('modalCategoryForm');
       if (nameInput) setTimeout(() => nameInput.focus(), 200);
@@ -2236,20 +2228,12 @@
       const modeInput = document.getElementById('categoryFormMode');
       const idInput = document.getElementById('categoryFormId');
       const nameInput = document.getElementById('categoryFormName');
-      const slugInput = document.getElementById('categoryFormSlug');
-      const descInput = document.getElementById('categoryFormDesc');
       const modalTitle = document.getElementById('categoryFormModalTitle');
 
       if (modeInput) modeInput.value = 'edit';
       if (idInput) idInput.value = cat.id;
       if (modalTitle) modalTitle.textContent = `ویرایش دسته‌بندی «${cat.name}»`;
-
       if (nameInput) nameInput.value = cat.name || '';
-      if (slugInput) slugInput.value = cat.slug || '';
-      if (descInput) descInput.value = cat.desc || '';
-
-      const iconRadio = document.querySelector(`input[name="categoryIcon"][value="${cat.icon || 'briefcase'}"]`);
-      if (iconRadio) iconRadio.checked = true;
 
       DYF_Modal.open('modalCategoryForm');
       if (nameInput) setTimeout(() => nameInput.focus(), 200);
@@ -2259,40 +2243,26 @@
       const mode = document.getElementById('categoryFormMode')?.value || 'create';
       const id = document.getElementById('categoryFormId')?.value;
       const name = document.getElementById('categoryFormName')?.value.trim();
-      const slug = document.getElementById('categoryFormSlug')?.value.trim();
-      const desc = document.getElementById('categoryFormDesc')?.value.trim();
-      const status = 'active';
-      const icon = document.querySelector('input[name="categoryIcon"]:checked')?.value || 'briefcase';
 
       if (!name) {
         DYF_Toast.show({
           type: 'error',
           title: 'نام دسته‌بندی الزامی است',
-          message: 'لطفاً عنوان کامل لاین محصول را وارد کنید.',
+          message: 'لطفاً نام دسته‌بندی را وارد کنید.',
         });
         document.getElementById('categoryFormName')?.focus();
         return;
       }
 
-      if (!slug) {
-        DYF_Toast.show({
-          type: 'error',
-          title: 'شناسه انگلیسی الزامی است',
-          message: 'لطفاً شناسه لاتین (Slug) دسته‌بندی را وارد کنید.',
-        });
-        document.getElementById('categoryFormSlug')?.focus();
-        return;
-      }
-
       if (mode === 'create') {
         const exists = this.categories.some(
-          (c) => c.name.toLowerCase() === name.toLowerCase() || c.slug.toLowerCase() === slug.toLowerCase()
+          (c) => c.name.toLowerCase() === name.toLowerCase()
         );
         if (exists) {
           DYF_Toast.show({
             type: 'error',
             title: 'دسته‌بندی تکراری',
-            message: 'دسته‌بندی دیگری با همین نام یا شناسه انگلیسی قبلاً ثبت شده است.',
+            message: 'دسته‌بندی دیگری با همین نام قبلاً ثبت شده است.',
           });
           return;
         }
@@ -2300,10 +2270,7 @@
         const newCat = {
           id: `cat-${Date.now()}`,
           name,
-          slug,
-          desc: desc || 'توضیحات تکمیلی این لاین کارگاهی به زودی درج خواهد شد.',
-          status,
-          icon,
+          status: 'active',
         };
 
         this.categories.push(newCat);
@@ -2318,10 +2285,7 @@
         if (cat) {
           const oldName = cat.name;
           cat.name = name;
-          cat.slug = slug;
-          cat.desc = desc;
-          cat.status = status;
-          cat.icon = icon;
+          cat.status = 'active';
 
           // به‌روزرسانی مدل‌های متصل در صورت تغییر عنوان دسته‌بندی
           if (oldName !== name && ShoesController.models) {
@@ -2458,11 +2422,8 @@
       return this.categories.filter((c) => {
         if (this.searchQuery) {
           const matchName = (c.name || '').toLowerCase().includes(this.searchQuery);
-          const matchSlug = (c.slug || '').toLowerCase().includes(this.searchQuery);
-          const matchDesc = (c.desc || '').toLowerCase().includes(this.searchQuery);
-          if (!matchName && !matchSlug && !matchDesc) return false;
+          if (!matchName) return false;
         }
-
         return true;
       });
     },
@@ -2504,30 +2465,12 @@
 
     renderCardHtml(cat) {
       const modelCount = this.getModelCountForCategory(cat.name);
-      const iconSvg = this.iconsMap[cat.icon] || this.iconsMap.briefcase;
 
       return `
         <article class="dyf-category-card" data-id="${cat.id}">
           <div class="dyf-category-header">
-            <div style="display: flex; align-items: center; gap: 0.85rem;">
-              <div class="dyf-category-icon-box">${iconSvg}</div>
-              <div>
-                <h3 class="dyf-category-title">${cat.name}</h3>
-                <span class="dyf-category-slug">slug: ${cat.slug}</span>
-              </div>
-            </div>
-          </div>
-
-          <p class="dyf-category-desc">${cat.desc || '-'}</p>
-
-          <div class="dyf-category-meta-box">
-            <div class="dyf-category-models-count">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14l3-6 4 2 5-4 4 8H4z"/></svg>
-              <span><strong>${modelCount}</strong> مدل منتسب</span>
-            </div>
-            <button type="button" class="dyf-btn dyf-btn-specular dyf-btn-sm js-view-cat-shoes" data-name="${cat.name}">
-              مشاهده مدل‌ها
-            </button>
+            <h3 class="dyf-category-title">${cat.name}</h3>
+            <span class="dyf-category-badge">${modelCount} مدل</span>
           </div>
 
           <div class="dyf-category-actions">
@@ -2540,6 +2483,9 @@
                 <span>حذف</span>
               </button>
             </div>
+            <button type="button" class="dyf-btn dyf-btn-specular dyf-btn-sm js-view-cat-shoes" data-name="${cat.name}">
+              مدل‌ها
+            </button>
           </div>
         </article>
       `;
@@ -2547,28 +2493,20 @@
 
     renderTableRowHtml(cat) {
       const modelCount = this.getModelCountForCategory(cat.name);
-      const iconSvg = this.iconsMap[cat.icon] || this.iconsMap.briefcase;
 
       return `
         <tr data-id="${cat.id}">
-          <td style="font-weight: 700; color: var(--text-ivory);">
-            <div style="display: flex; align-items: center; gap: 0.65rem;">
-              <div class="dyf-category-icon-box" style="width: 32px; height: 32px;">${iconSvg}</div>
-              <span>${cat.name}</span>
-            </div>
+          <td style="font-weight: 700; color: var(--text-ivory); font-size: 0.92rem;">
+            ${cat.name}
           </td>
-          <td style="font-family: var(--font-title); color: var(--gold-light); direction: ltr; text-align: right;">${cat.slug}</td>
-          <td style="max-width: 280px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">${cat.desc || '-'}</td>
           <td>
-            <div style="display: flex; align-items: center; gap: 0.45rem;">
-              <span class="dyf-badge dyf-badge-info">${modelCount} مدل</span>
-              <button type="button" class="dyf-btn dyf-btn-specular dyf-btn-sm js-view-cat-shoes" data-name="${cat.name}">مشاهده</button>
-            </div>
+            <span class="dyf-badge dyf-badge-active" style="font-size: 0.74rem;">${modelCount} مدل مرتبط</span>
           </td>
           <td>
             <div style="display: flex; gap: 0.35rem; align-items: center;">
               <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-edit-cat" data-id="${cat.id}">ویرایش</button>
               <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-delete-cat" data-id="${cat.id}" style="color: var(--status-danger);">حذف</button>
+              <button type="button" class="dyf-btn dyf-btn-specular dyf-btn-sm js-view-cat-shoes" data-name="${cat.name}">مشاهده مدل‌ها</button>
             </div>
           </td>
         </tr>
@@ -2611,7 +2549,7 @@
     customers: [],
     searchQuery: '',
     selectedStatus: 'all', // 'all', 'active', 'inactive'
-    viewMode: 'grid', // 'grid' or 'table'
+    viewMode: 'table', // 'grid' or 'table'
     currentViewingCustomerId: null,
 
     init() {
@@ -2632,6 +2570,13 @@
         }
       } catch (e) {
         this.customers = [...DEFAULT_CUSTOMERS];
+      }
+      if (this.customers) {
+        this.customers.forEach((c) => {
+          if (c.directAccess && c.directAccess.categories) {
+            c.directAccess.categories = c.directAccess.categories.map((cat) => cat.replace(/^لاین\s+/, ''));
+          }
+        });
       }
     },
 
@@ -2840,7 +2785,7 @@
           status,
           directAccess: {
             enabled: false,
-            categories: ['لاین رسمی و اداری'],
+            categories: ['کفش رسمی و اداری'],
             addModels: [],
             excludeModels: [],
             duration: '30m',
@@ -3271,7 +3216,7 @@
     searchQuery: '',
     selectedStatus: 'all', // 'all', 'active', 'pending', 'expired', 'deactivated'
     selectedAuth: 'all', // 'all', 'direct', 'otp'
-    viewMode: 'grid', // 'grid' or 'table'
+    viewMode: 'table', // 'grid' or 'table'
     currentStep: 1,
     currentDetailLink: null,
     wizardDraft: {
@@ -3307,6 +3252,13 @@
         }
       } catch (e) {
         this.links = [...DEFAULT_ACCESS_LINKS];
+      }
+      if (this.links) {
+        this.links.forEach((l) => {
+          if (l.categories) {
+            l.categories = l.categories.map((cat) => cat.replace(/^لاین\s+/, ''));
+          }
+        });
       }
     },
 
@@ -3513,7 +3465,7 @@
         recipientEn: '',
         phone: '',
         authType: 'direct',
-        categories: ['لاین رسمی و اداری'],
+        categories: ['کفش رسمی و اداری'],
         addModels: [],
         excludeModels: [],
         startDeadline: '3d',
@@ -4332,18 +4284,6 @@
           btn.classList.remove('is-loading');
           DYF_Toast.show({ type: 'success', title: 'تکمیل عملیات', message: 'عملیات با موفقیت پایان یافت.' });
         }, 1800);
-      });
-
-      // تست تعویض حالت جدول (عادی / خالی / لودینگ اسکلتون)
-      document.getElementById('demoTableToggleEmpty')?.addEventListener('click', () => {
-        const tbody = document.getElementById('recentLinksTableBody');
-        const empty = document.getElementById('tableEmptyState');
-        if (tbody.children.length > 0) {
-          tbody.innerHTML = '';
-          empty.style.display = 'block';
-        } else {
-          DashboardController.renderTable(DYF_DATA.recentAccessLinks);
-        }
       });
     },
   };
