@@ -58,7 +58,7 @@
       categories: ['لاین رسمی و اداری'],
       colors: ['قهوه‌ای هاوانا', 'مشکی'],
       sizes: ['۴۱', '۴۲', '۴۳', '۴۴', '۴۵'],
-      status: 'draft',
+      status: 'published',
       description: 'نمونه در حال بررسی آزمایشگاهی کارگاه؛ بهینه‌سازی فرم سرپنجه برای پای پهن بازار داخلی با آستر آنتی‌باکتریال.',
       media: [
         { url: 'assets/images/shoes.jpeg', type: 'image', isPrimary: true }
@@ -83,8 +83,8 @@
       categories: ['لاین اسپرت و کژوال'],
       colors: ['سفید-طوسی', 'مشکی'],
       sizes: ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
-      status: 'archived',
-      description: 'مدل فصل گذشته؛ تولید موقتاً متوقف گردیده و جهت حفظ سابقه سفارشات به بخش بایگانی منتقل شده است.',
+      status: 'published',
+      description: 'مدل ویژه فصل؛ تولید با زیره بسیار سبک و کفی طبی ارگونومیک.',
       media: [
         { url: 'assets/images/craft-sport.jpg', type: 'image', isPrimary: true }
       ]
@@ -120,8 +120,8 @@
       categories: ['لاین چرم لوکس دست‌دوز'],
       colors: ['عسلی کاراملی'],
       sizes: ['۴۰', '۴۱', '۴۲', '۴۳'],
-      status: 'draft',
-      description: 'طرح مفهومی فصل جدید جهت بررسی تیراژ سری در بنکداری‌های جنوب کشور.',
+      status: 'published',
+      description: 'طرح مفهومی فصل جدید با چرم طبیعی درجه یک و قالب راحت.',
       media: [
         { url: 'assets/images/bag2.jpeg', type: 'image', isPrimary: true }
       ]
@@ -205,8 +205,8 @@
       categories: ['لاین رسمی و اداری'],
       colors: ['مشکی واکس‌خورده'],
       sizes: ['۴۱', '۴۲', '۴۳', '۴۴'],
-      status: 'draft',
-      description: 'زیپ YKK استیل ضدزنگ، قالب کشیده اروپایی، در حال نهایی‌سازی نمونه‌برداری جهت افزودن به کاتالوگ زمستانه.',
+      status: 'published',
+      description: 'زیپ YKK استیل ضدزنگ، قالب کشیده اروپایی، چرم دست‌چین درجه یک.',
       media: [
         { url: 'assets/images/craft-formal.jpeg', type: 'image', isPrimary: true }
       ]
@@ -276,7 +276,7 @@
       name: 'اکسسوری و کیف سراجی',
       slug: 'accessories',
       desc: 'محصولات دست‌ساز مکمل شامل کیف‌های اداری چرم طبیعی، کمربند و جاکارتی هماهنگ با کفش‌ها.',
-      status: 'inactive',
+      status: 'active',
       icon: 'briefcase',
     },
   ];
@@ -652,6 +652,22 @@
 
   window.DYF_Modal = DYF_Modal;
 
+  // بستن تمامی مودال‌ها با کلیک روی المان‌های دارای [data-close] یا پس‌زمینه مودال
+  document.addEventListener('click', (e) => {
+    const closeBtn = e.target.closest('[data-close]');
+    if (closeBtn) {
+      const modal = closeBtn.closest('.dyf-modal-backdrop');
+      if (modal) {
+        DYF_Modal.close(modal.id);
+        return;
+      }
+    }
+
+    if (e.target.classList && e.target.classList.contains('dyf-modal-backdrop') && e.target.classList.contains('is-open')) {
+      DYF_Modal.close(e.target.id);
+    }
+  });
+
   // بستن مودال با دکمه Escape
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
@@ -979,13 +995,12 @@
     breadcrumbActive: document.getElementById('dyfBreadcrumbActive'),
 
     routes: {
-      '#dashboard': { title: 'داشبورد تحلیلی', viewId: 'viewDashboard' },
+      '#dashboard': { title: 'داشبورد', viewId: 'viewDashboard' },
       '#shoes': { title: 'مدیریت مدل‌های کفش', viewId: 'viewShoes' },
       '#categories': { title: 'مدیریت دسته‌بندی‌ها', viewId: 'viewCategories' },
       '#customers': { title: 'مشتریان و همکاران', viewId: 'viewCustomers' },
       '#access-links': { title: 'لینک‌های دسترسی اختصاصی', viewId: 'viewAccessLinks' },
       '#components': { title: 'کامپوننت‌های مشترک دیزاین سیستم', viewId: 'viewComponents' },
-      '#settings': { title: 'تنظیمات کاتالوگ', viewId: 'viewSettings' },
     },
 
     init() {
@@ -1228,6 +1243,9 @@
         }
       } catch (e) {
         this.models = [...DEFAULT_SHOES];
+      }
+      if (this.models) {
+        this.models.forEach((m) => { m.status = 'published'; });
       }
     },
 
@@ -1532,10 +1550,6 @@
         chk.checked = ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'].includes(chk.value);
       });
 
-      // وضعیت پیش‌فرض: منتشرشده
-      const pubRadio = document.querySelector('input[name="shoeStatus"][value="published"]');
-      if (pubRadio) pubRadio.checked = true;
-
       // افزودن یک تصویر نمونه کارگاه به عنوان کاور اولیه
       this.currentEditingMedia = [
         { url: 'assets/images/shoes.jpeg', type: 'image', isPrimary: true },
@@ -1578,10 +1592,6 @@
         chk.checked = (model.sizes || []).includes(chk.value);
       });
 
-      // وضعیت
-      const statusRadio = document.querySelector(`input[name="shoeStatus"][value="${model.status}"]`);
-      if (statusRadio) statusRadio.checked = true;
-
       // کپی رسانه‌ها
       this.currentEditingMedia = JSON.parse(JSON.stringify(model.media || []));
       if (!this.currentEditingMedia.some((m) => m.isPrimary) && this.currentEditingMedia.length > 0) {
@@ -1598,7 +1608,7 @@
       const title = document.getElementById('shoeFormTitle')?.value.trim();
       const desc = document.getElementById('shoeFormDesc')?.value.trim();
       const colorsRaw = document.getElementById('shoeFormColors')?.value.trim();
-      const status = document.querySelector('input[name="shoeStatus"]:checked')?.value || 'published';
+      const status = 'published';
 
       if (!title) {
         DYF_Toast.show({
@@ -1702,14 +1712,7 @@
 
       if (titleEl) titleEl.textContent = `${model.title} (DYF-${model.id})`;
       if (editBtn) editBtn.setAttribute('data-id', model.id);
-
-      const statusMap = {
-        published: `<span class="dyf-badge dyf-badge-published">منتشرشده در کاتالوگ</span>`,
-        draft: `<span class="dyf-badge dyf-badge-draft">پیش‌نویس کارگاه</span>`,
-        archived: `<span class="dyf-badge dyf-badge-archived">بایگانی‌شده</span>`,
-      };
-
-      if (badgeEl) badgeEl.innerHTML = statusMap[model.status] || '';
+      if (badgeEl) badgeEl.innerHTML = '';
 
       const coverMedia = (model.media || []).find((m) => m.isPrimary) || (model.media && model.media[0]) || { url: 'assets/images/shoes.jpeg' };
 
@@ -1822,22 +1825,10 @@
 
     updateGlobalCounters() {
       const allCount = this.models.length;
-      const pubCount = this.models.filter((m) => m.status === 'published').length;
-      const draftCount = this.models.filter((m) => m.status === 'draft').length;
-      const archCount = this.models.filter((m) => m.status === 'archived').length;
 
-      // به‌روزرسانی شمارنده‌های هدر تب‌ها
-      const elAll = document.getElementById('countAllModels');
-      const elPub = document.getElementById('countPublishedModels');
-      const elDraft = document.getElementById('countDraftModels');
-      const elArch = document.getElementById('countArchivedModels');
+      // به‌روزرسانی شمارنده هدر
       const badge = document.getElementById('shoesCountSummaryBadge');
-
-      if (elAll) elAll.textContent = allCount;
-      if (elPub) elPub.textContent = pubCount;
-      if (elDraft) elDraft.textContent = draftCount;
-      if (elArch) elArch.textContent = archCount;
-      if (badge) badge.textContent = `${allCount} مدل کل (${pubCount} فعال)`;
+      if (badge) badge.textContent = `${allCount} مدل`;
 
       // به‌روزرسانی شمارنده سایدبار
       const navCounter = document.querySelector('a[href="#shoes"] .dyf-nav-counter');
@@ -1860,13 +1851,6 @@
         // فیلتر دسته‌بندی
         if (this.selectedCategory !== 'all') {
           if (!m.categories || !m.categories.includes(this.selectedCategory)) {
-            return false;
-          }
-        }
-
-        // فیلتر وضعیت
-        if (this.selectedStatus !== 'all') {
-          if (m.status !== this.selectedStatus) {
             return false;
           }
         }
@@ -1928,9 +1912,6 @@
     renderPagination(totalItems) {
       const paginationEl = document.getElementById('shoesPagination');
       const pagesContainer = document.getElementById('shoesPaginationPages');
-      const startEl = document.getElementById('shoesPageStart');
-      const endEl = document.getElementById('shoesPageEnd');
-      const totalEl = document.getElementById('shoesTotalCount');
 
       if (!paginationEl) return;
 
@@ -1939,63 +1920,26 @@
         return;
       }
 
-      paginationEl.style.display = 'flex';
-
       const totalPages = Math.ceil(totalItems / this.pageSize) || 1;
-      const startIdx = (this.currentPage - 1) * this.pageSize + 1;
-      const endIdx = Math.min(this.currentPage * this.pageSize, totalItems);
+      if (totalPages <= 1) {
+        paginationEl.style.display = 'none';
+        return;
+      }
 
-      if (startEl) startEl.textContent = startIdx;
-      if (endEl) endEl.textContent = endIdx;
-      if (totalEl) totalEl.textContent = totalItems;
+      paginationEl.style.display = 'flex';
 
       if (!pagesContainer) return;
 
       let html = '';
-
-      // دکمه قبلی
-      html += `
-        <button type="button" class="dyf-pagination-btn js-page-prev" ${this.currentPage === 1 ? 'disabled' : ''} title="صفحه قبلی">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </button>
-      `;
-
-      // شماره صفحات
       for (let p = 1; p <= totalPages; p++) {
-        if (totalPages <= 5 || p === 1 || p === totalPages || (p >= this.currentPage - 1 && p <= this.currentPage + 1)) {
-          html += `
-            <button type="button" class="dyf-pagination-btn ${p === this.currentPage ? 'is-active' : ''} js-page-num" data-page="${p}">
-              ${p}
-            </button>
-          `;
-        } else if (p === this.currentPage - 2 || p === this.currentPage + 2) {
-          html += `<span class="dyf-pagination-dots">...</span>`;
-        }
+        html += `
+          <button type="button" class="dyf-pagination-btn ${p === this.currentPage ? 'is-active' : ''} js-page-num" data-page="${p}">
+            ${p}
+          </button>
+        `;
       }
 
-      // دکمه بعدی
-      html += `
-        <button type="button" class="dyf-pagination-btn js-page-next" ${this.currentPage === totalPages ? 'disabled' : ''} title="صفحه بعدی">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-      `;
-
       pagesContainer.innerHTML = html;
-
-      // رویدادهای دکمه‌ها
-      pagesContainer.querySelector('.js-page-prev')?.addEventListener('click', () => {
-        if (this.currentPage > 1) {
-          this.currentPage--;
-          this.render();
-        }
-      });
-
-      pagesContainer.querySelector('.js-page-next')?.addEventListener('click', () => {
-        if (this.currentPage < totalPages) {
-          this.currentPage++;
-          this.render();
-        }
-      });
 
       pagesContainer.querySelectorAll('.js-page-num').forEach((btn) => {
         btn.addEventListener('click', () => {
@@ -2012,12 +1956,6 @@
       const primaryMedia = (model.media || []).find((m) => m.isPrimary) || (model.media && model.media[0]) || { url: 'assets/images/shoes.jpeg' };
       const mediaCount = (model.media || []).length;
 
-      const statusBadges = {
-        published: `<span class="dyf-badge dyf-badge-published">منتشرشده</span>`,
-        draft: `<span class="dyf-badge dyf-badge-draft">پیش‌نویس</span>`,
-        archived: `<span class="dyf-badge dyf-badge-archived">بایگانی</span>`,
-      };
-
       const categoriesHtml = (model.categories || [])
         .map((c) => `<span class="dyf-category-pill">${c}</span>`)
         .join('');
@@ -2027,9 +1965,6 @@
           <div class="dyf-product-thumb-wrap">
             <img src="${primaryMedia.url}" alt="${model.title}" class="dyf-product-thumb" loading="lazy">
             <div class="dyf-product-thumb-overlay"></div>
-            <div class="dyf-product-badge-top">
-              ${statusBadges[model.status] || ''}
-            </div>
             <div class="dyf-product-id-badge">DYF-${model.id}</div>
             <div class="dyf-product-media-count">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
@@ -2064,16 +1999,6 @@
                 <span>شناسنامه</span>
               </button>
             </div>
-
-            <div>
-              ${
-                model.status === 'published'
-                  ? `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-archive-shoe" data-id="${model.id}" title="انتقال به بایگانی" style="color: var(--text-muted); border-color: transparent;">بایگانی</button>`
-                  : model.status === 'archived'
-                  ? `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-publish-shoe" data-id="${model.id}" title="انتشار مجدد" style="color: var(--gold-primary);">انتشار</button>`
-                  : `<button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-publish-shoe" data-id="${model.id}">انتشار</button>`
-              }
-            </div>
           </div>
         </article>
       `;
@@ -2081,12 +2006,6 @@
 
     renderTableRowHtml(model) {
       const primaryMedia = (model.media || []).find((m) => m.isPrimary) || (model.media && model.media[0]) || { url: 'assets/images/shoes.jpeg' };
-
-      const statusBadges = {
-        published: `<span class="dyf-badge dyf-badge-published">منتشرشده</span>`,
-        draft: `<span class="dyf-badge dyf-badge-draft">پیش‌نویس</span>`,
-        archived: `<span class="dyf-badge dyf-badge-archived">بایگانی</span>`,
-      };
 
       return `
         <tr data-id="${model.id}">
@@ -2109,16 +2028,10 @@
             <div style="font-size: 0.78rem; color: var(--text-main);">${(model.colors || []).join('، ')}</div>
             <div style="font-size: 0.72rem; color: var(--gold-primary); font-weight: 600;">سایز: ${(model.sizes || []).join(' ')}</div>
           </td>
-          <td>${statusBadges[model.status] || model.status}</td>
           <td>
             <div style="display: flex; gap: 0.35rem; align-items: center;">
               <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-edit-shoe" data-id="${model.id}">ویرایش</button>
               <button type="button" class="dyf-btn dyf-btn-specular dyf-btn-sm js-dossier-shoe" data-id="${model.id}">شناسنامه</button>
-              ${
-                model.status === 'published'
-                  ? `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-archive-shoe" data-id="${model.id}" title="بایگانی">بایگانی</button>`
-                  : `<button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-publish-shoe" data-id="${model.id}">انتشار</button>`
-              }
             </div>
           </td>
         </tr>
@@ -2141,24 +2054,6 @@
           e.stopPropagation();
           const id = parseInt(btn.getAttribute('data-id'), 10);
           this.openDossierModal(id);
-        });
-      });
-
-      // انتقال به بایگانی
-      container.querySelectorAll('.js-archive-shoe').forEach((btn) => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const id = parseInt(btn.getAttribute('data-id'), 10);
-          this.changeStatus(id, 'archived');
-        });
-      });
-
-      // انتشار
-      container.querySelectorAll('.js-publish-shoe').forEach((btn) => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const id = parseInt(btn.getAttribute('data-id'), 10);
-          this.changeStatus(id, 'published');
         });
       });
     },
@@ -2201,6 +2096,9 @@
         }
       } catch (e) {
         this.categories = [...DEFAULT_CATEGORIES];
+      }
+      if (this.categories) {
+        this.categories.forEach((c) => { c.status = 'active'; });
       }
     },
 
@@ -2277,16 +2175,6 @@
         });
       }
 
-      // تب‌های فیلتر وضعیت
-      document.querySelectorAll('[data-cat-status]').forEach((tab) => {
-        tab.addEventListener('click', () => {
-          document.querySelectorAll('[data-cat-status]').forEach((t) => t.classList.remove('is-active'));
-          tab.classList.add('is-active');
-          this.selectedStatus = tab.getAttribute('data-cat-status') || 'all';
-          this.render();
-        });
-      });
-
       // سوئیچ گرید / جدول
       const gridBtn = document.getElementById('categoriesViewGridBtn');
       const tableBtn = document.getElementById('categoriesViewTableBtn');
@@ -2301,20 +2189,6 @@
           this.viewMode = 'table';
           tableBtn.classList.add('is-active');
           gridBtn.classList.remove('is-active');
-          this.render();
-        });
-      }
-
-      // دکمه بازنشانی فیلتر
-      const resetBtn = document.getElementById('resetCategoryFiltersBtn');
-      if (resetBtn) {
-        resetBtn.addEventListener('click', () => {
-          this.searchQuery = '';
-          this.selectedStatus = 'all';
-          if (searchInput) searchInput.value = '';
-          document.querySelectorAll('[data-cat-status]').forEach((t) => {
-            t.classList.toggle('is-active', t.getAttribute('data-cat-status') === 'all');
-          });
           this.render();
         });
       }
@@ -2348,9 +2222,6 @@
       if (slugInput) slugInput.value = '';
       if (descInput) descInput.value = '';
 
-      const activeRadio = document.querySelector('input[name="categoryStatus"][value="active"]');
-      if (activeRadio) activeRadio.checked = true;
-
       const firstIconRadio = document.querySelector('input[name="categoryIcon"][value="briefcase"]');
       if (firstIconRadio) firstIconRadio.checked = true;
 
@@ -2377,9 +2248,6 @@
       if (slugInput) slugInput.value = cat.slug || '';
       if (descInput) descInput.value = cat.desc || '';
 
-      const statusRadio = document.querySelector(`input[name="categoryStatus"][value="${cat.status}"]`);
-      if (statusRadio) statusRadio.checked = true;
-
       const iconRadio = document.querySelector(`input[name="categoryIcon"][value="${cat.icon || 'briefcase'}"]`);
       if (iconRadio) iconRadio.checked = true;
 
@@ -2393,7 +2261,7 @@
       const name = document.getElementById('categoryFormName')?.value.trim();
       const slug = document.getElementById('categoryFormSlug')?.value.trim();
       const desc = document.getElementById('categoryFormDesc')?.value.trim();
-      const status = document.querySelector('input[name="categoryStatus"]:checked')?.value || 'active';
+      const status = 'active';
       const icon = document.querySelector('input[name="categoryIcon"]:checked')?.value || 'briefcase';
 
       if (!name) {
@@ -2577,18 +2445,9 @@
 
     updateGlobalCounters() {
       const allCount = this.categories.length;
-      const activeCount = this.categories.filter((c) => c.status === 'active').length;
-      const inactiveCount = this.categories.filter((c) => c.status === 'inactive').length;
 
-      const elAll = document.getElementById('countAllCategories');
-      const elAct = document.getElementById('countActiveCategories');
-      const elInact = document.getElementById('countInactiveCategories');
       const badge = document.getElementById('categoriesCountSummaryBadge');
-
-      if (elAll) elAll.textContent = allCount;
-      if (elAct) elAct.textContent = activeCount;
-      if (elInact) elInact.textContent = inactiveCount;
-      if (badge) badge.textContent = `${activeCount} لاین فعال (${allCount} کل)`;
+      if (badge) badge.textContent = `${allCount} دسته‌بندی`;
 
       // شمارنده در سایدبار
       const navCounter = document.querySelector('a[href="#categories"] .dyf-nav-counter');
@@ -2602,10 +2461,6 @@
           const matchSlug = (c.slug || '').toLowerCase().includes(this.searchQuery);
           const matchDesc = (c.desc || '').toLowerCase().includes(this.searchQuery);
           if (!matchName && !matchSlug && !matchDesc) return false;
-        }
-
-        if (this.selectedStatus !== 'all') {
-          if (c.status !== this.selectedStatus) return false;
         }
 
         return true;
@@ -2650,10 +2505,6 @@
     renderCardHtml(cat) {
       const modelCount = this.getModelCountForCategory(cat.name);
       const iconSvg = this.iconsMap[cat.icon] || this.iconsMap.briefcase;
-      const statusBadge =
-        cat.status === 'active'
-          ? `<span class="dyf-badge dyf-badge-active">فعال</span>`
-          : `<span class="dyf-badge dyf-badge-archived">غیرفعال</span>`;
 
       return `
         <article class="dyf-category-card" data-id="${cat.id}">
@@ -2665,7 +2516,6 @@
                 <span class="dyf-category-slug">slug: ${cat.slug}</span>
               </div>
             </div>
-            <div>${statusBadge}</div>
           </div>
 
           <p class="dyf-category-desc">${cat.desc || '-'}</p>
@@ -2690,14 +2540,6 @@
                 <span>حذف</span>
               </button>
             </div>
-
-            <div>
-              ${
-                cat.status === 'active'
-                  ? `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-toggle-cat" data-id="${cat.id}" data-action="inactive" style="color: var(--text-muted);">غیرفعال‌سازی</button>`
-                  : `<button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-toggle-cat" data-id="${cat.id}" data-action="active">فعال‌سازی</button>`
-              }
-            </div>
           </div>
         </article>
       `;
@@ -2706,10 +2548,6 @@
     renderTableRowHtml(cat) {
       const modelCount = this.getModelCountForCategory(cat.name);
       const iconSvg = this.iconsMap[cat.icon] || this.iconsMap.briefcase;
-      const statusBadge =
-        cat.status === 'active'
-          ? `<span class="dyf-badge dyf-badge-active">فعال</span>`
-          : `<span class="dyf-badge dyf-badge-archived">غیرفعال</span>`;
 
       return `
         <tr data-id="${cat.id}">
@@ -2727,15 +2565,9 @@
               <button type="button" class="dyf-btn dyf-btn-specular dyf-btn-sm js-view-cat-shoes" data-name="${cat.name}">مشاهده</button>
             </div>
           </td>
-          <td>${statusBadge}</td>
           <td>
             <div style="display: flex; gap: 0.35rem; align-items: center;">
               <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-edit-cat" data-id="${cat.id}">ویرایش</button>
-              ${
-                cat.status === 'active'
-                  ? `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-toggle-cat" data-id="${cat.id}" data-action="inactive">غیرفعال</button>`
-                  : `<button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-toggle-cat" data-id="${cat.id}" data-action="active">فعال</button>`
-              }
               <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-delete-cat" data-id="${cat.id}" style="color: var(--status-danger);">حذف</button>
             </div>
           </td>
@@ -2757,15 +2589,6 @@
           e.stopPropagation();
           const id = btn.getAttribute('data-id');
           this.deleteCategory(id);
-        });
-      });
-
-      container.querySelectorAll('.js-toggle-cat').forEach((btn) => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const id = btn.getAttribute('data-id');
-          const action = btn.getAttribute('data-action');
-          this.changeStatus(id, action);
         });
       });
 
@@ -2958,8 +2781,8 @@
       const modalTitle = document.getElementById('customerFormModalTitle');
 
       if (modeInput) modeInput.value = 'edit';
-      if (modalTitle) modalTitle.textContent = `ویرایش مشخصات مشتری (${cust.code})`;
-      if (idInput) idInput.value = cust.code || `CUST-${cust.id}`;
+      if (modalTitle) modalTitle.textContent = `ویرایش مشخصات مشتری «${cust.nameFa}»`;
+      if (idInput) idInput.value = cust.id;
 
       if (nameFa) nameFa.value = cust.nameFa || '';
       if (nameEn) nameEn.value = cust.nameEn || '';
@@ -2975,7 +2798,7 @@
 
     handleSaveForm() {
       const mode = document.getElementById('customerFormMode')?.value || 'create';
-      const code = document.getElementById('customerFormId')?.value;
+      const formIdVal = document.getElementById('customerFormId')?.value;
       const nameFa = document.getElementById('customerFormNameFa')?.value.trim();
       const nameEn = document.getElementById('customerFormNameEn')?.value.trim();
       const shop = document.getElementById('customerFormShop')?.value.trim();
@@ -3001,7 +2824,7 @@
       }
 
       if (mode === 'create') {
-        const id = parseInt(code.replace(/\D/g, ''), 10) || (Date.now() % 10000);
+        const id = Date.now() % 100000;
         const existsPhone = this.customers.some((c) => c.phone === phone);
         if (existsPhone) {
           DYF_Toast.show({ type: 'error', title: 'شماره تکراری', message: 'مشتری دیگری با این شماره تلفن قبلاً در سامانه ثبت شده است.' });
@@ -3010,7 +2833,6 @@
 
         const newCust = {
           id,
-          code,
           nameFa,
           nameEn,
           shop: shop || 'فروشگاه آزاد',
@@ -3032,11 +2854,11 @@
         DYF_Toast.show({
           type: 'success',
           title: 'مشتری ثبت شد',
-          message: `پروفایل «${nameFa}» با شناسه ${code} با موفقیت ایجاد گردید.`,
+          message: `پروفایل «${nameFa}» با موفقیت ایجاد گردید.`,
         });
       } else {
-        const id = parseInt(code.replace(/\D/g, ''), 10);
-        const cust = this.customers.find((c) => c.id === id || c.code === code);
+        const id = parseInt(formIdVal, 10);
+        const cust = this.customers.find((c) => c.id === id);
         if (cust) {
           cust.nameFa = nameFa;
           cust.nameEn = nameEn;
@@ -3324,7 +3146,6 @@
 
     renderCardHtml(cust) {
       const initials = cust.nameFa.split(' ').map((p) => p[0]).slice(0, 2).join('‌') || 'م';
-      const isDirectActive = cust.directAccess?.enabled;
 
       return `
         <article class="dyf-customer-card" data-id="${cust.id}">
@@ -3343,25 +3164,13 @@
             </div>
           </div>
 
-          <div class="dyf-customer-shop">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            <span>${cust.shop || 'فروشگاه آزاد'}</span>
-          </div>
-
-          <div class="dyf-customer-info-box">
-            <div class="dyf-customer-info-row">
-              <span style="color: var(--text-dim);">شناسه سیستمی:</span>
-              <span style="font-family: var(--font-title); font-weight: 700; color: var(--gold-light); direction: ltr;">${cust.code}</span>
+          <div class="dyf-customer-shop" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              <span>${cust.shop || 'فروشگاه آزاد'}</span>
             </div>
-            <div class="dyf-customer-info-row">
-              <span style="color: var(--text-dim);">شماره تلفن ورود:</span>
-              <span style="font-family: var(--font-title); font-weight: 600; color: var(--text-main); direction: ltr;">${cust.phone}</span>
-            </div>
-            <div class="dyf-customer-info-row" style="padding-top: 0.35rem; border-top: 1px solid var(--border-subtle);">
-              <span style="color: var(--text-dim);">دسترسی مستقیم کاتالوگ:</span>
-              <span class="dyf-badge ${isDirectActive ? 'dyf-badge-published' : 'dyf-badge-archived'}" style="font-size: 0.68rem;">
-                ${isDirectActive ? 'فعال (OTP مستقیم)' : 'غیرفعال'}
-              </span>
+            <div style="font-family: var(--font-title); font-size: 0.85rem; font-weight: 700; color: var(--gold-light); direction: ltr;">
+              ${cust.phone}
             </div>
           </div>
 
@@ -3393,7 +3202,6 @@
 
       return `
         <tr data-id="${cust.id}">
-          <td style="font-family: var(--font-title); font-weight: 700; color: var(--gold-light); direction: ltr; text-align: right;">${cust.code}</td>
           <td>
             <div style="font-weight: 700; color: var(--text-ivory);">${cust.nameFa}</div>
             <div style="font-size: 0.72rem; color: var(--text-dim); font-family: var(--font-title);">${cust.nameEn}</div>
@@ -4274,10 +4082,6 @@
           if (!matchFa && !matchEn && !matchCust && !matchPhone && !matchToken && !matchId) return false;
         }
 
-        if (this.selectedAuth !== 'all') {
-          if (l.authType !== this.selectedAuth) return false;
-        }
-
         if (this.selectedStatus !== 'all') {
           if (this.selectedStatus === 'expired') {
             if (l.status !== 'expired' && l.status !== 'deactivated') return false;
@@ -4326,72 +4130,68 @@
     },
 
     renderCardHtml(link) {
-      const isOtp = link.authType === 'otp';
       const fullUrl = this.getAbsoluteLinkUrl(link.token);
 
       const statusBadge =
         link.status === 'active'
-          ? '<span class=\"dyf-badge dyf-badge-active\">فعال</span>'
+          ? '<span class="dyf-badge dyf-badge-active">فعال</span>'
           : link.status === 'pending'
-          ? '<span class=\"dyf-badge dyf-badge-pending\">در انتظار</span>'
+          ? '<span class="dyf-badge dyf-badge-pending">در انتظار</span>'
           : link.status === 'expired'
-          ? '<span class=\"dyf-badge dyf-badge-archived\">منقضی</span>'
-          : '<span class=\"dyf-badge dyf-badge-disabled\">غیرفعال</span>';
+          ? '<span class="dyf-badge dyf-badge-archived">منقضی</span>'
+          : '<span class="dyf-badge dyf-badge-disabled">غیرفعال</span>';
 
       return `
-        <article class=\"dyf-link-card\" data-id=\"${link.id}\">
-          <div class=\"dyf-link-header\">
+        <article class="dyf-link-card" data-id="${link.id}">
+          <div class="dyf-link-header">
             <div>
-              <div style=\"display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;\">
-                <span style=\"font-family: var(--font-title); font-weight: 800; color: var(--gold-light); font-size: 0.92rem; direction: ltr;\">${link.id}</span>
-                <span class=\"dyf-badge ${isOtp ? 'dyf-badge-active' : 'dyf-badge-published'}\" style=\"font-size: 0.68rem;\">
-                  ${isOtp ? 'با تایید OTP' : 'لینک مستقیم'}
-                </span>
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                <span style="font-family: var(--font-title); font-weight: 800; color: var(--gold-light); font-size: 0.92rem; direction: ltr;">${link.id}</span>
               </div>
-              <h3 style=\"font-family: var(--font-title); font-size: 1.05rem; font-weight: 800; color: var(--text-ivory);\">${link.recipientFa}</h3>
-              <span style=\"font-size: 0.74rem; color: var(--text-dim); font-family: var(--font-title); direction: ltr; display: block;\">${link.recipientEn}</span>
+              <h3 style="font-family: var(--font-title); font-size: 1.05rem; font-weight: 800; color: var(--text-ivory);">${link.recipientFa}</h3>
+              <span style="font-size: 0.74rem; color: var(--text-dim); font-family: var(--font-title); direction: ltr; display: block;">${link.recipientEn}</span>
             </div>
             <div>${statusBadge}</div>
           </div>
 
-          <div class=\"dyf-link-url-box\">
-            <span class=\"dyf-link-url-text\">token=${link.token}</span>
-            <button type=\"button\" class=\"dyf-btn dyf-btn-outline dyf-btn-sm js-copy-link\" data-url=\"${fullUrl}\" title=\"کپی لینک\">
-              <svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/></svg>
+          <div class="dyf-link-url-box">
+            <span class="dyf-link-url-text">token=${link.token}</span>
+            <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-copy-link" data-url="${fullUrl}" title="کپی لینک">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
               <span>کپی</span>
             </button>
           </div>
 
-          <div class=\"dyf-link-meta-grid\">
-            <div class=\"dyf-link-meta-item\">
-              <span style=\"color: var(--text-dim); font-size: 0.7rem;\">مشتری / بنکداری:</span>
-              <span style=\"font-weight: 600; color: var(--text-main); text-overflow: ellipsis; overflow: hidden; white-space: nowrap;\">${link.customer || '-'}</span>
+          <div class="dyf-link-meta-grid">
+            <div class="dyf-link-meta-item">
+              <span style="color: var(--text-dim); font-size: 0.7rem;">مشتری / بنکداری:</span>
+              <span style="font-weight: 600; color: var(--text-main); text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${link.customer || '-'}</span>
             </div>
-            <div class=\"dyf-link-meta-item\">
-              <span style=\"color: var(--text-dim); font-size: 0.7rem;\">مهلت شروع:</span>
-              <span style=\"color: var(--gold-primary); font-weight: 600;\">${link.startDeadline}</span>
+            <div class="dyf-link-meta-item">
+              <span style="color: var(--text-dim); font-size: 0.7rem;">مهلت شروع:</span>
+              <span style="color: var(--gold-primary); font-weight: 600;">${link.startDeadline}</span>
             </div>
-            <div class=\"dyf-link-meta-item\">
-              <span style=\"color: var(--text-dim); font-size: 0.7rem;\">مدت مشاهده:</span>
-              <span style=\"color: var(--gold-light); font-weight: 600;\">${link.viewingDuration}</span>
+            <div class="dyf-link-meta-item">
+              <span style="color: var(--text-dim); font-size: 0.7rem;">مدت مشاهده:</span>
+              <span style="color: var(--gold-light); font-weight: 600;">${link.viewingDuration}</span>
             </div>
-            <div class=\"dyf-link-meta-item\">
-              <span style=\"color: var(--text-dim); font-size: 0.7rem;\">تعداد ورود:</span>
-              <span style=\"color: var(--text-muted); font-family: var(--font-title);\">${link.views} مرتبه</span>
+            <div class="dyf-link-meta-item">
+              <span style="color: var(--text-dim); font-size: 0.7rem;">تعداد ورود:</span>
+              <span style="color: var(--text-muted); font-family: var(--font-title);">${link.views} مرتبه</span>
             </div>
           </div>
 
-          <div style=\"display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); margin-top: auto;\">
-            <div style=\"display: flex; gap: 0.35rem;\">
-              <button type=\"button\" class=\"dyf-btn dyf-btn-primary dyf-btn-sm js-view-link\" data-id=\"${link.id}\">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); margin-top: auto;">
+            <div style="display: flex; gap: 0.35rem;">
+              <button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-view-link" data-id="${link.id}">
                 <span>جزئیات و تست</span>
               </button>
             </div>
             <div>
               ${
                 link.status === 'active' || link.status === 'pending'
-                  ? `<button type=\"button\" class=\"dyf-btn dyf-btn-outline dyf-btn-sm js-status-link\" data-id=\"${link.id}\" data-action=\"deactivate\" style=\"color: var(--status-danger); border-color: rgba(224, 86, 74, 0.35);\">ابطال لینک</button>`
-                  : `<button type=\"button\" class=\"dyf-btn dyf-btn-outline dyf-btn-sm js-status-link\" data-id=\"${link.id}\" data-action=\"activate\" style=\"color: #4cd964; border-color: rgba(76, 217, 100, 0.35);\">فعال‌سازی</button>`
+                  ? `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-status-link" data-id="${link.id}" data-action="deactivate" style="color: var(--status-danger); border-color: rgba(224, 86, 74, 0.35);">ابطال لینک</button>`
+                  : `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-status-link" data-id="${link.id}" data-action="activate" style="color: #4cd964; border-color: rgba(76, 217, 100, 0.35);">فعال‌سازی</button>`
               }
             </div>
           </div>
@@ -4400,44 +4200,38 @@
     },
 
     renderTableRowHtml(link) {
-      const isOtp = link.authType === 'otp';
       const fullUrl = this.getAbsoluteLinkUrl(link.token);
 
       const statusBadge =
         link.status === 'active'
-          ? '<span class=\"dyf-badge dyf-badge-active\">فعال</span>'
+          ? '<span class="dyf-badge dyf-badge-active">فعال</span>'
           : link.status === 'pending'
-          ? '<span class=\"dyf-badge dyf-badge-pending\">در انتظار</span>'
+          ? '<span class="dyf-badge dyf-badge-pending">در انتظار</span>'
           : link.status === 'expired'
-          ? '<span class=\"dyf-badge dyf-badge-archived\">منقضی</span>'
-          : '<span class=\"dyf-badge dyf-badge-disabled\">غیرفعال</span>';
+          ? '<span class="dyf-badge dyf-badge-archived">منقضی</span>'
+          : '<span class="dyf-badge dyf-badge-disabled">غیرفعال</span>';
 
       return `
-        <tr data-id=\"${link.id}\">
+        <tr data-id="${link.id}">
           <td>
-            <div style=\"font-family: var(--font-title); font-weight: 700; color: var(--gold-light); direction: ltr; text-align: right;\">${link.id}</div>
-            <div style=\"font-family: var(--font-title); font-size: 0.72rem; color: var(--text-dim); direction: ltr; text-align: right;\">token: ${link.token}</div>
+            <div style="font-family: var(--font-title); font-weight: 700; color: var(--gold-light); direction: ltr; text-align: right;">${link.id}</div>
+            <div style="font-family: var(--font-title); font-size: 0.72rem; color: var(--text-dim); direction: ltr; text-align: right;">token: ${link.token}</div>
           </td>
           <td>
-            <div style=\"font-weight: 700; color: var(--text-ivory);\">${link.recipientFa}</div>
-            <div style=\"font-size: 0.72rem; color: var(--text-dim); font-family: var(--font-title);\">${link.recipientEn} ${link.customer ? `| ${link.customer}` : ''}</div>
+            <div style="font-weight: 700; color: var(--text-ivory);">${link.recipientFa}</div>
+            <div style="font-size: 0.72rem; color: var(--text-dim); font-family: var(--font-title);">${link.recipientEn} ${link.customer ? `| ${link.customer}` : ''}</div>
           </td>
-          <td>
-            <span class=\"dyf-badge ${isOtp ? 'dyf-badge-active' : 'dyf-badge-published'}\" style=\"font-size: 0.7rem;\">
-              ${isOtp ? 'پیامکی (OTP)' : 'مستقیم'}
-            </span>
-          </td>
-          <td style=\"font-size: 0.8rem; color: var(--gold-primary); font-weight: 600;\">${link.startDeadline}</td>
-          <td style=\"font-size: 0.8rem; color: var(--gold-light); font-weight: 600;\">${link.viewingDuration}</td>
+          <td style="font-size: 0.8rem; color: var(--gold-primary); font-weight: 600;">${link.startDeadline}</td>
+          <td style="font-size: 0.8rem; color: var(--gold-light); font-weight: 600;">${link.viewingDuration}</td>
           <td>${statusBadge}</td>
           <td>
-            <div style=\"display: flex; gap: 0.35rem; align-items: center;\">
-              <button type=\"button\" class=\"dyf-btn dyf-btn-primary dyf-btn-sm js-view-link\" data-id=\"${link.id}\">جزئیات</button>
-              <button type=\"button\" class=\"dyf-btn dyf-btn-outline dyf-btn-sm js-copy-link\" data-url=\"${fullUrl}\">کپی</button>
+            <div style="display: flex; gap: 0.35rem; align-items: center;">
+              <button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-view-link" data-id="${link.id}">جزئیات</button>
+              <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-copy-link" data-url="${fullUrl}">کپی</button>
               ${
                 link.status === 'active' || link.status === 'pending'
-                  ? `<button type=\"button\" class=\"dyf-btn dyf-btn-outline dyf-btn-sm js-status-link\" data-id=\"${link.id}\" data-action=\"deactivate\" style=\"color: var(--status-danger);\">ابطال</button>`
-                  : `<button type=\"button\" class=\"dyf-btn dyf-btn-outline dyf-btn-sm js-status-link\" data-id=\"${link.id}\" data-action=\"activate\" style=\"color: #4cd964;\">فعال‌سازی</button>`
+                  ? `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-status-link" data-id="${link.id}" data-action="deactivate" style="color: var(--status-danger);">ابطال</button>`
+                  : `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-status-link" data-id="${link.id}" data-action="activate" style="color: #4cd964;">فعال‌سازی</button>`
               }
             </div>
           </td>
