@@ -23,12 +23,171 @@
     return String(str).replace(/[0-9]/g, (d) => farsiDigits[parseInt(d, 10)]);
   }
 
+  // ==========================================================================
+  // مدیریت لایت‌باکس بزرگنمایی و کنترل زوم تصویر کفش (Zoom & Pan Lightbox)
+  // ==========================================================================
+  const DYF_LightboxManager = {
+    scale: 1,
+    panX: 0,
+    panY: 0,
+    isDragging: false,
+    wasDragged: false,
+    startX: 0,
+    startY: 0,
+    initialized: false,
+
+    init() {
+      if (this.initialized) return;
+      this.initialized = true;
+
+      const img = document.getElementById('lightboxImg');
+      const zoomInBtn = document.getElementById('lightboxZoomInBtn');
+      const zoomOutBtn = document.getElementById('lightboxZoomOutBtn');
+      const resetBtn = document.getElementById('lightboxZoomResetBtn');
+
+      if (zoomInBtn) {
+        zoomInBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.zoom(0.4);
+        });
+      }
+
+      if (zoomOutBtn) {
+        zoomOutBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.zoom(-0.4);
+        });
+      }
+
+      if (resetBtn) {
+        resetBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.reset();
+        });
+      }
+
+      if (img) {
+        img.addEventListener('click', (e) => {
+          if (this.wasDragged) {
+            this.wasDragged = false;
+            return;
+          }
+          if (this.scale > 1.05) {
+            this.reset();
+          } else {
+            this.setScale(2, 0, 0);
+          }
+        });
+
+        // Wheel zoom
+        img.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          const delta = e.deltaY < 0 ? 0.35 : -0.35;
+          this.zoom(delta);
+        }, { passive: false });
+
+        // Mouse drag
+        img.addEventListener('mousedown', (e) => {
+          if (this.scale <= 1) return;
+          this.isDragging = true;
+          this.wasDragged = false;
+          this.startX = e.clientX - this.panX;
+          this.startY = e.clientY - this.panY;
+          img.classList.add('is-dragging');
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (!this.isDragging) return;
+          const newX = e.clientX - this.startX;
+          const newY = e.clientY - this.startY;
+          if (Math.abs(newX - this.panX) > 3 || Math.abs(newY - this.panY) > 3) {
+            this.wasDragged = true;
+          }
+          this.panX = newX;
+          this.panY = newY;
+          this.applyTransform();
+        });
+
+        window.addEventListener('mouseup', () => {
+          if (this.isDragging) {
+            this.isDragging = false;
+            img.classList.remove('is-dragging');
+          }
+        });
+
+        // Touch drag
+        img.addEventListener('touchstart', (e) => {
+          if (this.scale <= 1 || e.touches.length !== 1) return;
+          this.isDragging = true;
+          this.wasDragged = false;
+          this.startX = e.touches[0].clientX - this.panX;
+          this.startY = e.touches[0].clientY - this.panY;
+        }, { passive: true });
+
+        img.addEventListener('touchmove', (e) => {
+          if (!this.isDragging || e.touches.length !== 1) return;
+          const newX = e.touches[0].clientX - this.startX;
+          const newY = e.touches[0].clientY - this.startY;
+          if (Math.abs(newX - this.panX) > 3 || Math.abs(newY - this.panY) > 3) {
+            this.wasDragged = true;
+          }
+          this.panX = newX;
+          this.panY = newY;
+          this.applyTransform();
+        }, { passive: true });
+
+        img.addEventListener('touchend', () => {
+          this.isDragging = false;
+        });
+      }
+    },
+
+    zoom(delta) {
+      this.setScale(this.scale + delta);
+    },
+
+    setScale(newScale, newX = null, newY = null) {
+      this.scale = Math.min(3.5, Math.max(1, Math.round(newScale * 100) / 100));
+      if (this.scale === 1) {
+        this.panX = 0;
+        this.panY = 0;
+      } else {
+        if (newX !== null) this.panX = newX;
+        if (newY !== null) this.panY = newY;
+      }
+      this.applyTransform();
+    },
+
+    reset() {
+      this.scale = 1;
+      this.panX = 0;
+      this.panY = 0;
+      this.applyTransform();
+    },
+
+    applyTransform() {
+      const img = document.getElementById('lightboxImg');
+      if (!img) return;
+      if (this.scale > 1) {
+        img.classList.add('is-zoomed');
+        img.style.transform = `translate(${this.panX}px, ${this.panY}px) scale(${this.scale})`;
+      } else {
+        img.classList.remove('is-zoomed');
+        img.style.transform = '';
+      }
+    },
+  };
+
+  window.DYF_LightboxManager = DYF_LightboxManager;
+
   // لایت‌باکس بزرگنمایی تصویر کفش
   window.openShoeLightbox = function (url, title) {
     const lbImg = document.getElementById('lightboxImg');
     const lbCaption = document.getElementById('lightboxCaption');
     if (lbImg) lbImg.src = url;
     if (lbCaption) lbCaption.textContent = title || '';
+    DYF_LightboxManager.init();
+    DYF_LightboxManager.reset();
     if (window.DYF_Modal) window.DYF_Modal.open('modalShoeLightbox');
   };
 
@@ -607,14 +766,16 @@
       if (!modal) return;
       modal.classList.add('is-open');
       document.body.style.overflow = 'hidden';
-      const firstInput = modal.querySelector('input, button:not(.dyf-modal-close)');
-      if (firstInput) firstInput.focus();
+      // Do not auto-focus inputs to prevent mobile keyboard from popping up
     },
 
     close(modalId) {
       const modal = document.getElementById(modalId);
       if (!modal) return;
       modal.classList.remove('is-open');
+      if (modalId === 'modalShoeLightbox' && typeof DYF_LightboxManager !== 'undefined') {
+        DYF_LightboxManager.reset();
+      }
       const remainingOpen = document.querySelectorAll('.dyf-modal-backdrop.is-open');
       if (remainingOpen.length === 0) {
         document.body.style.overflow = '';
@@ -685,8 +846,11 @@
     const openModal = e.target.closest('.dyf-modal-backdrop.is-open');
     if (openModal) {
       const isInsideCard = e.target.closest('.dyf-modal-card');
-      const isInsideLightboxImg = e.target.closest('.dyf-lightbox-img');
-      if (!isInsideCard && !isInsideLightboxImg) {
+      const isInsideLightbox = e.target.closest('.dyf-lightbox-wrap, .dyf-lightbox-toolbar');
+      if (!isInsideCard && !isInsideLightbox) {
+        if (openModal.id === 'modalShoeLightbox' && typeof DYF_LightboxManager !== 'undefined') {
+          DYF_LightboxManager.reset();
+        }
         DYF_Modal.close(openModal.id);
       }
     }
@@ -1546,20 +1710,22 @@
         .map((item, index) => {
           const isPrimary = item.isPrimary;
           return `
-          <div class="dyf-media-item ${isPrimary ? 'is-primary' : ''}">
-            ${
-              item.type === 'video'
-                ? `<video src="${item.url}" class="dyf-media-thumb" muted></video>`
-                : `<img src="${item.url}" alt="پیش‌نمایش" class="dyf-media-thumb">`
-            }
-            ${isPrimary ? `<span class="dyf-media-primary-tag">تصویر اصلی</span>` : ''}
-            <div class="dyf-media-actions">
+          <div class="dyf-media-card ${isPrimary ? 'is-primary' : ''}">
+            <div class="dyf-media-thumb-wrap">
               ${
-                !isPrimary
-                  ? `<button type="button" class="dyf-media-btn js-set-cover" data-index="${index}">انتخاب کاور</button>`
-                  : ''
+                item.type === 'video'
+                  ? `<video src="${item.url}" class="dyf-media-thumb" muted></video>`
+                  : `<img src="${item.url}" alt="پیش‌نمایش" class="dyf-media-thumb">`
               }
-              <button type="button" class="dyf-media-btn dyf-media-btn-danger js-remove-media" data-index="${index}">حذف</button>
+              ${isPrimary ? `<span class="dyf-media-primary-badge">عکس اصلی</span>` : ''}
+            </div>
+            <div class="dyf-media-card-actions">
+              <button type="button" class="dyf-media-card-btn js-set-cover ${isPrimary ? 'is-active' : ''}" data-index="${index}">
+                ${isPrimary ? '★ عکس اصلی' : 'انتخاب به عنوان عکس اصلی'}
+              </button>
+              <button type="button" class="dyf-media-card-btn dyf-media-card-btn-danger js-remove-media" data-index="${index}">
+                حذف
+              </button>
             </div>
           </div>
         `;
@@ -1836,7 +2002,7 @@
               </div>
 
               <div>
-                <span style="color: var(--text-dim); font-size: 0.78rem;">شناسنامه و متریال کارگاه:</span>
+                <span style="color: var(--text-dim); font-size: 0.78rem;">توضیحات:</span>
                 <p style="color: var(--text-main); line-height: 1.7; margin-top: 0.25rem;">${model.description || '-'}</p>
               </div>
 
@@ -2237,9 +2403,9 @@
         .map((c, idx) => {
           const isChecked = selectedNames !== null ? selectedNames.includes(c.name) : idx === 0;
           return `
-            <label class="dyf-switch-label" style="background: var(--bg-surface-elevated); padding: 0.45rem 0.85rem; border: 1px solid var(--border-subtle); border-radius: var(--r-sm);">
+            <label class="dyf-category-checkbox-card ${isChecked ? 'is-checked' : ''}">
+              <span class="dyf-category-checkbox-name">${c.name}</span>
               <input type="checkbox" name="shoeCategories" value="${c.name}" ${isChecked ? 'checked' : ''}>
-              <span style="font-size: 0.82rem;">${c.name}</span>
             </label>
           `;
         })
@@ -2812,7 +2978,7 @@
   // ==========================================================================
   // ۹-ب. مودال دو‌بخشی پیشرفته انتخاب محصولات و مدل‌های مجاز (Split-Pane Product Picker Modal)
   const DYF_ProductPickerModal = {
-    activeCategoryKey: '__uncategorized__',
+    activeCategoryKey: '',
     searchQuery: '',
     categories: new Set(),
     addModels: new Set(),
@@ -2920,8 +3086,13 @@
         this.excludeModels = new Set();
       }
 
-      // اولویت نمایش دسته‌ها: بدون دسته‌بندی در ردیف اول
-      this.activeCategoryKey = '__uncategorized__';
+      // اولویت نمایش دسته‌ها: اولین دسته‌بندی فعال
+      const uncatShoes = this.getUncategorizedShoes();
+      if (uncatShoes.length > 0 && this.activeCategoryKey === '__uncategorized__') {
+        this.activeCategoryKey = '__uncategorized__';
+      } else {
+        this.activeCategoryKey = activeCats[0]?.name || (uncatShoes.length > 0 ? '__uncategorized__' : '');
+      }
 
       this.renderCategoriesSidebar();
       this.renderModelsPanel();
@@ -3141,19 +3312,21 @@
       const uncatShoes = this.getUncategorizedShoes();
       const activeCats = this.getCategories();
 
-      // ساخت لیست دسته‌بندی‌ها با قراردادن «بدون دسته‌بندی» در ردیف اول
-      const items = [
-        {
+      // ساخت لیست دسته‌بندی‌ها
+      const items = activeCats.map((cat) => ({
+        key: cat.name,
+        title: cat.name,
+        shoes: this.getShoesForCategory(cat.name),
+      }));
+
+      // تنها در صورتی که مدلی بدون دسته‌بندی وجود داشته باشد، آن را اضافه می‌کنیم
+      if (uncatShoes.length > 0) {
+        items.push({
           key: '__uncategorized__',
-          title: 'بدون دسته‌بندی',
+          title: 'مدل‌های متفرقه (بدون دسته)',
           shoes: uncatShoes,
-        },
-        ...activeCats.map((cat) => ({
-          key: cat.name,
-          title: cat.name,
-          shoes: this.getShoesForCategory(cat.name),
-        })),
-      ];
+        });
+      }
 
       let html = '';
       items.forEach((item) => {
@@ -3294,28 +3467,14 @@
       const badge = document.getElementById('pickerTotalEligibleBadge');
       const rulesEl = document.getElementById('pickerRulesSummary');
 
-      const allShoes = this.getAllPublishedShoes();
       const eligibleShoes = this.getAllEligibleShoes();
-      const activeCats = this.getCategories();
 
       if (badge) {
         badge.textContent = `${toPersianDigits(eligibleShoes.length)} مدل انتخاب‌شده`;
       }
 
       if (rulesEl) {
-        const allowedCatsCount = Array.from(this.categories).filter((c) => c !== '__uncategorized__').length;
-        const uncatAllowed = this.categories.has('__uncategorized__');
-        const totalCatsAllowed = allowedCatsCount + (uncatAllowed ? 1 : 0);
-
-        rulesEl.innerHTML = `
-          <span>${toPersianDigits(eligibleShoes.length)} از ${toPersianDigits(allShoes.length)} مدل مجاز</span>
-          <span class="dyf-dot-sep">•</span>
-          <span>${toPersianDigits(totalCatsAllowed)} دسته‌بندی مجاز</span>
-          <span class="dyf-dot-sep">•</span>
-          <span>${toPersianDigits(this.addModels.size)} مدل افزوده</span>
-          <span class="dyf-dot-sep">•</span>
-          <span>${toPersianDigits(this.excludeModels.size)} مدل مستثنا</span>
-        `;
+        rulesEl.innerHTML = '';
       }
     },
 
@@ -3514,11 +3673,7 @@
       if (shop) shop.value = '';
       if (phone) phone.value = '';
 
-      const activeRadio = document.querySelector('input[name="customerStatus"][value="active"]');
-      if (activeRadio) activeRadio.checked = true;
-
       DYF_Modal.open('modalCustomerForm');
-      if (nameFa) setTimeout(() => nameFa.focus(), 200);
     },
 
     openEditModal(id) {
@@ -3542,11 +3697,7 @@
       if (shop) shop.value = cust.shop || '';
       if (phone) phone.value = cust.phone || '';
 
-      const statusRadio = document.querySelector(`input[name="customerStatus"][value="${cust.status}"]`);
-      if (statusRadio) statusRadio.checked = true;
-
       DYF_Modal.open('modalCustomerForm');
-      if (nameFa) setTimeout(() => nameFa.focus(), 200);
     },
 
     handleSaveForm() {
@@ -3556,7 +3707,7 @@
       const shop = document.getElementById('customerFormShop')?.value.trim();
       const phoneRaw = document.getElementById('customerFormPhone')?.value.trim();
       const phone = toEnglishDigits(phoneRaw);
-      const status = document.querySelector('input[name="customerStatus"]:checked')?.value || 'active';
+      const status = 'active';
 
       if (!nameFa) {
         DYF_Toast.show({ type: 'error', title: 'نام مشتری الزامی است', message: 'لطفاً نام و نام خانوادگی مشتری را وارد کنید.' });
@@ -3974,11 +4125,6 @@
                 <h3 class="dyf-customer-title">${cust.nameFa}</h3>
               </div>
             </div>
-            <div>
-              <span class="dyf-badge ${cust.status === 'active' ? 'dyf-badge-active' : 'dyf-badge-disabled'}">
-                ${cust.status === 'active' ? 'فعال' : 'مسدود'}
-              </span>
-            </div>
           </div>
 
           <div class="dyf-customer-shop" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
@@ -3991,7 +4137,7 @@
             </div>
           </div>
 
-          <div class="dyf-customer-actions">
+          <div class="dyf-customer-actions" style="justify-content: flex-end;">
             <div style="display: flex; gap: 0.4rem;">
               <button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-access-cust" data-id="${cust.id}">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -4000,14 +4146,6 @@
               <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-edit-cust" data-id="${cust.id}">
                 <span>ویرایش</span>
               </button>
-            </div>
-
-            <div>
-              ${
-                cust.status === 'active'
-                  ? `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-toggle-cust" data-id="${cust.id}" data-action="inactive" style="color: var(--status-danger); border-color: rgba(224, 86, 74, 0.35);">مسدود</button>`
-                  : `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-toggle-cust" data-id="${cust.id}" data-action="active" style="color: #4cd964; border-color: rgba(76, 217, 100, 0.35);">فعال</button>`
-              }
             </div>
           </div>
         </article>
@@ -4025,24 +4163,14 @@
           <td style="font-size: 0.82rem; color: var(--text-muted);">${cust.shop || '-'}</td>
           <td style="font-family: var(--font-title); direction: ltr; text-align: right; color: var(--text-main);">${cust.phone}</td>
           <td>
-            <span class="dyf-badge ${cust.status === 'active' ? 'dyf-badge-active' : 'dyf-badge-disabled'}">
-              ${cust.status === 'active' ? 'فعال' : 'مسدود'}
-            </span>
-          </td>
-          <td>
             <span class="dyf-badge ${isDirectActive ? 'dyf-badge-published' : 'dyf-badge-archived'}">
               ${isDirectActive ? 'مستقیم فعال' : 'غیرفعال'}
             </span>
           </td>
-          <td>
-            <div style="display: flex; gap: 0.35rem; align-items: center;">
-              <button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-access-cust" data-id="${cust.id}">دسترسی</button>
+          <td style="text-align: left;">
+            <div class="dyf-table-actions" style="display: flex; gap: 0.35rem; align-items: center; justify-content: flex-end;">
+              <button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-access-cust" data-id="${cust.id}">دسترسی مستقیم</button>
               <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-edit-cust" data-id="${cust.id}">ویرایش</button>
-              ${
-                cust.status === 'active'
-                  ? `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-toggle-cust" data-id="${cust.id}" data-action="inactive" style="color: var(--status-danger);">مسدود</button>`
-                  : `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-toggle-cust" data-id="${cust.id}" data-action="active" style="color: #4cd964;">فعال</button>`
-              }
             </div>
           </td>
         </tr>
@@ -4112,8 +4240,27 @@
       this.updateGlobalCounters();
     },
 
+    parseTimeSetting(str, defaultVal, defaultUnit) {
+      if (!str || str === 'unlimited' || str === 'none') {
+        return { value: defaultVal, unit: str || defaultUnit };
+      }
+      const match = String(str).match(/^(\d+)([a-zA-Z]+)$/);
+      if (match) {
+        return { value: parseInt(match[1], 10), unit: match[2] };
+      }
+      return { value: defaultVal, unit: defaultUnit };
+    },
+
     formatDuration(dur) {
       if (!dur || dur === 'unlimited') return 'نامحدود';
+      const match = String(dur).match(/^(\d+)([a-zA-Z]+)$/);
+      if (match) {
+        const num = toPersianDigits(match[1]);
+        const unit = match[2];
+        if (unit === 'm') return `${num} دقیقه`;
+        if (unit === 'h') return `${num} ساعت`;
+        if (unit === 'd') return `${num} روز`;
+      }
       const map = {
         '10m': '۱۰ دقیقه',
         '15m': '۱۵ دقیقه',
@@ -4122,18 +4269,26 @@
         '2h': '۲ ساعت',
         '1d': '۱ روز',
       };
-      return map[dur] || dur;
+      return map[dur] || toPersianDigits(dur);
     },
 
     formatDeadline(dl) {
-      if (!dl || dl === 'unlimited') return 'نامحدود';
+      if (!dl || dl === 'unlimited' || dl === 'none') return 'نامحدود';
+      const match = String(dl).match(/^(\d+)([a-zA-Z]+)$/);
+      if (match) {
+        const num = toPersianDigits(match[1]);
+        const unit = match[2];
+        if (unit === 'm') return `${num} دقیقه`;
+        if (unit === 'h') return `${num} ساعت`;
+        if (unit === 'd') return `${num} روز`;
+      }
       const map = {
         '24h': '۲۴ ساعت',
         '48h': '۴۸ ساعت',
         '3d': '۳ روز',
         '7d': '۷ روز',
       };
-      return map[dl] || dl;
+      return map[dl] || toPersianDigits(dl);
     },
 
     loadLinks() {
@@ -4251,16 +4406,12 @@
       // دکمه‌های ناوبری ویزارد
       const nextBtn = document.getElementById('wizardNextBtn');
       const prevBtn = document.getElementById('wizardPrevBtn');
-      const genBtn = document.getElementById('wizardGenerateBtn');
 
       if (nextBtn) {
         nextBtn.addEventListener('click', () => this.handleWizardNext());
       }
       if (prevBtn) {
         prevBtn.addEventListener('click', () => this.goToStep(this.currentStep - 1));
-      }
-      if (genBtn) {
-        genBtn.addEventListener('click', () => this.generateLink());
       }
 
       // کپی لینک صادرشده در ویزارد
@@ -4272,13 +4423,14 @@
         });
       }
 
-      // کپی در مودال جزئیات
-      const detailsCopyBtn = document.getElementById('linkDetailsCopyBtn');
-      if (detailsCopyBtn) {
-        detailsCopyBtn.addEventListener('click', () => {
+      // دکمه ویرایش در پاورقی مودال جزئیات
+      const detailsEditBtn = document.getElementById('linkDetailsEditBtn');
+      if (detailsEditBtn) {
+        detailsEditBtn.addEventListener('click', () => {
           if (this.currentDetailLink) {
-            const fullUrl = this.getAbsoluteLinkUrl(this.currentDetailLink.token);
-            this.copyLinkToClipboard(fullUrl);
+            const editId = this.currentDetailLink.id;
+            DYF_Modal.close('modalLinkDetails');
+            this.openEditModal(editId);
           }
         });
       }
@@ -4342,11 +4494,7 @@
       };
 
       // بازیابی نمایش اصلی ویزارد
-      const reviewBox = document.getElementById('wizardReviewBox');
-      const successResult = document.getElementById('wizardSuccessResult');
       const footer = document.getElementById('wizardModalFooter');
-      if (reviewBox) reviewBox.style.display = 'block';
-      if (successResult) successResult.style.display = 'none';
       if (footer) footer.style.display = 'flex';
 
       const faInput = document.getElementById('wizardRecipientFa');
@@ -4384,14 +4532,38 @@
         });
       }
 
-      const dlSelect = document.getElementById('wizardStartDeadline');
-      const durSelect = document.getElementById('wizardViewingDuration');
-      if (dlSelect) dlSelect.value = '3d';
-      if (durSelect) durSelect.value = '15m';
+      const ddlValInput = document.getElementById('wizardDeadlineValue');
+      const ddlUnitSelect = document.getElementById('wizardDeadlineUnit');
+      const durValInput = document.getElementById('wizardDurationValue');
+      const durUnitSelect = document.getElementById('wizardDurationUnit');
+
+      if (ddlValInput) {
+        ddlValInput.value = '3';
+        ddlValInput.disabled = false;
+      }
+      if (ddlUnitSelect) ddlUnitSelect.value = 'd';
+
+      if (durValInput) {
+        durValInput.value = '15';
+        durValInput.disabled = false;
+      }
+      if (durUnitSelect) durUnitSelect.value = 'm';
+
+      if (ddlUnitSelect && !ddlUnitSelect._hasChangeHandler) {
+        ddlUnitSelect._hasChangeHandler = true;
+        ddlUnitSelect.addEventListener('change', (e) => {
+          if (ddlValInput) ddlValInput.disabled = e.target.value === 'none';
+        });
+      }
+      if (durUnitSelect && !durUnitSelect._hasChangeHandler) {
+        durUnitSelect._hasChangeHandler = true;
+        durUnitSelect.addEventListener('change', (e) => {
+          if (durValInput) durValInput.disabled = e.target.value === 'unlimited';
+        });
+      }
 
       this.goToStep(1);
       DYF_Modal.open('modalCreateLinkWizard');
-      if (faInput) setTimeout(() => faInput.focus(), 200);
     },
 
     updateWizardProductsSummary() {
@@ -4460,13 +4632,24 @@
         }
         this.goToStep(3);
       } else if (this.currentStep === 3) {
-        const dl = document.getElementById('wizardStartDeadline')?.value || '3d';
-        const dur = document.getElementById('wizardViewingDuration')?.value || '15m';
+        let dl = 'none';
+        const ddlUnit = document.getElementById('wizardDeadlineUnit')?.value || 'none';
+        if (ddlUnit !== 'none') {
+          const val = parseInt(document.getElementById('wizardDeadlineValue')?.value || '3', 10);
+          dl = `${Math.max(1, isNaN(val) ? 3 : val)}${ddlUnit}`;
+        }
+
+        let dur = 'unlimited';
+        const durUnit = document.getElementById('wizardDurationUnit')?.value || 'unlimited';
+        if (durUnit !== 'unlimited') {
+          const val = parseInt(document.getElementById('wizardDurationValue')?.value || '15', 10);
+          dur = `${Math.max(1, isNaN(val) ? 15 : val)}${durUnit}`;
+        }
+
         this.wizardDraft.startDeadline = dl;
         this.wizardDraft.viewingDuration = dur;
 
-        this.renderWizardReview();
-        this.goToStep(4);
+        this.generateLink();
       }
     },
 
@@ -4487,11 +4670,22 @@
 
       const prevBtn = document.getElementById('wizardPrevBtn');
       const nextBtn = document.getElementById('wizardNextBtn');
-      const genBtn = document.getElementById('wizardGenerateBtn');
 
-      if (prevBtn) prevBtn.style.display = step > 1 ? 'block' : 'none';
-      if (nextBtn) nextBtn.style.display = step < 4 ? 'block' : 'none';
-      if (genBtn) genBtn.style.display = step === 4 ? 'flex' : 'none';
+      if (prevBtn) prevBtn.style.display = (step > 1 && step < 4) ? 'block' : 'none';
+      if (nextBtn) {
+        if (step < 3) {
+          nextBtn.style.display = 'block';
+          nextBtn.innerHTML = '<span>مرحله بعد</span>';
+        } else if (step === 3) {
+          nextBtn.style.display = 'flex';
+          nextBtn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            <span>صدور لینک</span>
+          `;
+        } else {
+          nextBtn.style.display = 'none';
+        }
+      }
     },
 
     renderWizardReview() {
@@ -4500,23 +4694,6 @@
 
       const d = this.wizardDraft;
       const selectedCount = (d.selectedShoeIds || []).length;
-
-      const deadlineLabels = {
-        '24h': '۲۴ ساعت از زمان صدور',
-        '3d': '۳ روز آینده',
-        '7d': '۱ هفته آینده',
-        '30d': '۱ ماه آینده',
-        'unlimited': 'نامحدود (بدون انقضای ورود)',
-      };
-
-      const durationLabels = {
-        '10m': '۱۰ دقیقه پس از اولین ورود',
-        '15m': '۱۵ دقیقه پس از اولین ورود',
-        '30m': '۳۰ دقیقه پس از اولین ورود',
-        '2h': '۲ ساعت پس از اولین ورود',
-        '24h': '۲۴ ساعت پس از اولین ورود',
-        'unlimited': 'نامحدود (مشاهده دائم)',
-      };
 
       sumEl.innerHTML = `
         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
@@ -4533,11 +4710,11 @@
         </div>
         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
           <span style="color: var(--text-dim);">مهلت شروع دسترسی:</span>
-          <span style="color: var(--gold-primary); font-weight: 600;">${deadlineLabels[d.startDeadline] || d.startDeadline}</span>
+          <span style="color: var(--gold-primary); font-weight: 600;">${this.formatDeadline(d.startDeadline)}</span>
         </div>
         <div style="display: flex; justify-content: space-between;">
           <span style="color: var(--text-dim);">مدت مشاهده کاتالوگ:</span>
-          <span style="color: var(--gold-light); font-weight: 700;">${durationLabels[d.viewingDuration] || d.viewingDuration}</span>
+          <span style="color: var(--gold-light); font-weight: 700;">${this.formatDuration(d.viewingDuration)}</span>
         </div>
       `;
     },
@@ -4577,19 +4754,13 @@
       this.saveLinks(false);
       this.render();
 
-      const reviewBox = document.getElementById('wizardReviewBox');
-      const successResult = document.getElementById('wizardSuccessResult');
-      const footer = document.getElementById('wizardModalFooter');
       const urlText = document.getElementById('wizardGeneratedUrl');
-      const testLink = document.getElementById('wizardOpenTestLink');
-
       const absoluteUrl = this.getAbsoluteLinkUrl(token);
 
-      if (reviewBox) reviewBox.style.display = 'none';
-      if (successResult) successResult.style.display = 'block';
-      if (footer) footer.style.display = 'none';
       if (urlText) urlText.textContent = absoluteUrl;
-      if (testLink) testLink.href = `catalog.html?token=${token}`;
+
+      this.renderWizardReview();
+      this.goToStep(4);
 
       DYF_Toast.show({
         type: 'success',
@@ -4607,14 +4778,41 @@
       const titleEl = document.getElementById('editLinkModalTitle');
       const idInput = document.getElementById('editLinkId');
       const nameInput = document.getElementById('editLinkRecipientFa');
-      const startDl = document.getElementById('editLinkStartDeadline');
-      const viewDur = document.getElementById('editLinkViewingDuration');
+      const editDdlValInput = document.getElementById('editLinkDeadlineValue');
+      const editDdlUnitSelect = document.getElementById('editLinkDeadlineUnit');
+      const editDurValInput = document.getElementById('editLinkDurationValue');
+      const editDurUnitSelect = document.getElementById('editLinkDurationUnit');
 
       if (titleEl) titleEl.textContent = `ویرایش لینک اختصاصی (${link.id})`;
       if (idInput) idInput.value = link.id;
       if (nameInput) nameInput.value = link.recipientFa || '';
-      if (startDl) startDl.value = link.startDeadline || '3d';
-      if (viewDur) viewDur.value = link.viewingDuration || '15m';
+
+      const ddl = this.parseTimeSetting(link.startDeadline, 3, 'd');
+      if (editDdlValInput) {
+        editDdlValInput.value = ddl.value;
+        editDdlValInput.disabled = ddl.unit === 'none' || ddl.unit === 'unlimited';
+      }
+      if (editDdlUnitSelect) editDdlUnitSelect.value = (ddl.unit === 'unlimited' ? 'none' : ddl.unit);
+
+      const dur = this.parseTimeSetting(link.viewingDuration, 15, 'm');
+      if (editDurValInput) {
+        editDurValInput.value = dur.value;
+        editDurValInput.disabled = dur.unit === 'unlimited';
+      }
+      if (editDurUnitSelect) editDurUnitSelect.value = dur.unit;
+
+      if (editDdlUnitSelect && !editDdlUnitSelect._hasChangeHandler) {
+        editDdlUnitSelect._hasChangeHandler = true;
+        editDdlUnitSelect.addEventListener('change', (e) => {
+          if (editDdlValInput) editDdlValInput.disabled = e.target.value === 'none';
+        });
+      }
+      if (editDurUnitSelect && !editDurUnitSelect._hasChangeHandler) {
+        editDurUnitSelect._hasChangeHandler = true;
+        editDurUnitSelect.addEventListener('change', (e) => {
+          if (editDurValInput) editDurValInput.disabled = e.target.value === 'unlimited';
+        });
+      }
 
       // مقداردهی و همگام‌سازی مدل‌های مجاز لینک
       const allShoes = (window.ShoesController && window.ShoesController.models) || DEFAULT_SHOES;
@@ -4729,8 +4927,19 @@
         return;
       }
 
-      const startDl = document.getElementById('editLinkStartDeadline')?.value || '3d';
-      const viewDur = document.getElementById('editLinkViewingDuration')?.value || '15m';
+      let startDl = 'none';
+      const ddlUnit = document.getElementById('editLinkDeadlineUnit')?.value || 'none';
+      if (ddlUnit !== 'none') {
+        const val = parseInt(document.getElementById('editLinkDeadlineValue')?.value || '3', 10);
+        startDl = `${Math.max(1, isNaN(val) ? 3 : val)}${ddlUnit}`;
+      }
+
+      let viewDur = 'unlimited';
+      const durUnit = document.getElementById('editLinkDurationUnit')?.value || 'unlimited';
+      if (durUnit !== 'unlimited') {
+        const val = parseInt(document.getElementById('editLinkDurationValue')?.value || '15', 10);
+        viewDur = `${Math.max(1, isNaN(val) ? 15 : val)}${durUnit}`;
+      }
 
       link.recipientFa = nameFa;
       link.startDeadline = startDl;
@@ -4761,7 +4970,7 @@
       const bodyEl = document.getElementById('linkDetailsBody');
 
       if (titleEl) titleEl.textContent = `جزئیات لینک اختصاصی (${link.id})`;
-      if (subEl) subEl.textContent = `توکن ورود: ${link.token} | دسترسی مستقیم`;
+      if (subEl) subEl.textContent = `توکن ورود: ${link.token}`;
 
       const absoluteUrl = this.getAbsoluteLinkUrl(link.token);
       const allShoes = (window.ShoesController && window.ShoesController.models) || DEFAULT_SHOES;
@@ -4770,7 +4979,9 @@
       const matchingShoes = publishedShoes.filter((shoe) => {
         if ((link.excludeModels || []).includes(shoe.id)) return false;
         if ((link.addModels || []).includes(shoe.id)) return true;
-        return (shoe.categories || []).some((c) => (link.categories || []).includes(c));
+        const shoeCats = shoe.categories || [];
+        if (shoeCats.length === 0) return (link.categories || []).includes('__uncategorized__');
+        return shoeCats.some((c) => (link.categories || []).includes(c));
       });
 
       if (bodyEl) {
@@ -4831,55 +5042,156 @@
               <span style="direction: ltr; text-align: right;">${link.createdAt}</span>
             </div>
             <div class="dyf-link-meta-item">
-              <span style="color: var(--text-dim);">تعداد مدل‌های در دسترس:</span>
-              <span style="font-weight: 800; color: #4cd964;">${matchingShoes.length} مدل کفش</span>
+              <span style="color: var(--text-dim);">وضعیت دسترسی:</span>
+              <span style="color: #4cd964; font-weight: 700;">لینک مستقیم فعال</span>
             </div>
           </div>
 
-          <!-- محصولات مجاز -->
-          <div style="background: rgba(36, 30, 25, 0.4); border: 1px solid var(--border-subtle); border-radius: var(--r-sm); padding: 1rem; font-size: 0.8rem; margin-bottom: 1.25rem;">
-            <div style="font-weight: 700; color: var(--gold-light); margin-bottom: 0.35rem;">محصولات مجاز:</div>
-            <div style="color: var(--text-muted); margin-bottom: 0.3rem;">
-              دسته‌بندی‌ها: <strong>${(link.categories || []).join('، ') || 'هیچ'}</strong>
+          <!-- باکس تعاملی خلاصه مدل‌های قابل دیدن -->
+          <div id="linkDetailsShoesBox" class="dyf-link-details-shoes-trigger" title="جهت مشاهده فهرست مدل‌های مجاز این لینک کلیک کنید">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--gold-primary);"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              <span style="color: var(--text-muted); font-weight: 600;">تعداد مدل‌های قابل دیدن :</span>
             </div>
-            <div style="color: var(--text-dim); font-size: 0.74rem;">
-              تعداد مدل‌های اختصاصی: ${(link.addModels || []).length} مدل
+            <div style="display: flex; align-items: center; gap: 0.65rem;">
+              <span style="font-weight: 800; color: var(--gold-light); font-size: 1.05rem;">${toPersianDigits(matchingShoes.length)} مدل</span>
+              <span style="color: var(--gold-primary); font-size: 0.8rem; font-weight: 600;">(مشاهده مدل‌ها ←)</span>
             </div>
           </div>
 
           ${
             link.reason
               ? `
-              <div style="padding: 0.75rem 1rem; background: rgba(224, 86, 74, 0.1); border: 1px solid rgba(224, 86, 74, 0.3); border-radius: var(--r-sm); font-size: 0.78rem; color: var(--status-danger); margin-bottom: 1rem;">
+              <div style="padding: 0.75rem 1rem; background: rgba(224, 86, 74, 0.1); border: 1px solid rgba(224, 86, 74, 0.3); border-radius: var(--r-sm); font-size: 0.78rem; color: var(--status-danger); margin-top: 1rem;">
                 ⚠️ <strong>علت وضعیت:</strong> ${link.reason}
               </div>
             `
               : ''
           }
-
-          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-            <button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-modal-edit-btn" style="flex: 1; justify-content: center;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
-              <span>ویرایش مشخصات و محصولات لینک</span>
-            </button>
-            <a href="catalog.html?token=${link.token}" target="_blank" class="dyf-btn dyf-btn-specular dyf-btn-sm" style="flex: 1; justify-content: center;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
-              <span>مشاهده و تست ورود کاتالوگ</span>
-            </a>
-          </div>
         `;
+
+        bodyEl.querySelector('#linkDetailsShoesBox')?.addEventListener('click', () => {
+          this.openPermittedShoesViewer(link, matchingShoes);
+        });
 
         bodyEl.querySelector('.js-copy-url')?.addEventListener('click', () => {
           this.copyLinkToClipboard(absoluteUrl);
         });
-
-        bodyEl.querySelector('.js-modal-edit-btn')?.addEventListener('click', () => {
-          DYF_Modal.close('modalLinkDetails');
-          this.openEditModal(link.id);
-        });
       }
 
       DYF_Modal.open('modalLinkDetails');
+    },
+
+    openPermittedShoesViewer(link, matchingShoes) {
+      this.currentPermittedViewerLink = link;
+      this.currentPermittedViewerShoes = matchingShoes;
+
+      DYF_Modal.close('modalLinkDetails');
+
+      const titleEl = document.getElementById('permittedViewerTitle');
+      const subtitleEl = document.getElementById('permittedViewerSubtitle');
+      const searchInput = document.getElementById('permittedViewerSearch');
+      const bodyEl = document.getElementById('permittedViewerBody');
+
+      if (titleEl) titleEl.textContent = `مدل‌های مجاز لینک (${link.id})`;
+      if (subtitleEl) subtitleEl.textContent = `گیرنده: ${link.recipientFa} • ${toPersianDigits(matchingShoes.length)} مدل کفش مجاز و فعال`;
+      if (searchInput) searchInput.value = '';
+
+      const renderGrid = (shoesToDisplay) => {
+        if (!bodyEl) return;
+        if (!shoesToDisplay || shoesToDisplay.length === 0) {
+          bodyEl.innerHTML = `
+            <div style="text-align: center; padding: 3.5rem 1.5rem; color: var(--text-muted);">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 0.85rem; opacity: 0.5;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <h4 style="font-family: var(--font-title); font-size: 1.05rem; color: var(--text-ivory); margin-bottom: 0.35rem;">هیچ مدلی یافت نشد</h4>
+              <p style="font-size: 0.82rem;">با این مشخصات مدلی در لیست محصولات مجاز وجود ندارد.</p>
+            </div>
+          `;
+          return;
+        }
+
+        bodyEl.innerHTML = `
+          <div class="dyf-permitted-grid">
+            ${shoesToDisplay
+              .map((shoe) => {
+                const thumb = shoe.media?.find((m) => m.isPrimary)?.url || shoe.media?.[0]?.url || 'assets/images/shoes.jpeg';
+                const cats = (shoe.categories || []).join('، ') || 'بدون دسته‌بندی';
+                const priceFormatted = shoe.wholesalePrice ? `${Number(shoe.wholesalePrice).toLocaleString('fa-IR')} تومان` : 'استعلام تلفنی';
+                return `
+                  <div class="dyf-permitted-card" data-shoe-id="${shoe.id}">
+                    <div class="dyf-permitted-thumb-wrap js-permitted-zoom" data-img="${thumb}" data-title="${shoe.title}" title="کلیک برای بزرگنمایی تصویر">
+                      <img src="${thumb}" alt="${shoe.title}" class="dyf-permitted-thumb" loading="lazy">
+                    </div>
+                    <div class="dyf-permitted-info">
+                      <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+                        <span class="dyf-badge dyf-badge-active" style="font-size: 0.68rem; padding: 0.15rem 0.45rem;">DYF-${shoe.id}</span>
+                        <span style="font-size: 0.72rem; color: var(--gold-light); font-weight: 700;">${priceFormatted}</span>
+                      </div>
+                      <h4 class="dyf-permitted-title" title="${shoe.title}">${shoe.title}</h4>
+                      <div class="dyf-permitted-meta">
+                        <span>دسته‌بندی:</span>
+                        <span style="color: var(--text-light); font-weight: 600;">${cats}</span>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              })
+              .join('')}
+          </div>
+        `;
+
+        // پیوند لایت‌باکس بزرگنمایی تصویر با کلیک روی عکس
+        bodyEl.querySelectorAll('.js-permitted-zoom').forEach((wrap) => {
+          wrap.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const imgUrl = wrap.getAttribute('data-img');
+            const imgTitle = wrap.getAttribute('data-title');
+            if (window.DYF_LightboxManager && imgUrl) {
+              window.DYF_LightboxManager.open(imgUrl, imgTitle || 'تصویر کفش');
+            }
+          });
+        });
+      };
+
+      renderGrid(matchingShoes);
+
+      // جست‌وجوی زنده در مدل‌های مجاز
+      if (searchInput) {
+        searchInput.oninput = (e) => {
+          const q = toEnglishDigits(e.target.value.trim().toLowerCase());
+          if (!q) {
+            renderGrid(matchingShoes);
+            return;
+          }
+          const filtered = matchingShoes.filter((s) => {
+            const matchTitle = (s.title || '').toLowerCase().includes(q);
+            const matchCode = String(s.id).includes(q) || `dyf-${s.id}`.toLowerCase().includes(q);
+            const matchCat = (s.categories || []).some((c) => c.toLowerCase().includes(q));
+            return matchTitle || matchCode || matchCat;
+          });
+          renderGrid(filtered);
+        };
+      }
+
+      // دکمه بازگشت به جزئیات لینک
+      const backBtn = document.getElementById('permittedViewerBackToDetailsBtn');
+      if (backBtn) {
+        backBtn.onclick = () => {
+          DYF_Modal.close('modalPermittedShoesViewer');
+          this.openDetailsModal(link.id);
+        };
+      }
+
+      // دکمه ویرایش مدل‌های مجاز
+      const editBtn = document.getElementById('permittedViewerEditBtn');
+      if (editBtn) {
+        editBtn.onclick = () => {
+          DYF_Modal.close('modalPermittedShoesViewer');
+          this.openEditModal(link.id);
+        };
+      }
+
+      DYF_Modal.open('modalPermittedShoesViewer');
     },
 
     changeStatus(id, action) {
@@ -5112,15 +5424,15 @@
           <td class="dyf-col-deadline" style="font-size: 0.8rem; color: var(--gold-primary); font-weight: 600;">${this.formatDeadline(link.startDeadline)}</td>
           <td class="dyf-col-duration" style="font-size: 0.8rem; color: var(--gold-light); font-weight: 600;">${this.formatDuration(link.viewingDuration)}</td>
           <td>${statusBadge}</td>
-          <td>
-            <div class="dyf-table-actions">
-              <button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-view-link" data-id="${link.id}">جزئیات</button>
-              <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-edit-link" data-id="${link.id}">ویرایش</button>
-              <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-copy-link" data-url="${fullUrl}">کپی</button>
+          <td style="text-align: left;">
+            <div class="dyf-table-actions dyf-links-table-actions">
+              <button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm dyf-btn-action-view js-view-link" data-id="${link.id}">جزئیات</button>
+              <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm dyf-btn-action-edit js-edit-link" data-id="${link.id}">ویرایش</button>
+              <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm dyf-btn-action-copy js-copy-link" data-url="${fullUrl}">کپی</button>
               ${
                 link.status === 'active' || link.status === 'pending'
-                  ? `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-status-link" data-id="${link.id}" data-action="deactivate" style="color: var(--status-danger);">ابطال</button>`
-                  : `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-status-link" data-id="${link.id}" data-action="activate" style="color: #4cd964;">فعال‌سازی</button>`
+                  ? `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm dyf-btn-action-status js-status-link" data-id="${link.id}" data-action="deactivate" style="color: var(--status-danger);">ابطال</button>`
+                  : `<button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm dyf-btn-action-status js-status-link" data-id="${link.id}" data-action="activate" style="color: #4cd964;">فعال‌سازی</button>`
               }
             </div>
           </td>

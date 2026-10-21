@@ -14,12 +14,171 @@
       .replace(/[\u06F0-\u06F9]/g, (c) => c.charCodeAt(0) - 0x06F0);
   }
 
+  // ==========================================================================
+  // مدیریت لایت‌باکس بزرگنمایی و کنترل زوم تصویر کفش (Zoom & Pan Lightbox)
+  // ==========================================================================
+  const DYF_LightboxManager = {
+    scale: 1,
+    panX: 0,
+    panY: 0,
+    isDragging: false,
+    wasDragged: false,
+    startX: 0,
+    startY: 0,
+    initialized: false,
+
+    init() {
+      if (this.initialized) return;
+      this.initialized = true;
+
+      const img = document.getElementById('lightboxImg');
+      const zoomInBtn = document.getElementById('lightboxZoomInBtn');
+      const zoomOutBtn = document.getElementById('lightboxZoomOutBtn');
+      const resetBtn = document.getElementById('lightboxZoomResetBtn');
+
+      if (zoomInBtn) {
+        zoomInBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.zoom(0.4);
+        });
+      }
+
+      if (zoomOutBtn) {
+        zoomOutBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.zoom(-0.4);
+        });
+      }
+
+      if (resetBtn) {
+        resetBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.reset();
+        });
+      }
+
+      if (img) {
+        img.addEventListener('click', (e) => {
+          if (this.wasDragged) {
+            this.wasDragged = false;
+            return;
+          }
+          if (this.scale > 1.05) {
+            this.reset();
+          } else {
+            this.setScale(2, 0, 0);
+          }
+        });
+
+        // Wheel zoom
+        img.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          const delta = e.deltaY < 0 ? 0.35 : -0.35;
+          this.zoom(delta);
+        }, { passive: false });
+
+        // Mouse drag
+        img.addEventListener('mousedown', (e) => {
+          if (this.scale <= 1) return;
+          this.isDragging = true;
+          this.wasDragged = false;
+          this.startX = e.clientX - this.panX;
+          this.startY = e.clientY - this.panY;
+          img.classList.add('is-dragging');
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (!this.isDragging) return;
+          const newX = e.clientX - this.startX;
+          const newY = e.clientY - this.startY;
+          if (Math.abs(newX - this.panX) > 3 || Math.abs(newY - this.panY) > 3) {
+            this.wasDragged = true;
+          }
+          this.panX = newX;
+          this.panY = newY;
+          this.applyTransform();
+        });
+
+        window.addEventListener('mouseup', () => {
+          if (this.isDragging) {
+            this.isDragging = false;
+            img.classList.remove('is-dragging');
+          }
+        });
+
+        // Touch drag
+        img.addEventListener('touchstart', (e) => {
+          if (this.scale <= 1 || e.touches.length !== 1) return;
+          this.isDragging = true;
+          this.wasDragged = false;
+          this.startX = e.touches[0].clientX - this.panX;
+          this.startY = e.touches[0].clientY - this.panY;
+        }, { passive: true });
+
+        img.addEventListener('touchmove', (e) => {
+          if (!this.isDragging || e.touches.length !== 1) return;
+          const newX = e.touches[0].clientX - this.startX;
+          const newY = e.touches[0].clientY - this.startY;
+          if (Math.abs(newX - this.panX) > 3 || Math.abs(newY - this.panY) > 3) {
+            this.wasDragged = true;
+          }
+          this.panX = newX;
+          this.panY = newY;
+          this.applyTransform();
+        }, { passive: true });
+
+        img.addEventListener('touchend', () => {
+          this.isDragging = false;
+        });
+      }
+    },
+
+    zoom(delta) {
+      this.setScale(this.scale + delta);
+    },
+
+    setScale(newScale, newX = null, newY = null) {
+      this.scale = Math.min(3.5, Math.max(1, Math.round(newScale * 100) / 100));
+      if (this.scale === 1) {
+        this.panX = 0;
+        this.panY = 0;
+      } else {
+        if (newX !== null) this.panX = newX;
+        if (newY !== null) this.panY = newY;
+      }
+      this.applyTransform();
+    },
+
+    reset() {
+      this.scale = 1;
+      this.panX = 0;
+      this.panY = 0;
+      this.applyTransform();
+    },
+
+    applyTransform() {
+      const img = document.getElementById('lightboxImg');
+      if (!img) return;
+      if (this.scale > 1) {
+        img.classList.add('is-zoomed');
+        img.style.transform = `translate(${this.panX}px, ${this.panY}px) scale(${this.scale})`;
+      } else {
+        img.classList.remove('is-zoomed');
+        img.style.transform = '';
+      }
+    },
+  };
+
+  window.DYF_LightboxManager = DYF_LightboxManager;
+
   // باز کردن مودال بزرگنمایی لایت‌باکس تصویر کفش
   window.openShoeLightbox = function (url, title) {
     const lbImg = document.getElementById('lightboxImg');
     const lbCaption = document.getElementById('lightboxCaption');
     if (lbImg) lbImg.src = url;
     if (lbCaption) lbCaption.textContent = title || '';
+    DYF_LightboxManager.init();
+    DYF_LightboxManager.reset();
     if (window.DYF_Modal) {
       window.DYF_Modal.open('modalShoeLightbox');
     } else {
@@ -234,7 +393,7 @@
           ${title ? `<div class="dyf-toast-title">${title}</div>` : ''}
           <div class="dyf-toast-msg">${message}</div>
         </div>
-        <button type="button" class="dyf-toast-close" aria-label="بستن">&times;</button>
+        <button type="button" class="dyf-toast-close" aria-label="بستن"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
       `;
 
       toast.querySelector('.dyf-toast-close').addEventListener('click', () => {
@@ -269,6 +428,9 @@
       if (!modal) return;
       modal.classList.remove('is-open');
       modal.setAttribute('aria-hidden', 'true');
+      if (modalId === 'modalShoeLightbox' && typeof DYF_LightboxManager !== 'undefined') {
+        DYF_LightboxManager.reset();
+      }
       document.body.style.overflow = '';
     },
     init() {
@@ -286,8 +448,11 @@
         const openModal = e.target.closest('.dyf-modal-backdrop.is-open');
         if (openModal) {
           const isInsideCard = e.target.closest('.dyf-modal-card');
-          const isInsideLightboxImg = e.target.closest('.dyf-lightbox-img');
-          if (!isInsideCard && !isInsideLightboxImg) {
+          const isInsideLightbox = e.target.closest('.dyf-lightbox-wrap, .dyf-lightbox-toolbar');
+          if (!isInsideCard && !isInsideLightbox) {
+            if (openModal.id === 'modalShoeLightbox' && typeof DYF_LightboxManager !== 'undefined') {
+              DYF_LightboxManager.reset();
+            }
             this.close(openModal.id);
           }
         }
@@ -554,7 +719,7 @@
       if (!token) {
         // بدون توکن: ورود با شماره تلفن همکاران
         if (titleEl) titleEl.textContent = 'ورود به کاتالوگ خصوصی DYF';
-        if (subEl) subEl.textContent = 'ورود با شماره همراه تاییدشده جهت مشاهده لاین‌های مجاز همکاران';
+        if (subEl) subEl.textContent = '';
         if (stepPhone) stepPhone.classList.remove('is-hidden');
         if (stepOtp) stepOtp.classList.add('is-hidden');
         return;
@@ -575,7 +740,7 @@
 
       // لینک معتبر است
       if (titleEl) titleEl.textContent = 'ورود به کاتالوگ خصوصی DYF';
-      if (subEl) subEl.textContent = 'ورود با شماره همراه تاییدشده جهت مشاهده لاین‌های مجاز همکاران';
+      if (subEl) subEl.textContent = '';
 
       if (link.authType === 'direct') {
         // ورود مستقیم بدون رمز
@@ -882,7 +1047,7 @@
       if (!s || s.duration === 'unlimited') {
         if (timerPill) {
           timerPill.style.display = 'inline-flex';
-          timerPill.innerHTML = `<span>دسترسی نامحدود همکار</span>`;
+          timerPill.innerHTML = `<span>دسترسی نامحدود</span>`;
           timerPill.classList.remove('is-warning');
         }
         return;

@@ -1177,6 +1177,162 @@ textarea:focus-visible {
   flex-wrap: nowrap;
 }
 
+/* چپ‌چین کردن ستون عملیات در جدول‌های مدیریت (مشتریان و لینک‌ها) در دسکتاپ */
+.dyf-table th:last-child {
+  text-align: left !important;
+}
+
+.dyf-table td:last-child {
+  text-align: left !important;
+}
+
+.dyf-table td:last-child .dyf-table-actions {
+  justify-content: flex-end !important;
+  margin-right: auto !important;
+}
+
+/* یکسان‌سازی عرض و تراز دکمه‌های عملیات جدول لینک‌ها در تمامی وضعیت‌ها */
+.dyf-links-table-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 0.35rem !important;
+  white-space: nowrap !important;
+}
+
+.dyf-links-table-actions .dyf-btn-action-view {
+  min-width: 58px !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.dyf-links-table-actions .dyf-btn-action-edit {
+  min-width: 56px !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.dyf-links-table-actions .dyf-btn-action-copy {
+  min-width: 48px !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.dyf-links-table-actions .dyf-btn-action-status {
+  min-width: 78px !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.dyf-table td .dyf-badge {
+  min-width: 68px !important;
+  justify-content: center !important;
+  text-align: center !important;
+  display: inline-flex !important;
+}
+
+/* باکس تعاملی کلیک برای مشاهده مدل‌های مجاز در مودال جزئیات لینک */
+.dyf-link-details-shoes-trigger {
+  background: rgba(36, 30, 25, 0.55);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  padding: 0.9rem 1.25rem;
+  font-size: 0.92rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.dyf-link-details-shoes-trigger:hover {
+  border-color: var(--gold-primary);
+  background: rgba(216, 178, 100, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  transform: translateY(-1px);
+}
+
+/* مودال نمایش مدل‌های مجاز لینک یا همکار */
+.dyf-permitted-viewer-card {
+  background: #14110e !important;
+  border: 1px solid rgba(216, 178, 100, 0.25) !important;
+  box-shadow: 0 35px 90px rgba(0, 0, 0, 0.9), 0 0 45px rgba(216, 178, 100, 0.12) !important;
+}
+
+.dyf-permitted-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.dyf-permitted-card {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  padding: 0.85rem;
+  display: flex;
+  gap: 0.85rem;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.dyf-permitted-card:hover {
+  border-color: rgba(216, 178, 100, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+.dyf-permitted-thumb-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  border: 1px solid var(--border-subtle);
+  background: #0d0b09;
+  cursor: pointer;
+}
+
+.dyf-permitted-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.dyf-permitted-thumb-wrap:hover .dyf-permitted-thumb {
+  transform: scale(1.08);
+}
+
+.dyf-permitted-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.dyf-permitted-title {
+  font-family: var(--font-title);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-ivory);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dyf-permitted-meta {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 /* وضعیت خالی (Empty State) */
 .dyf-empty-state {
   text-align: center;
@@ -1328,15 +1484,63 @@ textarea:focus-visible {
   padding: 1rem !important;
 }
 
+.dyf-lightbox-toolbar {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 10010;
+  background: rgba(28, 23, 19, 0.9);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--r-full);
+  padding: 0.35rem 0.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+}
+
+.dyf-lightbox-tool-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-ivory);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.dyf-lightbox-tool-btn:hover {
+  background: rgba(216, 178, 100, 0.18);
+  color: var(--gold-light);
+  transform: scale(1.08);
+}
+
 .dyf-lightbox-wrap {
   position: relative;
-  max-width: 92vw;
+  max-width: 94vw;
   max-height: 88vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   margin: auto;
+}
+
+.dyf-lightbox-viewport {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: min(92vw, 840px);
+  max-height: 74vh;
+  border-radius: var(--r-md);
+  touch-action: none;
 }
 
 .dyf-lightbox-img {
@@ -1346,6 +1550,19 @@ textarea:focus-visible {
   border-radius: var(--r-md);
   border: 1px solid var(--border-medium);
   box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95);
+  cursor: zoom-in;
+  transition: transform 0.15s ease-out;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.dyf-lightbox-img.is-zoomed {
+  cursor: grab;
+}
+
+.dyf-lightbox-img.is-dragging {
+  cursor: grabbing;
+  transition: none !important;
 }
 
 .dyf-lightbox-caption {
@@ -1475,6 +1692,27 @@ textarea:focus-visible {
   height: 2px;
   background: var(--gold-primary);
   transform-origin: left;
+}
+
+.dyf-toast-close {
+  background: transparent !important;
+  border: none !important;
+  color: var(--text-muted) !important;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all var(--transition-fast);
+  margin-right: auto;
+  opacity: 0.7;
+}
+
+.dyf-toast-close:hover {
+  color: var(--gold-light) !important;
+  opacity: 1;
+  background: rgba(216, 178, 100, 0.12) !important;
 }
 
 /* ==========================================================================
@@ -1900,80 +2138,99 @@ textarea:focus-visible {
   margin-top: 1rem;
 }
 
-.dyf-media-item {
-  position: relative;
-  aspect-ratio: 1;
-  background: #1a1614;
+.dyf-media-card {
+  display: flex;
+  flex-direction: column;
+  background: #191613;
   border: 1px solid var(--border-subtle);
   border-radius: var(--r-sm);
   overflow: hidden;
+  transition: all var(--transition-fast);
+}
+
+.dyf-media-card.is-primary {
+  border: 2px solid var(--gold-primary);
+  box-shadow: 0 0 12px rgba(216, 178, 100, 0.25);
+}
+
+.dyf-media-thumb-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  background: #0d0b0a;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.dyf-media-item.is-primary {
-  border: 2px solid var(--gold-primary);
-  box-shadow: 0 0 10px var(--gold-glow);
+  overflow: hidden;
 }
 
 .dyf-media-thumb {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  pointer-events: none;
 }
 
-.dyf-media-primary-tag {
+.dyf-media-primary-badge {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 5px;
+  right: 5px;
   background: var(--gold-primary);
   color: #141210;
-  font-size: 0.62rem;
+  font-size: 0.65rem;
   font-weight: 800;
-  padding: 0.1rem 0.4rem;
-  border-radius: 3px;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--r-full);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
   z-index: 2;
 }
 
-.dyf-media-actions {
-  position: absolute;
-  inset: 0;
-  background: rgba(20, 18, 16, 0.8);
+.dyf-media-card-actions {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  opacity: 0;
-  transition: opacity var(--transition-fast);
+  gap: 0.35rem;
+  padding: 0.45rem;
+  background: #141210;
+  border-top: 1px solid var(--border-subtle);
 }
 
-.dyf-media-item:hover .dyf-media-actions {
-  opacity: 1;
-}
-
-.dyf-media-btn {
+.dyf-media-card-btn {
+  width: 100%;
+  padding: 0.35rem 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  border-radius: var(--r-sm);
   background: rgba(36, 30, 25, 0.9);
   border: 1px solid var(--border-subtle);
-  border-radius: 4px;
   color: var(--text-ivory);
-  font-size: 0.7rem;
-  padding: 0.25rem 0.5rem;
   cursor: pointer;
+  text-align: center;
   transition: all var(--transition-fast);
 }
 
-.dyf-media-btn:hover {
+.dyf-media-card-btn:hover {
   background: var(--leather-dark);
   color: var(--gold-light);
   border-color: var(--gold-primary);
 }
 
-.dyf-media-btn-danger:hover {
-  background: var(--status-danger);
-  border-color: var(--status-danger);
-  color: #fff;
+.dyf-media-card-btn.is-active {
+  background: rgba(61, 36, 21, 0.95);
+  border-color: var(--gold-primary);
+  color: var(--gold-light);
+  font-weight: 800;
+}
+
+.dyf-media-card-btn-danger {
+  color: var(--status-danger) !important;
+  border-color: rgba(224, 86, 74, 0.35) !important;
+}
+
+.dyf-media-card-btn-danger:hover {
+  background: var(--status-danger) !important;
+  color: #fff !important;
+  border-color: var(--status-danger) !important;
 }
 
 /* چک‌باکس‌های انتخاب سایز */
@@ -1981,6 +2238,44 @@ textarea:focus-visible {
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem;
+}
+
+/* کارت‌های چک‌باکس دسته‌بندی در فرم کفش */
+.dyf-category-checkbox-card {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0.9rem;
+  background: #191613;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-sm);
+  color: var(--text-ivory);
+  font-size: 0.84rem;
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--transition-fast);
+}
+
+.dyf-category-checkbox-card:hover {
+  border-color: var(--border-medium);
+  background: #221d19;
+}
+
+.dyf-category-checkbox-card input[type="checkbox"] {
+  appearance: auto;
+  -webkit-appearance: auto;
+  width: 16px;
+  height: 16px;
+  accent-color: #0075ff;
+  cursor: pointer;
+  margin: 0;
+}
+
+.dyf-category-checkbox-card:has(input[type="checkbox"]:focus) input[type="checkbox"],
+.dyf-category-checkbox-card input[type="checkbox"]:focus {
+  outline: 2px solid var(--gold-primary);
+  outline-offset: 1px;
 }
 
 .dyf-size-checkbox-label {
@@ -2903,8 +3198,8 @@ textarea:focus-visible {
 
 .dyf-picker-models-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.85rem;
   align-content: start;
 }
 
@@ -2912,8 +3207,9 @@ textarea:focus-visible {
 .dyf-picker-shoe-card {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.65rem 0.85rem;
+  gap: 0.85rem;
+  padding: 0.75rem 1rem;
+  min-height: 84px;
   border-radius: var(--r-md);
   background: rgba(28, 23, 19, 0.85);
   border: 1px solid var(--border-subtle);
@@ -2943,8 +3239,8 @@ textarea:focus-visible {
 }
 
 .dyf-picker-shoe-thumb {
-  width: 48px;
-  height: 48px;
+  width: 68px;
+  height: 68px;
   border-radius: var(--r-sm);
   object-fit: cover;
   background: #090706;
@@ -3017,11 +3313,20 @@ textarea:focus-visible {
 }
 
 @media (max-width: 768px) {
+  #modalProductPicker.dyf-modal-backdrop {
+    align-items: flex-end !important;
+    padding: 0 !important;
+  }
+
   .dyf-product-picker-split-card {
     width: 100% !important;
-    height: 100vh !important;
-    max-height: 100vh !important;
-    border-radius: 0 !important;
+    max-width: 100vw !important;
+    height: 88vh !important;
+    max-height: 88dvh !important;
+    border-radius: var(--r-lg) var(--r-lg) 0 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
   }
 
   .dyf-picker-split-header {
@@ -3029,19 +3334,25 @@ textarea:focus-visible {
     flex-direction: column;
     align-items: stretch;
     gap: 0.75rem;
+    box-sizing: border-box !important;
+    max-width: 100%;
   }
 
   .dyf-picker-split-header-search {
     width: 100%;
+    box-sizing: border-box !important;
   }
 
   .dyf-picker-search {
     flex: 1;
     width: auto;
+    min-width: 0;
   }
 
   .dyf-picker-split-body {
     flex-direction: column;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   .dyf-picker-cats-sidebar {
@@ -3049,6 +3360,7 @@ textarea:focus-visible {
     max-height: 140px;
     border-left: none;
     border-bottom: 1px solid var(--border-subtle);
+    box-sizing: border-box !important;
   }
 
   .dyf-picker-cats-list {
@@ -3063,23 +3375,25 @@ textarea:focus-visible {
     padding: 0.45rem 0.75rem;
   }
 
-  .dyf-picker-models-header {
-    padding: 0.65rem 1rem;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
-  }
-
-  .dyf-picker-models-header-actions {
-    justify-content: flex-end;
-  }
-
   .dyf-picker-models-scroll {
     padding: 0.85rem 1rem;
+    box-sizing: border-box !important;
+    flex: 1;
   }
 
   .dyf-picker-models-grid {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .dyf-picker-shoe-card {
+    min-height: 80px;
+    padding: 0.65rem 0.85rem;
+  }
+
+  .dyf-picker-shoe-thumb {
+    width: 64px !important;
+    height: 64px !important;
   }
 
   .dyf-picker-split-footer {
@@ -3087,6 +3401,12 @@ textarea:focus-visible {
     flex-direction: column;
     align-items: stretch;
     gap: 0.75rem;
+    box-sizing: border-box !important;
+    max-width: 100%;
+  }
+
+  .dyf-picker-footer-summary {
+    display: none !important;
   }
 
   .dyf-picker-footer-actions {
@@ -3178,6 +3498,39 @@ textarea:focus-visible {
 .dyf-wizard-panel.is-active {
   display: block;
   animation: dyfFadeUp 0.3s ease forwards;
+}
+
+/* پاورقی و دکمه‌های ناوبری ویزارد */
+.dyf-wizard-footer {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: nowrap !important;
+  gap: 0.5rem !important;
+  padding: 1rem 1.5rem !important;
+}
+
+.dyf-wizard-footer #wizardPrevBtn {
+  margin-inline-end: auto !important;
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+  width: auto !important;
+}
+
+.dyf-wizard-footer-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  margin-inline-start: auto !important;
+  flex-shrink: 0 !important;
+}
+
+.dyf-wizard-footer .dyf-btn {
+  white-space: nowrap !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
 }
 
 /* کارت‌های لیست لینک‌ها */
@@ -4090,14 +4443,36 @@ textarea:focus-visible {
   }
 
   .dyf-wizard-footer {
-    padding: 0.75rem 0.85rem;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    padding: 0.65rem 0.85rem !important;
+    gap: 0.5rem !important;
+  }
+
+  .dyf-wizard-footer #wizardPrevBtn {
+    margin-inline-end: auto !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+  }
+
+  .dyf-wizard-footer-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    margin-inline-start: auto !important;
+    flex: 0 0 auto !important;
   }
 
   .dyf-wizard-footer .dyf-btn {
-    flex: 1 1 calc(50% - 0.25rem);
-    height: 42px;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    height: 38px !important;
+    padding: 0.4rem 0.75rem !important;
+    font-size: 0.82rem !important;
     justify-content: center;
   }
 
@@ -4117,11 +4492,17 @@ textarea:focus-visible {
   .dyf-modal-card {
     width: 100% !important;
     max-width: 100% !important;
-    max-height: 94vh !important;
+    max-height: 80vh !important;
+    max-height: 80dvh !important;
     border-radius: var(--r-lg) var(--r-lg) 0 0 !important;
     display: flex !important;
     flex-direction: column !important;
     margin: 0;
+  }
+
+  #modalShoeDossier .dyf-modal-card {
+    max-height: 75vh !important;
+    max-height: 75dvh !important;
   }
 
   .dyf-modal-header {
@@ -4351,7 +4732,10 @@ textarea:focus-visible {
   }
 
   .dyf-wizard-footer .dyf-btn {
-    flex: 1 1 100%;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    font-size: 0.76rem !important;
+    padding: 0.35rem 0.6rem !important;
   }
 }
 
