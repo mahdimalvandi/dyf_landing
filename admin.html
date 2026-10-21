@@ -1030,7 +1030,6 @@
               <h4 style="font-family: var(--font-title); font-size: 0.98rem; font-weight: 800; color: var(--gold-light); margin-bottom: 0.2rem;">
                 دسترسی مستقیم به کاتالوگ
               </h4>
-              <p style="font-size: 0.76rem; color: var(--text-muted); margin: 0;">ورود مشتری با شماره تلفن همراه بدون نیاز به لینک موقت</p>
             </div>
             <label class="dyf-switch-label">
               <input type="checkbox" id="directAccessToggle" class="dyf-switch-input">
@@ -1044,7 +1043,26 @@
             <div class="dyf-form-group">
               <label class="dyf-form-label">محصولات و دسته‌بندی‌های مجاز مشتری</label>
               <div id="directAccessProductsWrap">
-                <!-- رندر پویا توسط کامپوننت انتخاب محصول -->
+                <div class="dyf-cust-products-trigger-card">
+                  <div class="dyf-cust-products-trigger-info">
+                    <div class="dyf-cust-products-trigger-line">
+                      <span id="custDirectProductsBadge" class="dyf-badge dyf-badge-active">۱۸ مدل مجاز انتخاب شده</span>
+                      <span id="custDirectCategoriesSummary" style="font-size: 0.78rem; color: var(--gold-light);">همه دسته‌بندی‌ها</span>
+                    </div>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.35rem 0 0 0;">
+                      مدل‌های کفش مجاز جهت مشاهده توسط این همکار به تفکیک دسته‌بندی یا تکی تعیین می‌شوند.
+                    </p>
+                  </div>
+                  <button type="button" id="btnOpenProductPicker" class="dyf-btn dyf-btn-primary dyf-btn-sm" style="flex-shrink: 0;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect width="7" height="7" x="3" y="3" rx="1"/>
+                      <rect width="7" height="7" x="14" y="3" rx="1"/>
+                      <rect width="7" height="7" x="14" y="14" rx="1"/>
+                      <rect width="7" height="7" x="3" y="14" rx="1"/>
+                    </svg>
+                    <span>انتخاب محصولات</span>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -1086,6 +1104,90 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           <span>ذخیره تنظیمات دسترسی مستقیم</span>
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       ۷-ب. مودال اختصاصی انتخاب محصولات مجاز دو‌بخشی (Split-Pane Product Picker Modal)
+       ====================================================================== -->
+  <div id="modalProductPicker" class="dyf-modal-backdrop dyf-modal-elevated" aria-hidden="true">
+    <div class="dyf-modal-card dyf-product-picker-split-card">
+      <!-- ۱. هدر ثابت بالای مودال -->
+      <div class="dyf-picker-split-header">
+        <div class="dyf-picker-split-header-info">
+          <div class="dyf-picker-split-title-row">
+            <h3 class="dyf-picker-split-title">انتخاب مدل‌های مجاز</h3>
+            <span id="pickerTotalEligibleBadge" class="dyf-badge dyf-badge-active">۰ مدل انتخاب‌شده</span>
+          </div>
+          <p class="dyf-picker-split-subtitle">جست‌وجوی عنوان یا شناسه مدل و انتخاب بر اساس دسته‌بندی</p>
+        </div>
+
+        <div class="dyf-picker-split-header-search">
+          <div class="dyf-toolbar-search dyf-picker-search">
+            <svg class="dyf-quick-search-icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="pickerSearchInput" class="dyf-quick-search-input" placeholder="جست‌وجوی مدل...">
+            <button type="button" id="pickerSearchClearBtn" class="dyf-picker-search-clear" style="display: none;" title="پاک کردن جست‌وجو">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <button type="button" class="dyf-modal-close" data-close>&times;</button>
+        </div>
+      </div>
+
+      <!-- ۲. بدنه دو ستونه (Split View) -->
+      <div class="dyf-picker-split-body">
+        <!-- ستون راست: فهرست دسته‌بندی‌ها -->
+        <aside class="dyf-picker-cats-sidebar">
+          <div class="dyf-picker-sidebar-header">
+            <span class="dyf-picker-sidebar-title">دسته‌بندی‌ها</span>
+            <div class="dyf-picker-sidebar-actions">
+              <button type="button" id="pickerSelectAllCatsBtn" class="dyf-picker-action-link">انتخاب همه</button>
+              <span class="dyf-dot-sep">•</span>
+              <button type="button" id="pickerDeselectAllCatsBtn" class="dyf-picker-action-link">لغو همه</button>
+            </div>
+          </div>
+          <div class="dyf-picker-cats-list" id="pickerCatsList">
+            <!-- رندر پویا توسط کنترلر -->
+          </div>
+        </aside>
+
+        <!-- ستون چپ: فهرست مدل‌های دسته انتخاب‌شده -->
+        <main class="dyf-picker-models-panel">
+          <div class="dyf-picker-models-header">
+            <div class="dyf-picker-models-header-title">
+              <span id="pickerActiveCategoryTitle">مدل‌های دسته انتخاب‌شده</span>
+              <span id="pickerActiveCategoryCount" class="dyf-category-group-count">۰ مدل</span>
+            </div>
+            <div class="dyf-picker-models-header-actions">
+              <button type="button" id="pickerSelectCurrentCatModelsBtn" class="dyf-btn dyf-btn-outline dyf-btn-xs">
+                انتخاب همه این دسته
+              </button>
+              <button type="button" id="pickerDeselectCurrentCatModelsBtn" class="dyf-btn dyf-btn-outline dyf-btn-xs">
+                لغو همه این دسته
+              </button>
+            </div>
+          </div>
+
+          <!-- لیست اسکرول‌شونده اختصاصی و مستقل مدل‌ها -->
+          <div class="dyf-picker-models-scroll" id="pickerModelsScroll">
+            <!-- رندر پویا توسط کنترلر -->
+          </div>
+        </main>
+      </div>
+
+      <!-- ۳. پاورقی ثابت پایین مودال -->
+      <div class="dyf-picker-split-footer">
+        <div class="dyf-picker-footer-summary" id="pickerRulesSummary">
+          انتخاب‌ها تا زمان تأیید حفظ می‌شوند.
+        </div>
+        <div class="dyf-picker-footer-actions">
+          <button type="button" class="dyf-btn dyf-btn-outline" data-close>انصراف</button>
+          <button type="button" id="pickerConfirmBtn" class="dyf-btn dyf-btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>تأیید انتخاب‌ها</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
