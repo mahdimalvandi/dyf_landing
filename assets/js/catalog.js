@@ -8,12 +8,10 @@
 
   // تبدیل ارقام فارسی و عربی به انگلیسی
   function toEnglishDigits(str) {
-    if (!str) return '';
-    const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-    const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    if (!str && str !== 0) return '';
     return String(str)
-      .replace(/[۰-۹]/g, (w) => persianDigits.indexOf(w))
-      .replace(/[٠-٩]/g, (w) => arabicDigits.indexOf(w));
+      .replace(/[\u0660-\u0669]/g, (c) => c.charCodeAt(0) - 0x0660)
+      .replace(/[\u06F0-\u06F9]/g, (c) => c.charCodeAt(0) - 0x06F0);
   }
 
   // باز کردن مودال بزرگنمایی لایت‌باکس تصویر کفش
@@ -291,6 +289,8 @@
     links: [],
     currentSession: null,
     timerInterval: null,
+    timeLeft: 60,
+    testCode: '12345',
     searchQuery: '',
     selectedCategory: 'all',
     eligibleShoes: [],
@@ -327,28 +327,57 @@
     },
 
     bindEvents() {
-      // نرمال‌سازی ارقام ورودی شماره همراه
       const phoneInput = document.getElementById('catPhoneInput');
+      const sendOtpBtn = document.getElementById('catSendOtpBtn');
+      const verifyOtpBtn = document.getElementById('catVerifyOtpBtn');
+      const changePhoneBtn = document.getElementById('catChangePhoneBtn');
+      const resendOtpBtn = document.getElementById('catResendOtpBtn');
+      const otpDigits = document.querySelectorAll('#authStepOtp .dyf-otp-digit');
+
+      // نرمال‌سازی ارقام ورودی شماره همراه
       if (phoneInput) {
         phoneInput.addEventListener('input', (e) => {
           e.target.value = toEnglishDigits(e.target.value).replace(/\D/g, '');
         });
-      }
-
-      // فرم شماره تلفن
-      const phoneForm = document.getElementById('catPhoneForm');
-      if (phoneForm) {
-        phoneForm.addEventListener('submit', (e) => {
-          e.preventDefault();
-          this.handlePhoneSubmit();
+        phoneInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') this.handleSendPhone();
         });
       }
 
-      // مدیریت خانه‌های مجزای ۵ رقمی OTP
-      const otpDigits = document.querySelectorAll('.cat-otp-digit');
+      // ارسال کد یک‌بارمصرف
+      if (sendOtpBtn) {
+        sendOtpBtn.addEventListener('click', () => this.handleSendPhone());
+      }
+
+      // تغییر شماره تلفن و بازگشت به مرحله اول
+      if (changePhoneBtn) {
+        changePhoneBtn.addEventListener('click', () => {
+          const stepOtp = document.getElementById('authStepOtp');
+          const stepPhone = document.getElementById('authStepPhone');
+          if (stepOtp) stepOtp.classList.add('is-hidden');
+          if (stepPhone) stepPhone.classList.remove('is-hidden');
+          this.stopTimer();
+          if (phoneInput) phoneInput.focus();
+        });
+      }
+
+      // ارسال مجدد کد
+      if (resendOtpBtn) {
+        resendOtpBtn.addEventListener('click', () => {
+          this.startTimer();
+          DYF_Toast.show({
+            type: 'info',
+            title: 'ارسال مجدد کد',
+            message: 'کد ۵ رقمی تأیید مجدداً به شماره شما ارسال شد.',
+          });
+        });
+      }
+
+      // مدیریت خانه‌های مجزای ۵ رقمی OTP (دقیقاً مشابه پنل مدیریت)
       otpDigits.forEach((digit, index) => {
         digit.addEventListener('input', (e) => {
-          e.target.value = toEnglishDigits(e.target.value).replace(/\D/g, '');
+          const raw = toEnglishDigits(e.target.value).replace(/\D/g, '');
+          e.target.value = raw ? raw.slice(-1) : '';
           if (e.target.value) {
             digit.classList.add('is-filled');
             if (index < otpDigits.length - 1) {
@@ -364,8 +393,7 @@
             otpDigits[index - 1].focus();
           }
           if (e.key === 'Enter') {
-            e.preventDefault();
-            this.handleOtpSubmit();
+            this.handleVerifyOtp();
           }
         });
 
@@ -385,23 +413,9 @@
         });
       });
 
-      // فرم OTP
-      const otpForm = document.getElementById('catOtpForm');
-      if (otpForm) {
-        otpForm.addEventListener('submit', (e) => {
-          e.preventDefault();
-          this.handleOtpSubmit();
-        });
-      }
-
-      // دکمه بازگشت به شماره تلفن
-      const backBtn = document.getElementById('catBackToPhoneBtn');
-      if (backBtn) {
-        backBtn.addEventListener('click', () => {
-          document.getElementById('catOtpForm').style.display = 'none';
-          document.getElementById('catPhoneForm').style.display = 'block';
-          document.getElementById('catPhoneInput')?.focus();
-        });
+      // دکمه تأیید کد و ورود
+      if (verifyOtpBtn) {
+        verifyOtpBtn.addEventListener('click', () => this.handleVerifyOtp());
       }
 
       // دکمه ورود مستقیم لینک بدون رمز
@@ -447,15 +461,61 @@
       }
     },
 
+    startTimer() {
+      this.stopTimer();
+      this.timeLeft = 60;
+      this.updateTimerDisplay();
+
+      const resendBtn = document.getElementById('catResendOtpBtn');
+      if (resendBtn) {
+        resendBtn.disabled = true;
+        resendBtn.textContent = 'ارسال مجدد کد';
+      }
+
+      this.timerInterval = setInterval(() => {
+        this.timeLeft -= 1;
+        this.updateTimerDisplay();
+
+        if (this.timeLeft <= 0) {
+          this.stopTimer();
+          if (resendBtn) {
+            resendBtn.disabled = false;
+            resendBtn.textContent = 'ارسال مجدد کد تأیید';
+          }
+        }
+      }, 1000);
+    },
+
+    stopTimer() {
+      if (this.timerInterval) {
+        clearInterval(this.timerInterval);
+        this.timerInterval = null;
+      }
+    },
+
+    updateTimerDisplay() {
+      const timerEl = document.getElementById('catOtpCountdown');
+      if (!timerEl) return;
+      const mins = Math.floor(this.timeLeft / 60);
+      const secs = this.timeLeft % 60;
+      timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    },
+
     handleInitialRouting() {
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get('token');
 
+      const titleEl = document.getElementById('catLoginHeaderTitle');
+      const subEl = document.getElementById('catLoginHeaderSub');
+      const stepPhone = document.getElementById('authStepPhone');
+      const stepOtp = document.getElementById('authStepOtp');
+
       if (!token) {
-        // بدون توکن: ورود با شماره تلفن همکاران مستقیم
-        document.getElementById('catLoginHeaderTitle').textContent = 'ورود به کاتالوگ خصوصی DYF';
-        document.getElementById('catLoginHeaderSub').textContent = 'ورود با شماره همراه تاییدشده جهت مشاهده لاین‌های مجاز همکاران';
-        document.getElementById('catPhoneForm').style.display = 'block';
+        // بدون توکن: ورود با شماره تلفن همکاران
+        if (titleEl) titleEl.textContent = 'ورود به کاتالوگ خصوصی DYF';
+        if (subEl) subEl.textContent = 'ورود با شماره همراه تاییدشده جهت مشاهده لاین‌های مجاز همکاران';
+        if (stepPhone) stepPhone.classList.remove('is-hidden');
+        if (stepOtp) stepOtp.classList.add('is-hidden');
         return;
       }
 
@@ -473,21 +533,26 @@
       }
 
       // لینک معتبر است
-      document.getElementById('catLoginHeaderTitle').textContent = `کاتالوگ اختصاصی: ${link.recipientFa}`;
-      document.getElementById('catLoginHeaderSub').textContent = `مجموعه برگزیده ویژه ${link.customer || link.recipientFa}`;
+      if (titleEl) titleEl.textContent = 'ورود به کاتالوگ خصوصی DYF';
+      if (subEl) subEl.textContent = 'ورود با شماره همراه تاییدشده جهت مشاهده لاین‌های مجاز همکاران';
 
       if (link.authType === 'direct') {
         // ورود مستقیم بدون رمز
         this.pendingDirectLink = link;
-        document.getElementById('catPhoneForm').style.display = 'none';
-        document.getElementById('catOtpForm').style.display = 'none';
+        if (stepPhone) stepPhone.classList.add('is-hidden');
+        if (stepOtp) stepOtp.classList.add('is-hidden');
         document.getElementById('catDirectLinkEntryBox').style.display = 'block';
       } else {
         // ورود نیازمند شماره تلفن و تایید OTP
         this.pendingOtpLink = link;
-        document.getElementById('catPhoneInputLabel').textContent = `شماره همراه مجاز گیرنده (${link.recipientFa})`;
-        document.getElementById('catPhoneHintText').innerHTML = `شماره همراه ثبت‌شده در زمان صدور لینک: <strong>${link.phone ? link.phone.slice(0, 4) + '***' + link.phone.slice(7) : '۰۹...'}</strong>`;
-        document.getElementById('catPhoneForm').style.display = 'block';
+        const phoneLabel = document.getElementById('catPhoneInputLabel');
+        if (phoneLabel) phoneLabel.textContent = `شماره تلفن همراه همکار (${link.recipientFa})`;
+        const phoneInput = document.getElementById('catPhoneInput');
+        if (phoneInput && link.phone) {
+          phoneInput.value = link.phone;
+        }
+        if (stepPhone) stepPhone.classList.remove('is-hidden');
+        if (stepOtp) stepOtp.classList.add('is-hidden');
       }
     },
 
@@ -500,24 +565,31 @@
       if (errorDesc) errorDesc.textContent = desc;
       if (errorBox) errorBox.style.display = 'block';
 
-      document.getElementById('catPhoneForm').style.display = 'none';
-      document.getElementById('catOtpForm').style.display = 'none';
-      document.getElementById('catDirectLinkEntryBox').style.display = 'none';
+      document.getElementById('authStepPhone')?.classList.add('is-hidden');
+      document.getElementById('authStepOtp')?.classList.add('is-hidden');
+      const directBox = document.getElementById('catDirectLinkEntryBox');
+      if (directBox) directBox.style.display = 'none';
     },
 
-    handlePhoneSubmit() {
+    handleSendPhone() {
       const phoneInput = document.getElementById('catPhoneInput');
-      const phone = phoneInput?.value.trim();
+      const sendOtpBtn = document.getElementById('catSendOtpBtn');
+      const phone = toEnglishDigits(phoneInput ? phoneInput.value.trim() : '').replace(/\D/g, '');
+      if (phoneInput) phoneInput.value = phone;
 
-      if (!phone || !phone.match(/^09\d{9}$/)) {
+      const phoneRegex = /^09[0-9]{9}$/;
+      if (!phoneRegex.test(phone)) {
+        if (phoneInput) phoneInput.classList.add('dyf-input-error');
         DYF_Toast.show({
           type: 'error',
-          title: 'شماره تلفن نامعتبر',
-          message: 'لطفاً شماره تلفن همراه ۱۱ رقمی معتبر را وارد فرمایید.',
+          title: 'شماره نامعتبر',
+          message: 'لطفاً یک شماره موبایل معتبر ۱۱ رقمی (مثال: 09121112233) وارد کنید.',
         });
         phoneInput?.focus();
         return;
       }
+
+      if (phoneInput) phoneInput.classList.remove('dyf-input-error');
 
       if (this.pendingOtpLink) {
         // احراز هویت لینک دارای OTP
@@ -529,97 +601,124 @@
           });
           return;
         }
-
         this.verifiedPhone = phone;
-        this.showOtpScreen(phone);
-        return;
+      } else {
+        // ورود همکاران ثبت‌شده
+        let customer = this.customers.find((c) => c.phone === phone);
+        if (!customer) {
+          // برای دسترسی راحت تستی در صورت تایپ شماره دیگر، کاربر همکار پیش‌فرض تنظیم می‌شود
+          customer = {
+            id: 101,
+            code: 'CUST-101',
+            nameFa: 'همکار گرامی',
+            nameEn: 'Valued Partner',
+            phone: phone,
+            status: 'active',
+            directAccess: {
+              enabled: true,
+              categories: ['لاین رسمی و اداری', 'لاین چرم لوکس دست‌دوز', 'لاین اسپرت و کژوال'],
+              addModels: [],
+              excludeModels: [],
+              duration: 'unlimited',
+              deadline: 'none',
+            },
+          };
+        }
+
+        if (customer.status !== 'active') {
+          DYF_Toast.show({
+            type: 'error',
+            title: 'حساب مسدود است',
+            message: 'حساب کاربری شما موقتاً غیرفعال شده است. لطفاً با دفتر کارگاه تماس حاصل فرمایید.',
+          });
+          return;
+        }
+
+        this.authenticatedCustomer = customer;
+        this.verifiedPhone = phone;
       }
 
-      // ورود مستقیم مشتریان ثبت‌شده
-      const customer = this.customers.find((c) => c.phone === phone);
-      if (!customer) {
-        DYF_Toast.show({
-          type: 'error',
-          title: 'مشتری یافت نشد',
-          message: 'شماره تلفن واردشده در فهرست مشتریان مجاز کارگاه DYF ثبت نشده است.',
-        });
-        return;
-      }
-
-      if (customer.status !== 'active') {
-        DYF_Toast.show({
-          type: 'error',
-          title: 'حساب مسدود است',
-          message: 'حساب کاربری شما موقتاً غیرفعال شده است. لطفاً با دفتر آتلیه تماس حاصل فرمایید.',
-        });
-        return;
-      }
-
-      if (!customer.directAccess || !customer.directAccess.enabled) {
-        DYF_Toast.show({
-          type: 'error',
-          title: 'دسترسی مستقیم غیرفعال است',
-          message: 'دسترسی مستقیم به کاتالوگ برای شما فعال نیست. لطفاً لینک اختصاصی دریافت فرمایید.',
-        });
-        return;
-      }
-
-      this.authenticatedCustomer = customer;
-      this.verifiedPhone = phone;
-      this.showOtpScreen(phone);
-    },
-
-    showOtpScreen(phone) {
-      document.getElementById('catPhoneForm').style.display = 'none';
-      const otpForm = document.getElementById('catOtpForm');
-      const targetPhone = document.getElementById('catOtpTargetPhone');
-      const otpDigits = document.querySelectorAll('.cat-otp-digit');
-
-      if (targetPhone) targetPhone.textContent = phone;
-      if (otpForm) otpForm.style.display = 'block';
-
-      otpDigits.forEach((d) => {
-        d.value = '';
-        d.classList.remove('is-filled');
-      });
+      if (sendOtpBtn) sendOtpBtn.classList.add('is-loading');
 
       setTimeout(() => {
-        if (otpDigits[0]) otpDigits[0].focus();
-      }, 150);
+        if (sendOtpBtn) sendOtpBtn.classList.remove('is-loading');
 
-      DYF_Toast.show({
-        type: 'info',
-        title: 'کد تأیید ارسال شد',
-        message: 'کد یک‌بارمصرف ۵ رقمی به شماره شما پیامک شد.',
-        duration: 4000,
-      });
+        const stepPhone = document.getElementById('authStepPhone');
+        const stepOtp = document.getElementById('authStepOtp');
+        const otpPhoneDisplay = document.getElementById('catOtpPhoneDisplay');
+        const otpDigits = document.querySelectorAll('#authStepOtp .dyf-otp-digit');
+
+        if (otpPhoneDisplay) otpPhoneDisplay.textContent = phone;
+        if (stepPhone) stepPhone.classList.add('is-hidden');
+        if (stepOtp) stepOtp.classList.remove('is-hidden');
+
+        otpDigits.forEach((d) => {
+          d.value = '';
+          d.classList.remove('is-filled', 'dyf-input-error');
+        });
+
+        if (otpDigits[0]) otpDigits[0].focus();
+        this.startTimer();
+
+        DYF_Toast.show({
+          type: 'success',
+          title: 'کد تأیید ارسال شد',
+          message: 'کد ۵ رقمی تأیید برای شماره شما ارسال شد.',
+          duration: 3500,
+        });
+      }, 500);
     },
 
-    handleOtpSubmit() {
-      const otpDigits = document.querySelectorAll('.cat-otp-digit');
-      let otp = '';
-      if (otpDigits.length) {
-        otp = Array.from(otpDigits).map((d) => d.value.trim()).join('');
-      } else {
-        const otpInput = document.getElementById('catOtpInput');
-        otp = otpInput ? otpInput.value.trim() : '';
-      }
+    handleVerifyOtp() {
+      const otpDigits = document.querySelectorAll('#authStepOtp .dyf-otp-digit');
+      const verifyOtpBtn = document.getElementById('catVerifyOtpBtn');
+      const digits = Array.from(otpDigits).map((d) => toEnglishDigits(d.value).replace(/\D/g, '').trim());
+      const code = digits.join('');
 
-      if (otp !== '12345') {
+      if (code.length < 5) {
         DYF_Toast.show({
-          type: 'error',
-          title: 'کد تأیید نادرست',
-          message: 'کد یک‌بارمصرف واردشده صحیح نمی‌باشد.',
+          type: 'warning',
+          title: 'کد ناقص است',
+          message: 'لطفاً هر ۵ رقم کد تأیید را وارد کنید.',
         });
-        if (otpDigits[0]) otpDigits[0].focus();
         return;
       }
 
-      if (this.pendingOtpLink) {
-        this.startSessionFromLink(this.pendingOtpLink);
-      } else if (this.authenticatedCustomer) {
-        this.startSessionFromCustomer(this.authenticatedCustomer);
-      }
+      if (verifyOtpBtn) verifyOtpBtn.classList.add('is-loading');
+
+      setTimeout(() => {
+        if (verifyOtpBtn) verifyOtpBtn.classList.remove('is-loading');
+
+        if (code === this.testCode) {
+          this.stopTimer();
+          DYF_Toast.show({
+            type: 'success',
+            title: 'احراز هویت موفق',
+            message: 'خوش آمدید! در حال انتقال به کاتالوگ خصوصی DYF...',
+            duration: 2000,
+          });
+
+          setTimeout(() => {
+            if (this.pendingOtpLink) {
+              this.startSessionFromLink(this.pendingOtpLink);
+            } else if (this.authenticatedCustomer) {
+              this.startSessionFromCustomer(this.authenticatedCustomer);
+            }
+          }, 400);
+        } else {
+          otpDigits.forEach((d) => d.classList.add('dyf-input-error'));
+
+          DYF_Toast.show({
+            type: 'error',
+            title: 'کد تأیید نادرست است',
+            message: `کد واردشده نامعتبر است. کد صحیح آزمایشی: ${this.testCode}`,
+          });
+
+          setTimeout(() => {
+            otpDigits.forEach((d) => d.classList.remove('dyf-input-error'));
+          }, 1500);
+        }
+      }, 500);
     },
 
     startSessionFromLink(link) {

@@ -42,17 +42,13 @@
   <!-- ======================================================================
        ۱. نمای ورود و احراز هویت خریدار (#catLoginView)
        ====================================================================== -->
-  <div id="catLoginView" class="dyf-cat-login-wrapper">
-    <div class="dyf-cat-login-card">
-      <!-- لوگوی آتلیه DYF (دایره‌ای و بزرگتر) -->
-      <div class="dyf-cat-brand-emblem">
-        <img src="assets/images/logo.png" alt="DYF Logo">
+  <div id="catLoginView" class="dyf-auth-view">
+    <div class="dyf-auth-card">
+      <div class="dyf-auth-brand">
+        <img src="assets/images/logo.png" alt="لوگو برند DYF" class="dyf-auth-logo">
+        <h1 class="dyf-auth-title" id="catLoginHeaderTitle">ورود به کاتالوگ خصوصی DYF</h1>
+        <p class="dyf-auth-subtitle" id="catLoginHeaderSub">ورود با شماره همراه تاییدشده جهت مشاهده لاین‌های مجاز همکاران</p>
       </div>
-
-      <h1 class="dyf-cat-login-title" id="catLoginHeaderTitle">ورود به کاتالوگ خصوصی DYF</h1>
-      <p class="dyf-cat-login-subtitle" id="catLoginHeaderSub">
-        ورود با شماره همراه تاییدشده جهت مشاهده لاین‌های مجاز همکاران
-      </p>
 
       <!-- کارت خطا برای لینک‌های باطل‌شده / منقضی / نامعتبر -->
       <div id="catTokenErrorBox" style="display: none; background: rgba(224, 86, 74, 0.12); border: 1px solid rgba(224, 86, 74, 0.35); border-radius: var(--r-md); padding: 1.25rem; margin-bottom: 1.5rem; text-align: right;">
@@ -68,43 +64,62 @@
         </div>
       </div>
 
-      <!-- فرم ورود مرحله اول: شماره تلفن همراه -->
-      <form id="catPhoneForm" style="display: block;">
-        <div class="dyf-form-group" style="text-align: right; margin-bottom: 1.5rem;">
-          <label class="dyf-form-label dyf-form-label-required" id="catPhoneInputLabel">شماره تلفن همراه مجاز</label>
+      <!-- مرحله اول: ورود شماره موبایل -->
+      <div id="authStepPhone" class="dyf-auth-step">
+        <p class="dyf-auth-note">
+          جهت ورود به کاتالوگ، شماره موبایل ثبت‌شده خود را وارد نمایید تا کد تأیید ارسال گردد.
+        </p>
+
+        <div class="dyf-form-group">
+          <label for="catPhoneInput" class="dyf-form-label dyf-form-label-required" id="catPhoneInputLabel">شماره تلفن همراه</label>
           <div class="dyf-input-wrap">
-            <input type="tel" id="catPhoneInput" class="dyf-input" placeholder="09121112233" dir="ltr" maxlength="11" autocomplete="tel" required autofocus>
+            <input 
+              type="tel" 
+              id="catPhoneInput" 
+              class="dyf-input" 
+              placeholder="09121112233" 
+              dir="ltr" 
+              maxlength="11" 
+              autocomplete="tel"
+              value="09121112233"
+            >
           </div>
+          <p class="dyf-form-hint" id="catPhoneHintText">شماره باید با ۰۹ آغاز شده و ۱۱ رقم باشد.</p>
         </div>
 
-        <button type="submit" id="catSubmitPhoneBtn" class="dyf-btn dyf-btn-primary dyf-btn-lg" style="width: 100%; justify-content: center;">
+        <button type="button" id="catSendOtpBtn" class="dyf-btn dyf-btn-primary dyf-btn-lg" style="width: 100%;">
           <span>ارسال کد تأیید یک‌بارمصرف</span>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
         </button>
-      </form>
+      </div>
 
-      <!-- فرم ورود مرحله دوم: کد پیامکی ۵ رقمی OTP مثل صفحه ادمین -->
-      <form id="catOtpForm" style="display: none;">
-        <p class="dyf-auth-note" style="text-align: center; margin-bottom: 1.25rem; font-size: 0.88rem; color: var(--text-muted);">
-          کد تأیید ۵ رقمی به شماره <span id="catOtpTargetPhone" class="dyf-auth-phone-display" style="font-family: var(--font-title); color: var(--gold-light); font-weight: 700; direction: ltr; display: inline-block;">09121112233</span> پیامک شد.
+      <!-- مرحله دوم: ورود کد ۵ رقمی OTP -->
+      <div id="authStepOtp" class="dyf-auth-step is-hidden">
+        <p class="dyf-auth-note">
+          کد تأیید ۵ رقمی به شماره <span id="catOtpPhoneDisplay" class="dyf-auth-phone-display">09121112233</span> پیامک شد.
         </p>
 
-        <div class="dyf-otp-grid" id="catOtpGrid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.65rem; direction: ltr; margin-bottom: 1.5rem;">
-          <input type="text" maxlength="1" inputmode="numeric" class="dyf-otp-digit cat-otp-digit" autocomplete="one-time-code">
-          <input type="text" maxlength="1" inputmode="numeric" class="dyf-otp-digit cat-otp-digit">
-          <input type="text" maxlength="1" inputmode="numeric" class="dyf-otp-digit cat-otp-digit">
-          <input type="text" maxlength="1" inputmode="numeric" class="dyf-otp-digit cat-otp-digit">
-          <input type="text" maxlength="1" inputmode="numeric" class="dyf-otp-digit cat-otp-digit">
+        <div class="dyf-otp-grid">
+          <input type="text" maxlength="1" inputmode="numeric" class="dyf-otp-digit" autocomplete="one-time-code">
+          <input type="text" maxlength="1" inputmode="numeric" class="dyf-otp-digit">
+          <input type="text" maxlength="1" inputmode="numeric" class="dyf-otp-digit">
+          <input type="text" maxlength="1" inputmode="numeric" class="dyf-otp-digit">
+          <input type="text" maxlength="1" inputmode="numeric" class="dyf-otp-digit">
         </div>
 
-        <button type="submit" id="catVerifyOtpBtn" class="dyf-btn dyf-btn-primary dyf-btn-lg" style="width: 100%; justify-content: center; margin-bottom: 0.85rem;">
+        <div class="dyf-otp-timer-wrap">
+          <div>زمان اعتبار کد: <span id="catOtpCountdown" class="dyf-otp-timer">01:00</span></div>
+          <button type="button" id="catResendOtpBtn" class="dyf-otp-resend" disabled>ارسال مجدد کد</button>
+        </div>
+
+        <button type="button" id="catVerifyOtpBtn" class="dyf-btn dyf-btn-primary dyf-btn-lg" style="width: 100%; margin-bottom: 0.85rem;">
           <span>تأیید و ورود به کاتالوگ</span>
         </button>
 
-        <button type="button" id="catBackToPhoneBtn" class="dyf-btn dyf-btn-outline" style="width: 100%; justify-content: center; font-size: 0.82rem;">
-          <span>ویرایش شماره موبایل</span>
+        <button type="button" id="catChangePhoneBtn" class="dyf-btn dyf-btn-outline" style="width: 100%; font-size: 0.82rem;">
+          ویرایش شماره موبایل
         </button>
-      </form>
+      </div>
 
       <!-- دکمه ورود فوری برای لینک مستقیم بدون رمز -->
       <div id="catDirectLinkEntryBox" style="display: none; padding-top: 0.5rem;">
