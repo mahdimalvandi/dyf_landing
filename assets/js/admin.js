@@ -536,10 +536,11 @@
     },
 
     show({ type = 'info', title = '', message = '', duration = 4000 }) {
+      // غیرفعال‌سازی کامل اعلان‌ها در موبایل و تبلت طبق درخواست کارفرما
+      if (typeof window !== 'undefined' && (window.innerWidth <= 768 || (window.matchMedia && window.matchMedia('(max-width: 768px)').matches))) {
+        return;
+      }
       this.init();
-
-      const isMobile = typeof window !== 'undefined' && window.innerWidth <= 640;
-      const effectiveDuration = isMobile ? Math.min(duration, 2400) : duration;
 
       const icons = {
         success: `<svg class="dyf-toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>`,

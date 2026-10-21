@@ -211,6 +211,10 @@
       this.container = document.getElementById('dyfToastContainer');
     },
     show({ type = 'info', title = '', message = '', duration = 4000 }) {
+      // غیرفعال‌سازی کامل اعلان‌ها در موبایل و تبلت طبق درخواست کارفرما
+      if (typeof window !== 'undefined' && (window.innerWidth <= 768 || (window.matchMedia && window.matchMedia('(max-width: 768px)').matches))) {
+        return;
+      }
       if (!this.container) this.init();
       if (!this.container) return;
 
@@ -300,6 +304,7 @@
   };
 
   window.DYF_Modal = DYF_Modal;
+  window.DYF_Toast = DYF_Toast;
 
   // ==========================================================================
   // ۴. کنترلر تجربه کاربری کاتالوگ (CatalogAppController)

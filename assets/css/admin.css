@@ -2760,6 +2760,16 @@ textarea:focus-visible {
    ب. تبلت‌های عمودی و صفحات تا عرض ۸۸۰ پیکسل (≤ 880px)
    -------------------------------------------------------------------------- */
 @media (max-width: 880px) {
+  /* غیرفعال‌سازی و پنهان‌سازی کامل اعلان‌های شناور (Toast) در موبایل و تبلت */
+  .dyf-toast-container,
+  #dyfToastContainer,
+  .dyf-toast {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
   :root {
     --sidebar-width: 270px;
     --header-height: 60px;
@@ -3381,94 +3391,14 @@ textarea:focus-visible {
     align-items: center;
   }
 
-  /* اعلان‌های سیستم در موبایل — کپسول شناور بالا و مینیمال (عدم انسداد محتوا) */
-  .dyf-toast-container {
-    position: fixed !important;
-    top: 1rem !important;
-    bottom: auto !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) !important;
-    width: auto !important;
-    max-width: calc(100vw - 2rem) !important;
-    z-index: 10005 !important;
-    gap: 0.4rem !important;
-    align-items: center !important;
-    pointer-events: none !important;
-  }
-
+  /* غیرفعال‌سازی و پنهان‌سازی قطعی تمامی اعلان‌های شناور (Toast) در موبایل */
+  .dyf-toast-container,
+  #dyfToastContainer,
   .dyf-toast {
-    min-width: 0 !important;
-    width: auto !important;
-    max-width: 100% !important;
-    padding: 0.55rem 0.95rem !important;
-    border-radius: var(--r-full) !important;
-    align-items: center !important;
-    gap: 0.55rem !important;
-    background: rgba(27, 23, 20, 0.96) !important;
-    backdrop-filter: blur(16px) !important;
-    -webkit-backdrop-filter: blur(16px) !important;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.7) !important;
-    border: 1px solid var(--border-medium) !important;
-    animation: toastMobileSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-  }
-
-  .dyf-toast.is-leaving {
-    animation: toastMobileSlideOut 0.2s ease forwards !important;
-  }
-
-  .dyf-toast-icon {
-    width: 17px !important;
-    height: 17px !important;
-    margin-top: 0 !important;
-    flex-shrink: 0 !important;
-  }
-
-  .dyf-toast-content {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 0.4rem !important;
-    line-height: 1.3 !important;
-    overflow: hidden !important;
-  }
-
-  .dyf-toast-title {
-    font-size: 0.78rem !important;
-    font-weight: 700 !important;
-    margin-bottom: 0 !important;
-    white-space: nowrap !important;
-  }
-
-  .dyf-toast-message {
-    font-size: 0.72rem !important;
-    color: var(--text-muted) !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    max-width: 190px !important;
-  }
-
-  .dyf-toast-progress {
     display: none !important;
-  }
-}
-
-@keyframes toastMobileSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.94);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes toastMobileSlideOut {
-  to {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.94);
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 }
 

@@ -305,6 +305,16 @@
 }
 
 @media (max-width: 768px) {
+  /* غیرفعال‌سازی قطعی اعلان‌های شناور (Toast) در موبایل */
+  .dyf-toast-container,
+  #dyfToastContainer,
+  .dyf-toast {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
   .dyf-cat-dossier-layout {
     grid-template-columns: 1fr;
     gap: 1.25rem;
