@@ -1895,10 +1895,6 @@
     updateGlobalCounters() {
       const allCount = this.models.length;
 
-      // به‌روزرسانی شمارنده هدر
-      const badge = document.getElementById('shoesCountSummaryBadge');
-      if (badge) badge.textContent = `${allCount} مدل`;
-
       // به‌روزرسانی شمارنده سایدبار
       const navCounter = document.querySelector('a[href="#shoes"] .dyf-nav-counter');
       if (navCounter) navCounter.textContent = allCount;
@@ -1906,6 +1902,11 @@
       // به‌روزرسانی کارت داشبورد
       const dashStat = document.querySelector('.dyf-stat-card .dyf-stat-value');
       if (dashStat) dashStat.innerHTML = `${allCount} <span>مدل</span>`;
+
+      // هماهنگ‌سازی تعداد دسته‌بندی‌ها در فیلتر
+      if (window.DYF_Categories && typeof window.DYF_Categories.syncWithShoeFilters === 'function') {
+        window.DYF_Categories.syncWithShoeFilters();
+      }
     },
 
     getFilteredModels() {
@@ -2195,13 +2196,14 @@
       const shoeFilterSelect = document.getElementById('shoesCategoryFilter');
       if (shoeFilterSelect) {
         const currentVal = shoeFilterSelect.value;
-        let optionsHtml = '<option value="all">همه دسته‌بندی‌ها</option>';
+        const totalModelsCount = (ShoesController.models || []).length;
+        let optionsHtml = `<option value="all">همه دسته‌بندی‌ها (${totalModelsCount})</option>`;
         this.categories.forEach((cat) => {
           const count = this.getModelCountForCategory(cat.name);
           const isInactive = cat.status === 'inactive';
           optionsHtml += `
             <option value="${cat.name}" ${currentVal === cat.name ? 'selected' : ''}>
-              ${cat.name} (${count} مدل) ${isInactive ? '— غیرفعال' : ''}
+              ${cat.name} (${count})${isInactive ? ' — غیرفعال' : ''}
             </option>
           `;
         });
@@ -2457,9 +2459,6 @@
 
     updateGlobalCounters() {
       const allCount = this.categories.length;
-
-      const badge = document.getElementById('categoriesCountSummaryBadge');
-      if (badge) badge.textContent = `${allCount} دسته‌بندی`;
 
       // شمارنده در سایدبار
       const navCounter = document.querySelector('a[href="#categories"] .dyf-nav-counter');
@@ -3276,12 +3275,10 @@
       const elAll = document.getElementById('countAllCustomers');
       const elAct = document.getElementById('countActiveCustomers');
       const elInact = document.getElementById('countInactiveCustomers');
-      const badge = document.getElementById('customersCountSummaryBadge');
 
       if (elAll) elAll.textContent = allCount;
       if (elAct) elAct.textContent = activeCount;
       if (elInact) elInact.textContent = inactiveCount;
-      if (badge) badge.textContent = `${activeCount} مشتری فعال (${allCount} کل)`;
 
       // سایدبار
       const navCounter = document.querySelector('a[href="#customers"] .dyf-nav-counter');
@@ -4183,13 +4180,11 @@
       const elAct = document.getElementById('countActiveLinks');
       const elPen = document.getElementById('countPendingLinks');
       const elExp = document.getElementById('countExpiredLinks');
-      const badge = document.getElementById('linksCountSummaryBadge');
 
       if (elAll) elAll.textContent = allCount;
       if (elAct) elAct.textContent = activeCount;
       if (elPen) elPen.textContent = pendingCount;
       if (elExp) elExp.textContent = expiredCount;
-      if (badge) badge.textContent = `${activeCount} لینک فعال (${allCount} کل)`;
 
       // سایدبار
       const navCounter = document.querySelector('a[href=\"#access-links\"] .dyf-nav-counter');

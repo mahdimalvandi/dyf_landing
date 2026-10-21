@@ -492,14 +492,14 @@
         });
       }
 
-      // خروج از کاتالوگ
-      const logoutBtn = document.getElementById('catLogoutBtn');
-      if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
+      // خروج از کاتالوگ (دسکتاپ و موبایل)
+      const logoutBtns = document.querySelectorAll('.dyf-cat-logout-btn');
+      logoutBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
           this.endSession(false);
           window.location.href = 'catalog.html';
         });
-      }
+      });
     },
 
     startTimer() {
@@ -828,18 +828,11 @@
 
       // تنظیم اطلاعات هدر و خوش‌آمدگویی (فقط نام مشتری بدون نام شرکت یا پرانتز)
       const greetingEl = document.getElementById('catRecipientGreetingName');
-      const badgeText = document.getElementById('catAccessScopeBadgeText');
 
       if (greetingEl) {
         const rawName = session.recipientFa || 'همکار گرامی';
         const cleanName = rawName.replace(/\(.*?\)/g, '').trim();
         greetingEl.textContent = cleanName || 'همکار گرامی';
-      }
-      if (badgeText) {
-        badgeText.textContent =
-          session.mode === 'link'
-            ? 'دسترسی اختصاصی با لینک'
-            : 'دسترسی مجاز همکاران';
       }
 
       // محاسبه مدل‌های مجاز بر اساس فرمول تجاری
@@ -1071,11 +1064,8 @@
     renderCatalogGrid() {
       const grid = document.getElementById('catShoesGrid');
       const emptyState = document.getElementById('catEmptyState');
-      const countBadge = document.getElementById('catModelsCountBadge');
 
       const filtered = this.getFilteredShoes();
-
-      if (countBadge) countBadge.textContent = `${filtered.length} مدل قابل مشاهده`;
 
       if (!filtered.length) {
         if (grid) grid.style.display = 'none';
