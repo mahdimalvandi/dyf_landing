@@ -268,11 +268,32 @@
       document.body.style.overflow = '';
     },
     init() {
+      // بستن با دکمه‌های [data-close] یا کلیک روی پس‌زمینه خارج از باکس
       document.addEventListener('click', (e) => {
         const closeBtn = e.target.closest('[data-close]');
         if (closeBtn) {
           const modal = closeBtn.closest('.dyf-modal-backdrop');
-          if (modal) this.close(modal.id);
+          if (modal) {
+            this.close(modal.id);
+            return;
+          }
+        }
+
+        const openModal = e.target.closest('.dyf-modal-backdrop.is-open');
+        if (openModal) {
+          const isInsideCard = e.target.closest('.dyf-modal-card');
+          const isInsideLightboxImg = e.target.closest('.dyf-lightbox-img');
+          if (!isInsideCard && !isInsideLightboxImg) {
+            this.close(openModal.id);
+          }
+        }
+      });
+
+      // بستن مودال با کلید Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          const openModal = document.querySelector('.dyf-modal-backdrop.is-open');
+          if (openModal) this.close(openModal.id);
         }
       });
     },

@@ -657,7 +657,7 @@
 
   window.DYF_Modal = DYF_Modal;
 
-  // بستن تمامی مودال‌ها با کلیک روی المان‌های دارای [data-close] یا پس‌زمینه مودال
+  // بستن تمامی مودال‌ها با کلیک روی المان‌های دارای [data-close] یا خارج از باکس مودال
   document.addEventListener('click', (e) => {
     const closeBtn = e.target.closest('[data-close]');
     if (closeBtn) {
@@ -668,8 +668,13 @@
       }
     }
 
-    if (e.target.classList && e.target.classList.contains('dyf-modal-backdrop') && e.target.classList.contains('is-open')) {
-      DYF_Modal.close(e.target.id);
+    const openModal = e.target.closest('.dyf-modal-backdrop.is-open');
+    if (openModal) {
+      const isInsideCard = e.target.closest('.dyf-modal-card');
+      const isInsideLightboxImg = e.target.closest('.dyf-lightbox-img');
+      if (!isInsideCard && !isInsideLightboxImg) {
+        DYF_Modal.close(openModal.id);
+      }
     }
   });
 
