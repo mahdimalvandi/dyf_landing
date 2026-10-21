@@ -4335,6 +4335,10 @@
         recipientFa: '',
         startDeadline: '3d',
         viewingDuration: '15m',
+        categories: [],
+        addModels: [],
+        excludeModels: [],
+        selectedShoeIds: [],
       };
 
       // بازیابی نمایش اصلی ویزارد
@@ -4348,10 +4352,37 @@
       const faInput = document.getElementById('wizardRecipientFa');
       if (faInput) faInput.value = '';
 
-      // رندر سلسله‌مراتبی محصولات (پیش‌فرض همه تیک دارند تا کاربر در صورت نیاز هرکدام را بردارد)
-      DYF_ProductSelector.render('wizardProductsWrap', {
-        defaultSelectAll: true,
-      });
+      // مقداردهی اولیه مدل‌های مجاز ویزارد (پیش‌فرض دسترسی کامل به همه مدل‌های منتشرشده)
+      const allShoes = (window.ShoesController && window.ShoesController.models) || DEFAULT_SHOES;
+      const publishedShoes = allShoes.filter((s) => s.status === 'published');
+      const allCats = (window.CategoriesController && window.CategoriesController.categories) || DEFAULT_CATEGORIES;
+
+      this.wizardDraft.categories = ['__uncategorized__', ...allCats.filter((c) => c.status === 'active').map((c) => c.name)];
+      this.wizardDraft.addModels = [];
+      this.wizardDraft.excludeModels = [];
+      this.wizardDraft.selectedShoeIds = publishedShoes.map((s) => s.id);
+
+      this.updateWizardProductsSummary();
+
+      const openWizardPickerBtn = document.getElementById('btnOpenWizardProductPicker');
+      if (openWizardPickerBtn && !openWizardPickerBtn._hasPickerHandler) {
+        openWizardPickerBtn._hasPickerHandler = true;
+        openWizardPickerBtn.addEventListener('click', () => {
+          DYF_ProductPickerModal.open({
+            categories: this.wizardDraft.categories,
+            addModels: this.wizardDraft.addModels,
+            excludeModels: this.wizardDraft.excludeModels,
+            selectedShoeIds: this.wizardDraft.selectedShoeIds,
+            onConfirm: (res) => {
+              this.wizardDraft.selectedShoeIds = res.selectedShoeIds;
+              this.wizardDraft.categories = res.categories;
+              this.wizardDraft.addModels = res.addModels;
+              this.wizardDraft.excludeModels = res.excludeModels;
+              this.updateWizardProductsSummary();
+            },
+          });
+        });
+      }
 
       const dlSelect = document.getElementById('wizardStartDeadline');
       const durSelect = document.getElementById('wizardViewingDuration');
@@ -4361,6 +4392,47 @@
       this.goToStep(1);
       DYF_Modal.open('modalCreateLinkWizard');
       if (faInput) setTimeout(() => faInput.focus(), 200);
+    },
+
+    updateWizardProductsSummary() {
+      const badge = document.getElementById('wizardProductsBadge');
+      const catsSummary = document.getElementById('wizardCategoriesSummary');
+      const allShoes = (window.ShoesController && window.ShoesController.models) || DEFAULT_SHOES;
+      const publishedShoes = allShoes.filter((s) => s.status === 'published');
+      const allCats = (window.CategoriesController && window.CategoriesController.categories) || DEFAULT_CATEGORIES;
+
+      const selectedIds = this.wizardDraft.selectedShoeIds || [];
+      const cats = this.wizardDraft.categories || [];
+      const adds = this.wizardDraft.addModels || [];
+      const excludes = this.wizardDraft.excludeModels || [];
+
+      if (badge) {
+        badge.textContent = `${toPersianDigits(selectedIds.length)} مدل مجاز انتخاب شده (از ${toPersianDigits(publishedShoes.length)} مدل)`;
+      }
+
+      if (catsSummary) {
+        const allowedCats = cats.filter((c) => c !== '__uncategorized__');
+        const uncatAllowed = cats.includes('__uncategorized__');
+        const parts = [];
+
+        if (allowedCats.length === allCats.length && uncatAllowed) {
+          parts.push('تمام دسته‌بندی‌ها (دسترسی کامل)');
+        } else if (allowedCats.length > 0 || uncatAllowed) {
+          const count = allowedCats.length + (uncatAllowed ? 1 : 0);
+          parts.push(`${toPersianDigits(count)} دسته‌بندی مجاز`);
+        } else {
+          parts.push('بدون دسته‌بندی مجاز');
+        }
+
+        if (adds.length > 0) {
+          parts.push(`${toPersianDigits(adds.length)} مدل افزوده`);
+        }
+        if (excludes.length > 0) {
+          parts.push(`${toPersianDigits(excludes.length)} مدل مستثنا`);
+        }
+
+        catsSummary.textContent = parts.join(' • ');
+      }
     },
 
     handleWizardNext() {
@@ -4378,8 +4450,7 @@
         this.wizardDraft.recipientFa = fa;
         this.goToStep(2);
       } else if (this.currentStep === 2) {
-        const prodData = DYF_ProductSelector.getData('wizardProductsWrap');
-        if (!prodData.selectedShoeIds.length) {
+        if (!this.wizardDraft.selectedShoeIds || !this.wizardDraft.selectedShoeIds.length) {
           DYF_Toast.show({
             type: 'error',
             title: 'حداقل یک محصول انتخاب شود',
@@ -4428,7 +4499,7 @@
       if (!sumEl) return;
 
       const d = this.wizardDraft;
-      const prodData = DYF_ProductSelector.getData('wizardProductsWrap');
+      const selectedCount = (d.selectedShoeIds || []).length;
 
       const deadlineLabels = {
         '24h': '۲۴ ساعت از زمان صدور',
@@ -4458,7 +4529,7 @@
         </div>
         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
           <span style="color: var(--text-dim);">تعداد مدل‌های انتخابی:</span>
-          <span style="font-weight: 800; color: #4cd964;">${prodData.selectedShoeIds.length} مدل کفش</span>
+          <span style="font-weight: 800; color: #4cd964;">${toPersianDigits(selectedCount)} مدل کفش</span>
         </div>
         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
           <span style="color: var(--text-dim);">مهلت شروع دسترسی:</span>
@@ -4473,7 +4544,6 @@
 
     generateLink() {
       const d = this.wizardDraft;
-      const prodData = DYF_ProductSelector.getData('wizardProductsWrap');
       const hex = Math.random().toString(36).substring(2, 6) + Math.random().toString(36).substring(2, 6);
       const token = hex.toLowerCase();
       const nextIdNum = 9080 + this.links.length + 1;
@@ -4491,9 +4561,9 @@
         customerId: null,
         phone: '',
         authType: 'direct',
-        categories: prodData.categories,
-        addModels: prodData.addModels,
-        excludeModels: prodData.excludeModels,
+        categories: d.categories || [],
+        addModels: d.addModels || [],
+        excludeModels: d.excludeModels || [],
         startDeadline: d.startDeadline,
         viewingDuration: d.viewingDuration,
         createdAt: createdDate,
@@ -4546,15 +4616,92 @@
       if (startDl) startDl.value = link.startDeadline || '3d';
       if (viewDur) viewDur.value = link.viewingDuration || '15m';
 
-      // رندر محصولات مجاز
-      DYF_ProductSelector.render('editLinkProductsWrap', {
-        categories: link.categories || [],
-        addModels: link.addModels || [],
-        excludeModels: link.excludeModels || [],
-        defaultSelectAll: false,
-      });
+      // مقداردهی و همگام‌سازی مدل‌های مجاز لینک
+      const allShoes = (window.ShoesController && window.ShoesController.models) || DEFAULT_SHOES;
+      const publishedShoes = allShoes.filter((s) => s.status === 'published');
+      const allCats = (window.CategoriesController && window.CategoriesController.categories) || DEFAULT_CATEGORIES;
+
+      this.currentEditLinkCategories = Array.isArray(link.categories)
+        ? [...link.categories]
+        : ['__uncategorized__', ...allCats.filter((c) => c.status === 'active').map((c) => c.name)];
+      this.currentEditLinkAddModels = Array.isArray(link.addModels) ? link.addModels.map(Number) : [];
+      this.currentEditLinkExcludeModels = Array.isArray(link.excludeModels) ? link.excludeModels.map(Number) : [];
+
+      this.currentEditLinkSelectedShoeIds = publishedShoes
+        .filter((shoe) => {
+          if (this.currentEditLinkExcludeModels.includes(shoe.id)) return false;
+          if (this.currentEditLinkAddModels.includes(shoe.id)) return true;
+          const shoeCats = shoe.categories || [];
+          if (shoeCats.length === 0) return this.currentEditLinkCategories.includes('__uncategorized__');
+          return shoeCats.some((c) => this.currentEditLinkCategories.includes(c));
+        })
+        .map((s) => s.id);
+
+      this.updateEditLinkProductsSummary();
+
+      // دکمه باز کردن مودال دو‌بخشی انتخاب محصولات در ویرایش لینک
+      const openEditPickerBtn = document.getElementById('btnOpenEditLinkProductPicker');
+      if (openEditPickerBtn && !openEditPickerBtn._hasPickerHandler) {
+        openEditPickerBtn._hasPickerHandler = true;
+        openEditPickerBtn.addEventListener('click', () => {
+          DYF_ProductPickerModal.open({
+            categories: this.currentEditLinkCategories,
+            addModels: this.currentEditLinkAddModels,
+            excludeModels: this.currentEditLinkExcludeModels,
+            selectedShoeIds: this.currentEditLinkSelectedShoeIds,
+            onConfirm: (res) => {
+              this.currentEditLinkSelectedShoeIds = res.selectedShoeIds;
+              this.currentEditLinkCategories = res.categories;
+              this.currentEditLinkAddModels = res.addModels;
+              this.currentEditLinkExcludeModels = res.excludeModels;
+              this.updateEditLinkProductsSummary();
+            },
+          });
+        });
+      }
 
       DYF_Modal.open('modalEditLink');
+    },
+
+    updateEditLinkProductsSummary() {
+      const badge = document.getElementById('editLinkProductsBadge');
+      const catsSummary = document.getElementById('editLinkCategoriesSummary');
+      const allShoes = (window.ShoesController && window.ShoesController.models) || DEFAULT_SHOES;
+      const publishedShoes = allShoes.filter((s) => s.status === 'published');
+      const allCats = (window.CategoriesController && window.CategoriesController.categories) || DEFAULT_CATEGORIES;
+
+      const selectedIds = this.currentEditLinkSelectedShoeIds || [];
+      const cats = this.currentEditLinkCategories || [];
+      const adds = this.currentEditLinkAddModels || [];
+      const excludes = this.currentEditLinkExcludeModels || [];
+
+      if (badge) {
+        badge.textContent = `${toPersianDigits(selectedIds.length)} مدل مجاز انتخاب شده (از ${toPersianDigits(publishedShoes.length)} مدل)`;
+      }
+
+      if (catsSummary) {
+        const allowedCats = cats.filter((c) => c !== '__uncategorized__');
+        const uncatAllowed = cats.includes('__uncategorized__');
+        const parts = [];
+
+        if (allowedCats.length === allCats.length && uncatAllowed) {
+          parts.push('تمام دسته‌بندی‌ها (دسترسی کامل)');
+        } else if (allowedCats.length > 0 || uncatAllowed) {
+          const count = allowedCats.length + (uncatAllowed ? 1 : 0);
+          parts.push(`${toPersianDigits(count)} دسته‌بندی مجاز`);
+        } else {
+          parts.push('بدون دسته‌بندی مجاز');
+        }
+
+        if (adds.length > 0) {
+          parts.push(`${toPersianDigits(adds.length)} مدل افزوده`);
+        }
+        if (excludes.length > 0) {
+          parts.push(`${toPersianDigits(excludes.length)} مدل مستثنا`);
+        }
+
+        catsSummary.textContent = parts.join(' • ');
+      }
     },
 
     handleSaveEditLink() {
@@ -4573,8 +4720,7 @@
         return;
       }
 
-      const prodData = DYF_ProductSelector.getData('editLinkProductsWrap');
-      if (!prodData.selectedShoeIds.length) {
+      if (!this.currentEditLinkSelectedShoeIds || !this.currentEditLinkSelectedShoeIds.length) {
         DYF_Toast.show({
           type: 'error',
           title: 'حداقل یک محصول انتخاب شود',
@@ -4589,9 +4735,9 @@
       link.recipientFa = nameFa;
       link.startDeadline = startDl;
       link.viewingDuration = viewDur;
-      link.categories = prodData.categories;
-      link.addModels = prodData.addModels;
-      link.excludeModels = prodData.excludeModels;
+      link.categories = this.currentEditLinkCategories;
+      link.addModels = this.currentEditLinkAddModels;
+      link.excludeModels = this.currentEditLinkExcludeModels;
 
       this.saveLinks();
       this.render();

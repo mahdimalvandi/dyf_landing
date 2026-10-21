@@ -3338,8 +3338,20 @@ textarea:focus-visible {
   }
 
   .dyf-dashboard-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 1.25rem;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .dyf-dashboard-col {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .dyf-dashboard-card {
+    min-width: 0;
+    width: 100%;
   }
 
   .dyf-product-grid {
@@ -3842,16 +3854,44 @@ textarea:focus-visible {
     padding: 0.65rem 0.75rem;
   }
 
-  /* داشبورد: ریسپانسیو اختصاصی جدول آخرین لینک‌ها در موبایل بدون اسکرول افقی */
+  /* داشبورد: ریسپانسیو اختصاصی جدول آخرین لینک‌ها و مشتریان فعال در موبایل بدون اسکرول افقی و بیرون‌زدگی */
+  .dyf-dashboard-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .dyf-dashboard-col {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .dyf-dashboard-card {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
   .dyf-dashboard-card .dyf-table-container {
-    overflow-x: visible !important;
+    overflow-x: hidden !important;
     padding: 0 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .dyf-dashboard-card .dyf-table {
     display: block !important;
     min-width: 0 !important;
     width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .dyf-dashboard-card .dyf-table thead {
@@ -3863,34 +3903,47 @@ textarea:focus-visible {
     flex-direction: column !important;
     gap: 0.65rem !important;
     padding: 0.85rem !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .dyf-dashboard-card .dyf-table tbody tr.dyf-dashboard-tr {
     display: grid !important;
-    grid-template-columns: 1fr auto !important;
-    gap: 0.45rem 0.75rem !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    gap: 0.5rem 0.75rem !important;
     align-items: center !important;
     padding: 0.75rem 0.85rem !important;
     background: var(--bg-surface-elevated) !important;
     border: 1px solid var(--border-subtle) !important;
     border-radius: var(--r-sm) !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .dyf-dashboard-card .dyf-table tbody tr.dyf-dashboard-tr td {
     padding: 0 !important;
     border: none !important;
+    min-width: 0 !important;
   }
 
   .dyf-dashboard-card .dyf-td-recipient {
     grid-column: 1 / 2;
     grid-row: 1 / 2;
     font-size: 0.86rem;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
 
   .dyf-dashboard-card .dyf-td-status {
     grid-column: 2 / 3;
     grid-row: 1 / 2;
     text-align: left;
+    flex-shrink: 0;
   }
 
   .dyf-dashboard-card .dyf-td-expires {
@@ -3898,23 +3951,36 @@ textarea:focus-visible {
     grid-row: 2 / 3;
     font-size: 0.74rem;
     display: flex !important;
-    gap: 0.4rem;
-    align-items: center;
-    border-top: 1px dashed rgba(255, 255, 255, 0.08);
-    padding-top: 0.4rem !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.15rem !important;
+    border-top: 1px dashed rgba(255, 255, 255, 0.08) !important;
+    padding-top: 0.45rem !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .dyf-dashboard-card .dyf-td-expires > div {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
   }
 
   .dyf-dashboard-card .dyf-td-actions {
     grid-column: 2 / 3;
     grid-row: 2 / 3;
-    border-top: 1px dashed rgba(255, 255, 255, 0.08);
-    padding-top: 0.4rem !important;
+    border-top: 1px dashed rgba(255, 255, 255, 0.08) !important;
+    padding-top: 0.45rem !important;
     display: flex !important;
-    justify-content: flex-end;
+    justify-content: flex-end !important;
+    flex-shrink: 0 !important;
   }
 
   .dyf-dashboard-card .dyf-td-actions .dyf-table-actions {
     gap: 0.35rem !important;
+    display: flex !important;
+    align-items: center !important;
   }
 
   .dyf-dashboard-card .dyf-td-actions .dyf-btn {
@@ -3922,6 +3988,7 @@ textarea:focus-visible {
     font-size: 0.72rem !important;
     height: 28px !important;
     gap: 0.3rem !important;
+    box-sizing: border-box !important;
   }
 
   .dyf-dashboard-card .dyf-td-actions .dyf-btn span {
@@ -3932,10 +3999,16 @@ textarea:focus-visible {
   .dyf-dashboard-active-cust-list {
     padding: 0.85rem !important;
     gap: 0.65rem !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .dyf-dashboard-active-cust-list > div {
     padding: 0.65rem 0.75rem !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   /* کامپوننت انتخابگر سلسله‌مراتبی محصولات (DYF_ProductSelector) */

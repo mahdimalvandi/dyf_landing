@@ -1238,10 +1238,29 @@
         <!-- مرحله دوم: تعیین محصولات مجاز -->
         <div class="dyf-wizard-panel" id="wizardPanel2">
           <div style="margin-bottom: 0.85rem; font-size: 0.84rem; color: var(--text-muted);">
-            مدل‌های کفش مجاز جهت نمایش برای این لینک را انتخاب فرمایید. با انتخاب هر دسته‌بندی، مدل‌های آن یکجا انتخاب می‌شوند:
+            مدل‌های کفش مجاز جهت نمایش برای این لینک را تعیین فرمایید:
           </div>
           <div id="wizardProductsWrap">
-            <!-- رندر پویا توسط کامپوننت انتخاب محصول -->
+            <div class="dyf-cust-products-trigger-card">
+              <div class="dyf-cust-products-trigger-info">
+                <div class="dyf-cust-products-trigger-line">
+                  <span id="wizardProductsBadge" class="dyf-badge dyf-badge-active">۱۸ مدل مجاز انتخاب شده</span>
+                  <span id="wizardCategoriesSummary" style="font-size: 0.78rem; color: var(--gold-light);">همه دسته‌بندی‌ها</span>
+                </div>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.35rem 0 0 0;">
+                  مدل‌های کفش مجاز این لینک به تفکیک دسته‌بندی یا تکی تعیین می‌شوند.
+                </p>
+              </div>
+              <button type="button" id="btnOpenWizardProductPicker" class="dyf-btn dyf-btn-primary dyf-btn-sm" style="flex-shrink: 0;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect width="7" height="7" x="3" y="3" rx="1"/>
+                  <rect width="7" height="7" x="14" y="3" rx="1"/>
+                  <rect width="7" height="7" x="14" y="14" rx="1"/>
+                  <rect width="7" height="7" x="3" y="14" rx="1"/>
+                </svg>
+                <span>انتخاب محصولات</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1359,7 +1378,26 @@
         <div class="dyf-form-group" style="margin-bottom: 1.25rem;">
           <label class="dyf-form-label">محصولات و مدل‌های مجاز این لینک</label>
           <div id="editLinkProductsWrap">
-            <!-- رندر پویا توسط کامپوننت انتخاب محصول -->
+            <div class="dyf-cust-products-trigger-card">
+              <div class="dyf-cust-products-trigger-info">
+                <div class="dyf-cust-products-trigger-line">
+                  <span id="editLinkProductsBadge" class="dyf-badge dyf-badge-active">۰ مدل مجاز انتخاب شده</span>
+                  <span id="editLinkCategoriesSummary" style="font-size: 0.78rem; color: var(--gold-light);">همه دسته‌بندی‌ها</span>
+                </div>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.35rem 0 0 0;">
+                  مدل‌های کفش مجاز این لینک به تفکیک دسته‌بندی یا تکی تعیین می‌شوند.
+                </p>
+              </div>
+              <button type="button" id="btnOpenEditLinkProductPicker" class="dyf-btn dyf-btn-primary dyf-btn-sm" style="flex-shrink: 0;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect width="7" height="7" x="3" y="3" rx="1"/>
+                  <rect width="7" height="7" x="14" y="3" rx="1"/>
+                  <rect width="7" height="7" x="14" y="14" rx="1"/>
+                  <rect width="7" height="7" x="3" y="14" rx="1"/>
+                </svg>
+                <span>انتخاب محصولات</span>
+              </button>
+            </div>
           </div>
         </div>
 
