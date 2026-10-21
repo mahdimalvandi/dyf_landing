@@ -6,6 +6,33 @@
 (() => {
   'use strict';
 
+  // تبدیل ارقام فارسی و عربی به انگلیسی
+  function toEnglishDigits(str) {
+    if (!str) return '';
+    const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    return String(str)
+      .replace(/[۰-۹]/g, (w) => persianDigits.indexOf(w))
+      .replace(/[٠-٩]/g, (w) => arabicDigits.indexOf(w));
+  }
+
+  // باز کردن مودال بزرگنمایی لایت‌باکس تصویر کفش
+  window.openShoeLightbox = function (url, title) {
+    const lbImg = document.getElementById('lightboxImg');
+    const lbCaption = document.getElementById('lightboxCaption');
+    if (lbImg) lbImg.src = url;
+    if (lbCaption) lbCaption.textContent = title || '';
+    if (window.DYF_Modal) {
+      window.DYF_Modal.open('modalShoeLightbox');
+    } else {
+      const modal = document.getElementById('modalShoeLightbox');
+      if (modal) {
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+      }
+    }
+  };
+
   // ==========================================================================
   // ۱. داده‌های پشتیبان پیش‌فرض در صورت خالی بودن LocalStorage
   // ==========================================================================
@@ -253,6 +280,8 @@
     },
   };
 
+  window.DYF_Modal = DYF_Modal;
+
   // ==========================================================================
   // ۴. کنترلر تجربه کاربری کاتالوگ (CatalogAppController)
   // ==========================================================================
@@ -298,6 +327,14 @@
     },
 
     bindEvents() {
+      // نرمال‌سازی ارقام ورودی شماره همراه
+      const phoneInput = document.getElementById('catPhoneInput');
+      if (phoneInput) {
+        phoneInput.addEventListener('input', (e) => {
+          e.target.value = toEnglishDigits(e.target.value).replace(/\D/g, '');
+        });
+      }
+
       // فرم شماره تلفن
       const phoneForm = document.getElementById('catPhoneForm');
       if (phoneForm) {
@@ -306,6 +343,47 @@
           this.handlePhoneSubmit();
         });
       }
+
+      // مدیریت خانه‌های مجزای ۵ رقمی OTP
+      const otpDigits = document.querySelectorAll('.cat-otp-digit');
+      otpDigits.forEach((digit, index) => {
+        digit.addEventListener('input', (e) => {
+          e.target.value = toEnglishDigits(e.target.value).replace(/\D/g, '');
+          if (e.target.value) {
+            digit.classList.add('is-filled');
+            if (index < otpDigits.length - 1) {
+              otpDigits[index + 1].focus();
+            }
+          } else {
+            digit.classList.remove('is-filled');
+          }
+        });
+
+        digit.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && !digit.value && index > 0) {
+            otpDigits[index - 1].focus();
+          }
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            this.handleOtpSubmit();
+          }
+        });
+
+        digit.addEventListener('paste', (e) => {
+          e.preventDefault();
+          const raw = (e.clipboardData || window.clipboardData).getData('text').trim();
+          const pasteData = toEnglishDigits(raw).replace(/\D/g, '');
+          if (pasteData.length >= 5) {
+            pasteData.slice(0, 5).split('').forEach((char, i) => {
+              if (otpDigits[i]) {
+                otpDigits[i].value = char;
+                otpDigits[i].classList.add('is-filled');
+              }
+            });
+            otpDigits[otpDigits.length - 1].focus();
+          }
+        });
+      });
 
       // فرم OTP
       const otpForm = document.getElementById('catOtpForm');
@@ -495,34 +573,45 @@
       document.getElementById('catPhoneForm').style.display = 'none';
       const otpForm = document.getElementById('catOtpForm');
       const targetPhone = document.getElementById('catOtpTargetPhone');
-      const otpInput = document.getElementById('catOtpInput');
+      const otpDigits = document.querySelectorAll('.cat-otp-digit');
 
       if (targetPhone) targetPhone.textContent = phone;
       if (otpForm) otpForm.style.display = 'block';
-      if (otpInput) {
-        otpInput.value = '';
-        setTimeout(() => otpInput.focus(), 150);
-      }
+
+      otpDigits.forEach((d) => {
+        d.value = '';
+        d.classList.remove('is-filled');
+      });
+
+      setTimeout(() => {
+        if (otpDigits[0]) otpDigits[0].focus();
+      }, 150);
 
       DYF_Toast.show({
         type: 'info',
-        title: 'کد تایید ارسال شد',
-        message: 'کد شبیه‌سازی‌شده «۱۲۳۴۵» جهت ورود پیامک گردید.',
-        duration: 6000,
+        title: 'کد تأیید ارسال شد',
+        message: 'کد یک‌بارمصرف ۵ رقمی به شماره شما پیامک شد.',
+        duration: 4000,
       });
     },
 
     handleOtpSubmit() {
-      const otpInput = document.getElementById('catOtpInput');
-      const otp = otpInput?.value.trim();
+      const otpDigits = document.querySelectorAll('.cat-otp-digit');
+      let otp = '';
+      if (otpDigits.length) {
+        otp = Array.from(otpDigits).map((d) => d.value.trim()).join('');
+      } else {
+        const otpInput = document.getElementById('catOtpInput');
+        otp = otpInput ? otpInput.value.trim() : '';
+      }
 
       if (otp !== '12345') {
         DYF_Toast.show({
           type: 'error',
-          title: 'کد تایید نادرست',
-          message: 'کد یک‌بارمصرف واردشده معتبر نمی‌باشد (کد شبیه‌سازی: ۱۲۳۴۵).',
+          title: 'کد تأیید نادرست',
+          message: 'کد یک‌بارمصرف واردشده صحیح نمی‌باشد.',
         });
-        otpInput?.focus();
+        if (otpDigits[0]) otpDigits[0].focus();
         return;
       }
 
@@ -597,11 +686,15 @@
       const appView = document.getElementById('catAppView');
       appView.style.display = 'flex';
 
-      // تنظیم اطلاعات هدر و خوش‌آمدگویی
+      // تنظیم اطلاعات هدر و خوش‌آمدگویی (فقط نام مشتری بدون نام شرکت یا پرانتز)
       const greetingEl = document.getElementById('catRecipientGreetingName');
       const badgeText = document.getElementById('catAccessScopeBadgeText');
 
-      if (greetingEl) greetingEl.textContent = `${session.recipientFa} (${session.customer || 'همکار گرامی'})`;
+      if (greetingEl) {
+        const rawName = session.recipientFa || 'همکار گرامی';
+        const cleanName = rawName.replace(/\(.*?\)/g, '').trim();
+        greetingEl.textContent = cleanName || 'همکار گرامی';
+      }
       if (badgeText) {
         badgeText.textContent =
           session.mode === 'link'
@@ -795,63 +888,40 @@
 
     renderShoeCardHtml(shoe) {
       const primaryImage = shoe.image || (shoe.gallery && shoe.gallery[0]) || 'assets/images/craft-formal.jpeg';
-      const mainCat = shoe.category || (shoe.categories && shoe.categories[0]) || 'لاین چرم دست‌ساز';
-
-      const colorDots = (shoe.colors || [
-        { name: 'مشکی', hex: '#1a1918' },
-        { name: 'قهوه‌ای', hex: '#4a2c1b' },
-      ])
-        .map((c) => `<span class="dyf-cat-color-dot" style="background-color: ${c.hex};" title="${c.name}"></span>`)
+      const categories = shoe.categories || (shoe.category ? [shoe.category] : ['کفش چرم دست‌دوز']);
+      const categoriesHtml = categories
+        .map((c) => `<span class="dyf-category-pill" style="font-size: 0.72rem; padding: 0.15rem 0.55rem; background: rgba(61, 36, 21, 0.45); border: 1px solid var(--border-subtle); border-radius: var(--r-sm); color: var(--gold-light);">${c}</span>`)
         .join('');
 
-      const sizesText = (shoe.sizes || ['۴۰ تا ۴۴']).slice(0, 5).join('، ');
+      const colorCount = (shoe.colors || []).length;
+      const sizeCount = (shoe.sizes || []).length;
 
       return `
-        <article class="dyf-cat-card" data-shoe-id="${shoe.id}">
+        <article class="dyf-cat-card" data-shoe-id="${shoe.id}" title="مشاهده جزئیات مدل">
           <div class="dyf-cat-media">
             <img src="${primaryImage}" alt="${shoe.title}" loading="lazy">
-            <div class="dyf-cat-media-badges">
-              <span class="dyf-badge dyf-badge-active" style="background: rgba(20, 18, 16, 0.85); backdrop-filter: blur(8px);">
-                ${mainCat}
-              </span>
-            </div>
             <div class="dyf-cat-code-badge">DYF-${shoe.id}</div>
           </div>
 
           <div class="dyf-cat-body">
             <h3 class="dyf-cat-title">${shoe.title}</h3>
-            <p class="dyf-cat-desc">${shoe.description || 'تولید دست‌دوز با کیفیت صادراتی و متریال درجه یک طبیعی.'}</p>
+            <div class="dyf-cat-categories">${categoriesHtml}</div>
 
-            <div class="dyf-cat-specs-grid">
-              <div class="dyf-cat-spec-item">
-                <span style="color: var(--text-dim); font-size: 0.7rem;">رویه چرم:</span>
-                <span style="font-weight: 700; color: var(--gold-light); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                  ${shoe.leather ? shoe.leather.split(' ')[0] + ' ' + (shoe.leather.split(' ')[1] || '') : 'چرم طبیعی اعلا'}
-                </span>
+            <div class="dyf-cat-specs-row">
+              <div style="display: flex; align-items: center; gap: 0.35rem;">
+                <span>تعداد رنگ:</span>
+                <span style="color: var(--text-main); font-weight: 700;">${colorCount}</span>
               </div>
-              <div class="dyf-cat-spec-item">
-                <span style="color: var(--text-dim); font-size: 0.7rem;">زیره و اسکلت:</span>
-                <span style="font-weight: 600; color: var(--text-ivory); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                  ${shoe.construction || 'دست‌دوز گودیر'}
-                </span>
+              <div style="display: flex; align-items: center; gap: 0.35rem;">
+                <span>تعداد سایز:</span>
+                <span style="color: var(--gold-light); font-weight: 700;">${sizeCount}</span>
               </div>
-              <div class="dyf-cat-spec-item" style="grid-column: span 2; border-top: 1px solid var(--border-subtle); padding-top: 0.35rem; margin-top: 0.2rem;">
-                <span style="color: var(--text-dim); font-size: 0.7rem;">سایزبندی موجود:</span>
-                <span style="font-family: var(--font-title); direction: ltr; text-align: right; color: var(--gold-light); font-weight: 700;">
-                  ${sizesText}
-                </span>
-              </div>
-            </div>
-
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
-              <div style="font-size: 0.74rem; color: var(--text-dim);">رنگ‌بندی:</div>
-              <div class="dyf-cat-colors-swatch">${colorDots}</div>
             </div>
 
             <div class="dyf-cat-footer-actions">
               <button type="button" class="dyf-btn dyf-btn-primary dyf-btn-sm js-view-dossier" data-shoe-id="${shoe.id}" style="width: 100%; justify-content: center;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                <span>مشاهده پرونده فنی مدل</span>
+                <span>مشاهده جزئیات</span>
               </button>
             </div>
           </div>
@@ -860,11 +930,21 @@
     },
 
     bindCardEvents(container) {
+      // کلیک روی کل کارت برای مشاهده شناسنامه و جزئیات
+      container.querySelectorAll('.dyf-cat-card').forEach((card) => {
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('button, a')) return;
+          const id = parseInt(card.getAttribute('data-shoe-id'), 10);
+          if (id) this.openShoeDossier(id);
+        });
+      });
+
+      // کلیک روی دکمه مشاهده جزئیات
       container.querySelectorAll('.js-view-dossier').forEach((btn) => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           const id = parseInt(btn.getAttribute('data-shoe-id'), 10);
-          this.openShoeDossier(id);
+          if (id) this.openShoeDossier(id);
         });
       });
     },
@@ -874,26 +954,33 @@
       if (!shoe) return;
 
       const titleEl = document.getElementById('dossierModalTitle');
-      const subEl = document.getElementById('dossierModalSubtitle');
       const shoeTitleEl = document.getElementById('dossierShoeTitle');
       const catPillEl = document.getElementById('dossierCategoryPill');
       const descEl = document.getElementById('dossierShoeDesc');
       const mainImg = document.getElementById('dossierMainImage');
+      const mainImgWrap = document.getElementById('dossierMainImageWrap');
       const thumbsWrap = document.getElementById('dossierThumbnailsWrap');
-
-      const leatherEl = document.getElementById('dossierLeatherType');
-      const soleEl = document.getElementById('dossierSoleType');
       const sizesEl = document.getElementById('dossierSizes');
       const colorsEl = document.getElementById('dossierColors');
 
-      if (titleEl) titleEl.textContent = `پرونده تخصصی مدل DYF-${shoe.id}`;
-      if (subEl) subEl.textContent = `${shoe.category || 'لاین انحصاری'} | ساختار ${shoe.construction || 'دست‌دوز'}`;
+      if (titleEl) titleEl.textContent = `شناسنامه مدل کفش (DYF-${shoe.id})`;
       if (shoeTitleEl) shoeTitleEl.textContent = shoe.title;
-      if (catPillEl) catPillEl.innerHTML = `<span class="dyf-badge dyf-badge-active">${shoe.category || 'چرم طبیعی'}</span>`;
+      if (catPillEl) {
+        const cat = shoe.category || (shoe.categories && shoe.categories[0]) || 'چرم طبیعی کارگاه';
+        catPillEl.innerHTML = `<span class="dyf-badge dyf-badge-active">${cat}</span>`;
+      }
       if (descEl) descEl.textContent = shoe.description || 'تولید دست‌دوز با کیفیت صادراتی و متریال درجه یک طبیعی.';
 
       const primaryImage = shoe.image || (shoe.gallery && shoe.gallery[0]) || 'assets/images/craft-formal.jpeg';
       if (mainImg) mainImg.src = primaryImage;
+
+      // کلیک تصویر اصلی برای نمایش لایت‌باکس تمام‌صفحه
+      if (mainImgWrap) {
+        mainImgWrap.onclick = () => {
+          const currentSrc = mainImg ? mainImg.src : primaryImage;
+          window.openShoeLightbox(currentSrc, `${shoe.title} (DYF-${shoe.id})`);
+        };
+      }
 
       // رندر ریزتصاویر
       const gallery = shoe.gallery && shoe.gallery.length ? shoe.gallery : [primaryImage, 'assets/images/shoes.jpeg'];
@@ -917,11 +1004,13 @@
         });
       }
 
-      if (leatherEl) leatherEl.textContent = shoe.leather || 'چرم طبیعی گاوی درجه یک';
-      if (soleEl) soleEl.textContent = `${shoe.sole || 'زیره چرم اشپالت'} (${shoe.construction || 'گودیرولت'})`;
-      if (sizesEl) sizesEl.textContent = (shoe.sizes || ['40', '41', '42', '43', '44']).join(', ');
+      if (sizesEl) {
+        const sizes = shoe.sizes || ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'];
+        sizesEl.textContent = sizes.join('، ');
+      }
       if (colorsEl) {
-        colorsEl.textContent = (shoe.colors || [{ name: 'مشکی' }, { name: 'قهوه‌ای' }]).map((c) => c.name).join('، ');
+        const colors = shoe.colors || [{ name: 'مشکی' }, { name: 'قهوه‌ای' }];
+        colorsEl.textContent = colors.map((c) => (typeof c === 'string' ? c : c.name)).join('، ');
       }
 
       DYF_Modal.open('modalShoeDossier');

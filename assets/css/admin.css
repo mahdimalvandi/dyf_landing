@@ -814,25 +814,21 @@ textarea:focus-visible {
 
 .dyf-stat-value {
   font-family: var(--font-title);
-  font-size: 2rem;
+  font-size: 2.75rem;
   font-weight: 900;
   color: var(--text-ivory);
   line-height: 1.1;
-  margin-bottom: 0.45rem;
-}
-
-.dyf-stat-footer {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 0.45rem;
-  font-size: 0.78rem;
-  color: var(--text-dim);
 }
 
-.dyf-stat-trend {
-  color: var(--status-published);
-  font-weight: 700;
-  direction: ltr;
+.dyf-stat-value span {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-muted);
 }
 
 /* دو ستون اصلی داشبورد */
@@ -1109,6 +1105,7 @@ textarea:focus-visible {
   font-size: 0.74rem;
   font-weight: 700;
   line-height: 1.2;
+  white-space: nowrap;
 }
 
 .dyf-badge::before {
@@ -1125,9 +1122,11 @@ textarea:focus-visible {
   color: #4cd964;
 }
 
+.dyf-badge-pending,
 .dyf-badge-draft {
-  background: var(--status-draft-bg);
-  color: var(--leather-caramel);
+  background: rgba(210, 153, 34, 0.16);
+  border: 1px solid rgba(210, 153, 34, 0.35);
+  color: #d29922;
 }
 
 .dyf-badge-archived {
@@ -1144,6 +1143,14 @@ textarea:focus-visible {
 .dyf-badge-info {
   background: var(--status-info-bg);
   color: var(--status-info);
+}
+
+.dyf-table-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
 }
 
 /* وضعیت خالی (Empty State) */
@@ -1250,17 +1257,25 @@ textarea:focus-visible {
 }
 
 .dyf-modal-close {
-  background: none;
-  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
   color: var(--text-muted);
   cursor: pointer;
-  padding: 0.35rem;
-  border-radius: 4px;
-  transition: color var(--transition-fast);
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-sm);
+  font-size: 1.6rem;
+  line-height: 1;
+  transition: all var(--transition-fast);
 }
 
 .dyf-modal-close:hover {
-  color: var(--text-ivory);
+  background: rgba(216, 178, 100, 0.15);
+  border-color: var(--gold-primary);
+  color: var(--gold-light);
 }
 
 .dyf-modal-body {
@@ -1678,6 +1693,7 @@ textarea:focus-visible {
   flex-direction: column;
   transition: all var(--transition-normal);
   position: relative;
+  cursor: pointer;
 }
 
 .dyf-product-card:hover {
@@ -1752,7 +1768,7 @@ textarea:focus-visible {
 
 /* بدنه محتوای کارت محصول */
 .dyf-product-body {
-  padding: 1.25rem;
+  padding: 0.95rem 1.15rem;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -1760,10 +1776,10 @@ textarea:focus-visible {
 
 .dyf-product-title {
   font-family: var(--font-title);
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   font-weight: 800;
   color: var(--text-ivory);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
   line-height: 1.35;
 }
 
@@ -1771,7 +1787,7 @@ textarea:focus-visible {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.55rem;
 }
 
 .dyf-category-pill {
@@ -2009,11 +2025,10 @@ textarea:focus-visible {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  padding: 0.75rem 1.25rem;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--r-md);
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  background: transparent;
+  border: none;
   margin-top: 1rem;
   margin-bottom: 2rem;
 }

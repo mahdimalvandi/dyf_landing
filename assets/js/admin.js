@@ -1084,7 +1084,47 @@
 
     init() {
       this.renderTable(DYF_DATA.recentAccessLinks);
+      this.renderActiveCustomers();
       this.bindActions();
+    },
+
+    renderActiveCustomers() {
+      const container = document.getElementById('dashboardActiveCustomersList');
+      if (!container) return;
+
+      let customers = [];
+      try {
+        const saved = localStorage.getItem('dyf_admin_customers_v1');
+        customers = saved ? JSON.parse(saved) : DEFAULT_CUSTOMERS;
+      } catch (e) {
+        customers = DEFAULT_CUSTOMERS;
+      }
+
+      const activeCusts = customers.filter((c) => c.status === 'active').slice(0, 5);
+      if (!activeCusts.length) {
+        container.innerHTML = '<div style="color: var(--text-dim); font-size: 0.8rem; text-align: center; padding: 1rem;">مشتری فعالی ثبت نشده است.</div>';
+        return;
+      }
+
+      container.innerHTML = activeCusts
+        .map((c) => {
+          const initials = (c.nameFa || 'م').split(' ').map((p) => p[0]).slice(0, 2).join('‌');
+          return `
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.65rem 0.85rem; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--r-sm);">
+            <div style="display: flex; align-items: center; gap: 0.7rem;">
+              <div class="dyf-customer-avatar" style="width: 36px; height: 36px; font-size: 0.82rem; flex-shrink: 0;">${initials}</div>
+              <div>
+                <div style="font-weight: 700; color: var(--text-ivory); font-size: 0.86rem;">${c.nameFa}</div>
+                <div style="font-size: 0.74rem; color: var(--text-muted);">${c.shop || c.city || 'همکار کارگاه'}</div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span class="dyf-badge dyf-badge-active" style="font-size: 0.7rem; padding: 0.15rem 0.5rem; white-space: nowrap;">فعال</span>
+            </div>
+          </div>
+        `;
+        })
+        .join('');
     },
 
     renderTable(links) {
@@ -1098,14 +1138,9 @@
       if (this.emptyState) this.emptyState.style.display = 'none';
 
       const statusBadges = {
-        active: `<span class="dyf-badge dyf-badge-active">فعال</span>`,
-        expired: `<span class="dyf-badge dyf-badge-expired">منقضی</span>`,
-        pending: `<span class="dyf-badge dyf-badge-draft">در انتظار ورود</span>`,
-      };
-
-      const authBadges = {
-        otp: `<span style="color: var(--gold-light); font-size: 0.76rem;">همراه با OTP</span>`,
-        direct: `<span style="color: var(--text-muted); font-size: 0.76rem;">ورود مستقیم</span>`,
+        active: `<span class="dyf-badge dyf-badge-active" style="white-space: nowrap;">فعال</span>`,
+        expired: `<span class="dyf-badge dyf-badge-expired" style="white-space: nowrap;">منقضی</span>`,
+        pending: `<span class="dyf-badge dyf-badge-pending" style="white-space: nowrap;">در انتظار ورود</span>`,
       };
 
       this.tableBody.innerHTML = links
@@ -1114,19 +1149,14 @@
         <tr>
           <td>
             <div style="font-weight: 700; color: var(--text-ivory);">${lnk.recipientFa}</div>
-            <div style="font-size: 0.74rem; color: var(--text-dim); font-family: var(--font-serif);">${lnk.recipientEn}</div>
           </td>
-          <td class="dyf-col-customer">
-            <div style="font-size: 0.86rem; color: var(--text-main); font-weight: 600;">${lnk.customer}</div>
-          </td>
-          <td class="dyf-col-auth">${authBadges[lnk.authType] || '-'}</td>
-          <td>${statusBadges[lnk.status] || lnk.status}</td>
+          <td>${statusBadges[lnk.status] || `<span class="dyf-badge dyf-badge-pending" style="white-space: nowrap;">${lnk.status}</span>`}</td>
           <td class="dyf-col-expires">
-            <div style="font-size: 0.8rem; color: var(--text-muted);">${lnk.expiresAt}</div>
-            <div style="font-size: 0.7rem; color: var(--text-dim);">${lnk.duration}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); white-space: nowrap;">${lnk.expiresAt}</div>
+            <div style="font-size: 0.7rem; color: var(--text-dim); white-space: nowrap;">${lnk.duration}</div>
           </td>
           <td>
-            <div class="dyf-table-actions">
+            <div class="dyf-table-actions" style="display: flex; flex-direction: row; gap: 0.45rem; align-items: center; white-space: nowrap;">
               <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-copy-link" data-url="${lnk.url}" title="کپی لینک اختصاصی">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
                 <span class="dyf-btn-text-responsive">کپی</span>
@@ -1730,7 +1760,7 @@
 
       if (bodyEl) {
         bodyEl.innerHTML = `
-          <div class="dyf-dossier-grid" style="display: grid; grid-template-columns: 310px 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+          <div class="dyf-dossier-grid" style="display: grid; grid-template-columns: 380px 1fr; gap: 2rem; margin-bottom: 1.5rem;">
             <div>
               <div 
                 style="position: relative; width: 100%; aspect-ratio: 1; border-radius: var(--r-md); overflow: hidden; background: #0e0c0a; border: 1px solid var(--border-medium); margin-bottom: 0.75rem; cursor: zoom-in;" 
@@ -1839,7 +1869,7 @@
 
       // به‌روزرسانی کارت داشبورد
       const dashStat = document.querySelector('.dyf-stat-card .dyf-stat-value');
-      if (dashStat) dashStat.innerHTML = `${allCount} <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted);">مدل</span>`;
+      if (dashStat) dashStat.innerHTML = `${allCount} <span>مدل</span>`;
     },
 
     getFilteredModels() {
@@ -1957,14 +1987,13 @@
 
     renderCardHtml(model) {
       const primaryMedia = (model.media || []).find((m) => m.isPrimary) || (model.media && model.media[0]) || { url: 'assets/images/shoes.jpeg' };
-      const mediaCount = (model.media || []).length;
 
       const categoriesHtml = (model.categories || [])
         .map((c) => `<span class="dyf-category-pill">${c}</span>`)
         .join('');
 
       return `
-        <article class="dyf-product-card" data-id="${model.id}">
+        <article class="dyf-product-card" data-id="${model.id}" title="مشاهده شناسنامه و جزئیات">
           <div class="dyf-product-thumb-wrap">
             <img src="${primaryMedia.url}" alt="${model.title}" class="dyf-product-thumb" loading="lazy">
             <div class="dyf-product-id-badge">DYF-${model.id}</div>
@@ -1973,29 +2002,16 @@
           <div class="dyf-product-body">
             <h3 class="dyf-product-title">${model.title}</h3>
             <div class="dyf-product-categories">${categoriesHtml}</div>
-            <p class="dyf-product-desc">${model.description || '-'}</p>
 
             <div class="dyf-product-specs-row">
               <div style="display: flex; align-items: center; gap: 0.35rem;">
-                <span>رنگ‌ها:</span>
-                <span style="color: var(--text-main); font-weight: 600;">${(model.colors || []).join('، ')}</span>
+                <span>تعداد رنگ:</span>
+                <span style="color: var(--text-main); font-weight: 700;">${(model.colors || []).length}</span>
               </div>
-              <div>
-                <span>سایزها:</span>
-                <span style="color: var(--gold-light); font-weight: 700;">${(model.sizes || []).join(' ')}</span>
+              <div style="display: flex; align-items: center; gap: 0.35rem;">
+                <span>تعداد سایز:</span>
+                <span style="color: var(--gold-light); font-weight: 700;">${(model.sizes || []).length}</span>
               </div>
-            </div>
-          </div>
-
-          <div class="dyf-product-actions-footer">
-            <div style="display: flex; gap: 0.4rem;">
-              <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-edit-shoe" data-id="${model.id}">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
-                <span>ویرایش</span>
-              </button>
-              <button type="button" class="dyf-btn dyf-btn-specular dyf-btn-sm js-dossier-shoe" data-id="${model.id}">
-                <span>شناسنامه</span>
-              </button>
             </div>
           </div>
         </article>
@@ -2037,7 +2053,16 @@
     },
 
     bindCardActions(container) {
-      // ویرایش
+      // کلیک روی کارت برای مشاهده پرونده و جزئیات مدل
+      container.querySelectorAll('.dyf-product-card').forEach((card) => {
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('button, a')) return;
+          const id = parseInt(card.getAttribute('data-id'), 10);
+          if (id) this.openDossierModal(id);
+        });
+      });
+
+      // ویرایش در حالت جدول
       container.querySelectorAll('.js-edit-shoe').forEach((btn) => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -2046,7 +2071,7 @@
         });
       });
 
-      // شناسنامه فنی
+      // شناسنامه فنی در حالت جدول
       container.querySelectorAll('.js-dossier-shoe').forEach((btn) => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -3183,7 +3208,7 @@
 
       // داشبورد
       const dashStat = document.querySelectorAll('.dyf-stat-card .dyf-stat-value')[1];
-      if (dashStat) dashStat.innerHTML = `${activeCount} <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted);">مشتری</span>`;
+      if (dashStat) dashStat.innerHTML = `${activeCount} <span>مشتری</span>`;
     },
 
     getFilteredCustomers() {
@@ -4098,7 +4123,7 @@
 
       // داشبورد کارت لینک‌ها
       const dashStat = document.querySelectorAll('.dyf-stat-card .dyf-stat-value')[2];
-      if (dashStat) dashStat.innerHTML = `${activeCount} <span style=\"font-size: 0.95rem; font-weight: 500; color: var(--text-muted);\">لینک</span>`;
+      if (dashStat) dashStat.innerHTML = `${activeCount} <span>لینک</span>`;
     },
 
     getFilteredLinks() {

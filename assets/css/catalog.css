@@ -10,7 +10,10 @@
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  background: radial-gradient(circle at 50% 20%, rgba(61, 36, 21, 0.45) 0%, rgba(20, 18, 16, 0.95) 75%), var(--bg-deep);
+  background:
+    radial-gradient(circle at 50% 20%, rgba(61, 36, 21, 0.45) 0%, transparent 65%),
+    radial-gradient(circle at 80% 80%, rgba(216, 178, 100, 0.08) 0%, transparent 50%),
+    url('../images/hero-bg.jpeg') center/cover no-repeat;
   position: relative;
   overflow: hidden;
 }
@@ -18,19 +21,16 @@
 .dyf-cat-login-wrapper::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: radial-gradient(rgba(216, 178, 100, 0.04) 1px, transparent 1px);
-  background-size: 32px 32px;
-  pointer-events: none;
+  inset: 0;
+  background: rgba(20, 18, 16, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .dyf-cat-login-card {
   width: 100%;
-  max-width: 480px;
-  background: rgba(30, 26, 23, 0.92);
+  max-width: 460px;
+  background: rgba(27, 23, 20, 0.94);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border-medium);
@@ -43,9 +43,9 @@
 }
 
 .dyf-cat-brand-emblem {
-  width: 72px;
-  height: 72px;
-  margin: 0 auto 1.25rem;
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 1.35rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -56,7 +56,7 @@
 }
 
 .dyf-cat-brand-emblem img {
-  width: 46px;
+  width: 58px;
   height: auto;
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6));
 }
@@ -234,23 +234,24 @@
 .dyf-cat-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--r-lg);
+  border-radius: var(--r-md);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   transition: all var(--transition-normal);
   position: relative;
+  cursor: pointer;
 }
 
 .dyf-cat-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-4px);
   border-color: var(--gold-primary);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), 0 0 30px rgba(216, 178, 100, 0.12);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), 0 0 24px rgba(216, 178, 100, 0.1);
 }
 
 .dyf-cat-media {
   position: relative;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 10;
   background: #0f0d0b;
   overflow: hidden;
 }
@@ -259,17 +260,17 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .dyf-cat-card:hover .dyf-cat-media img {
-  transform: scale(1.06);
+  transform: scale(1.05);
 }
 
 .dyf-cat-media-badges {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  top: 0.85rem;
+  right: 0.85rem;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -293,7 +294,7 @@
 }
 
 .dyf-cat-body {
-  padding: 1.5rem;
+  padding: 1.15rem 1.25rem;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -301,66 +302,35 @@
 
 .dyf-cat-title {
   font-family: var(--font-title);
-  font-size: 1.18rem;
+  font-size: 1.05rem;
   font-weight: 800;
   color: var(--text-ivory);
   margin-bottom: 0.35rem;
   line-height: 1.35;
 }
 
-.dyf-cat-desc {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  line-height: 1.6;
-  margin-bottom: 1.25rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.dyf-cat-specs-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.6rem;
-  background: var(--bg-surface-elevated);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--r-sm);
-  padding: 0.75rem 0.85rem;
-  margin-bottom: 1.25rem;
-  font-size: 0.76rem;
-}
-
-.dyf-cat-spec-item {
+.dyf-cat-categories {
   display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.65rem;
 }
 
-.dyf-cat-colors-swatch {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-bottom: 1.25rem;
-}
-
-.dyf-cat-color-dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  display: inline-block;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-}
-
-.dyf-cat-footer-actions {
+.dyf-cat-specs-row {
   margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(216, 178, 100, 0.08);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border-subtle);
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin-bottom: 0.9rem;
+}
+
+.dyf-cat-footer-actions {
+  display: flex;
+  align-items: center;
 }
 
 /* صفحه قفل انقضای نشست یا خطای دسترسی */
@@ -395,10 +365,28 @@
   justify-content: center;
 }
 
+/* پوسته نمای اصلی کاتالوگ با پس‌زمینه چرم آتلیه مشابه هیرو */
+#catAppView {
+  min-height: 100vh;
+  position: relative;
+  background-image:
+    linear-gradient(180deg,
+      rgba(20, 18, 16, 0.88) 0%,
+      rgba(38, 22, 13, 0.72) 50%,
+      rgba(20, 18, 16, 0.95) 100%
+    ),
+    radial-gradient(circle at 75% 25%, rgba(216, 178, 100, 0.15) 0%, transparent 60%),
+    url('../images/hero-bg.jpeg');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
 /* مودال مشاهده جزئیات تخصصی مدل کفش */
 .dyf-cat-dossier-modal {
-  max-width: 860px;
-  width: 100%;
+  max-width: 960px;
+  width: 95%;
 }
 
 .dyf-cat-dossier-layout {
