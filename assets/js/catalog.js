@@ -468,12 +468,27 @@
       if (resetBtn) {
         resetBtn.addEventListener('click', () => {
           this.searchQuery = '';
-          this.selectedCategory = 'all';
           if (searchInput) searchInput.value = '';
-          document.querySelectorAll('.dyf-cat-filter-btn').forEach((btn) => {
-            btn.classList.toggle('is-active', btn.getAttribute('data-cat') === 'all');
-          });
-          this.renderCatalogGrid();
+          this.setCategoryFilter('all');
+        });
+      }
+
+      // دراپ‌داون انتخابی دسته‌بندی در موبایل
+      const dropdownWrap = document.getElementById('catCategoryDropdown');
+      const dropdownTrigger = document.getElementById('catDropdownTrigger');
+      if (dropdownTrigger && dropdownWrap) {
+        dropdownTrigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isOpen = dropdownWrap.classList.contains('is-open');
+          dropdownWrap.classList.toggle('is-open', !isOpen);
+          dropdownTrigger.setAttribute('aria-expanded', !isOpen ? 'true' : 'false');
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('#catCategoryDropdown')) {
+            dropdownWrap.classList.remove('is-open');
+            dropdownTrigger.setAttribute('aria-expanded', 'false');
+          }
         });
       }
 
@@ -823,8 +838,8 @@
       if (badgeText) {
         badgeText.textContent =
           session.mode === 'link'
-            ? `دسترسی اختصاصی با لینک ${session.id} | احراز هویت‌شده`
-            : `دسترسی مستقیم بنکداری | ورود پیامکی ${session.recipientFa}`;
+            ? 'دسترسی اختصاصی با لینک'
+            : 'دسترسی مجاز همکاران';
       }
 
       // محاسبه مدل‌های مجاز بر اساس فرمول تجاری
@@ -939,7 +954,9 @@
 
     renderCategoryTabs() {
       const container = document.getElementById('catCategoryFilterTabs');
-      if (!container) return;
+      const dropdownMenu = document.getElementById('catDropdownMenu');
+      const dropdownLabel = document.getElementById('catDropdownSelectedLabel');
+      const dropdownWrap = document.getElementById('catCategoryDropdown');
 
       // جمع‌آوری دسته‌بندی‌های یکتا میان کفش‌های مجاز
       const catSet = new Set();
@@ -950,22 +967,83 @@
 
       const uniqueCats = Array.from(catSet);
 
-      let html = `<button type="button" class="dyf-cat-filter-btn is-active" data-cat="all">همه مدل‌های مجاز (${this.eligibleShoes.length})</button>`;
-      uniqueCats.forEach((cat) => {
-        const count = this.eligibleShoes.filter((s) => (s.categories || [s.category]).includes(cat)).length;
-        html += `<button type="button" class="dyf-cat-filter-btn" data-cat="${cat}">${cat} (${count})</button>`;
-      });
-
-      container.innerHTML = html;
-
-      container.querySelectorAll('.dyf-cat-filter-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          container.querySelectorAll('.dyf-cat-filter-btn').forEach((b) => b.classList.remove('is-active'));
-          btn.classList.add('is-active');
-          this.selectedCategory = btn.getAttribute('data-cat') || 'all';
-          this.renderCatalogGrid();
+      // ۱. رندر تب‌های افقی دسکتاپ
+      if (container) {
+        let html = `<button type="button" class="dyf-cat-filter-btn is-active" data-cat="all">همه مدل‌های مجاز (${this.eligibleShoes.length})</button>`;
+        uniqueCats.forEach((cat) => {
+          const count = this.eligibleShoes.filter((s) => (s.categories || [s.category]).includes(cat)).length;
+          html += `<button type="button" class="dyf-cat-filter-btn" data-cat="${cat}">${cat} (${count})</button>`;
         });
+        container.innerHTML = html;
+
+        container.querySelectorAll('.dyf-cat-filter-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const cat = btn.getAttribute('data-cat') || 'all';
+            this.setCategoryFilter(cat);
+          });
+        });
+      }
+
+      // ۲. رندر گزینه‌های دراپ‌داون موبایل
+      if (dropdownMenu) {
+        let dropHtml = `
+          <button type="button" class="dyf-cat-dropdown-item is-active" data-cat="all">
+            <span class="dyf-cat-dropdown-item-title">همه مدل‌های مجاز</span>
+            <span class="dyf-cat-dropdown-item-count">${this.eligibleShoes.length} مدل</span>
+          </button>
+        `;
+        uniqueCats.forEach((cat) => {
+          const count = this.eligibleShoes.filter((s) => (s.categories || [s.category]).includes(cat)).length;
+          dropHtml += `
+            <button type="button" class="dyf-cat-dropdown-item" data-cat="${cat}">
+              <span class="dyf-cat-dropdown-item-title">${cat}</span>
+              <span class="dyf-cat-dropdown-item-count">${count} مدل</span>
+            </button>
+          `;
+        });
+        dropdownMenu.innerHTML = dropHtml;
+
+        dropdownMenu.querySelectorAll('.dyf-cat-dropdown-item').forEach((item) => {
+          item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const cat = item.getAttribute('data-cat') || 'all';
+            this.setCategoryFilter(cat);
+            if (dropdownWrap) {
+              dropdownWrap.classList.remove('is-open');
+              const trigger = document.getElementById('catDropdownTrigger');
+              if (trigger) trigger.setAttribute('aria-expanded', 'false');
+            }
+          });
+        });
+      }
+
+      if (dropdownLabel) {
+        dropdownLabel.textContent = `همه مدل‌های مجاز (${this.eligibleShoes.length})`;
+      }
+    },
+
+    setCategoryFilter(cat) {
+      this.selectedCategory = cat || 'all';
+
+      // به‌روزرسانی تب‌های دسکتاپ
+      document.querySelectorAll('.dyf-cat-filter-btn').forEach((btn) => {
+        btn.classList.toggle('is-active', btn.getAttribute('data-cat') === this.selectedCategory);
       });
+
+      // به‌روزرسانی دراپ‌داون موبایل
+      const dropdownLabel = document.getElementById('catDropdownSelectedLabel');
+      document.querySelectorAll('.dyf-cat-dropdown-item').forEach((item) => {
+        const itemCat = item.getAttribute('data-cat') || 'all';
+        const isActive = itemCat === this.selectedCategory;
+        item.classList.toggle('is-active', isActive);
+        if (isActive && dropdownLabel) {
+          const title = item.querySelector('.dyf-cat-dropdown-item-title')?.textContent || '';
+          const count = item.querySelector('.dyf-cat-dropdown-item-count')?.textContent || '';
+          dropdownLabel.textContent = `${title} (${count})`;
+        }
+      });
+
+      this.renderCatalogGrid();
     },
 
     getFilteredShoes() {

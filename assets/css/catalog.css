@@ -8,32 +8,80 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(20, 18, 16, 0.92);
+  background: rgba(20, 18, 16, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-subtle);
-  padding: 0.85rem 1.5rem;
+  padding: 0.85rem 1.75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 1.5rem;
+}
+
+.dyf-cat-nav-main {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
 }
 
 .dyf-cat-brand-bar {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
 }
 
-.dyf-cat-brand-bar img {
+.dyf-cat-brand-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+
+.dyf-cat-logo {
   height: 38px;
   width: auto;
 }
 
-.dyf-cat-session-meta {
+.dyf-cat-brand-title {
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: var(--text-ivory);
+  letter-spacing: -0.01em;
+}
+
+.dyf-cat-nav-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
+}
+
+.dyf-cat-user-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.dyf-cat-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.88rem;
+  color: var(--gold-light);
+  font-weight: 700;
+}
+
+.dyf-cat-recipient-name {
+  white-space: nowrap;
+}
+
+.dyf-cat-access-info {
+  display: flex;
+  align-items: center;
+}
+
+.dyf-cat-logout-btn {
+  gap: 0.4rem;
 }
 
 .dyf-cat-timer-pill {
@@ -104,13 +152,167 @@
 /* نوار فیلتر و جست‌وجوی کاتالوگ */
 .dyf-cat-toolbar {
   max-width: 1240px;
-  margin: 2rem auto 1.5rem;
+  margin: 1.75rem auto 1.5rem;
   padding: 0 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1.25rem;
-  flex-wrap: wrap;
+}
+
+.dyf-cat-filter-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* دراپ‌داون بازشونده دسته‌بندی برای موبایل */
+.dyf-cat-category-dropdown {
+  display: none;
+  position: relative;
+  width: 100%;
+}
+
+.dyf-cat-dropdown-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--r-md);
+  padding: 0.75rem 1rem;
+  color: var(--text-ivory);
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.dyf-cat-dropdown-trigger:hover,
+.dyf-cat-dropdown-trigger:focus-visible {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 16px var(--gold-glow);
+}
+
+.dyf-cat-dropdown-trigger-text {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--text-ivory);
+}
+
+.dyf-cat-dropdown-arrow {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--gold-light);
+  flex-shrink: 0;
+}
+
+.dyf-cat-category-dropdown.is-open .dyf-cat-dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.dyf-cat-category-dropdown.is-open .dyf-cat-dropdown-trigger {
+  border-color: var(--gold-primary);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.dyf-cat-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 250;
+  background: rgba(23, 19, 17, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--gold-primary);
+  border-top: none;
+  border-bottom-left-radius: var(--r-md);
+  border-bottom-right-radius: var(--r-md);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85);
+  padding: 0.4rem;
+  max-height: 270px;
+  overflow-y: auto;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.dyf-cat-category-dropdown.is-open .dyf-cat-dropdown-menu {
+  display: flex;
+  animation: dropdownFadeDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dropdownFadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dyf-cat-dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 0.85rem;
+  background: transparent;
+  border: none;
+  border-radius: var(--r-sm);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: right;
+}
+
+.dyf-cat-dropdown-item:hover {
+  background: rgba(61, 36, 21, 0.6);
+  color: var(--gold-light);
+}
+
+.dyf-cat-dropdown-item.is-active {
+  background: rgba(61, 36, 21, 0.95);
+  border: 1px solid rgba(216, 178, 100, 0.35);
+  color: var(--gold-light);
+  font-weight: 700;
+}
+
+.dyf-cat-dropdown-item-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dyf-cat-dropdown-item.is-active .dyf-cat-dropdown-item-title::before {
+  content: '✓';
+  color: var(--gold-light);
+  font-weight: 900;
+  margin-left: 0.25rem;
+}
+
+.dyf-cat-dropdown-item-count {
+  font-size: 0.76rem;
+  background: rgba(20, 18, 16, 0.8);
+  border: 1px solid var(--border-subtle);
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--r-full);
+  color: var(--text-dim);
+}
+
+.dyf-cat-dropdown-item.is-active .dyf-cat-dropdown-item-count {
+  border-color: var(--gold-primary);
+  color: var(--gold-light);
 }
 
 .dyf-cat-filter-tabs {
@@ -119,6 +321,12 @@
   gap: 0.4rem;
   overflow-x: auto;
   padding-bottom: 0.25rem;
+}
+
+.dyf-cat-search-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .dyf-cat-filter-btn {
@@ -315,15 +523,126 @@
     pointer-events: none !important;
   }
 
+  /* پنهان‌سازی تب‌های افقی و فعال‌سازی دراپ‌داون در موبایل */
+  .dyf-cat-filter-tabs {
+    display: none !important;
+  }
+
+  .dyf-cat-category-dropdown {
+    display: block;
+    width: 100%;
+  }
+
+  /* هدر دو ردیفه متوازن و منظم در موبایل */
+  .dyf-cat-navbar {
+    padding: 0.65rem 1rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.55rem;
+  }
+
+  .dyf-cat-nav-main {
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .dyf-cat-logo {
+    height: 32px;
+  }
+
+  .dyf-cat-brand-title {
+    font-size: 0.96rem;
+  }
+
+  .dyf-cat-nav-actions {
+    gap: 0.5rem;
+  }
+
+  .dyf-cat-logout-btn {
+    padding: 0.35rem 0.65rem !important;
+    font-size: 0.78rem !important;
+  }
+
+  .dyf-cat-user-strip {
+    width: 100%;
+    padding: 0.45rem 0.75rem;
+    background: rgba(30, 24, 20, 0.7);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-sm);
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    box-sizing: border-box;
+  }
+
+  .dyf-cat-user-info {
+    font-size: 0.82rem;
+    gap: 0.35rem;
+  }
+
+  .dyf-cat-recipient-name {
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #catAccessScopeBadgeText {
+    font-size: 0.68rem !important;
+    padding: 0.2rem 0.55rem !important;
+    white-space: nowrap;
+  }
+
+  /* نوار فیلتر و جست‌وجو در موبایل */
+  .dyf-cat-toolbar {
+    margin: 1.25rem auto 1rem;
+    padding: 0 1rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .dyf-cat-filter-wrapper {
+    width: 100%;
+  }
+
+  .dyf-cat-search-group {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .dyf-toolbar-search {
+    flex: 1;
+    min-width: 0 !important;
+    width: 100%;
+  }
+
+  .dyf-quick-search-input {
+    font-size: 15px !important;
+  }
+
+  #catModelsCountBadge {
+    font-size: 0.72rem !important;
+    padding: 0.35rem 0.6rem !important;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* شبکه کارت‌ها در موبایل */
+  .dyf-cat-grid {
+    grid-template-columns: 1fr;
+    padding: 0 1rem;
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+  }
+
+  /* مودال جزئیات در موبایل */
   .dyf-cat-dossier-layout {
     grid-template-columns: 1fr;
     gap: 1.25rem;
-  }
-  .dyf-cat-navbar {
-    padding: 0.75rem 1rem;
-    flex-wrap: wrap;
-  }
-  .dyf-cat-grid {
-    grid-template-columns: 1fr;
+    padding: 1rem !important;
   }
 }

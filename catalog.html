@@ -140,42 +140,76 @@
   <div id="catAppView" style="display: none; min-height: 100vh; flex-direction: column;">
     <!-- نوار چسبان ناوبری آتلیه -->
     <header class="dyf-cat-navbar">
-      <div class="dyf-cat-brand-bar">
-        <a href="catalog.html" style="display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
-          <img src="assets/images/logo.png" alt="DYF" style="height: 40px; width: auto;">
-          <span style="font-family: var(--font-title); font-weight: 800; font-size: 1.15rem; color: var(--text-ivory);">کاتالوگ خصوصی DYF</span>
-        </a>
+      <div class="dyf-cat-nav-main">
+        <div class="dyf-cat-brand-bar">
+          <a href="catalog.html" class="dyf-cat-brand-link">
+            <img src="assets/images/logo.png" alt="DYF" class="dyf-cat-logo">
+            <span class="dyf-cat-brand-title">کاتالوگ خصوصی DYF</span>
+          </a>
+        </div>
+
+        <div class="dyf-cat-nav-actions">
+          <!-- تایمر شمارش معکوس نشست -->
+          <div id="catSessionTimerPill" class="dyf-cat-timer-pill" style="display: none;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span><strong id="catCountdownDisplay">۱۵:۰۰</strong></span>
+          </div>
+
+          <!-- دکمه خروج -->
+          <button type="button" id="catLogoutBtn" class="dyf-btn dyf-btn-outline dyf-btn-sm dyf-cat-logout-btn" title="خروج از حساب کاتالوگ">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+            <span>خروج</span>
+          </button>
+        </div>
       </div>
 
-      <div class="dyf-cat-session-meta">
-        <!-- تایمر شمارش معکوس نشست -->
-        <div id="catSessionTimerPill" class="dyf-cat-timer-pill" style="display: none;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <span>زمان باقی‌مانده: <strong id="catCountdownDisplay">۱۵:۰۰</strong></span>
+      <!-- نوار مشخصات همکار و سطح دسترسی (اسم و دسترسی) -->
+      <div class="dyf-cat-user-strip">
+        <div class="dyf-cat-user-info">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--gold-primary); flex-shrink: 0;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span id="catRecipientGreetingName" class="dyf-cat-recipient-name">حاج مصطفی کمالی</span>
         </div>
-
-        <!-- نشان خوش‌آمدگویی خریدار -->
-        <div style="font-size: 0.84rem; color: var(--gold-light); font-weight: 700; display: flex; align-items: center;">
-          <span id="catRecipientGreetingName">حاج مصطفی کمالی</span>
+        <div class="dyf-cat-access-info">
+          <span id="catAccessScopeBadgeText" class="dyf-badge dyf-badge-active">دسترسی مجاز همکاران</span>
         </div>
-
-        <!-- دکمه خروج -->
-        <button type="button" id="catLogoutBtn" class="dyf-btn dyf-btn-outline dyf-btn-sm" title="خروج از حساب کاتالوگ">
-          <span>خروج</span>
-        </button>
       </div>
     </header>
 
     <!-- نوار فیلتر و جست‌وجو -->
     <section class="dyf-cat-toolbar">
-      <!-- تب‌های دسته‌بندی مجاز -->
-      <div class="dyf-cat-filter-tabs" id="catCategoryFilterTabs">
-        <!-- رندر پویا توسط JS -->
+      <div class="dyf-cat-filter-wrapper">
+        <!-- دراپ‌داون انتخابی دسته‌بندی برای موبایل -->
+        <div class="dyf-cat-category-dropdown" id="catCategoryDropdown">
+          <button type="button" class="dyf-cat-dropdown-trigger" id="catDropdownTrigger" aria-haspopup="listbox" aria-expanded="false">
+            <div class="dyf-cat-dropdown-trigger-text">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--gold-light); flex-shrink: 0;">
+                <rect width="7" height="7" x="3" y="3" rx="1"/>
+                <rect width="7" height="7" x="14" y="3" rx="1"/>
+                <rect width="7" height="7" x="14" y="14" rx="1"/>
+                <rect width="7" height="7" x="3" y="14" rx="1"/>
+              </svg>
+              <span id="catDropdownSelectedLabel">همه مدل‌های مجاز</span>
+            </div>
+            <svg class="dyf-cat-dropdown-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+
+          <!-- لیست گزینه‌های دراپ‌داون -->
+          <div class="dyf-cat-dropdown-menu" id="catDropdownMenu" role="listbox" tabindex="-1">
+            <!-- رندر پویا توسط JS -->
+          </div>
+        </div>
+
+        <!-- تب‌های افقی دسته‌بندی برای دسکتاپ -->
+        <div class="dyf-cat-filter-tabs" id="catCategoryFilterTabs">
+          <!-- رندر پویا توسط JS -->
+        </div>
       </div>
 
       <!-- جست‌وجو و شمارنده -->
-      <div style="display: flex; align-items: center; gap: 1rem; margin-right: auto;">
-        <div class="dyf-toolbar-search" style="min-width: 260px;">
+      <div class="dyf-cat-search-group">
+        <div class="dyf-toolbar-search">
           <svg class="dyf-quick-search-icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           <input type="text" id="catSearchInput" class="dyf-quick-search-input" placeholder="جست‌وجوی مدل، سبک زیره، چرم...">
         </div>
