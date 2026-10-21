@@ -535,11 +535,13 @@
       }
     },
 
-    show({ type = 'info', title = '', message = '', duration = 4000 }) {
-      // غیرفعال‌سازی کامل اعلان‌ها در موبایل و تبلت طبق درخواست کارفرما
-      if (typeof window !== 'undefined' && (window.innerWidth <= 768 || (window.matchMedia && window.matchMedia('(max-width: 768px)').matches))) {
+    show({ type = 'info', title = '', message = '', duration = 3000, force = false }) {
+      // فقط برای عملیات کپی لینک یا مواردی که صریحاً مجاز شده‌اند اعلان نمایش داده شود
+      const isCopyToast = (title && title.includes('کپی')) || (message && message.includes('کپی'));
+      if (!force && !isCopyToast) {
         return;
       }
+
       this.init();
 
       const icons = {
@@ -549,6 +551,7 @@
         info: `<svg class="dyf-toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>`,
       };
 
+      const effectiveDuration = duration || 3000;
       const toast = document.createElement('div');
       toast.className = `dyf-toast dyf-toast-${type}`;
       toast.innerHTML = `
@@ -1106,7 +1109,7 @@
         customers = DEFAULT_CUSTOMERS;
       }
 
-      const activeCusts = customers.filter((c) => c.status === 'active').slice(0, 5);
+      const activeCusts = customers.filter((c) => c.status === 'active').slice(0, 4);
       if (!activeCusts.length) {
         container.innerHTML = '<div style="color: var(--text-dim); font-size: 0.8rem; text-align: center; padding: 1rem;">مشتری فعالی ثبت نشده است.</div>';
         return;
@@ -1117,14 +1120,14 @@
           const initials = (c.nameFa || 'م').split(' ').map((p) => p[0]).slice(0, 2).join('‌');
           return `
           <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.65rem 0.85rem; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--r-sm);">
-            <div style="display: flex; align-items: center; gap: 0.7rem;">
+            <div style="display: flex; align-items: center; gap: 0.7rem; min-width: 0;">
               <div class="dyf-customer-avatar" style="width: 36px; height: 36px; font-size: 0.82rem; flex-shrink: 0;">${initials}</div>
-              <div>
-                <div style="font-weight: 700; color: var(--text-ivory); font-size: 0.86rem;">${c.nameFa}</div>
-                <div style="font-size: 0.74rem; color: var(--text-muted);">${c.shop || c.city || 'همکار کارگاه'}</div>
+              <div style="min-width: 0;">
+                <div style="font-weight: 700; color: var(--text-ivory); font-size: 0.86rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${c.nameFa}</div>
+                <div style="font-size: 0.74rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${c.shop || c.city || 'همکار کارگاه'}</div>
               </div>
             </div>
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;">
               <span class="dyf-badge dyf-badge-active" style="font-size: 0.7rem; padding: 0.15rem 0.5rem; white-space: nowrap;">فعال</span>
             </div>
           </div>
@@ -1135,7 +1138,8 @@
 
     renderTable(links) {
       if (!this.tableBody) return;
-      if (!links || links.length === 0) {
+      const displayLinks = (links || []).slice(0, 4);
+      if (!displayLinks.length) {
         this.tableBody.innerHTML = '';
         if (this.emptyState) this.emptyState.style.display = 'block';
         return;
@@ -1149,26 +1153,27 @@
         pending: `<span class="dyf-badge dyf-badge-pending" style="white-space: nowrap;">در انتظار ورود</span>`,
       };
 
-      this.tableBody.innerHTML = links
+      this.tableBody.innerHTML = displayLinks
         .map(
           (lnk) => `
-        <tr>
-          <td>
+        <tr class="dyf-dashboard-tr">
+          <td class="dyf-td-recipient">
             <div style="font-weight: 700; color: var(--text-ivory);">${lnk.recipientFa}</div>
           </td>
-          <td>${statusBadges[lnk.status] || `<span class="dyf-badge dyf-badge-pending" style="white-space: nowrap;">${lnk.status}</span>`}</td>
-          <td class="dyf-col-expires">
+          <td class="dyf-td-status">${statusBadges[lnk.status] || `<span class="dyf-badge dyf-badge-pending" style="white-space: nowrap;">${lnk.status}</span>`}</td>
+          <td class="dyf-td-expires">
             <div style="font-size: 0.8rem; color: var(--text-muted); white-space: nowrap;">${lnk.expiresAt}</div>
             <div style="font-size: 0.7rem; color: var(--text-dim); white-space: nowrap;">${lnk.duration}</div>
           </td>
-          <td>
+          <td class="dyf-td-actions">
             <div class="dyf-table-actions" style="display: flex; flex-direction: row; gap: 0.45rem; align-items: center; white-space: nowrap;">
               <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-sm js-copy-link" data-url="${lnk.url}" title="کپی لینک اختصاصی">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                <span class="dyf-btn-text-responsive">کپی</span>
+                <span>کپی</span>
               </button>
               <button type="button" class="dyf-btn dyf-btn-specular dyf-btn-sm js-view-link-detail" data-id="${lnk.id}" title="مشاهده جزئیات">
-                <span class="dyf-btn-text-responsive">جزئیات</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span>جزئیات</span>
               </button>
             </div>
           </td>
@@ -1181,16 +1186,41 @@
       this.tableBody.querySelectorAll('.js-copy-link').forEach((btn) => {
         btn.addEventListener('click', () => {
           const url = btn.getAttribute('data-url');
-          if (navigator.clipboard) {
-            navigator.clipboard.writeText(url).then(() => {
-              DYF_Toast.show({
-                type: 'success',
-                title: 'لینک کپی شد',
-                message: 'آدرس کاتالوگ اختصاصی در حافظه کپی شد.',
-              });
+          const showSuccess = () => {
+            DYF_Toast.show({
+              type: 'success',
+              title: 'کپی در کلیپ‌بورد',
+              message: 'لینک در کلیپ‌بورد کپی شد',
+              force: true,
             });
+          };
+
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url)
+              .then(showSuccess)
+              .catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = url;
+                ta.style.position = 'fixed';
+                ta.style.left = '-9999px';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                try { document.execCommand('copy'); } catch (e) {}
+                document.body.removeChild(ta);
+                showSuccess();
+              });
           } else {
-            DYF_Toast.show({ type: 'info', title: 'لینک کاتالوگ', message: url });
+            const ta = document.createElement('textarea');
+            ta.value = url;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try { document.execCommand('copy'); } catch (e) {}
+            document.body.removeChild(ta);
+            showSuccess();
           }
         });
       });
@@ -2033,20 +2063,15 @@
             <img src="${primaryMedia.url}" alt="${model.title}" style="width: 48px; height: 48px; object-fit: cover; border-radius: var(--r-sm); border: 1px solid var(--border-subtle);">
           </td>
           <td style="font-family: var(--font-title); font-weight: 700; color: var(--gold-light); direction: ltr; text-align: right;">
-            DYF-${model.id}
+            ${model.id}
           </td>
           <td>
             <div style="font-weight: 700; color: var(--text-ivory);">${model.title}</div>
-            <div style="font-size: 0.74rem; color: var(--text-muted);">${(model.media || []).length} تصویر و ویدئو</div>
           </td>
           <td>
             <div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">
               ${(model.categories || []).map((c) => `<span class="dyf-category-pill" style="font-size: 0.68rem;">${c}</span>`).join('')}
             </div>
-          </td>
-          <td>
-            <div style="font-size: 0.78rem; color: var(--text-main);">${(model.colors || []).join('، ')}</div>
-            <div style="font-size: 0.72rem; color: var(--gold-primary); font-weight: 600;">سایز: ${(model.sizes || []).join(' ')}</div>
           </td>
           <td>
             <div style="display: flex; gap: 0.35rem; align-items: center;">
@@ -3097,8 +3122,10 @@
       const toggle = document.getElementById('directAccessToggle');
       const label = document.getElementById('directAccessStatusLabel');
       const controls = document.getElementById('directAccessControlsWrap');
-      const durSelect = document.getElementById('directAccessDurationSelect');
-      const ddlSelect = document.getElementById('directAccessDeadlineSelect');
+      const durValInput = document.getElementById('directAccessDurationValue');
+      const durUnitSelect = document.getElementById('directAccessDurationUnit');
+      const ddlValInput = document.getElementById('directAccessDeadlineValue');
+      const ddlUnitSelect = document.getElementById('directAccessDeadlineUnit');
 
       if (toggle) toggle.checked = da.enabled;
       if (label) {
@@ -3109,8 +3136,44 @@
         controls.style.opacity = da.enabled ? '1' : '0.45';
         controls.style.pointerEvents = da.enabled ? 'all' : 'none';
       }
-      if (durSelect) durSelect.value = da.duration || 'unlimited';
-      if (ddlSelect) ddlSelect.value = da.deadline || 'none';
+
+      const parseTimeSetting = (str, defaultVal, defaultUnit) => {
+        if (!str || str === 'unlimited' || str === 'none') {
+          return { value: defaultVal, unit: str || defaultUnit };
+        }
+        const match = String(str).match(/^(\d+)([mhd])$/);
+        if (match) {
+          return { value: parseInt(match[1], 10), unit: match[2] };
+        }
+        return { value: defaultVal, unit: defaultUnit };
+      };
+
+      const dur = parseTimeSetting(da.duration, 15, 'm');
+      if (durValInput) {
+        durValInput.value = dur.value;
+        durValInput.disabled = dur.unit === 'unlimited';
+      }
+      if (durUnitSelect) durUnitSelect.value = dur.unit;
+
+      const ddl = parseTimeSetting(da.deadline, 3, 'd');
+      if (ddlValInput) {
+        ddlValInput.value = ddl.value;
+        ddlValInput.disabled = ddl.unit === 'none';
+      }
+      if (ddlUnitSelect) ddlUnitSelect.value = ddl.unit;
+
+      if (durUnitSelect && !durUnitSelect._hasChangeHandler) {
+        durUnitSelect._hasChangeHandler = true;
+        durUnitSelect.addEventListener('change', (e) => {
+          if (durValInput) durValInput.disabled = e.target.value === 'unlimited';
+        });
+      }
+      if (ddlUnitSelect && !ddlUnitSelect._hasChangeHandler) {
+        ddlUnitSelect._hasChangeHandler = true;
+        ddlUnitSelect.addEventListener('change', (e) => {
+          if (ddlValInput) ddlValInput.disabled = e.target.value === 'none';
+        });
+      }
 
       // رندر سلسله‌مراتبی محصولات و دسته‌بندی‌ها
       DYF_ProductSelector.render('directAccessProductsWrap', {
@@ -3129,8 +3192,20 @@
       if (!cust) return;
 
       const enabled = document.getElementById('directAccessToggle')?.checked || false;
-      const duration = document.getElementById('directAccessDurationSelect')?.value || 'unlimited';
-      const deadline = document.getElementById('directAccessDeadlineSelect')?.value || 'none';
+
+      let duration = 'unlimited';
+      const durUnit = document.getElementById('directAccessDurationUnit')?.value || 'unlimited';
+      if (durUnit !== 'unlimited') {
+        const val = parseInt(document.getElementById('directAccessDurationValue')?.value || '15', 10);
+        duration = `${Math.max(1, isNaN(val) ? 15 : val)}${durUnit}`;
+      }
+
+      let deadline = 'none';
+      const ddlUnit = document.getElementById('directAccessDeadlineUnit')?.value || 'none';
+      if (ddlUnit !== 'none') {
+        const val = parseInt(document.getElementById('directAccessDeadlineValue')?.value || '3', 10);
+        deadline = `${Math.max(1, isNaN(val) ? 3 : val)}${ddlUnit}`;
+      }
 
       const prodData = DYF_ProductSelector.getData('directAccessProductsWrap');
 
@@ -3604,8 +3679,8 @@
         navigator.clipboard.writeText(url).then(() => {
           DYF_Toast.show({
             type: 'success',
-            title: 'کپی موفق لینک',
-            message: 'نشانی لینک اختصاصی کاتالوگ با موفقیت در کلیپ‌بورد کپی شد.',
+            title: 'کپی در کلیپ‌بورد',
+            message: 'لینک در کلیپ‌بورد کپی شد',
           });
         }).catch(() => this.fallbackCopy(url));
       } else {
@@ -3625,8 +3700,8 @@
         document.execCommand('copy');
         DYF_Toast.show({
           type: 'success',
-          title: 'کپی موفق لینک',
-          message: 'نشانی لینک اختصاصی در کلیپ‌بورد کپی شد.',
+          title: 'کپی در کلیپ‌بورد',
+          message: 'لینک در کلیپ‌بورد کپی شد',
         });
       } catch (err) {
         DYF_Toast.show({
@@ -3968,9 +4043,6 @@
                     : 'غیرفعال توسط مدیر'
                 }
               </span>
-              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.35rem;">
-                تعداد دفعات ورود: <strong>${link.views} مرتبه</strong>
-              </div>
             </div>
           </div>
 
@@ -3984,10 +4056,6 @@
 
           <!-- متاداده و تنظیمات -->
           <div class="dyf-link-meta-grid" style="margin-bottom: 1.25rem;">
-            <div class="dyf-link-meta-item">
-              <span style="color: var(--text-dim);">شیوه ورود:</span>
-              <span style="font-weight: 700; color: var(--gold-light);">لینک مستقیم (ورود آنی بدون نیاز به پیامک)</span>
-            </div>
             <div class="dyf-link-meta-item">
               <span style="color: var(--text-dim);">مهلت شروع دسترسی:</span>
               <span style="color: var(--gold-primary); font-weight: 600;">${this.formatDeadline(link.startDeadline)}</span>
@@ -4008,7 +4076,7 @@
 
           <!-- محصولات مجاز -->
           <div style="background: rgba(36, 30, 25, 0.4); border: 1px solid var(--border-subtle); border-radius: var(--r-sm); padding: 1rem; font-size: 0.8rem; margin-bottom: 1.25rem;">
-            <div style="font-weight: 700; color: var(--gold-light); margin-bottom: 0.35rem;">قلمرو محصولات مجاز:</div>
+            <div style="font-weight: 700; color: var(--gold-light); margin-bottom: 0.35rem;">محصولات مجاز:</div>
             <div style="color: var(--text-muted); margin-bottom: 0.3rem;">
               دسته‌بندی‌ها: <strong>${(link.categories || []).join('، ') || 'هیچ'}</strong>
             </div>

@@ -34,7 +34,7 @@
   </style>
 
   <!-- استایل‌شیت رسمی پنل مدیریت -->
-  <link rel="stylesheet" href="assets/css/admin.css?v=1">
+  <link rel="stylesheet" href="assets/css/admin.css?v=2">
 </head>
 <body>
 
@@ -297,8 +297,8 @@
           <div class="dyf-dashboard-grid">
             
             <!-- ستون سمت راست: جدول لینک‌های اختصاصی اخیر -->
-            <div>
-              <div class="dyf-panel-card">
+            <div class="dyf-dashboard-col">
+              <div class="dyf-panel-card dyf-dashboard-card">
                 <div class="dyf-panel-card-header">
                   <h2 class="dyf-panel-card-title">آخرین لینک‌های دسترسی اختصاصی</h2>
                   <div class="dyf-panel-card-actions">
@@ -339,15 +339,18 @@
             </div>
 
             <!-- ستون سمت چپ: لیست مشتریان فعال -->
-            <div>
-              <div class="dyf-panel-card">
-                <div class="dyf-panel-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="dyf-dashboard-col">
+              <div class="dyf-panel-card dyf-dashboard-card">
+                <div class="dyf-panel-card-header">
                   <h3 class="dyf-panel-card-title">مشتریان فعال</h3>
-                  <a href="#customers" class="dyf-btn dyf-btn-outline dyf-btn-sm" style="font-size: 0.74rem; padding: 0.2rem 0.6rem;">
-                    مشاهده همه
-                  </a>
+                  <div class="dyf-panel-card-actions">
+                    <a href="#customers" class="dyf-btn dyf-btn-primary dyf-btn-sm">
+                      <span>مشاهده همه</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                    </a>
+                  </div>
                 </div>
-                <div id="dashboardActiveCustomersList" style="padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: 0.85rem;">
+                <div id="dashboardActiveCustomersList" class="dyf-dashboard-active-cust-list" style="padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: 0.85rem;">
                   <!-- با JS رندر می‌شود -->
                 </div>
               </div>
@@ -419,7 +422,6 @@
                     <th>شناسه</th>
                     <th>عنوان مدل</th>
                     <th>دسته‌بندی‌ها</th>
-                    <th>رنگ‌ها و سایزها</th>
                     <th>عملیات</th>
                   </tr>
                 </thead>
@@ -1030,9 +1032,9 @@
           <div class="dyf-direct-access-header">
             <div>
               <h4 style="font-family: var(--font-title); font-size: 0.98rem; font-weight: 800; color: var(--gold-light); margin-bottom: 0.2rem;">
-                دسترسی مستقیم به کاتالوگ (Direct Access)
+                دسترسی مستقیم به کاتالوگ
               </h4>
-              <p style="font-size: 0.76rem; color: var(--text-muted);">ورود مشتری با شماره تلفن همراه بدون نیاز به لینک موقت</p>
+              <p style="font-size: 0.76rem; color: var(--text-muted); margin: 0;">ورود مشتری با شماره تلفن همراه بدون نیاز به لینک موقت</p>
             </div>
             <label class="dyf-switch-label">
               <input type="checkbox" id="directAccessToggle" class="dyf-switch-input">
@@ -1054,31 +1056,30 @@
             <div class="dyf-form-row-2col dyf-form-row-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
               <div class="dyf-form-group" style="margin: 0;">
                 <label class="dyf-form-label">مدت مجاز مشاهده (پس از اولین ورود موفق)</label>
-                <select id="directAccessDurationSelect" class="dyf-select">
-                  <option value="15m">۱۵ دقیقه پس از ورود</option>
-                  <option value="30m">۳۰ دقیقه پس از ورود</option>
-                  <option value="1h">۱ ساعت پس از ورود</option>
-                  <option value="24h">۲۴ ساعت پس از ورود</option>
-                  <option value="3d">۳ روز کاری</option>
-                  <option value="unlimited" selected>نامحدود (دسترسی دائم همکار)</option>
-                </select>
+                <div class="dyf-time-input-group">
+                  <input type="number" id="directAccessDurationValue" class="dyf-input dyf-time-val" min="1" max="999" value="15" placeholder="مقدار">
+                  <select id="directAccessDurationUnit" class="dyf-select dyf-time-unit">
+                    <option value="m">دقیقه</option>
+                    <option value="h">ساعت</option>
+                    <option value="d">روز</option>
+                    <option value="unlimited">نامحدود</option>
+                  </select>
+                </div>
               </div>
 
               <div class="dyf-form-group" style="margin: 0;">
                 <label class="dyf-form-label">آخرین مهلت شروع دسترسی (انقضای ورود)</label>
-                <select id="directAccessDeadlineSelect" class="dyf-select">
-                  <option value="none" selected>بدون محدودیت مهلت شروع</option>
-                  <option value="2d">تا ۲ روز آینده</option>
-                  <option value="5d">تا ۵ روز آینده</option>
-                  <option value="7d">تا ۱ هفته آینده</option>
-                  <option value="30d">تا ۱ ماه آینده</option>
-                </select>
+                <div class="dyf-time-input-group">
+                  <input type="number" id="directAccessDeadlineValue" class="dyf-input dyf-time-val" min="1" max="999" value="3" placeholder="مقدار">
+                  <select id="directAccessDeadlineUnit" class="dyf-select dyf-time-unit">
+                    <option value="d">روز</option>
+                    <option value="h">ساعت</option>
+                    <option value="m">دقیقه</option>
+                    <option value="none">بدون مهلت (نامحدود)</option>
+                  </select>
+                </div>
               </div>
             </div>
-          </div>
-
-          <div style="margin-top: 1.25rem; padding: 0.75rem 1rem; background: rgba(20, 18, 16, 0.7); border-radius: var(--r-sm); border: 1px dashed var(--border-subtle); font-size: 0.76rem; color: var(--text-dim); line-height: 1.5;">
-            💡 <strong>استقلال دسترسی مستقیم:</strong> این بخش مستقیماً امکان لاگین با کد OTP به نشانی <code>catalog.html</code> را برای مشتری فعال می‌کند. تغییر یا غیرفعال‌سازی این بخش تاثیری روی لینک‌های اختصاصی مستقلی که در تسک ۵ برای این شخص ساخته می‌شود نخواهد داشت.
           </div>
         </div>
       </div>
@@ -1331,6 +1332,6 @@
   <div id="dyfToastContainer" class="dyf-toast-container" aria-live="polite"></div>
 
   <!-- اسکریپت رسمی منطق و تعاملات پنل مدیریت -->
-  <script src="assets/js/admin.js?v=1"></script>
+  <script src="assets/js/admin.js?v=2"></script>
 </body>
 </html>

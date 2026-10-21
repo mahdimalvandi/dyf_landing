@@ -899,12 +899,14 @@
 
       // محاسبه مدت زمان به ثانیه
       let totalSeconds = 15 * 60; // پیش‌فرض ۱۵ دقیقه
-      if (s.duration === '10m') totalSeconds = 10 * 60;
-      else if (s.duration === '15m') totalSeconds = 15 * 60;
-      else if (s.duration === '30m') totalSeconds = 30 * 60;
-      else if (s.duration === '1h') totalSeconds = 60 * 60;
-      else if (s.duration === '2h') totalSeconds = 120 * 60;
-      else if (s.duration === '24h') totalSeconds = 24 * 3600;
+      const m = String(s.duration || '').match(/^(\d+)([mhd])$/);
+      if (m) {
+        const val = parseInt(m[1], 10);
+        const unit = m[2];
+        if (unit === 'm') totalSeconds = val * 60;
+        else if (unit === 'h') totalSeconds = val * 3600;
+        else if (unit === 'd') totalSeconds = val * 86400;
+      }
 
       const elapsedSeconds = Math.floor((Date.now() - s.startTimestamp) / 1000);
       let remainingSeconds = Math.max(0, totalSeconds - elapsedSeconds);
