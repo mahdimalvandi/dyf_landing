@@ -1177,9 +1177,10 @@ textarea:focus-visible {
   flex-wrap: nowrap;
 }
 
-/* چپ‌چین کردن ستون عملیات در جدول‌های مدیریت (مشتریان و لینک‌ها) در دسکتاپ */
-.dyf-table th:last-child {
-  text-align: left !important;
+/* تراز عنوان و ستون عملیات در جدول‌های مدیریت (مشتریان و لینک‌ها) در دسکتاپ */
+.dyf-table th:last-child,
+.dyf-table th.dyf-th-actions {
+  text-align: center !important;
 }
 
 .dyf-table td:last-child {
@@ -1522,8 +1523,8 @@ textarea:focus-visible {
 
 .dyf-lightbox-wrap {
   position: relative;
-  max-width: 94vw;
-  max-height: 88vh;
+  max-width: 96vw;
+  max-height: 94vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1537,15 +1538,15 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  max-width: min(92vw, 840px);
-  max-height: 74vh;
+  max-width: min(95vw, 1280px);
+  max-height: 88vh;
   border-radius: var(--r-md);
   touch-action: none;
 }
 
 .dyf-lightbox-img {
-  max-width: min(90vw, 760px);
-  max-height: 72vh;
+  max-width: min(94vw, 1200px);
+  max-height: 86vh;
   object-fit: contain;
   border-radius: var(--r-md);
   border: 1px solid var(--border-medium);
@@ -1941,8 +1942,8 @@ textarea:focus-visible {
 /* گرید تصویری محصولات (Catalog Cards Grid) */
 .dyf-product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
-  gap: 1.15rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.35rem;
   margin-bottom: 2rem;
 }
 

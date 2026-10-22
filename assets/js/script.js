@@ -199,16 +199,19 @@ if (heroModelViewer) {
     });
   });
 
-  // دکمه‌های اقدام به استعلام (هدر و هیرو)
-  document.querySelectorAll('.js-scroll-inquiry, .header-actions .btn-desktop').forEach(btn => {
+  // دکمه‌های اقدام به استعلام (فقط دکمه‌هایی که به فرم استعلام هدایت می‌شوند)
+  document.querySelectorAll('.js-scroll-inquiry, .hero-btn-primary').forEach(btn => {
     btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      const inquiryTarget = document.getElementById('inquiry');
-      if (inquiryTarget) {
-        if (lenis) {
-          lenis.scrollTo(inquiryTarget, { offset: -85, duration: 1.1 });
-        } else {
-          inquiryTarget.scrollIntoView({ behavior: 'smooth' });
+      const href = this.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        e.preventDefault();
+        const inquiryTarget = document.getElementById(href.slice(1)) || document.getElementById('inquiry');
+        if (inquiryTarget) {
+          if (lenis) {
+            lenis.scrollTo(inquiryTarget, { offset: -85, duration: 1.1 });
+          } else {
+            inquiryTarget.scrollIntoView({ behavior: 'smooth' });
+          }
         }
       }
 

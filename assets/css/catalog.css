@@ -372,12 +372,12 @@
 
 /* شبکه کارت‌های لوکس کاتالوگ */
 .dyf-cat-grid {
-  max-width: 1240px;
+  max-width: 1380px;
   margin: 0 auto 3.5rem;
   padding: 0 1.5rem;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
-  gap: 1.15rem;
+  grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+  gap: 1.35rem;
 }
 
 .dyf-cat-card {
