@@ -1,5 +1,5 @@
 # سند استانداردهای پایگاه‌داده و سیستم مایگریشن (Database & Migrations)
-**نسخه سند:** ۲.۰  
+**نسخه سند:** ۲.۱  
 **پروژه:** DYF Private Catalog Backend  
 **مخاطبان:** توسعه‌دهندگان، مهندسان DevOps و ایجنت‌های هوش مصنوعی (AI Agents)
 
@@ -21,19 +21,19 @@
 
 ### ۱.۳. نام‌گذاری دقیق camelCase با دابل‌کوتیشن (`"`)
 - از آنجا که PostgreSQL شناسه‌های فاقد کوتیشن را به حروف کوچک تبدیل می‌کند، در کلیه فایل‌های SQL نام تمامی جداول و ستون‌ها با دابل‌کوتیشن درج می‌شوند:
-  - جدول‌ها: `"shoeModels"`, `"categories"`, `"customers"`, `"accessLinks"`, `"schemaMigrations"`
-  - ستون‌ها: `"ID"`, `"shoeTitle"`, `"primaryImageURL"`, `"updatedAt"`, `"categoryIDs"`
+  - جدول‌ها: `"shoeModels"`, `"categories"`, `"customers"`, `"accessLinks"`, `"adminTokens"`, `"catalogTokens"`, `"schemaMigrations"`
+  - ستون‌ها: `"ID"`, `"shoeTitle"`, `"primaryImageURL"`, `"updatedAt"`, `"categoryIDs"`, `"tokenHash"`
 
 ### ۱.۴. ایندکس‌گذاری اجباری فیلدهای مورد کوئری (Mandatory Indexing)
 - **قاعده قطعی:** هر ستونی که در عملیات فیلترینگ، جست‌وجو، شرط‌های `WHERE` یا کلید خارجی قرار می‌گیرد، باید به صورت صریح با `CREATE INDEX IF NOT EXISTS` ایندکس شود.
-- ایندکس‌های روی فیلدهای متنی حساس یا اسلاگ‌ها: B-Tree Index
-- ایندکس‌های روی فیلدهای آرایه‌ای یا JSONB (مانند دسته‌بندی‌ها یا مدل‌های مجاز): GIN Index
+- ایندکس روی فیلدهای متنی حساس، اسلاگ‌ها و هش‌ها: B-Tree Index
+- ایندکس روی فیلدهای آرایه‌ای یا JSONB (مانند دسته‌بندی‌ها یا مدل‌های مجاز): GIN Index
 
 ---
 
 ## ۲. سیستم مایگریشن با کتابخانه استاندارد `golang-migrate`
 
-مدیریت ساختار پایگاه داده و نسخه‌بندی آن با ابزار استاندارد صنعت Go یعنی **`golang-migrate/migrate/v4`** انجام می‌شود و از نوشتن اسکریپت‌های دستی خودداری شده است.
+مدیریت ساختار پایگاه داده و نسخه‌بندی آن با ابزار استاندارد Go یعنی **`golang-migrate/migrate/v4`** انجام می‌شود و از نوشتن اسکریپت‌های دستی خودداری شده است.
 
 ### ۲.۱. ساختار فایل‌های مایگریشن در پوشه `backend/migrations/`
 فایل‌ها با شماره‌گذاری عددی ۶ رقمی و دو فایل رو به جلو (`.up.sql`) و بازگشت (`.down.sql`) ایجاد می‌شوند:
@@ -46,7 +46,9 @@ backend/migrations/
 ├── 000003_create_customers.up.sql
 ├── 000003_create_customers.down.sql
 ├── 000004_create_access_links.up.sql
-└── 000004_create_access_links.down.sql
+├── 000004_create_access_links.down.sql
+├── 000005_create_admins_and_tokens.up.sql
+└── 000005_create_admins_and_tokens.down.sql
 ```
 
 ### ۲.۲. دستورات اجرایی CLI مایگریشن (`cmd/migrate/main.go`)
@@ -64,16 +66,6 @@ go run cmd/migrate/main.go down
 
 # ۳. بررسی وضعیت و نسخه فعلی دیتابیس (Version)
 go run cmd/migrate/main.go version
-```
-
-### ۲.۳. جدول تاریخچه مایگریشن‌ها (`schemaMigrations`)
-کتابخانه `golang-migrate` به صورت خودکار جدولی به نام `"schemaMigrations"` در دیتابیس ایجاد کرده و نسخه اعمال‌شده و وضعیت کثیف/تمیز بودن آن را ثبت می‌کند:
-```sql
--- جدول ایجادشده به صورت خودکار توسط golang-migrate
-CREATE TABLE IF NOT EXISTS "schemaMigrations" (
-    "version" BIGINT NOT NULL PRIMARY KEY,
-    "dirty" BOOLEAN NOT NULL
-);
 ```
 
 ---
@@ -197,7 +189,21 @@ CREATE INDEX IF NOT EXISTS "idx_admins_phoneNumber" ON "admins" ("phoneNumber");
 CREATE INDEX IF NOT EXISTS "idx_admins_isActive" ON "admins" ("isActive");
 ```
 
-### ۳.۷. جدول کدهای یک‌بارمصرف پیامکی (`"otpVerifications"`)
+### ۳.۷. جدول توکن‌های دسترسی مدیران (`"adminTokens"`)
+```sql
+CREATE TABLE IF NOT EXISTS "adminTokens" (
+    "ID" BIGINT PRIMARY KEY,
+    "adminID" BIGINT NOT NULL REFERENCES "admins" ("ID") ON DELETE CASCADE,
+    "tokenHash" VARCHAR(32) NOT NULL UNIQUE, -- هش MD5 توکن احراز هویت
+    "expiresAt" BIGINT NOT NULL,
+    "updatedAt" BIGINT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS "idx_adminTokens_tokenHash" ON "adminTokens" ("tokenHash");
+CREATE INDEX IF NOT EXISTS "idx_adminTokens_expiresAt" ON "adminTokens" ("expiresAt");
+```
+
+### ۳.۸. جدول کدهای یک‌بارمصرف پیامکی (`"otpVerifications"`)
 ```sql
 CREATE TABLE IF NOT EXISTS "otpVerifications" (
     "ID" BIGINT PRIMARY KEY,
@@ -214,13 +220,22 @@ CREATE INDEX IF NOT EXISTS "idx_otp_phone_purpose" ON "otpVerifications" ("phone
 CREATE INDEX IF NOT EXISTS "idx_otp_expiresAt" ON "otpVerifications" ("expiresAt");
 ```
 
----
+### ۳.۹. جدول توکن‌های نشست کاتالوگ (`"catalogTokens"`)
+```sql
+CREATE TABLE IF NOT EXISTS "catalogTokens" (
+    "ID" BIGINT PRIMARY KEY,
+    "tokenHash" VARCHAR(32) NOT NULL UNIQUE, -- هش MD5 توکن نشست کاتالوگ
+    "accessType" VARCHAR(20) NOT NULL, -- 'DIRECT_CUSTOMER' or 'LINK'
+    "accessLinkID" BIGINT REFERENCES "accessLinks" ("ID") ON DELETE CASCADE,
+    "customerID" BIGINT REFERENCES "customers" ("ID") ON DELETE CASCADE,
+    "cycleNumber" INT NOT NULL DEFAULT 1,
+    "clientIP" VARCHAR(45),
+    "startedAt" BIGINT NOT NULL,
+    "expiresAt" BIGINT NOT NULL,
+    "updatedAt" BIGINT NOT NULL
+);
 
-## ۴. چک‌لیست نوشتن مایگریشن جدید برای توسعه‌دهنده و AI Agent
-
-هنگام پیاده‌سازی هر تسکی که نیاز به تغییر ساختار دیتابیس دارد:
-1. شماره ترتیبی ۶ رقمی جدید را تعیین کنید (مثلاً `000005_feature.up.sql` و `000005_feature.down.sql`).
-2. ستون `"ID" BIGINT PRIMARY KEY` را بدون `createdAt` قرار دهید.
-3. تمامی زمان‌ها را به صورت `BIGINT` بنویسید.
-4. کلیه فیلدهایی را که در کوئری‌ها جستجو می‌شوند با ایندکس اختصاصی پوشش دهید.
-5. فایل را با فرمان `go run cmd/migrate/main.go up` اجرا کرده و از ثبت صحیح آن در `"schemaMigrations"` مطمئن شوید.
+CREATE INDEX IF NOT EXISTS "idx_catalogTokens_tokenHash" ON "catalogTokens" ("tokenHash");
+CREATE INDEX IF NOT EXISTS "idx_catalogTokens_linkID" ON "catalogTokens" ("accessLinkID");
+CREATE INDEX IF NOT EXISTS "idx_catalogTokens_expiresAt" ON "catalogTokens" ("expiresAt");
+```

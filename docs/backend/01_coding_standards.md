@@ -1,5 +1,5 @@
 # سند استانداردهای کدنویسی و معماری بک‌اند (Coding Standards & Architecture)
-**نسخه سند:** ۲.۰  
+**نسخه سند:** ۲.۱  
 **پروژه:** DYF Private Catalog Backend  
 **مخاطبان:** توسعه‌دهندگان Go و ایجنت‌های هوش مصنوعی (AI Agents)
 
@@ -9,11 +9,11 @@
 
 | بخش | ابزار و نسخه | توضیحات و الزامات فنی |
 | :--- | :--- | :--- |
-| **زبان** | **Go (Golang) نسخه ۱.۲۶** | بهره‌گیری از قابلیت‌های جدید Go 1.26 نظیر Range-over-function، بهینه‌سازی‌های Garbage Collector، مدیریت مدرن خطاها و پکیج‌های استاندارد به‌روزرسانی‌شده |
-| **وب‌فریمورک** | **Fiber v3** (`github.com/gofiber/fiber/v3`) | نسخه نسل سوم با رابط کاربری جدید `fiber.Ctx`، قابلیت Binding مدرن (`c.Bind().Body()`)، عملکرد فوق‌العاده بالا بر پایه Fasthttp |
-| **پردازشگر JSON** | **jsoniter** (`github.com/json-iterator/go`) | جایگزین سریع `encoding/json` با تنظیم `ConfigCompatibleWithStandardLibrary` متصل به اینکودر و دیکودر Fiber v3 |
+| **زبان** | **Go (Golang) نسخه ۱.۲۶** | بهره‌گیری از قابلیت‌های جدید Go 1.26، بهینه‌سازی Garbage Collector و پکیج‌های استاندارد مدرن |
+| **وب‌فریمورک** | **Fiber v3** (`github.com/gofiber/fiber/v3`) | نسخه نسل سوم با رابط کاربری مدرن `fiber.Ctx`، قابلیت Binding جدید (`c.Bind().Body()`)، عملکرد بالا بر پایه Fasthttp |
+| **پردازشگر JSON** | **jsoniter** (`github.com/json-iterator/go`) | جایگزین سریع `encoding/json` متصل به اینکودر و دیکودر Fiber v3 |
 | **ORM** | **GORM v2** (`gorm.io/gorm`) | تنظیم استراتژی نام‌گذاری camelCase و استفاده انحصاری از تگ `column` در Structها |
-| **پایگاه‌داده** | **PostgreSQL نسخه ۱۵+** | کلیه نام‌های جداول و ستون‌ها در دیتابیس به صورت camelCase و با دابل‌کوتیشن کوئری و نگهداری می‌شوند |
+| **پایگاه‌داده** | **PostgreSQL نسخه ۱۵+** | کلیه نام‌های جداول و ستون‌ها در دیتابیس به صورت camelCase و با دابل‌کوتیشن نگهداری می‌شوند |
 | **سیستم مایگریشن** | **golang-migrate** (`github.com/golang-migrate/migrate/v4`) | موتور استاندارد اجرای مایگریشن‌های اتمیک SQL |
 | **اعتبارسنجی** | **validator/v10** | ولیدیشن ساختاریافته DTO با تگ‌های اختصاصی مانند `iran_phone` |
 
@@ -25,7 +25,7 @@
 
 ### ۲.۱. ممنوعیت کامل کامنت در کدها (No Comments in Code)
 - **قاعده قطعی:** در هیچ‌یک از فایل‌های کد Go نباید هیچ‌گونه کامنتی (`//` یا `/* */`) درج شود.
-- کد باید خودتوضیح (Self-Documenting) و با نام‌های شفاف و دقیق نوشته شود.
+- کد باید کاملاً خودتوضیح (Self-Documenting) و با نام‌های شفاف و دقیق نوشته شود.
 
 ### ۲.۲. ممنوعیت متغیرهای تک‌حرفی (No Single-Letter Variables)
 - **قاعده قطعی:** استفاده از متغیرهای تک‌حرفی ممنوع است، مگر به عنوان شمارنده ایندکس در حلقه‌ها (مانند `index` یا `i`).
@@ -43,7 +43,8 @@
   - `URL` (نه `Url`): `imageURL`, `videoURL`, `primaryImageURL`
   - `IP` (نه `Ip`): `clientIP`
   - `OTP` (نه `Otp`): `verifyOTP`, `targetOTP`
-  - `JWT` (نه `Jwt`): `jwtSecret`, `jwtToken`
+  - `MD5` (نه `Md5`): `tokenMD5`, `rawTokenMD5`
+  - `DTO` (نه `Dto`): `categoryDTO`, `shoeDTO`
 
 ### ۲.۴. حداقل‌سازی پوینترها جهت جلوگیری از خطای Nil Pointer (Value-Type Policy)
 - **قاعده قطعی:** تا جای ممکن از ارسال و دریافت اشاره‌گرها (Pointers) خودداری کنید.
@@ -68,332 +69,95 @@
 
 ---
 
-## ۳. سیستم مدیریت خطاها و نگاشت پیام‌های فارسی (Custom Error & Persian Mapping)
+## ۳. مدیریت تراکنش‌های پایگاه داده (Database Transactions)
 
-سیستم خطای بک‌اند بر پایه یک تایپ اختصاصی `CustomError` است که رابط `error` زبان Go را پیاده‌سازی می‌کند.  
-لایه سرویس و ریپازیتوری تنها ارور دامنه را برمی‌گردانند؛ سپس لایه‌ای که وظیفه آماده‌سازی پاسخ کلاینت را بر عهده دارد (Response Layer / Handler)، با بررسی کد ارور در یک مپ ثبت‌شده، پیام ترجمه‌شده فارسی و کد وضعیت HTTP متناسب را استخراج کرده و به کلاینت تحویل می‌دهد.
+برای حفظ سادگی حداکثری و جلوگیری از پاس دادن مستقیم شیء دیتابیس یا پوینتر به لایه سرویس، مدیریت تراکنش‌ها از طریق **Context Injection** پیاده‌سازی می‌شود:
 
-### ۳.۱. پیاده‌سازی CustomError (`pkg/apperror/apperror.go`)
+### ۳.۱. اینترفیس TransactionManager در لایه مخزن داده
 ```go
-package apperror
+package repository
 
-import (
-	"errors"
-)
+import "context"
 
-type CustomError struct {
-	errorCode string
+type TransactionManager interface {
+	Execute(ctx context.Context, operation func(txContext context.Context) error) error
 }
+```
 
-func New(errorCode string) CustomError {
-	return CustomError{
-		errorCode: errorCode,
+### ۳.۲. عملکرد خودکار ریپازیتوری‌ها با تراکنش
+ریپازیتوری‌ها ابتدا بررسی می‌کنند که آیا تراکنشی در `context.Context` ثبت شده است یا خیر؛ در صورت وجود، کوئری را روی همان تراکنش اجرا می‌کنند و در غیر این صورت از کانکشن پیش‌فرض دیتابیس استفاده می‌کنند:
+```go
+func (repositoryInstance BaseRepository) resolveDB(ctx context.Context) *gorm.DB {
+	if txInstance, hasTx := ctx.Value(transactionContextKey{}).(*gorm.DB); hasTx {
+		return txInstance
 	}
-}
-
-func (customError CustomError) Error() string {
-	return customError.errorCode
-}
-
-func (customError CustomError) Code() string {
-	return customError.errorCode
-}
-
-var (
-	ErrNotFound           = New("NOT_FOUND")
-	ErrValidationFailed   = New("VALIDATION_FAILED")
-	ErrUnauthorized       = New("UNAUTHORIZED")
-	ErrForbidden          = New("FORBIDDEN")
-	ErrDuplicatePhone     = New("DUPLICATE_PHONE")
-	ErrInvalidOTP         = New("INVALID_OTP")
-	ErrOTPExpired         = New("OTP_EXPIRED")
-	ErrLinkExpired        = New("LINK_EXPIRED")
-	ErrLinkInactive       = New("LINK_INACTIVE")
-	ErrCustomerInactive   = New("CUSTOMER_INACTIVE")
-	ErrInternalServer     = New("INTERNAL_SERVER_ERROR")
-)
-
-type ErrorDetails struct {
-	StatusCode int
-	MessageFa  string
-}
-
-var persianErrorRegistry = map[string]ErrorDetails{
-	"NOT_FOUND": {
-		StatusCode: 404,
-		MessageFa:  "آیتم مورد نظر یافت نشد",
-	},
-	"VALIDATION_FAILED": {
-		StatusCode: 422,
-		MessageFa:  "داده‌های ارسالی معتبر نیستند",
-	},
-	"UNAUTHORIZED": {
-		StatusCode: 401,
-		MessageFa:  "احراز هویت انجام نشده است",
-	},
-	"FORBIDDEN": {
-		StatusCode: 403,
-		MessageFa:  "دسترسی مجاز نمی‌باشد",
-	},
-	"DUPLICATE_PHONE": {
-		StatusCode: 409,
-		MessageFa:  "شماره تلفن همراه از قبل در سیستم وجود دارد",
-	},
-	"INVALID_OTP": {
-		StatusCode: 400,
-		MessageFa:  "کد تایید وارد شده نادرست است",
-	},
-	"OTP_EXPIRED": {
-		StatusCode: 410,
-		MessageFa:  "کد تایید منقضی شده است",
-	},
-	"LINK_EXPIRED": {
-		StatusCode: 410,
-		MessageFa:  "مهلت زمانی این لینک به پایان رسیده است",
-	},
-	"LINK_INACTIVE": {
-		StatusCode: 403,
-		MessageFa:  "این لینک توسط مدیریت غیرفعال شده است",
-	},
-	"CUSTOMER_INACTIVE": {
-		StatusCode: 403,
-		MessageFa:  "حساب کاربری مشتری غیرفعال است",
-	},
-	"INTERNAL_SERVER_ERROR": {
-		StatusCode: 500,
-		MessageFa:  "خطای غیرمنتظره در سرور رخ داد",
-	},
-}
-
-func Resolve(err error) (int, string, string) {
-	if err == nil {
-		return 200, "", ""
-	}
-
-	var customErr CustomError
-	if errors.As(err, &customErr) {
-		if mapping, exists := persianErrorRegistry[customErr.Code()]; exists {
-			return mapping.StatusCode, customErr.Code(), mapping.MessageFa
-		}
-		return 400, customErr.Code(), customErr.Code()
-	}
-
-	return 500, "INTERNAL_SERVER_ERROR", "خطای غیرمنتظره در سرور رخ داد"
+	return repositoryInstance.DatabaseConnection.WithContext(ctx)
 }
 ```
 
 ---
 
-## ۴. معماری لایه‌ای و نمونه پیاده‌سازی طبق استانداردهای فوق
+## ۴. احراز هویت توکن‌محور و اعتبارسنجی با هش MD5
 
-### ۴.۱. لایه موجودیت دامنه (`internal/entity/sample.go`)
+احراز هویت بدون وابستگی به توکن‌های بدون وضعیت (JWT) و به صورت توکن مات (Opaque Token) پیاده‌سازی می‌شود:
+
+### ۴.۱. نحوه تولید و اعتبارسنجی توکن
+1. هنگام ورود موفق کاربر (مدیر یا دارنده مجوز کاتالوگ)، یک توکن تصادفی امن و غیرقابل‌حدس (رشته هگزادسیمال حداقل ۳۲ کاراکتری) تولید می‌شود: `rawToken`.
+2. سرور مقدار هش **MD5** آن توکن را محاسبه می‌کند:
+   $$\text{tokenHash} = \text{MD5}(\text{rawToken})$$
+3. تنها مقدار `tokenHash` به همراه `userID` / `customerID` و زمان انقضا در جدول دیتابیس ذخیره می‌شود. مقدار خام `rawToken` هرگز در دیتابیس ذخیره نمی‌شود.
+4. مقدار خام `rawToken` به کلاینت تحویل داده می‌شود.
+5. در درخواست‌های بعدی، کلاینت توکن را در هدر `Authorization: Bearer <rawToken>` ارسال می‌کند.
+6. میدلور احراز هویت مقدار MD5 توکن ورودی را محاسبه کرده و در جدول جستجو می‌کند:
+   ```sql
+   SELECT * FROM "adminTokens" WHERE "tokenHash" = $1 AND "expiresAt" > $2
+   ```
+
+---
+
+## ۵. اینترفیس ذخیره‌سازی رسانه‌ها (Storage Interface & FileSystem)
+
+برای ذخیره‌سازی تصاویر ژورنالی و ویدیوها، از الگوی اینترفیس با پیاده‌سازی اولیه روی فایل‌سیستم محلی سرور استفاده می‌شود تا در آینده در صورت نیاز به S3 یا MinIO، بدون دستکاری منطق تجاری سوییچ شود.
+
 ```go
-package entity
+package storage
 
-type BaseEntity struct {
-	ID        int64 `gorm:"column:ID" json:"ID"`
-	UpdatedAt int64 `gorm:"column:updatedAt" json:"updatedAt"`
-}
+import "context"
 
-type Category struct {
-	BaseEntity
-	Title       string `gorm:"column:title" json:"title"`
-	Slug        string `gorm:"column:slug" json:"slug"`
-	Description string `gorm:"column:description" json:"description"`
-	SortOrder   int    `gorm:"column:sortOrder" json:"sortOrder"`
+type StorageService interface {
+	Upload(ctx context.Context, fileBytes []byte, originalFilename string, subDirectory string) (fileURL string, storageError error)
+	Delete(ctx context.Context, fileURL string) error
 }
 ```
+پیاده‌سازی محلی (`FileSystemStorage`) فایل‌ها را در پوشه مشخص (مانند `./uploads/shoes/...`) ذخیره کرده و نشانی دسترسی استاتیک آن را بازمی‌گرداند.
 
-### ۴.۲. لایه DTO (`internal/dto/categoryDto.go`)
-```go
-package dto
+---
 
-type CreateCategoryRequest struct {
-	Title       string `json:"title" validate:"required,min=2,max=100"`
-	Slug        string `json:"slug" validate:"required,min=2,max=100"`
-	Description string `json:"description" validate:"omitempty,max=500"`
-	SortOrder   int    `json:"sortOrder"`
-}
-```
+## ۶. تایم‌اوت پیش‌فرض Context (۱۰ ثانیه)
 
-### ۴.۳. لایه ریپازیتوری با ۳ خروجی در Get (`internal/repository/categoryRepo.go`)
-```go
-package repository
+برای جلوگیری از معلق ماندن اتصالات و مصرف بی‌رویه منابع دیتابیس:
+- یک میدلور سراسری در Fiber تعبیه شده است که برای هر درخواست ورودی یک تایم‌اوت قطعی **۱۰ ثانیه‌ای** روی `context.Context` تنظیم می‌کند (`context.WithTimeout(ctx, 10*time.Second)`).
+- کلیه عملیات دیتابیس، آپلود و سرویس‌ها باید این context را دریافت و رعایت کنند.
 
-import (
-	"context"
-	"errors"
+---
 
-	"dyf-backend/internal/entity"
+## ۷. سیستم مدیریت خطاها و نگاشت پیام‌های فارسی (Custom Error & Persian Mapping)
 
-	"gorm.io/gorm"
-)
+سیستم خطای بک‌اند بر پایه یک تایپ اختصاصی `CustomError` است که رابط `error` زبان Go را پیاده‌سازی می‌کند.  
+لایه سرویس و ریپازیتوری تنها ارور دامنه را برمی‌گردانند؛ سپس لایه پاسخ‌دهی (`response.FromAppError`) با بررسی کد ارور در یک مپ ثبت‌شده، پیام ترجمه‌شده فارسی و کد وضعیت HTTP متناسب را استخراج کرده و به کلاینت تحویل می‌دهد.
 
-type CategoryRepository interface {
-	Create(ctx context.Context, category entity.Category) (entity.Category, error)
-	GetByID(ctx context.Context, categoryID int64) (entity.Category, bool, error)
-	ExistsBySlug(ctx context.Context, slug string) (bool, error)
-}
-
-type categoryRepository struct {
-	databaseConnection *gorm.DB
-}
-
-func NewCategoryRepository(databaseConnection *gorm.DB) CategoryRepository {
-	return categoryRepository{
-		databaseConnection: databaseConnection,
-	}
-}
-
-func (repositoryInstance categoryRepository) Create(ctx context.Context, category entity.Category) (entity.Category, error) {
-	databaseError := repositoryInstance.databaseConnection.WithContext(ctx).Create(&category).Error
-	if databaseError != nil {
-		return entity.Category{}, databaseError
-	}
-	return category, nil
-}
-
-func (repositoryInstance categoryRepository) GetByID(ctx context.Context, categoryID int64) (entity.Category, bool, error) {
-	var category entity.Category
-	databaseError := repositoryInstance.databaseConnection.WithContext(ctx).Where(`"ID" = ?`, categoryID).First(&category).Error
-	if databaseError != nil {
-		if errors.Is(databaseError, gorm.ErrRecordNotFound) {
-			return entity.Category{}, false, nil
-		}
-		return entity.Category{}, false, databaseError
-	}
-	return category, true, nil
-}
-
-func (repositoryInstance categoryRepository) ExistsBySlug(ctx context.Context, slug string) (bool, error) {
-	var recordCount int64
-	databaseError := repositoryInstance.databaseConnection.WithContext(ctx).Model(&entity.Category{}).Where(`"slug" = ?`, slug).Count(&recordCount).Error
-	if databaseError != nil {
-		return false, databaseError
-	}
-	return recordCount > 0, nil
-}
-```
-
-### ۴.۴. لایه سرویس بدون وابستگی به Fiber (`internal/service/categoryService.go`)
-```go
-package service
-
-import (
-	"context"
-
-	"dyf-backend/internal/dto"
-	"dyf-backend/internal/entity"
-	"dyf-backend/internal/repository"
-	"dyf-backend/pkg/apperror"
-)
-
-type CategoryService interface {
-	CreateCategory(ctx context.Context, request dto.CreateCategoryRequest) (entity.Category, error)
-	GetCategoryByID(ctx context.Context, categoryID int64) (entity.Category, error)
-}
-
-type categoryService struct {
-	categoryRepository repository.CategoryRepository
-}
-
-func NewCategoryService(categoryRepository repository.CategoryRepository) CategoryService {
-	return categoryService{
-		categoryRepository: categoryRepository,
-	}
-}
-
-func (serviceInstance categoryService) CreateCategory(ctx context.Context, request dto.CreateCategoryRequest) (entity.Category, error) {
-	isExisting, checkError := serviceInstance.categoryRepository.ExistsBySlug(ctx, request.Slug)
-	if checkError != nil {
-		return entity.Category{}, checkError
-	}
-	if isExisting {
-		return entity.Category{}, apperror.New("DUPLICATE_SLUG")
-	}
-
-	newCategory := entity.Category{
-		BaseEntity: entity.BaseEntity{
-			ID:        entity.GenerateNanosecondID(),
-			UpdatedAt: entity.CurrentUnixTimestamp(),
-		},
-		Title:       request.Title,
-		Slug:        request.Slug,
-		Description: request.Description,
-		SortOrder:   request.SortOrder,
-	}
-
-	return serviceInstance.categoryRepository.Create(ctx, newCategory)
-}
-
-func (serviceInstance categoryService) GetCategoryByID(ctx context.Context, categoryID int64) (entity.Category, error) {
-	category, isFound, fetchError := serviceInstance.categoryRepository.GetByID(ctx, categoryID)
-	if fetchError != nil {
-		return entity.Category{}, fetchError
-	}
-	if !isFound {
-		return entity.Category{}, apperror.ErrNotFound
-	}
-	return category, nil
-}
-```
-
-### ۴.۵. لایه هندلر با سینتکس Fiber v3 (`internal/handler/categoryHandler.go`)
-```go
-package handler
-
-import (
-	"strconv"
-
-	"dyf-backend/internal/dto"
-	"dyf-backend/internal/service"
-	"dyf-backend/pkg/apperror"
-	"dyf-backend/pkg/response"
-	"dyf-backend/pkg/validator"
-
-	"github.com/gofiber/fiber/v3"
-)
-
-type CategoryHandler struct {
-	categoryService service.CategoryService
-}
-
-func NewCategoryHandler(categoryService service.CategoryService) CategoryHandler {
-	return CategoryHandler{
-		categoryService: categoryService,
-	}
-}
-
-func (handlerInstance CategoryHandler) Create(fiberContext fiber.Ctx) error {
-	var request dto.CreateCategoryRequest
-	if bindingError := fiberContext.Bind().Body(&request); bindingError != nil {
-		return response.Error(fiberContext, fiber.StatusBadRequest, "INVALID_BODY", "ساختار داده ورودی نامعتبر است", nil)
-	}
-
-	if validationIssues := validator.ValidateStruct(request); len(validationIssues) > 0 {
-		return response.Error(fiberContext, fiber.StatusUnprocessableEntity, "VALIDATION_FAILED", "خطای اعتبارسنجی ورودی‌ها", validationIssues)
-	}
-
-	createdCategory, serviceError := handlerInstance.categoryService.CreateCategory(fiberContext.UserContext(), request)
-	if serviceError != nil {
-		return response.FromAppError(fiberContext, serviceError, nil)
-	}
-
-	return response.Success(fiberContext, fiber.StatusCreated, "دسته‌بندی با موفقیت ایجاد شد", createdCategory, nil)
-}
-
-func (handlerInstance CategoryHandler) GetByID(fiberContext fiber.Ctx) error {
-	rawID := fiberContext.Params("id")
-	categoryID, parseError := strconv.ParseInt(rawID, 10, 64)
-	if parseError != nil {
-		return response.FromAppError(fiberContext, apperror.ErrValidationFailed, nil)
-	}
-
-	category, fetchError := handlerInstance.categoryService.GetCategoryByID(fiberContext.UserContext(), categoryID)
-	if fetchError != nil {
-		return response.FromAppError(fiberContext, fetchError, nil)
-	}
-
-	return response.Success(fiberContext, fiber.StatusOK, "اطلاعات دسته‌بندی دریافت شد", category, nil)
-}
-```
+### جدول مپ خطاهای فارسی سیستم:
+| کد خطا (`CustomError`) | وضعیت HTTP | پیام فارسی کلاینت |
+| :--- | :---: | :--- |
+| `NOT_FOUND` | 404 | آیتم مورد نظر یافت نشد |
+| `VALIDATION_FAILED` | 422 | داده‌های ارسالی معتبر نیستند |
+| `UNAUTHORIZED` | 401 | احراز هویت انجام نشده است |
+| `FORBIDDEN` | 403 | دسترسی مجاز نمی‌باشد |
+| `DUPLICATE_PHONE` | 409 | شماره تلفن همراه از قبل در سیستم وجود دارد |
+| `DUPLICATE_SLUG` | 409 | شناسه لاتین دسته‌بندی تکراری است |
+| `INVALID_OTP` | 400 | کد تایید وارد شده نادرست است |
+| `OTP_EXPIRED` | 410 | کد تایید منقضی شده است |
+| `LINK_EXPIRED` | 410 | مهلت زمانی این لینک به پایان رسیده است |
+| `LINK_INACTIVE` | 403 | این لینک توسط مدیریت غیرفعال شده است |
+| `CUSTOMER_INACTIVE` | 403 | حساب کاربری مشتری غیرفعال است |
+| `INTERNAL_SERVER_ERROR`| 500 | خطای غیرمنتظره در سرور رخ داد |
