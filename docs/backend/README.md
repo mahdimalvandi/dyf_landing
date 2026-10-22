@@ -1,34 +1,48 @@
-# مستندات جامع بک‌اند کاتالوگ خصوصی DYF
-**تکنولوژی:** Go (Golang) + Fiber + GORM + PostgreSQL + JSON  
-**قرارداد نام‌گذاری:** Strict camelCase (متغیرها، JSON، جداول و ستون‌های دیتابیس)
+# راهنمای اسناد و توسعه بک‌اند کاتالوگ خصوصی DYF
+**فناوری:** Go (Golang 1.22+) + Fiber v2 + GORM v2 + PostgreSQL + JSON  
+**استراتژی نام‌گذاری:** Strict camelCase (متغیرها، تگ‌های JSON، جداول و ستون‌های دیتابیس)
 
 ---
 
-## راهنمای اسناد این دایرکتوری (Table of Contents)
+## ۱. فهرست اسناد این دایرکتوری
 
-این مجموعه مستندات به گونه‌ای تدوین شده است که تمامی ابعاد معماری، پایگاه داده، قوانین محصولی و اندپوینت‌ها به صورت ساختاریافته و با جزئیات کامل در دسترس باشد تا هر دولوپر یا ایجنت هوش مصنوعی بتواند بدون ابهام پروژه را پیاده‌سازی کند:
+این اسناد به عنوان مرجع قطعی و قوانین پایه برای توسعه بک‌اند و هدایت ایجنت‌های هوش مصنوعی تدوین شده‌اند:
 
-1. **[سند معماری، ساختار و استانداردها (01_overview_and_architecture.md)](./01_overview_and_architecture.md)**
-   - پشته فناوری (Tech Stack)
-   - معماری لایه‌ای ساده (Layered Architecture: Handler -> Service -> Repository)
-   - قراردادهای نام‌گذاری camelCase در تمام سطوح
-   - استاندارد یکپارچه پاسخ‌ها (`success`, `data`, `error`, `meta`) و مدیریت خطاها
-   - ساختار کامل پوشه‌ها و فایل‌های پروژه Go
+1. **[سند جامع استانداردهای کدنویسی و معماری (01_coding_standards.md)](./01_coding_standards.md)**
+   - پشته فناوری و نسخه‌ها
+   - معماری لایه‌ای تمیز و جریان یک‌طرفه داده (`Handler -> Service -> Repository -> Database`)
+   - نمونه کدهای استاندارد برای لایه‌های Handler, Service, Repository, DTO, Entity
+   - قانون طلایی نام‌گذاری camelCase در تمام سطوح (متغیرهای Go، تگ‌های JSON، ستون‌ها و جداول PostgreSQL)
+   - ساختار استاندارد پاسخ‌ها (`response.Success`, `response.Error`)
+   - اعتبارسنجی ورودی‌ها با `validator/v10`
+   - قوانین و محدودیت‌های الزامی برای هوش مصنوعی (Agent Rules)
 
-2. **[تحلیل موجودیت‌ها، منطق تجاری و ماتریس دسترسی (02_domain_analysis_and_entities.md)](./02_domain_analysis_and_entities.md)**
-   - تشریح جامع فیلدهای هر موجودیت (Admin, Category, ShoeModel, Customer, AccessLink, AccessPermission, Session, OTP)
-   - فرمول قطعی فیلتر محصولات مجاز (قانون اولویت استثنا بر دسته‌بندی)
-   - منطق تایمر سرور-محور، پایداری در رفرش و سشن‌های چند دستگاهی
-   - چرخه حیات و ماشین وضعیت وضعیت‌های دسترسی (Disabled, Active Unseen, In Use, Expired, Finished)
+2. **[سند استانداردهای پایگاه‌داده و سیستم مایگریشن اختصاصی (02_database_and_migration_standards.md)](./02_database_and_migration_standards.md)**
+   - استراتژی نگهداری اسامی camelCase در PostgreSQL با دابل‌کوتیشن
+   - تنظیم سفارشی `CamelCaseNamingStrategy` در GORM
+   - معماری و نحوه عملکرد سیستم مایگریشن اختصاصی Go (`cmd/migrate/main.go` و `pkg/database/migrator.go`)
+   - دستورات اجرای مایگریشن (`up`, `down`, `status`)
+   - راهنمای گام‌به‌گام نوشتن مایگریشن‌های جدید
 
-3. **[پایگاه داده و سیستم مایگریشن اختصاصی (03_database_and_migrations.md)](./03_database_and_migrations.md)**
-   - استراتژی پیاده‌سازی camelCase در PostgreSQL با دابل کوتیشن
-   - پیکربندی سفارشی `NamingStrategy` در GORM
-   - طراحی سیستم مایگریشن اختصاصی و سرویس `cmd/migrate/main.go`
-   - ساختار فایل‌های `.up.sql` و `.down.sql`
-   - اسکریپت‌های DDL کامل تمام جداول، روابط و ایندکس‌ها
+---
 
-4. **[چک‌لیست شروع پروژه و نقشه راه اندپوینت‌ها (04_kickoff_checklist.md)](./04_kickoff_checklist.md)**
-   - پیش‌نیازهای محیطی و تنظیمات ضروری قبل از کدنویسی
-   - فهرست کامل اندپوینت‌های RESTful برای پنل مدیریت، احراز هویت و کاتالوگ خریدار
-   - فازبندی گام‌به‌گام پیاده‌سازی (۷ فاز اجرایی)
+## ۲. نحوه اجرای پروژه و ابزارها
+
+### اجرای وب‌سرور:
+```bash
+cd backend
+go run cmd/server/main.go
+```
+
+### تست سلامت سرویس (Health Check):
+```bash
+curl http://localhost:8080/api/v1/health
+```
+
+### اجرای سیستم مایگریشن دیتابیس:
+```bash
+cd backend
+go run cmd/migrate/main.go up      # اجرای مایگریشن‌های جدید
+go run cmd/migrate/main.go down    # بازگردانی آخرین مایگریشن
+go run cmd/migrate/main.go status  # مشاهده وضعیت مایگریشن‌ها
+```
