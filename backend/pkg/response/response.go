@@ -1,7 +1,7 @@
 package response
 
 import (
-	"dyf-backend/pkg/apperror"
+	staticerrors "dyf-backend/statics/errors"
 
 	"github.com/gofiber/fiber/v3"
 	jsoniter "github.com/json-iterator/go"
@@ -69,7 +69,11 @@ func Error(fiberContext fiber.Ctx, statusCode int, errorCode string, message str
 	return fiberContext.Send(responseBytes)
 }
 
-func FromAppError(fiberContext fiber.Ctx, err error, details interface{}) error {
-	statusCode, errorCode, messageFa := apperror.Resolve(err)
-	return Error(fiberContext, statusCode, errorCode, messageFa, details)
+func FromError(fiberContext fiber.Ctx, statusCode int, err error, details interface{}) error {
+	if err == nil {
+		return Success(fiberContext, statusCode, "", nil, nil)
+	}
+	errorCode := err.Error()
+	persianMessage := staticerrors.TranslateToPersian(err)
+	return Error(fiberContext, statusCode, errorCode, persianMessage, details)
 }

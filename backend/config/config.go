@@ -12,7 +12,7 @@ type Config struct {
 	AppPort  string
 	AppName  string
 	Database DatabaseConfig
-	JWT      JWTConfig
+	Auth     AuthConfig
 	OTP      OTPConfig
 }
 
@@ -25,9 +25,8 @@ type DatabaseConfig struct {
 	SSLMode  string
 }
 
-type JWTConfig struct {
-	Secret          string
-	ExpirationHours int
+type AuthConfig struct {
+	TokenExpirationHours int
 }
 
 type OTPConfig struct {
@@ -38,7 +37,7 @@ type OTPConfig struct {
 func Load() Config {
 	_ = godotenv.Load()
 
-	jwtExpirationHours, _ := strconv.Atoi(fetchEnvironment("JWT_EXPIRATION_HOURS", "72"))
+	tokenExpirationHours, _ := strconv.Atoi(fetchEnvironment("AUTH_TOKEN_EXPIRATION_HOURS", "72"))
 	otpExpirationMinutes, _ := strconv.Atoi(fetchEnvironment("OTP_EXPIRATION_MINUTES", "2"))
 
 	return Config{
@@ -53,9 +52,8 @@ func Load() Config {
 			DBName:   fetchEnvironment("DB_NAME", "dyf_catalog"),
 			SSLMode:  fetchEnvironment("DB_SSLMODE", "disable"),
 		},
-		JWT: JWTConfig{
-			Secret:          fetchEnvironment("JWT_SECRET", "dyf-default-secret-key-change-me"),
-			ExpirationHours: jwtExpirationHours,
+		Auth: AuthConfig{
+			TokenExpirationHours: tokenExpirationHours,
 		},
 		OTP: OTPConfig{
 			Provider:          fetchEnvironment("OTP_PROVIDER", "mock"),
