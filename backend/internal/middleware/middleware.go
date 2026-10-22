@@ -5,25 +5,24 @@ import (
 
 	"dyf-backend/pkg/response"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
-// GlobalErrorHandler catches unhandled errors and panics to return unified standard JSON
-func GlobalErrorHandler(c *fiber.Ctx, err error) error {
-	code := fiber.StatusInternalServerError
-	message := "خطای غیرمنتظره در سرور رخ داده است"
+func GlobalErrorHandler(fiberContext fiber.Ctx, uncaughtError error) error {
+	statusCode := fiber.StatusInternalServerError
+	errorMessage := "خطای غیرمنتظره در سرور رخ داده است"
 	errorCode := "INTERNAL_SERVER_ERROR"
 
-	if e, ok := err.(*fiber.Error); ok {
-		code = e.Code
-		message = e.Message
-		if code == fiber.StatusNotFound {
+	if fiberError, isFiberError := uncaughtError.(*fiber.Error); isFiberError {
+		statusCode = fiberError.Code
+		errorMessage = fiberError.Message
+		if statusCode == fiber.StatusNotFound {
 			errorCode = "NOT_FOUND"
-		} else if code == fiber.StatusBadRequest {
+		} else if statusCode == fiber.StatusBadRequest {
 			errorCode = "BAD_REQUEST"
 		}
 	}
 
-	log.Printf("[ERROR] %s %s - %v", c.Method(), c.Path(), err)
-	return response.Error(c, code, errorCode, message, nil)
+	log.Printf("[ERROR] %s %s - %v", fiberContext.Method(), fiberContext.Path(), uncaughtError)
+	return response.Error(fiberContext, statusCode, errorCode, errorMessage, nil)
 }

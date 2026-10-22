@@ -2,9 +2,15 @@ package entity
 
 import "time"
 
-// BaseEntity provides shared camelCase fields for all domain entities
 type BaseEntity struct {
-	ID        uint      `gorm:"primaryKey;column:id" json:"id"`
-	CreatedAt time.Time `gorm:"column:createdAt" json:"createdAt"`
-	UpdatedAt time.Time `gorm:"column:updatedAt" json:"updatedAt"`
+	ID        int64 `gorm:"column:ID" json:"ID"`
+	UpdatedAt int64 `gorm:"column:updatedAt" json:"updatedAt"`
+}
+
+func GenerateNanosecondID() int64 {
+	return time.Now().UnixNano()
+}
+
+func CurrentUnixTimestamp() int64 {
+	return time.Now().Unix()
 }

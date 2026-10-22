@@ -9,69 +9,67 @@ import (
 )
 
 var (
-	validate       = validator.New()
-	iranPhoneRegex = regexp.MustCompile(`^09[0-9]{9}$`)
+	structValidator = validator.New()
+	iranPhoneRegex  = regexp.MustCompile(`^09[0-9]{9}$`)
 )
 
 func init() {
-	// Custom validator for Iranian phone numbers: e.g. 09121234567
-	_ = validate.RegisterValidation("iran_phone", func(fl validator.FieldLevel) bool {
-		phone := fl.Field().String()
-		return iranPhoneRegex.MatchString(phone)
+	_ = structValidator.RegisterValidation("iran_phone", func(fieldLevel validator.FieldLevel) bool {
+		phoneNumber := fieldLevel.Field().String()
+		return iranPhoneRegex.MatchString(phoneNumber)
 	})
 }
 
-// ValidationErrorDetail represents a single field error
 type ValidationErrorDetail struct {
 	Field string `json:"field"`
 	Issue string `json:"issue"`
 }
 
-// ValidateStruct validates a struct and returns formatted error details
-func ValidateStruct(s interface{}) []ValidationErrorDetail {
-	err := validate.Struct(s)
-	if err == nil {
+func ValidateStruct(targetStruct interface{}) []ValidationErrorDetail {
+	validationError := structValidator.Struct(targetStruct)
+	if validationError == nil {
 		return nil
 	}
 
 	var issues []ValidationErrorDetail
-	if validationErrors, ok := err.(validator.ValidationErrors); ok {
-		for _, e := range validationErrors {
-			fieldName := toLowerCamelCase(e.Field())
-			issue := formatErrorMessage(e)
+	if fieldErrors, isFieldErrors := validationError.(validator.ValidationErrors); isFieldErrors {
+		for index := range fieldErrors {
+			singleError := fieldErrors[index]
+			fieldName := formatFieldName(singleError.Field())
+			issueMessage := formatErrorMessage(singleError)
 			issues = append(issues, ValidationErrorDetail{
 				Field: fieldName,
-				Issue: issue,
+				Issue: issueMessage,
 			})
 		}
 	} else {
 		issues = append(issues, ValidationErrorDetail{
 			Field: "body",
-			Issue: err.Error(),
+			Issue: validationError.Error(),
 		})
 	}
 
 	return issues
 }
 
-func formatErrorMessage(e validator.FieldError) string {
-	switch e.Tag() {
+func formatErrorMessage(fieldError validator.FieldError) string {
+	switch fieldError.Tag() {
 	case "required":
-		return fmt.Sprintf("فیلد %s الزامی است", toLowerCamelCase(e.Field()))
+		return fmt.Sprintf("فیلد %s الزامی است", formatFieldName(fieldError.Field()))
 	case "iran_phone":
-		return "شماره تلفن باید ۱۱ رقم بوده و با ۰۹ شروع شود"
+		return "شماره تلفن همراه باید ۱۱ رقم بوده و با ۰۹ آغاز شود"
 	case "min":
-		return fmt.Sprintf("حداقل مقدار/طول مجاز %s است", e.Param())
+		return fmt.Sprintf("حداقل مقدار یا طول مجاز %s است", fieldError.Param())
 	case "max":
-		return fmt.Sprintf("حداکثر مقدار/طول مجاز %s است", e.Param())
+		return fmt.Sprintf("حداکثر مقدار یا طول مجاز %s است", fieldError.Param())
 	default:
-		return fmt.Sprintf("مقدار فیلد %s معتبر نیست", toLowerCamelCase(e.Field()))
+		return fmt.Sprintf("مقدار فیلد %s نامعتبر است", formatFieldName(fieldError.Field()))
 	}
 }
 
-func toLowerCamelCase(s string) string {
-	if len(s) == 0 {
-		return s
+func formatFieldName(rawFieldName string) string {
+	if len(rawFieldName) == 0 {
+		return rawFieldName
 	}
-	return strings.ToLower(s[:1]) + s[1:]
+	return strings.ToLower(rawFieldName[:1]) + rawFieldName[1:]
 }

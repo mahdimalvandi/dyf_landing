@@ -3,19 +3,17 @@ package handler
 import (
 	"dyf-backend/pkg/response"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
-// BaseHandler encapsulates shared handler functionality
 type BaseHandler struct{}
 
-func NewBaseHandler() *BaseHandler {
-	return &BaseHandler{}
+func NewBaseHandler() BaseHandler {
+	return BaseHandler{}
 }
 
-// HealthCheck provides a simple system status check
-func (h *BaseHandler) HealthCheck(c *fiber.Ctx) error {
-	return response.Success(c, fiber.StatusOK, "سرویس کاتالوگ خصوصی DYF فعال است", fiber.Map{
+func (baseHandler BaseHandler) HealthCheck(fiberContext fiber.Ctx) error {
+	return response.Success(fiberContext, fiber.StatusOK, "سرویس کاتالوگ اختصاصی فعال است", map[string]string{
 		"status":  "operational",
 		"service": "dyf-catalog-backend",
 	}, nil)

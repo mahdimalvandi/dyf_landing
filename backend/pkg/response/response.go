@@ -1,20 +1,23 @@
 package response
 
 import (
-	"github.com/gofiber/fiber/v2"
+	"dyf-backend/pkg/apperror"
+
+	"github.com/gofiber/fiber/v3"
+	jsoniter "github.com/json-iterator/go"
 )
 
-// Response defines the unified standard response envelope for all API endpoints
-type Response struct {
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
+
+type Envelope struct {
 	Success    bool        `json:"success"`
 	StatusCode int         `json:"statusCode"`
 	Message    string      `json:"message,omitempty"`
 	Data       interface{} `json:"data,omitempty"`
-	Meta       *Meta       `json:"meta,omitempty"`
-	Error      *ErrorInfo  `json:"error,omitempty"`
+	Meta       interface{} `json:"meta,omitempty"`
+	Error      interface{} `json:"error,omitempty"`
 }
 
-// Meta holds pagination information
 type Meta struct {
 	Page       int   `json:"page"`
 	Limit      int   `json:"limit"`
@@ -22,33 +25,51 @@ type Meta struct {
 	TotalPages int   `json:"totalPages"`
 }
 
-// ErrorInfo standardizes error structure
 type ErrorInfo struct {
 	Code    string      `json:"code"`
 	Message string      `json:"message"`
 	Details interface{} `json:"details,omitempty"`
 }
 
-// Success sends a standardized JSON success response
-func Success(c *fiber.Ctx, statusCode int, message string, data interface{}, meta *Meta) error {
-	return c.Status(statusCode).JSON(Response{
+func Success(fiberContext fiber.Ctx, statusCode int, message string, data interface{}, meta interface{}) error {
+	fiberContext.Status(statusCode)
+	fiberContext.Set("Content-Type", "application/json; charset=utf-8")
+
+	responseBytes, marshalError := json.Marshal(Envelope{
 		Success:    true,
 		StatusCode: statusCode,
 		Message:    message,
 		Data:       data,
 		Meta:       meta,
 	})
+	if marshalError != nil {
+		return fiberContext.Status(500).SendString(marshalError.Error())
+	}
+
+	return fiberContext.Send(responseBytes)
 }
 
-// Error sends a standardized JSON error response
-func Error(c *fiber.Ctx, statusCode int, errorCode, message string, details interface{}) error {
-	return c.Status(statusCode).JSON(Response{
+func Error(fiberContext fiber.Ctx, statusCode int, errorCode string, message string, details interface{}) error {
+	fiberContext.Status(statusCode)
+	fiberContext.Set("Content-Type", "application/json; charset=utf-8")
+
+	responseBytes, marshalError := json.Marshal(Envelope{
 		Success:    false,
 		StatusCode: statusCode,
-		Error: &ErrorInfo{
+		Error: ErrorInfo{
 			Code:    errorCode,
 			Message: message,
 			Details: details,
 		},
 	})
+	if marshalError != nil {
+		return fiberContext.Status(500).SendString(marshalError.Error())
+	}
+
+	return fiberContext.Send(responseBytes)
+}
+
+func FromAppError(fiberContext fiber.Ctx, err error, details interface{}) error {
+	statusCode, errorCode, messageFa := apperror.Resolve(err)
+	return Error(fiberContext, statusCode, errorCode, messageFa, details)
 }

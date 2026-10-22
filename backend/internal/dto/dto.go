@@ -1,28 +1,24 @@
 package dto
 
-// PaginationQuery represents common query parameters for paginated endpoints
 type PaginationQuery struct {
 	Page  int `query:"page" json:"page"`
 	Limit int `query:"limit" json:"limit"`
 }
 
-// GetPage returns normalized 1-based page number
-func (p *PaginationQuery) GetPage() int {
-	if p.Page <= 0 {
+func (pagination PaginationQuery) NormalizePage() int {
+	if pagination.Page <= 0 {
 		return 1
 	}
-	return p.Page
+	return pagination.Page
 }
 
-// GetLimit returns normalized item limit per page
-func (p *PaginationQuery) GetLimit() int {
-	if p.Limit <= 0 || p.Limit > 100 {
+func (pagination PaginationQuery) NormalizeLimit() int {
+	if pagination.Limit <= 0 || pagination.Limit > 100 {
 		return 20
 	}
-	return p.Limit
+	return pagination.Limit
 }
 
-// GetOffset calculates database query offset
-func (p *PaginationQuery) GetOffset() int {
-	return (p.GetPage() - 1) * p.GetLimit()
+func (pagination PaginationQuery) CalculateOffset() int {
+	return (pagination.NormalizePage() - 1) * pagination.NormalizeLimit()
 }

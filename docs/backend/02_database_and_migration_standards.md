@@ -1,135 +1,226 @@
-# سند استانداردهای پایگاه‌داده و سیستم مایگریشن اختصاصی (Database & Migrations)
-**نسخه سند:** ۱.۰  
+# سند استانداردهای پایگاه‌داده و سیستم مایگریشن (Database & Migrations)
+**نسخه سند:** ۲.۰  
 **پروژه:** DYF Private Catalog Backend  
-**مخاطبان:** توسعه‌دهندگان بک‌اند و ایجنت‌های هوش مصنوعی پیاده‌ساز
+**مخاطبان:** توسعه‌دهندگان، مهندسان DevOps و ایجنت‌های هوش مصنوعی (AI Agents)
 
 ---
 
-## ۱. پایگاه داده و استراتژی نام‌گذاری camelCase در PostgreSQL
+## ۱. پایگاه‌داده PostgreSQL و استانداردهای طراحی Schema
 
-طبق دستورالعمل پروژه، تمامی نام‌گذاری‌ها در پایگاه داده شامل نام جداول و نام ستون‌ها باید به صورت **camelCase** باشند.
+کلیه ساختارهای پایگاه داده و ستون‌ها باید دقیقاً مطابق با این قواعد تعریف شوند:
 
-### ۱.۱. رفتار PostgreSQL با شناسه‌های camelCase
-در PostgreSQL، شناسه‌ها به صورت پیش‌فرض به حروف کوچک تبدیل می‌شوند (`case-folding`). برای حفظ دقیق بزرگی و کوچکی حروف در فرمت **camelCase**، تمامی اسامی جداول و ستون‌ها در مایگریشن‌های SQL و کوئری‌های خام درون **دابل کوتیشن (`"`)** قرار می‌گیرند:
+### ۱.۱. قاعده شناسه `"ID"` و نوع داده `BIGINT`
+- **قاعده قطعی:** نام فیلد شناسه رکوردها در دیتابیس دقیقاً `"ID"` (با حروف بزرگ و درون دابل‌کوتیشن) است.
+- نوع داده این ستون در PostgreSQL معادل **`BIGINT PRIMARY KEY`** است.
+- در لایه کدهای Go، این فیلد برابر با **`ID int64`** است که با `time.Now().UnixNano()` تولید می‌شود.
+- **حذف فیلد `createdAt`:** به دلیل این‌که زمان ساخت از روی ارقام نانوثانیه فیلد `"ID"` قابل استخراج است، هیچ ستونی با نام `createdAt` نباید در جداول ساخته شود.
 
-```sql
--- نمونه استاندارد ساخت جدول با فیلدهای camelCase
-CREATE TABLE IF NOT EXISTS "sampleItems" (
-    "id" SERIAL PRIMARY KEY,
-    "itemTitle" VARCHAR(255) NOT NULL,
-    "primaryImageUrl" TEXT NOT NULL,
-    "sortOrder" INT NOT NULL DEFAULT 0,
-    "isActive" BOOLEAN NOT NULL DEFAULT TRUE,
-    "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-```
+### ۱.۲. نگهداری زمان‌ها با نوع `BIGINT` (Unix Timestamps)
+- هیچ ستونی از نوع `TIMESTAMP` یا `TIMESTAMPTZ` استفاده نمی‌شود.
+- تمامی فیلدهای زمانی (نظیر `"updatedAt"`, `"expiresAt"`, `"startedAt"`) از نوع **`BIGINT`** (یونیکس تایم‌استمپ برحسب ثانیه) هستند.
 
-### ۱.۲. تنظیم استراتژی نام‌گذاری GORM (`CamelCaseNamingStrategy`)
-در پروژه بک‌اند (`backend/pkg/database/postgres.go`)، یک `NamingStrategy` سفارشی برای GORM پیاده‌سازی شده است:
-- **نام جداول:** به صورت خودکار به فرمت camelCase جمع تبدیل می‌شوند (مثلاً `ShoeModel` -> `shoeModels`).
-- **نام ستون‌ها:** به صورت خودکار به فرمت camelCase ذخیره می‌شوند (مثلاً `PrimaryImageUrl` -> `primaryImageUrl`).
-- علاوه بر استراتژی عمومی، در تمام ساختارهای `entity`، تگ صریح ستون درج می‌گردد:
-  ```go
-  type ShoeModel struct {
-      ID              uint      `gorm:"primaryKey;column:id" json:"id"`
-      ShoeTitle       string    `gorm:"column:shoeTitle;not null" json:"shoeTitle"`
-      PrimaryImageUrl string    `gorm:"column:primaryImageUrl" json:"primaryImageUrl"`
-      CreatedAt       time.Time `gorm:"column:createdAt" json:"createdAt"`
-  }
-  ```
+### ۱.۳. نام‌گذاری دقیق camelCase با دابل‌کوتیشن (`"`)
+- از آنجا که PostgreSQL شناسه‌های فاقد کوتیشن را به حروف کوچک تبدیل می‌کند، در کلیه فایل‌های SQL نام تمامی جداول و ستون‌ها با دابل‌کوتیشن درج می‌شوند:
+  - جدول‌ها: `"shoeModels"`, `"categories"`, `"customers"`, `"accessLinks"`, `"schemaMigrations"`
+  - ستون‌ها: `"ID"`, `"shoeTitle"`, `"primaryImageURL"`, `"updatedAt"`, `"categoryIDs"`
+
+### ۱.۴. ایندکس‌گذاری اجباری فیلدهای مورد کوئری (Mandatory Indexing)
+- **قاعده قطعی:** هر ستونی که در عملیات فیلترینگ، جست‌وجو، شرط‌های `WHERE` یا کلید خارجی قرار می‌گیرد، باید به صورت صریح با `CREATE INDEX IF NOT EXISTS` ایندکس شود.
+- ایندکس‌های روی فیلدهای متنی حساس یا اسلاگ‌ها: B-Tree Index
+- ایندکس‌های روی فیلدهای آرایه‌ای یا JSONB (مانند دسته‌بندی‌ها یا مدل‌های مجاز): GIN Index
 
 ---
 
-## ۲. معماری سیستم مایگریشن اختصاصی (Custom Migration Runner)
+## ۲. سیستم مایگریشن با کتابخانه استاندارد `golang-migrate`
 
-پروژه دارای یک سیستم مایگریشن مستقل و اختصاصی در زبان Go است که نیاز به ابزارهای خارجی را حذف کرده و عملکردی فوق‌العاده مطمئن، اتمیک و شفاف فراهم می‌کند.
+مدیریت ساختار پایگاه داده و نسخه‌بندی آن با ابزار استاندارد صنعت Go یعنی **`golang-migrate/migrate/v4`** انجام می‌شود و از نوشتن اسکریپت‌های دستی خودداری شده است.
 
 ### ۲.۱. ساختار فایل‌های مایگریشن در پوشه `backend/migrations/`
-تمام فایل‌های تغییرات ساختار دیتابیس در پوشه `migrations/` با شماره‌گذاری ترتیبی ۶ رقمی و دو فایل رفت (`.up.sql`) و برگشت (`.down.sql`) ایجاد می‌شوند:
-
+فایل‌ها با شماره‌گذاری عددی ۶ رقمی و دو فایل رو به جلو (`.up.sql`) و بازگشت (`.down.sql`) ایجاد می‌شوند:
 ```text
 backend/migrations/
-├── 000001_create_schema_migrations.up.sql
-├── 000001_create_schema_migrations.down.sql
-├── 000002_create_categories.up.sql
-├── 000002_create_categories.down.sql
-├── 000003_create_shoe_models.up.sql
-└── 000003_create_shoe_models.down.sql
+├── 000001_create_categories.up.sql
+├── 000001_create_categories.down.sql
+├── 000002_create_shoe_models.up.sql
+├── 000002_create_shoe_models.down.sql
+├── 000003_create_customers.up.sql
+├── 000003_create_customers.down.sql
+├── 000004_create_access_links.up.sql
+└── 000004_create_access_links.down.sql
 ```
 
-### ۲.۲. جدول ردیابی وضعیت مایگریشن‌ها (`schemaMigrations`)
-وضعیت مایگریشن‌های اجرا شده در جدول اختصاصی `"schemaMigrations"` در پایگاه داده ثبت می‌شود:
-```sql
-CREATE TABLE IF NOT EXISTS "schemaMigrations" (
-    "id" SERIAL PRIMARY KEY,
-    "version" INT NOT NULL UNIQUE,
-    "name" VARCHAR(255) NOT NULL,
-    "appliedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-```
+### ۲.۲. دستورات اجرایی CLI مایگریشن (`cmd/migrate/main.go`)
 
-### ۲.۳. عملکرد اسکریپت مایگریتور (`backend/cmd/migrate/main.go`)
-
-فرمان‌های اجرایی مایگریتور از ترمینال:
+کلیه عملیات مایگریشن از طریق ترمینال در دایرکتوری `backend` قابل اجرا هستند:
 
 ```bash
-# رفتن به پوشه بک‌اند
 cd backend
 
-# ۱. اجرای تمام مایگریشن‌های اعمال‌نشده (Up)
+# ۱. اجرای کلیه مایگریشن‌های اعمال‌نشده (Up)
 go run cmd/migrate/main.go up
 
-# ۲. بازگردانی آخرین مایگریشن اعمال‌شده (Down / Rollback)
+# ۲. رول‌بک و بازگردانی آخرین نسخه مایگریشن (Down)
 go run cmd/migrate/main.go down
 
-# ۳. مشاهده جدول وضعیت مایگریشن‌ها (Status)
-go run cmd/migrate/main.go status
+# ۳. بررسی وضعیت و نسخه فعلی دیتابیس (Version)
+go run cmd/migrate/main.go version
 ```
 
-### ۲.۴. تضمین اتمیک بودن و امنیت اجرا (Atomic Transactions):
-1. **تراکنش پایگاه داده (Database Transaction):**  
-   هر فایل مایگریشن دقیقاً درون یک تراکنش (`BEGIN ... COMMIT`) اجرا می‌شود.
-2. **رول‌بک خودکار در صورت خطا:**  
-   چنانچه هر دستوری در فایل SQL با خطا مواجه شود، تراکنش فوراً `ROLLBACK` شده و هیچ تغییری ناقص اعمال نمی‌شود.
-3. **ثبت خودکار نسخه:**  
-   شماره نسخه و نام مایگریشن در همان تراکنش در جدول `"schemaMigrations"` ثبت می‌شود.
+### ۲.۳. جدول تاریخچه مایگریشن‌ها (`schemaMigrations`)
+کتابخانه `golang-migrate` به صورت خودکار جدولی به نام `"schemaMigrations"` در دیتابیس ایجاد کرده و نسخه اعمال‌شده و وضعیت کثیف/تمیز بودن آن را ثبت می‌کند:
+```sql
+-- جدول ایجادشده به صورت خودکار توسط golang-migrate
+CREATE TABLE IF NOT EXISTS "schemaMigrations" (
+    "version" BIGINT NOT NULL PRIMARY KEY,
+    "dirty" BOOLEAN NOT NULL
+);
+```
 
 ---
 
-## ۳. راهنمای گام‌به‌گام نوشتن مایگریشن جدید برای توسعه‌دهنده و AI Agent
+## ۳. طرح تفصیلی جداول دیتابیس (SQL Schema Blueprint)
 
-هنگام پیاده‌سازی تسک جدیدی که نیاز به جدول یا ستون جدید دارد، مراحل زیر را دقیقاً دنبال کنید:
-
-### گام ۱: شماره نسخه بعدی را بررسی کنید
-به پوشه `backend/migrations/` نگاه کنید و شماره آخرین فایل را بیابید (مثلاً `000003`). نسخه جدید شماره بعد خواهد بود (`000004`).
-
-### گام ۲: فایل Up را بسازید: `000004_create_feature_name.up.sql`
-- از شناسه‌های camelCase درون دابل‌کوتیشن (`"`) استفاده کنید.
-- ایندکس‌های لازم را تعریف کنید.
-- ستون‌های پیش‌فرض `createdAt` و `updatedAt` را قرار دهید.
-
+### ۳.۱. جدول دسته‌بندی‌ها / لاین‌های محصول (`"categories"`)
 ```sql
-CREATE TABLE IF NOT EXISTS "sampleTable" (
-    "id" SERIAL PRIMARY KEY,
-    "sampleName" VARCHAR(100) NOT NULL,
-    "isActive" BOOLEAN NOT NULL DEFAULT TRUE,
-    "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS "categories" (
+    "ID" BIGINT PRIMARY KEY,
+    "title" VARCHAR(150) NOT NULL,
+    "slug" VARCHAR(150) NOT NULL UNIQUE,
+    "description" TEXT,
+    "sortOrder" INT NOT NULL DEFAULT 0,
+    "updatedAt" BIGINT NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS "idx_sampleTable_sampleName" ON "sampleTable" ("sampleName");
+CREATE INDEX IF NOT EXISTS "idx_categories_slug" ON "categories" ("slug");
+CREATE INDEX IF NOT EXISTS "idx_categories_sortOrder" ON "categories" ("sortOrder");
 ```
 
-### گام ۳: فایل Down را بسازید: `000004_create_feature_name.down.sql`
-دستور پاک‌سازی تغییرات را بنویسید:
+### ۳.۲. جدول مدل‌های کفش (`"shoeModels"`)
 ```sql
-DROP TABLE IF EXISTS "sampleTable";
+CREATE TABLE IF NOT EXISTS "shoeModels" (
+    "ID" BIGINT PRIMARY KEY,
+    "shoeTitle" VARCHAR(255) NOT NULL,
+    "description" TEXT,
+    "primaryImageURL" TEXT NOT NULL,
+    "colors" JSONB NOT NULL DEFAULT '[]'::jsonb,
+    "sizes" JSONB NOT NULL DEFAULT '[]'::jsonb,
+    "images" JSONB NOT NULL DEFAULT '[]'::jsonb,
+    "videos" JSONB NOT NULL DEFAULT '[]'::jsonb,
+    "categoryIDs" JSONB NOT NULL DEFAULT '[]'::jsonb,
+    "updatedAt" BIGINT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS "idx_shoeModels_shoeTitle" ON "shoeModels" ("shoeTitle");
+CREATE INDEX IF NOT EXISTS "idx_shoeModels_categoryIDs" ON "shoeModels" USING GIN ("categoryIDs");
 ```
 
-### گام ۴: اجرای مایگریشن
-با اجرای فرمان زیر مایگریشن را اعمال کنید:
-```bash
-go run cmd/migrate/main.go up
+### ۳.۳. جدول مشتریان و همکاران تجاری (`"customers"`)
+```sql
+CREATE TABLE IF NOT EXISTS "customers" (
+    "ID" BIGINT PRIMARY KEY,
+    "firstNameFa" VARCHAR(100) NOT NULL,
+    "lastNameFa" VARCHAR(100) NOT NULL,
+    "firstNameEn" VARCHAR(100),
+    "lastNameEn" VARCHAR(100),
+    "storeName" VARCHAR(200),
+    "phoneNumber" VARCHAR(20) NOT NULL UNIQUE,
+    "isActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "updatedAt" BIGINT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS "idx_customers_phoneNumber" ON "customers" ("phoneNumber");
+CREATE INDEX IF NOT EXISTS "idx_customers_isActive" ON "customers" ("isActive");
 ```
-وضعیت را با `go run cmd/migrate/main.go status` بازبینی کنید.
+
+### ۳.۴. جدول مجوز دسترسی مستقیم مشتری (`"customerDirectPermissions"`)
+```sql
+CREATE TABLE IF NOT EXISTS "customerDirectPermissions" (
+    "ID" BIGINT PRIMARY KEY,
+    "customerID" BIGINT NOT NULL UNIQUE REFERENCES "customers" ("ID") ON DELETE CASCADE,
+    "allowedCategoryIDs" JSONB NOT NULL DEFAULT '[]'::jsonb,
+    "allowedShoeIDs" JSONB NOT NULL DEFAULT '[]'::jsonb,
+    "excludedShoeIDs" JSONB NOT NULL DEFAULT '[]'::jsonb,
+    "durationMinutes" INT NOT NULL DEFAULT 0,
+    "expiresAt" BIGINT,
+    "isActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "startedAt" BIGINT,
+    "updatedAt" BIGINT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS "idx_cdp_customerID" ON "customerDirectPermissions" ("customerID");
+CREATE INDEX IF NOT EXISTS "idx_cdp_isActive" ON "customerDirectPermissions" ("isActive");
+```
+
+### ۳.۵. جدول لینک‌های دسترسی اختصاصی (`"accessLinks"`)
+```sql
+CREATE TABLE IF NOT EXISTS "accessLinks" (
+    "ID" BIGINT PRIMARY KEY,
+    "token" VARCHAR(128) NOT NULL UNIQUE,
+    "title" VARCHAR(255),
+    "recipientNameFa" VARCHAR(100) NOT NULL,
+    "recipientLastNameFa" VARCHAR(100) NOT NULL,
+    "recipientNameEn" VARCHAR(100),
+    "recipientLastNameEn" VARCHAR(100),
+    "customerID" BIGINT REFERENCES "customers" ("ID") ON DELETE SET NULL,
+    "authType" VARCHAR(20) NOT NULL DEFAULT 'DIRECT', -- 'DIRECT' or 'PHONE_OTP'
+    "requiredPhoneNumber" VARCHAR(20),
+    "allowedCategoryIDs" JSONB NOT NULL DEFAULT '[]'::jsonb,
+    "allowedShoeIDs" JSONB NOT NULL DEFAULT '[]'::jsonb,
+    "excludedShoeIDs" JSONB NOT NULL DEFAULT '[]'::jsonb,
+    "durationMinutes" INT NOT NULL DEFAULT 0,
+    "expiresAt" BIGINT,
+    "isActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "cycleNumber" INT NOT NULL DEFAULT 1,
+    "startedAt" BIGINT,
+    "lastAccessedAt" BIGINT,
+    "updatedAt" BIGINT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS "idx_accessLinks_token" ON "accessLinks" ("token");
+CREATE INDEX IF NOT EXISTS "idx_accessLinks_authType" ON "accessLinks" ("authType");
+CREATE INDEX IF NOT EXISTS "idx_accessLinks_isActive" ON "accessLinks" ("isActive");
+CREATE INDEX IF NOT EXISTS "idx_accessLinks_customerID" ON "accessLinks" ("customerID");
+```
+
+### ۳.۶. جدول مدیران پنل (`"admins"`)
+```sql
+CREATE TABLE IF NOT EXISTS "admins" (
+    "ID" BIGINT PRIMARY KEY,
+    "firstName" VARCHAR(100) NOT NULL,
+    "lastName" VARCHAR(100) NOT NULL,
+    "phoneNumber" VARCHAR(20) NOT NULL UNIQUE,
+    "isActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "updatedAt" BIGINT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS "idx_admins_phoneNumber" ON "admins" ("phoneNumber");
+CREATE INDEX IF NOT EXISTS "idx_admins_isActive" ON "admins" ("isActive");
+```
+
+### ۳.۷. جدول کدهای یک‌بارمصرف پیامکی (`"otpVerifications"`)
+```sql
+CREATE TABLE IF NOT EXISTS "otpVerifications" (
+    "ID" BIGINT PRIMARY KEY,
+    "phoneNumber" VARCHAR(20) NOT NULL,
+    "code" VARCHAR(10) NOT NULL,
+    "purpose" VARCHAR(50) NOT NULL,
+    "expiresAt" BIGINT NOT NULL,
+    "attempts" INT NOT NULL DEFAULT 0,
+    "isUsed" BOOLEAN NOT NULL DEFAULT FALSE,
+    "updatedAt" BIGINT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS "idx_otp_phone_purpose" ON "otpVerifications" ("phoneNumber", "purpose");
+CREATE INDEX IF NOT EXISTS "idx_otp_expiresAt" ON "otpVerifications" ("expiresAt");
+```
+
+---
+
+## ۴. چک‌لیست نوشتن مایگریشن جدید برای توسعه‌دهنده و AI Agent
+
+هنگام پیاده‌سازی هر تسکی که نیاز به تغییر ساختار دیتابیس دارد:
+1. شماره ترتیبی ۶ رقمی جدید را تعیین کنید (مثلاً `000005_feature.up.sql` و `000005_feature.down.sql`).
+2. ستون `"ID" BIGINT PRIMARY KEY` را بدون `createdAt` قرار دهید.
+3. تمامی زمان‌ها را به صورت `BIGINT` بنویسید.
+4. کلیه فیلدهایی را که در کوئری‌ها جستجو می‌شوند با ایندکس اختصاصی پوشش دهید.
+5. فایل را با فرمان `go run cmd/migrate/main.go up` اجرا کرده و از ثبت صحیح آن در `"schemaMigrations"` مطمئن شوید.

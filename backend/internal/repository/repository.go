@@ -2,11 +2,12 @@ package repository
 
 import "gorm.io/gorm"
 
-// BaseRepository encapsulates shared GORM database operations
 type BaseRepository struct {
-	DB *gorm.DB
+	DatabaseConnection *gorm.DB
 }
 
-func NewBaseRepository(db *gorm.DB) *BaseRepository {
-	return &BaseRepository{DB: db}
+func NewBaseRepository(databaseConnection *gorm.DB) BaseRepository {
+	return BaseRepository{
+		DatabaseConnection: databaseConnection,
+	}
 }

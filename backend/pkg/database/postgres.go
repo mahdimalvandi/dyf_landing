@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -14,66 +13,64 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-// CamelCaseNamingStrategy implements GORM's schema.Namer interface
-// to enforce camelCase table and column names in PostgreSQL.
 type CamelCaseNamingStrategy struct {
 	schema.NamingStrategy
 }
 
-func (ns CamelCaseNamingStrategy) TableName(str string) string {
-	if str == "" {
+func (namingStrategy CamelCaseNamingStrategy) TableName(rawTableName string) string {
+	if rawTableName == "" {
 		return ""
 	}
-	// e.g. ShoeModel -> shoeModels
-	lower := toLowerCamel(str)
-	if !strings.HasSuffix(lower, "s") {
-		return lower + "s"
+	camel := convertToLowerCamel(rawTableName)
+	if !strings.HasSuffix(camel, "s") {
+		return camel + "s"
 	}
-	return lower
+	return camel
 }
 
-func (ns CamelCaseNamingStrategy) ColumnName(table, column string) string {
-	return toLowerCamel(column)
-}
-
-func toLowerCamel(s string) string {
-	if len(s) == 0 {
-		return s
+func (namingStrategy CamelCaseNamingStrategy) ColumnName(rawTableName, rawColumnName string) string {
+	if rawColumnName == "ID" {
+		return "ID"
 	}
-	return strings.ToLower(s[:1]) + s[1:]
+	return convertToLowerCamel(rawColumnName)
 }
 
-// ConnectPostgres establishes a GORM connection using camelCase naming strategy
-func ConnectPostgres(cfg *config.Config) (*gorm.DB, error) {
+func convertToLowerCamel(rawString string) string {
+	if len(rawString) == 0 {
+		return rawString
+	}
+	return strings.ToLower(rawString[:1]) + rawString[1:]
+}
+
+func ConnectPostgres(appConfig config.Config) (*gorm.DB, error) {
 	dsn := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=Asia/Tehran",
-		cfg.Database.Host,
-		cfg.Database.Port,
-		cfg.Database.User,
-		cfg.Database.Password,
-		cfg.Database.DBName,
-		cfg.Database.SSLMode,
+		appConfig.Database.Host,
+		appConfig.Database.Port,
+		appConfig.Database.User,
+		appConfig.Database.Password,
+		appConfig.Database.DBName,
+		appConfig.Database.SSLMode,
 	)
 
-	gormConfig := &gorm.Config{
+	gormConfiguration := &gorm.Config{
 		NamingStrategy: CamelCaseNamingStrategy{},
-		Logger:         logger.Default.LogMode(logger.Info),
+		Logger:         logger.Default.LogMode(logger.Silent),
 	}
 
-	db, err := gorm.Open(postgres.Open(dsn), gormConfig)
-	if err != nil {
-		return nil, fmt.Errorf("failed to connect to database: %w", err)
+	databaseConnection, connectionError := gorm.Open(postgres.Open(dsn), gormConfiguration)
+	if connectionError != nil {
+		return nil, fmt.Errorf("failed to connect to database: %w", connectionError)
 	}
 
-	sqlDB, err := db.DB()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get sql.DB from gorm: %w", err)
+	sqlDatabase, databaseError := databaseConnection.DB()
+	if databaseError != nil {
+		return nil, fmt.Errorf("failed to get underlying sql db: %w", databaseError)
 	}
 
-	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetMaxOpenConns(50)
-	sqlDB.SetConnMaxLifetime(time.Hour)
+	sqlDatabase.SetMaxIdleConns(10)
+	sqlDatabase.SetMaxOpenConns(50)
+	sqlDatabase.SetConnMaxLifetime(time.Hour)
 
-	log.Println("[DATABASE] PostgreSQL connection established successfully with camelCase naming strategy")
-	return db, nil
+	return databaseConnection, nil
 }

@@ -1,7 +1,6 @@
 package config
 
 import (
-	"log"
 	"os"
 	"strconv"
 
@@ -36,41 +35,38 @@ type OTPConfig struct {
 	ExpirationMinutes int
 }
 
-// Load loads configuration from environment variables or .env file
-func Load() *Config {
-	if err := godotenv.Load(); err != nil {
-		log.Println("[CONFIG] Notice: .env file not found, reading from system environment")
-	}
+func Load() Config {
+	_ = godotenv.Load()
 
-	jwtExpHours, _ := strconv.Atoi(getEnv("JWT_EXPIRATION_HOURS", "72"))
-	otpExpMinutes, _ := strconv.Atoi(getEnv("OTP_EXPIRATION_MINUTES", "2"))
+	jwtExpirationHours, _ := strconv.Atoi(fetchEnvironment("JWT_EXPIRATION_HOURS", "72"))
+	otpExpirationMinutes, _ := strconv.Atoi(fetchEnvironment("OTP_EXPIRATION_MINUTES", "2"))
 
-	return &Config{
-		AppEnv:  getEnv("APP_ENV", "development"),
-		AppPort: getEnv("APP_PORT", "8080"),
-		AppName: getEnv("APP_NAME", "DYF Private Catalog"),
+	return Config{
+		AppEnv:  fetchEnvironment("APP_ENV", "development"),
+		AppPort: fetchEnvironment("APP_PORT", "8080"),
+		AppName: fetchEnvironment("APP_NAME", "DYF Private Catalog"),
 		Database: DatabaseConfig{
-			Host:     getEnv("DB_HOST", "127.0.0.1"),
-			Port:     getEnv("DB_PORT", "5432"),
-			User:     getEnv("DB_USER", "postgres"),
-			Password: getEnv("DB_PASSWORD", "postgres"),
-			DBName:   getEnv("DB_NAME", "dyf_catalog"),
-			SSLMode:  getEnv("DB_SSLMODE", "disable"),
+			Host:     fetchEnvironment("DB_HOST", "127.0.0.1"),
+			Port:     fetchEnvironment("DB_PORT", "5432"),
+			User:     fetchEnvironment("DB_USER", "postgres"),
+			Password: fetchEnvironment("DB_PASSWORD", "postgres"),
+			DBName:   fetchEnvironment("DB_NAME", "dyf_catalog"),
+			SSLMode:  fetchEnvironment("DB_SSLMODE", "disable"),
 		},
 		JWT: JWTConfig{
-			Secret:          getEnv("JWT_SECRET", "dyf-default-secret-key-change-me"),
-			ExpirationHours: jwtExpHours,
+			Secret:          fetchEnvironment("JWT_SECRET", "dyf-default-secret-key-change-me"),
+			ExpirationHours: jwtExpirationHours,
 		},
 		OTP: OTPConfig{
-			Provider:          getEnv("OTP_PROVIDER", "mock"),
-			ExpirationMinutes: otpExpMinutes,
+			Provider:          fetchEnvironment("OTP_PROVIDER", "mock"),
+			ExpirationMinutes: otpExpirationMinutes,
 		},
 	}
 }
 
-func getEnv(key, fallback string) string {
-	if val := os.Getenv(key); val != "" {
-		return val
+func fetchEnvironment(keyName, fallbackValue string) string {
+	if environmentValue := os.Getenv(keyName); environmentValue != "" {
+		return environmentValue
 	}
-	return fallback
+	return fallbackValue
 }
