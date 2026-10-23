@@ -12,12 +12,8 @@ import (
 	"time"
 
 	dtoShoe "dyf-backend/internal/dto/shoe"
+	constantsShoe "dyf-backend/statics/constants/shoe"
 	staticErrors "dyf-backend/statics/errors"
-)
-
-const (
-	maxImageSizeInBytes = 10 * 1024 * 1024
-	maxVideoSizeInBytes = 50 * 1024 * 1024
 )
 
 var allowedImageExtensions = map[string]bool{
@@ -45,11 +41,11 @@ func (service Service) SaveUploadedFile(fileHeader *multipart.FileHeader) (dtoSh
 	detectedFileType := "image"
 	if isVideo {
 		detectedFileType = "video"
-		if fileHeader.Size > maxVideoSizeInBytes {
+		if fileHeader.Size > constantsShoe.MaxVideoSizeInBytes {
 			return dtoShoe.UploadMediaResponse{}, http.StatusBadRequest, staticErrors.ErrMediaSizeExceeded
 		}
 	} else {
-		if fileHeader.Size > maxImageSizeInBytes {
+		if fileHeader.Size > constantsShoe.MaxImageSizeInBytes {
 			return dtoShoe.UploadMediaResponse{}, http.StatusBadRequest, staticErrors.ErrMediaSizeExceeded
 		}
 	}
@@ -60,13 +56,12 @@ func (service Service) SaveUploadedFile(fileHeader *multipart.FileHeader) (dtoSh
 	}
 	defer openedFile.Close()
 
-	uploadDirectory := filepath.Join(".", "uploads", "shoes")
-	if mkdirError := os.MkdirAll(uploadDirectory, 0755); mkdirError != nil {
+	if mkdirError := os.MkdirAll(constantsShoe.UploadDirectory, 0755); mkdirError != nil {
 		return dtoShoe.UploadMediaResponse{}, http.StatusInternalServerError, staticErrors.ErrUploadFailed
 	}
 
 	generatedFileName := fmt.Sprintf("%d_%04d%s", time.Now().UnixNano(), rand.Intn(10000), fileExtension)
-	destinationPath := filepath.Join(uploadDirectory, generatedFileName)
+	destinationPath := filepath.Join(constantsShoe.UploadDirectory, generatedFileName)
 
 	destinationFile, createError := os.Create(destinationPath)
 	if createError != nil {
@@ -78,7 +73,7 @@ func (service Service) SaveUploadedFile(fileHeader *multipart.FileHeader) (dtoSh
 		return dtoShoe.UploadMediaResponse{}, http.StatusInternalServerError, staticErrors.ErrUploadFailed
 	}
 
-	publicURL := fmt.Sprintf("/uploads/shoes/%s", generatedFileName)
+	publicURL := fmt.Sprintf("%s/%s", constantsShoe.UploadPublicURLPrefix, generatedFileName)
 
 	return dtoShoe.UploadMediaResponse{
 		URL:      publicURL,

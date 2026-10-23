@@ -41,38 +41,41 @@
   "success": true,
   "statusCode": 200,
   "message": "فهرست مدل‌های کفش با موفقیت دریافت شد",
-  "data": [
-    {
-      "ID": 1792761483100205500,
-      "modelID": 1,
-      "title": "کفش آکسفورد مدل ونیز",
-      "description": "رویه چرم طبیعی گاوی درجه یک، زیره میکرولایت با دوخت دستی",
-      "coverImage": "/uploads/shoes/1792761483100_oxford.jpg",
-      "categories": [
-        {
-          "ID": 1792757059582788000,
-          "title": "کفش رسمی دست‌دوز"
-        }
-      ],
-      "colors": ["مشکی واکس‌خورده", "عسلی پتینه‌ای"],
-      "colorsCount": 2,
-      "sizes": [40, 41, 42, 43, 44],
-      "sizesCount": 5,
-      "images": [
-        "/uploads/shoes/1792761483100_oxford.jpg",
-        "/uploads/shoes/1792761483101_side.jpg"
-      ],
-      "videos": [
-        "/uploads/shoes/1792761483102_making.mp4"
-      ]
+  "data": {
+    "items": [
+      {
+        "ID": 1792761483100205500,
+        "modelID": 1,
+        "title": "کفش آکسفورد مدل ونیز",
+        "description": "رویه چرم طبیعی گاوی درجه یک، زیره میکرولایت با دوخت دستی",
+        "coverImage": "/uploads/shoes/1792761483100_oxford.jpg",
+        "categories": [
+          {
+            "ID": 1792757059582788000,
+            "title": "کفش رسمی دست‌دوز"
+          }
+        ],
+        "colors": ["مشکی واکس‌خورده", "عسلی پتینه‌ای"],
+        "colorsCount": 2,
+        "sizes": [40, 41, 42, 43, 44],
+        "sizesCount": 5,
+        "images": [
+          "/uploads/shoes/1792761483100_oxford.jpg",
+          "/uploads/shoes/1792761483101_side.jpg"
+        ],
+        "videos": [
+          "/uploads/shoes/1792761483102_making.mp4"
+        ]
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 12,
+      "total": 35,
+      "totalPages": 3
     }
-  ],
-  "meta": {
-    "page": 1,
-    "limit": 12,
-    "total": 35,
-    "totalPages": 3
-  }
+  },
+  "meta": null
 }
 ```
 
@@ -98,11 +101,16 @@ export interface ShoeListItem {
   videos: string[];
 }
 
-export interface PaginationMeta {
+export interface Pagination {
   page: number;
   limit: number;
   total: number;
   totalPages: number;
+}
+
+export interface ShoeListResponse {
+  items: ShoeListItem[];
+  pagination: Pagination;
 }
 
 export async function fetchShoes(params?: {
@@ -110,17 +118,16 @@ export async function fetchShoes(params?: {
   limit?: number;
   categoryID?: number;
   search?: string;
-}) {
+}): Promise<ShoeListResponse> {
   const token = localStorage.getItem("admin_token");
   const response = await axios.get<{
-    data: ShoeListItem[];
-    meta: PaginationMeta;
+    data: ShoeListResponse;
   }>("http://localhost:8080/api/v1/shoes", {
     params,
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.data;
+  return response.data.data;
 }
 ```

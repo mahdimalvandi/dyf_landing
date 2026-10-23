@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	entityShoe "dyf-backend/internal/entity/shoe"
+	"dyf-backend/pkg/pagination"
 
 	"gorm.io/gorm"
 )
@@ -74,7 +75,7 @@ func (repository Repository) DeleteShoe(shoeID int64) error {
 	return deleteResult.Error
 }
 
-func (repository Repository) ListShoes(categoryID int64, searchTerm string, offset int, limit int) ([]entityShoe.ShoeModel, int64, error) {
+func (repository Repository) ListShoes(categoryID int64, searchTerm string, paginationScope pagination.Pagination) ([]entityShoe.ShoeModel, int64, error) {
 	baseQuery := repository.databaseConnection.Model(&entityShoe.ShoeModel{})
 
 	if categoryID > 0 {
@@ -96,7 +97,7 @@ func (repository Repository) ListShoes(categoryID int64, searchTerm string, offs
 	}
 
 	var shoesList []entityShoe.ShoeModel
-	findResult := baseQuery.Order(`"modelID" ASC`).Offset(offset).Limit(limit).Find(&shoesList)
+	findResult := baseQuery.Scopes(paginationScope.GetScope()).Order(`"modelID" ASC`).Find(&shoesList)
 	if findResult.Error != nil {
 		return nil, 0, findResult.Error
 	}

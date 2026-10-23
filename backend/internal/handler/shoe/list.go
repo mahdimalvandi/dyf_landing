@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	dtoShoe "dyf-backend/internal/dto/shoe"
+	"dyf-backend/pkg/pagination"
 	"dyf-backend/pkg/response"
 	constantsShoe "dyf-backend/statics/constants/shoe"
 
@@ -17,17 +18,19 @@ func (handler Handler) List(fiberContext fiber.Ctx) error {
 	searchTerm := fiberContext.Query("search", "")
 
 	queryFilter := dtoShoe.ListShoesFilter{
-		Page:       pageNumber,
-		Limit:      limitNumber,
+		Pagination: pagination.Pagination{
+			Page:  pageNumber,
+			Limit: limitNumber,
+		},
 		CategoryID: categoryID,
 		Search:     searchTerm,
 	}
 	queryFilter.Normalize()
 
-	serviceResponse, meta, statusCode, executeError := handler.service.List(queryFilter)
+	serviceResponse, statusCode, executeError := handler.service.List(queryFilter)
 	if executeError != nil {
 		return response.FromError(fiberContext, statusCode, executeError, nil)
 	}
 
-	return response.Success(fiberContext, statusCode, constantsShoe.MsgShoeListFetchedSuccessfully, serviceResponse, meta)
+	return response.Success(fiberContext, statusCode, constantsShoe.MsgShoeListFetchedSuccessfully, serviceResponse, nil)
 }

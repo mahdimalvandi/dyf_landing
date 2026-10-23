@@ -77,11 +77,6 @@ func (request *RemoveMediaRequest) Normalize() {
 }
 
 func (filter *ListShoesFilter) Normalize() {
-	if filter.Page <= 0 {
-		filter.Page = 1
-	}
-	if filter.Limit <= 0 || filter.Limit > 50 {
-		filter.Limit = 12
-	}
+	filter.Pagination.Normalize()
 	filter.Search = strings.TrimSpace(filter.Search)
 }

@@ -72,18 +72,20 @@ func (service Service) Update(shoeID int64, request dtoShoe.UpdateShoeRequest) (
 	}
 
 	return dtoShoe.ShoeDetailResponse{
-		ID:          existingShoe.ID,
-		ModelID:     existingShoe.ModelID,
-		Title:       existingShoe.ShoeTitle,
-		Description: existingShoe.Description,
-		CoverImage:  existingShoe.CoverImage,
-		Categories:  categorySummaries,
+		ShoeItemResponse: dtoShoe.ShoeItemResponse{
+			ID:          existingShoe.ID,
+			ModelID:     existingShoe.ModelID,
+			Title:       existingShoe.ShoeTitle,
+			Description: existingShoe.Description,
+			CoverImage:  existingShoe.CoverImage,
+			Categories:  categorySummaries,
+			Colors:      existingShoe.Colors,
+			ColorsCount: len(existingShoe.Colors),
+			Sizes:       existingShoe.Sizes,
+			SizesCount:  len(existingShoe.Sizes),
+			Images:      existingShoe.Images,
+			Videos:      existingShoe.Videos,
+		},
 		CategoryIDs: existingShoe.CategoryIDs,
-		Colors:      existingShoe.Colors,
-		ColorsCount: len(existingShoe.Colors),
-		Sizes:       existingShoe.Sizes,
-		SizesCount:  len(existingShoe.Sizes),
-		Images:      existingShoe.Images,
-		Videos:      existingShoe.Videos,
 	}, http.StatusOK, nil
 }

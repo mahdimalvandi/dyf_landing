@@ -31,18 +31,20 @@ func (service Service) Detail(identifier int64) (dtoShoe.ShoeDetailResponse, int
 	}
 
 	return dtoShoe.ShoeDetailResponse{
-		ID:          shoeRecord.ID,
-		ModelID:     shoeRecord.ModelID,
-		Title:       shoeRecord.ShoeTitle,
-		Description: shoeRecord.Description,
-		CoverImage:  shoeRecord.CoverImage,
-		Categories:  categorySummaries,
+		ShoeItemResponse: dtoShoe.ShoeItemResponse{
+			ID:          shoeRecord.ID,
+			ModelID:     shoeRecord.ModelID,
+			Title:       shoeRecord.ShoeTitle,
+			Description: shoeRecord.Description,
+			CoverImage:  shoeRecord.CoverImage,
+			Categories:  categorySummaries,
+			Colors:      shoeRecord.Colors,
+			ColorsCount: len(shoeRecord.Colors),
+			Sizes:       shoeRecord.Sizes,
+			SizesCount:  len(shoeRecord.Sizes),
+			Images:      shoeRecord.Images,
+			Videos:      shoeRecord.Videos,
+		},
 		CategoryIDs: shoeRecord.CategoryIDs,
-		Colors:      shoeRecord.Colors,
-		ColorsCount: len(shoeRecord.Colors),
-		Sizes:       shoeRecord.Sizes,
-		SizesCount:  len(shoeRecord.Sizes),
-		Images:      shoeRecord.Images,
-		Videos:      shoeRecord.Videos,
 	}, http.StatusOK, nil
 }

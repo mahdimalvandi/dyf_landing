@@ -69,18 +69,20 @@ func (service Service) Create(request dtoShoe.CreateShoeRequest) (dtoShoe.ShoeDe
 	}
 
 	return dtoShoe.ShoeDetailResponse{
-		ID:          createdRecord.ID,
-		ModelID:     createdRecord.ModelID,
-		Title:       createdRecord.ShoeTitle,
-		Description: createdRecord.Description,
-		CoverImage:  createdRecord.CoverImage,
-		Categories:  categorySummaries,
+		ShoeItemResponse: dtoShoe.ShoeItemResponse{
+			ID:          createdRecord.ID,
+			ModelID:     createdRecord.ModelID,
+			Title:       createdRecord.ShoeTitle,
+			Description: createdRecord.Description,
+			CoverImage:  createdRecord.CoverImage,
+			Categories:  categorySummaries,
+			Colors:      createdRecord.Colors,
+			ColorsCount: len(createdRecord.Colors),
+			Sizes:       createdRecord.Sizes,
+			SizesCount:  len(createdRecord.Sizes),
+			Images:      createdRecord.Images,
+			Videos:      createdRecord.Videos,
+		},
 		CategoryIDs: createdRecord.CategoryIDs,
-		Colors:      createdRecord.Colors,
-		ColorsCount: len(createdRecord.Colors),
-		Sizes:       createdRecord.Sizes,
-		SizesCount:  len(createdRecord.Sizes),
-		Images:      createdRecord.Images,
-		Videos:      createdRecord.Videos,
 	}, http.StatusCreated, nil
 }

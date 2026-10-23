@@ -30,22 +30,3 @@ func (handler Handler) SetCover(fiberContext fiber.Ctx) error {
 
 	return response.Success(fiberContext, statusCode, constantsShoe.MsgCoverUpdatedSuccessfully, serviceResponse, nil)
 }
-
-func (handler Handler) RemoveMedia(fiberContext fiber.Ctx) error {
-	shoeID, parseIDError := strconv.ParseInt(fiberContext.Params("id"), 10, 64)
-	if parseIDError != nil {
-		return response.FromError(fiberContext, fiber.StatusBadRequest, staticErrors.ErrInvalidShoeID, nil)
-	}
-
-	var requestBody dtoShoe.RemoveMediaRequest
-	if parseError := request.ParseBody(fiberContext, &requestBody); parseError != nil {
-		return parseError
-	}
-
-	serviceResponse, statusCode, executeError := handler.service.RemoveMedia(shoeID, requestBody)
-	if executeError != nil {
-		return response.FromError(fiberContext, statusCode, executeError, nil)
-	}
-
-	return response.Success(fiberContext, statusCode, constantsShoe.MsgMediaRemovedSuccessfully, serviceResponse, nil)
-}

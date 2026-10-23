@@ -9,4 +9,9 @@ const (
 	MsgMediaUploadedSuccessfully   = "فایل رسانه با موفقیت بارگذاری شد"
 	MsgCoverUpdatedSuccessfully    = "تصویر کاور مدل با موفقیت به‌روزرسانی شد"
 	MsgMediaRemovedSuccessfully    = "فایل رسانه با موفقیت از مدل حذف شد"
+
+	UploadDirectory       = "./uploads/shoes"
+	UploadPublicURLPrefix = "/uploads/shoes"
+	MaxImageSizeInBytes   = 10 * 1024 * 1024
+	MaxVideoSizeInBytes   = 50 * 1024 * 1024
 )

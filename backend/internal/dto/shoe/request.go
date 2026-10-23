@@ -1,5 +1,7 @@
 package shoe
 
+import "dyf-backend/pkg/pagination"
+
 type CreateShoeRequest struct {
 	Title       string   `json:"title" validate:"required,min=2,max=255"`
 	Description string   `json:"description"`
@@ -31,8 +33,7 @@ type RemoveMediaRequest struct {
 }
 
 type ListShoesFilter struct {
-	Page       int    `query:"page"`
-	Limit      int    `query:"limit"`
+	pagination.Pagination
 	CategoryID int64  `query:"categoryID"`
 	Search     string `query:"search"`
 }

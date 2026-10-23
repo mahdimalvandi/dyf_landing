@@ -1,19 +1,47 @@
 package shoe
 
 import (
-	"math"
 	"net/http"
 
 	dtoShoe "dyf-backend/internal/dto/shoe"
+	entityShoe "dyf-backend/internal/entity/shoe"
 )
 
-func (service Service) List(filter dtoShoe.ListShoesFilter) ([]dtoShoe.ShoeListItemResponse, dtoShoe.PaginationMeta, int, error) {
-	offset := (filter.Page - 1) * filter.Limit
-	shoesList, totalCount, listError := service.shoeRepository.ListShoes(filter.CategoryID, filter.Search, offset, filter.Limit)
+func (service Service) List(filter dtoShoe.ListShoesFilter) (dtoShoe.ShoeListResponse, int, error) {
+	shoesList, totalCount, listError := service.shoeRepository.ListShoes(filter.CategoryID, filter.Search, filter.Pagination)
 	if listError != nil {
-		return nil, dtoShoe.PaginationMeta{}, http.StatusInternalServerError, listError
+		return dtoShoe.ShoeListResponse{}, http.StatusInternalServerError, listError
 	}
 
+	filter.Pagination.Calculate(totalCount)
+
+	preparedItems, prepareError := service.prepareShoeItems(shoesList)
+	if prepareError != nil {
+		return dtoShoe.ShoeListResponse{}, http.StatusInternalServerError, prepareError
+	}
+
+	return dtoShoe.ShoeListResponse{
+		Items:      preparedItems,
+		Pagination: filter.Pagination,
+	}, http.StatusOK, nil
+}
+
+func (service Service) prepareShoeItems(shoesList []entityShoe.ShoeModel) ([]dtoShoe.ShoeItemResponse, error) {
+	uniqueCategoryIDs := service.extractUniqueCategoryIDs(shoesList)
+	categoryTitleMap, loadError := service.loadCategoryTitleMap(uniqueCategoryIDs)
+	if loadError != nil {
+		return nil, loadError
+	}
+
+	responseItems := make([]dtoShoe.ShoeItemResponse, 0, len(shoesList))
+	for index := range shoesList {
+		responseItems = append(responseItems, service.mapToShoeItemResponse(shoesList[index], categoryTitleMap))
+	}
+
+	return responseItems, nil
+}
+
+func (service Service) extractUniqueCategoryIDs(shoesList []entityShoe.ShoeModel) []int64 {
 	uniqueCategoryMap := make(map[int64]bool)
 	for index := range shoesList {
 		for categoryIndex := range shoesList[index].CategoryIDs {
@@ -25,58 +53,51 @@ func (service Service) List(filter dtoShoe.ListShoesFilter) ([]dtoShoe.ShoeListI
 	for categoryID := range uniqueCategoryMap {
 		uniqueCategoryIDs = append(uniqueCategoryIDs, categoryID)
 	}
+	return uniqueCategoryIDs
+}
 
+func (service Service) loadCategoryTitleMap(categoryIDs []int64) (map[int64]string, error) {
 	categoryTitleMap := make(map[int64]string)
-	if len(uniqueCategoryIDs) > 0 {
-		categoriesList, findCategoriesError := service.categoryRepository.FindCategoriesByIDs(uniqueCategoryIDs)
-		if findCategoriesError == nil {
-			for index := range categoriesList {
-				categoryTitleMap[categoriesList[index].ID] = categoriesList[index].Title
-			}
+	if len(categoryIDs) == 0 {
+		return categoryTitleMap, nil
+	}
+
+	categoriesList, findCategoriesError := service.categoryRepository.FindCategoriesByIDs(categoryIDs)
+	if findCategoriesError != nil {
+		return nil, findCategoriesError
+	}
+
+	for index := range categoriesList {
+		categoryTitleMap[categoriesList[index].ID] = categoriesList[index].Title
+	}
+
+	return categoryTitleMap, nil
+}
+
+func (service Service) mapToShoeItemResponse(shoeRecord entityShoe.ShoeModel, categoryTitleMap map[int64]string) dtoShoe.ShoeItemResponse {
+	categorySummaries := make([]dtoShoe.ShoeCategorySummary, 0, len(shoeRecord.CategoryIDs))
+	for categoryIndex := range shoeRecord.CategoryIDs {
+		targetCategoryID := shoeRecord.CategoryIDs[categoryIndex]
+		if title, exists := categoryTitleMap[targetCategoryID]; exists {
+			categorySummaries = append(categorySummaries, dtoShoe.ShoeCategorySummary{
+				ID:    targetCategoryID,
+				Title: title,
+			})
 		}
 	}
 
-	responseItems := make([]dtoShoe.ShoeListItemResponse, 0, len(shoesList))
-	for index := range shoesList {
-		singleShoe := shoesList[index]
-		categorySummaries := make([]dtoShoe.ShoeCategorySummary, 0, len(singleShoe.CategoryIDs))
-		for categoryIndex := range singleShoe.CategoryIDs {
-			targetCategoryID := singleShoe.CategoryIDs[categoryIndex]
-			if title, exists := categoryTitleMap[targetCategoryID]; exists {
-				categorySummaries = append(categorySummaries, dtoShoe.ShoeCategorySummary{
-					ID:    targetCategoryID,
-					Title: title,
-				})
-			}
-		}
-
-		responseItems = append(responseItems, dtoShoe.ShoeListItemResponse{
-			ID:          singleShoe.ID,
-			ModelID:     singleShoe.ModelID,
-			Title:       singleShoe.ShoeTitle,
-			Description: singleShoe.Description,
-			CoverImage:  singleShoe.CoverImage,
-			Categories:  categorySummaries,
-			Colors:      singleShoe.Colors,
-			ColorsCount: len(singleShoe.Colors),
-			Sizes:       singleShoe.Sizes,
-			SizesCount:  len(singleShoe.Sizes),
-			Images:      singleShoe.Images,
-			Videos:      singleShoe.Videos,
-		})
+	return dtoShoe.ShoeItemResponse{
+		ID:          shoeRecord.ID,
+		ModelID:     shoeRecord.ModelID,
+		Title:       shoeRecord.ShoeTitle,
+		Description: shoeRecord.Description,
+		CoverImage:  shoeRecord.CoverImage,
+		Categories:  categorySummaries,
+		Colors:      shoeRecord.Colors,
+		ColorsCount: len(shoeRecord.Colors),
+		Sizes:       shoeRecord.Sizes,
+		SizesCount:  len(shoeRecord.Sizes),
+		Images:      shoeRecord.Images,
+		Videos:      shoeRecord.Videos,
 	}
-
-	totalPages := 0
-	if totalCount > 0 {
-		totalPages = int(math.Ceil(float64(totalCount) / float64(filter.Limit)))
-	}
-
-	meta := dtoShoe.PaginationMeta{
-		Page:       filter.Page,
-		Limit:      filter.Limit,
-		Total:      totalCount,
-		TotalPages: totalPages,
-	}
-
-	return responseItems, meta, http.StatusOK, nil
 }
