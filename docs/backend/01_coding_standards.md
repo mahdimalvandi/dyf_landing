@@ -38,24 +38,23 @@
 - تمام محدودیت‌های کلید، پیش‌فرض و نات‌نال در مایگریشن‌های SQL تعیین می‌شوند.
 
 ### ۲.۳. لایه کنترلر / هندلر (`internal/handler/<family>/`)
-- **قانون تفکیک فایل:** به ازای هر API مستقل، دقیقاً **یک فایل** به نام همان عملیات/API ایجاد می‌شود.
-  - مثال برای خانواده `customer`:
-    - `internal/handler/customer/create.go`
-    - `internal/handler/customer/detail.go`
-    - `internal/handler/customer/list.go`
-    - `internal/handler/customer/statusToggle.go`
+- **ساختار تک‌استراکتی خانواده:** در فایل `handler.go`، یک استراکت واحد به نام `Handler` همراه با تابع سازنده `NewHandler(service service.Service)` تعریف می‌شود.
+- **روش پیاده‌سازی APIها:** هر API به صورت یک **متد (Receiver)** روی همان استراکت `Handler` تعریف می‌شود و در فایلی مجزا به نام همان عملیات قرار می‌گیرد:
+  - `internal/handler/auth/handler.go` (تعریف استراکت `Handler` و متد سازنده)
+  - `internal/handler/auth/sendOTP.go` (`func (handler Handler) SendOTP(fiberContext fiber.Ctx) error`)
+  - `internal/handler/auth/verifyOTP.go` (`func (handler Handler) VerifyOTP(fiberContext fiber.Ctx) error`)
+- **تابع مشترک پردازش ورودی (`request.ParseBody`):** کلیه هندلرها برای عملیات بایندینگ، نرمال‌سازی و اعتبارسنجی ورودی از تابع کمکی سراسری `request.ParseBody(fiberContext, &targetStruct)` استفاده می‌کنند.
 
 ### ۲.۴. لایه سرویس (`internal/service/<family>/`)
-- **قانون تفکیک فایل:** به ازای هر API مستقل، دقیقاً **یک فایل** به نام همان عملیات/API ایجاد می‌شود.
-  - مثال برای خانواده `customer`:
-    - `internal/service/customer/create.go`
-    - `internal/service/customer/detail.go`
-    - `internal/service/customer/list.go`
-    - `internal/service/customer/statusToggle.go`
+- **ساختار تک‌استراکتی خانواده:** در فایل `service.go`، یک استراکت واحد به نام `Service` همراه با تابع سازنده `NewService(...)` تعریف می‌شود.
+- **روش پیاده‌سازی APIها:** هر API به صورت یک **متد (Receiver)** روی همان استراکت `Service` پیاده‌سازی شده و در فایلی به نام همان عملیات قرار می‌گیرد:
+  - `internal/service/auth/service.go` (تعریف استراکت `Service` و متد سازنده)
+  - `internal/service/auth/sendOTP.go` (`func (service Service) SendOTP(...) (Response, int, error)`)
+- **بازگرداندن StatusCode از لایه سرویس:** لایه سرویس علاوه بر مقدار دیتای خروجی و ارور، کد وضعیت استاندارد HTTP را نیز برمی‌گرداند (`net/http` Status Codes). بدین ترتیب لایه هندلر بدون نیاز به نوشتن زنجیره‌های طویل `if/else`، کد وضعیت را به همراه پاسخ ارسال می‌کند.
 - لایه سرویس هیچ وابستگی به فریمورک Fiber ندارد.
 
 ### ۲.۵. لایه ریپازیتوری (`internal/repository/<family>/`)
-- در این پوشه متدهای تعامل با پایگاه‌داده و اجرای کوئری‌های مربوط به آن خانواده قرار می‌گیرند.
+- **ساختار تک‌استراکتی خانواده:** در فایل `repository.go`، استراکت `Repository` و سازنده `NewRepository(databaseConnection *gorm.DB)` قرار دارند و کلیه کوئری‌ها متدهای این استراکت هستند.
 - کلیه متدهای جستجوی تک‌رکورد ۳ مقدار بازمی‌گردانند: `(item, found, error)`.
 
 ---
@@ -110,16 +109,24 @@ backend/statics/
 3. فراخوانی `SetupRoutes(coreService.FiberApp, coreService.DatabaseConnection)`.
 4. آغاز به کار سرور روی پورت مشخص‌شده در `.env`.
 
-### ۴.۲. وظیفه `cmd/server/route.go`
-این فایل در کنار `main.go` قرار دارد و شامل:
-- تابع اصلی `SetupRoutes(fiberApp *fiber.App, databaseConnection *gorm.DB)`
-- توابع ثبت مسیر به ازای هر خانواده API:
-  - `SetupCustomerRoute(apiGroup fiber.Router, databaseConnection *gorm.DB)`
-  - `SetupShoeRoute(apiGroup fiber.Router, databaseConnection *gorm.DB)`
-  - `SetupCategoryRoute(apiGroup fiber.Router, databaseConnection *gorm.DB)`
-  - `SetupAccessLinkRoute(apiGroup fiber.Router, databaseConnection *gorm.DB)`
-  - `SetupAuthRoute(apiGroup fiber.Router, databaseConnection *gorm.DB)`
-  - `SetupCatalogRoute(apiGroup fiber.Router, databaseConnection *gorm.DB)`
+### ۴.۲. تفکیک و ثبت ماژولار مسیرها (`cmd/server/routes/` و `route.go`)
+- برای جلوگیری از شلوغی و تداخل در `route.go`، به ازای هر خانواده API یک فایل در پوشه `cmd/server/routes/` قرار می‌گیرد (مثال: `routes/auth.go`).
+- تمامی مراحل آماده‌سازی ریپازیتوری، سرویس و هندلر در تابع `Register<Family>Routes(apiGroup, databaseConnection)` همان فایل انجام می‌شود.
+- فایل `cmd/server/route.go` صرفاً توابع ثبت مسیر ماژولار پکیج `routes` را صدا می‌زند:
+  ```go
+  func SetupRoutes(fiberApp *fiber.App, databaseConnection *gorm.DB) {
+      baseHandler := handler.NewBaseHandler()
+      apiGroup := fiberApp.Group("/api/v1")
+      apiGroup.Get("/health", baseHandler.HealthCheck)
+
+      routes.RegisterAuthRoutes(apiGroup, databaseConnection)
+      // routes.RegisterCustomerRoutes(...)
+  }
+  ```
+
+### ۴.۳. دسترسی سراسری به پیکربندی (`config.Get()`)
+- برای جلوگیری از ارسال مکرر شیء کانفیگ در زنجیره ورودی توابع و سازنده‌ها، متد `config.Get()` در دسترس کل پروژه قرار دارد.
+- هر سرویس یا پکیجی که به مقادیر محیطی یا تنظیمی نیاز دارد، مستقیماً `config.Get()` را ایمپورت و استفاده می‌کند.
 
 ---
 

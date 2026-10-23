@@ -1,52 +1,42 @@
 package auth
 
 import (
+	"net/http"
 	"time"
 
 	dtoauth "dyf-backend/internal/dto/auth"
-	repoauth "dyf-backend/internal/repository/auth"
 	constantsauth "dyf-backend/statics/constants/auth"
 	staticerrors "dyf-backend/statics/errors"
 )
 
-type VerifyOTPService struct {
-	repository repoauth.Repository
-}
-
-func NewVerifyOTPService(repository repoauth.Repository) VerifyOTPService {
-	return VerifyOTPService{
-		repository: repository,
-	}
-}
-
-func (service VerifyOTPService) Execute(request dtoauth.VerifyOTPRequest) (dtoauth.VerifyOTPResponse, error) {
+func (service Service) VerifyOTP(request dtoauth.VerifyOTPRequest) (dtoauth.VerifyOTPResponse, int, error) {
 	otpRecord, found, findError := service.repository.FindLatestActiveOTP(request.PhoneNumber, constantsauth.PurposeAdminLogin)
 	if findError != nil {
-		return dtoauth.VerifyOTPResponse{}, findError
+		return dtoauth.VerifyOTPResponse{}, http.StatusInternalServerError, findError
 	}
 	if !found {
-		return dtoauth.VerifyOTPResponse{}, staticerrors.ErrInvalidOTP
+		return dtoauth.VerifyOTPResponse{}, http.StatusBadRequest, staticerrors.ErrInvalidOTP
 	}
 
 	currentTime := time.Now().Unix()
 	if currentTime > otpRecord.ExpiresAt {
-		return dtoauth.VerifyOTPResponse{}, staticerrors.ErrOTPExpired
+		return dtoauth.VerifyOTPResponse{}, http.StatusBadRequest, staticerrors.ErrOTPExpired
 	}
 
 	if otpRecord.Code != request.Code {
-		return dtoauth.VerifyOTPResponse{}, staticerrors.ErrInvalidOTP
+		return dtoauth.VerifyOTPResponse{}, http.StatusBadRequest, staticerrors.ErrInvalidOTP
 	}
 
 	if markError := service.repository.MarkOTPAsUsed(otpRecord.ID); markError != nil {
-		return dtoauth.VerifyOTPResponse{}, markError
+		return dtoauth.VerifyOTPResponse{}, http.StatusInternalServerError, markError
 	}
 
 	adminUser, adminFound, adminError := service.repository.FindAdminByPhoneNumber(request.PhoneNumber)
 	if adminError != nil {
-		return dtoauth.VerifyOTPResponse{}, adminError
+		return dtoauth.VerifyOTPResponse{}, http.StatusInternalServerError, adminError
 	}
 	if !adminFound {
-		return dtoauth.VerifyOTPResponse{}, staticerrors.ErrUserNotFound
+		return dtoauth.VerifyOTPResponse{}, http.StatusNotFound, staticerrors.ErrUserNotFound
 	}
 
 	return dtoauth.VerifyOTPResponse{
@@ -57,5 +47,5 @@ func (service VerifyOTPService) Execute(request dtoauth.VerifyOTPRequest) (dtoau
 			PhoneNumber: adminUser.PhoneNumber,
 		},
 		Token: "",
-	}, nil
+	}, http.StatusOK, nil
 }

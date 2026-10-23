@@ -36,19 +36,16 @@
 مدیریت ساختار پایگاه داده و نسخه‌بندی آن با ابزار استاندارد Go یعنی **`golang-migrate/migrate/v4`** انجام می‌شود و از نوشتن اسکریپت‌های دستی خودداری شده است.
 
 ### ۲.۱. ساختار فایل‌های مایگریشن در پوشه `backend/migrations/`
+- **قانون قطعی (یک جدول به ازای هر مایگریشن):** به ازای هر جدول دیتابیس، دقیقاً **یک فایل مایگریشن** مجزا (`.up.sql` و `.down.sql`) ایجاد می‌شود. به هیچ عنوان چند جدول نباید در یک فایل مایگریشن تجمیع شوند.
+- **عدم ساخت مایگریشن دستی برای `schemaMigrations`:** جدول رهگیری نسخه‌ها به صورت خودکار توسط کتابخانه `golang-migrate` مدیریت و ساخته می‌شود و نسخه `000001` به اولین جدول بیزینسی پروژه اختصاص دارد.
 فایل‌ها با شماره‌گذاری عددی ۶ رقمی و دو فایل رو به جلو (`.up.sql`) و بازگشت (`.down.sql`) ایجاد می‌شوند:
 ```text
 backend/migrations/
-├── 000001_create_categories.up.sql
-├── 000001_create_categories.down.sql
-├── 000002_create_shoe_models.up.sql
-├── 000002_create_shoe_models.down.sql
-├── 000003_create_customers.up.sql
-├── 000003_create_customers.down.sql
-├── 000004_create_access_links.up.sql
-├── 000004_create_access_links.down.sql
-├── 000005_create_admins_and_tokens.up.sql
-└── 000005_create_admins_and_tokens.down.sql
+├── 000001_create_admin_users.up.sql
+├── 000001_create_admin_users.down.sql
+├── 000002_create_otp_verifications.up.sql
+├── 000002_create_otp_verifications.down.sql
+└── ...
 ```
 
 ### ۲.۲. دستورات اجرایی CLI مایگریشن (`cmd/migrate/main.go`)

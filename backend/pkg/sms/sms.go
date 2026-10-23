@@ -13,7 +13,8 @@ type Sender interface {
 	SendOTP(payload MessagePayload) error
 }
 
-func NewSender(appConfig config.Config) Sender {
+func NewSender() Sender {
+	appConfig := config.Get()
 	if appConfig.OTP.Provider == "msgway" {
 		return NewMsgWaySender(appConfig.OTP.MsgWayAPIKey, appConfig.OTP.MsgWayTemplateID)
 	}

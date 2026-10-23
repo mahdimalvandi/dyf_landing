@@ -4,82 +4,58 @@ import (
 	"crypto/rand"
 	"fmt"
 	"math/big"
+	"net/http"
 	"time"
 
 	dtoauth "dyf-backend/internal/dto/auth"
 	entityauth "dyf-backend/internal/entity/auth"
-	repoauth "dyf-backend/internal/repository/auth"
 	"dyf-backend/pkg/sms"
 	constantsauth "dyf-backend/statics/constants/auth"
 	staticerrors "dyf-backend/statics/errors"
 )
 
-type SendOTPService struct {
-	repository      repoauth.Repository
-	smsSender       sms.Sender
-	expirationSec   int
-	cooldownSec     int
-	msgwayTemplate  int
-}
-
-func NewSendOTPService(
-	repository repoauth.Repository,
-	smsSender sms.Sender,
-	expirationSec int,
-	cooldownSec int,
-	msgwayTemplate int,
-) SendOTPService {
-	return SendOTPService{
-		repository:     repository,
-		smsSender:      smsSender,
-		expirationSec:  expirationSec,
-		cooldownSec:    cooldownSec,
-		msgwayTemplate: msgwayTemplate,
-	}
-}
-
-func (service SendOTPService) Execute(request dtoauth.SendOTPRequest) (dtoauth.SendOTPResponse, error) {
+func (service Service) SendOTP(request dtoauth.SendOTPRequest) (dtoauth.SendOTPResponse, int, error) {
 	adminUser, found, findError := service.repository.FindAdminByPhoneNumber(request.PhoneNumber)
 	if findError != nil {
-		return dtoauth.SendOTPResponse{}, findError
+		return dtoauth.SendOTPResponse{}, http.StatusInternalServerError, findError
 	}
 	if !found {
-		return dtoauth.SendOTPResponse{}, staticerrors.ErrUserNotFound
+		return dtoauth.SendOTPResponse{}, http.StatusNotFound, staticerrors.ErrUserNotFound
 	}
 	if !adminUser.IsActive {
-		return dtoauth.SendOTPResponse{}, staticerrors.ErrAdminInactive
+		return dtoauth.SendOTPResponse{}, http.StatusForbidden, staticerrors.ErrAdminInactive
 	}
 
 	currentTime := time.Now().Unix()
 
 	latestOTP, otpFound, fetchError := service.repository.FindLatestActiveOTP(request.PhoneNumber, constantsauth.PurposeAdminLogin)
 	if fetchError != nil {
-		return dtoauth.SendOTPResponse{}, fetchError
+		return dtoauth.SendOTPResponse{}, http.StatusInternalServerError, fetchError
 	}
 
 	if otpFound {
 		elapsedSeconds := currentTime - (latestOTP.ExpiresAt - int64(service.expirationSec))
 		if elapsedSeconds < int64(service.cooldownSec) && currentTime < latestOTP.ExpiresAt {
-			return dtoauth.SendOTPResponse{}, staticerrors.ErrOTPCooldownActive
+			return dtoauth.SendOTPResponse{}, http.StatusTooManyRequests, staticerrors.ErrOTPCooldownActive
 		}
 	}
 
 	nanosecondsThreshold := (currentTime - constantsauth.MaxRequestsWindowSec) * int64(time.Second)
 	recentCount, countError := service.repository.CountRecentOTPRequests(request.PhoneNumber, constantsauth.PurposeAdminLogin, nanosecondsThreshold)
 	if countError != nil {
-		return dtoauth.SendOTPResponse{}, countError
+		return dtoauth.SendOTPResponse{}, http.StatusInternalServerError, countError
 	}
 	if recentCount >= constantsauth.MaxRequestsPerWindow {
-		return dtoauth.SendOTPResponse{}, staticerrors.ErrTooManyRequests
+		return dtoauth.SendOTPResponse{}, http.StatusTooManyRequests, staticerrors.ErrTooManyRequests
 	}
 
 	generatedCode, codeError := generateNumericCode(constantsauth.DefaultCodeLength)
 	if codeError != nil {
-		return dtoauth.SendOTPResponse{}, codeError
+		return dtoauth.SendOTPResponse{}, http.StatusInternalServerError, codeError
 	}
 
 	if invalidateError := service.repository.InvalidatePreviousOTPs(request.PhoneNumber, constantsauth.PurposeAdminLogin); invalidateError != nil {
-		return dtoauth.SendOTPResponse{}, invalidateError
+		return dtoauth.SendOTPResponse{}, http.StatusInternalServerError, invalidateError
 	}
 
 	otpRecord := entityauth.OTPVerification{
@@ -92,7 +68,7 @@ func (service SendOTPService) Execute(request dtoauth.SendOTPRequest) (dtoauth.S
 	}
 
 	if createError := service.repository.CreateOTP(otpRecord); createError != nil {
-		return dtoauth.SendOTPResponse{}, createError
+		return dtoauth.SendOTPResponse{}, http.StatusInternalServerError, createError
 	}
 
 	deliveryPayload := sms.MessagePayload{
@@ -103,12 +79,12 @@ func (service SendOTPService) Execute(request dtoauth.SendOTPRequest) (dtoauth.S
 	}
 
 	if deliveryError := service.smsSender.SendOTP(deliveryPayload); deliveryError != nil {
-		return dtoauth.SendOTPResponse{}, staticerrors.ErrSMSDeliveryFailed
+		return dtoauth.SendOTPResponse{}, http.StatusBadGateway, staticerrors.ErrSMSDeliveryFailed
 	}
 
 	return dtoauth.SendOTPResponse{
 		ExpiresInSeconds: service.expirationSec,
-	}, nil
+	}, http.StatusOK, nil
 }
 
 func generateNumericCode(length int) (string, error) {

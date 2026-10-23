@@ -155,10 +155,15 @@ CREATE TABLE IF NOT EXISTS "otpVerifications" (
 
 ```text
 backend/
+├── cmd/server/
+│   ├── routes/
+│   │   └── auth.go               # ثبت ماژولار روت‌های ادمین و احراز هویت
+│   ├── route.go                  # فراخوانی SetupRoutes و تجمیع مسیرها
+│   └── main.go
 ├── internal/
 │   ├── dto/
 │   │   └── auth/
-│   │       ├── request.go        # ورودی‌های SendOTP, VerifyOTP, Logout
+│   │       ├── request.go        # ورودی‌های SendOTP, VerifyOTP
 │   │       ├── response.go       # خروجی‌های پاسخ
 │   │       └── recievers.go      # متدهای رسیور و نرمال‌سازی
 │   ├── entity/
@@ -166,17 +171,19 @@ backend/
 │   │       └── entity.go         # تعاریف AdminUser و OTPVerification (بدون فیلد updatedAt)
 │   ├── handler/
 │   │   └── auth/
-│   │       ├── sendOTP.go
-│   │       ├── verifyOTP.go
-│   │       └── logout.go
+│   │       ├── handler.go        # تعریف استراکت واحد Handler و تابع NewHandler
+│   │       ├── sendOTP.go        # متد SendOTP روی Handler با استفاده از request.ParseBody
+│   │       ├── verifyOTP.go      # متد VerifyOTP روی Handler
+│   │       └── logout.go         # متد Logout روی Handler
 │   ├── service/
 │   │   └── auth/
-│   │       ├── sendOTP.go
-│   │       ├── verifyOTP.go
-│   │       └── logout.go
+│   │       ├── service.go        # تعریف استراکت واحد Service و NewService (خواندن config.Get())
+│   │       ├── sendOTP.go        # متد SendOTP با خروجی (Response, statusCode, error)
+│   │       ├── verifyOTP.go      # متد VerifyOTP با خروجی (Response, statusCode, error)
+│   │       └── logout.go         # متد Logout با خروجی (statusCode, error)
 │   └── repository/
 │       └── auth/
-│           └── repository.go     # کوئری‌های واکشی ادمین و OTP
+│           └── repository.go     # استراکت Repository و کوئری‌های واکشی ادمین و OTP
 ├── statics/
 │   ├── constants/
 │   │   └── auth/
@@ -185,6 +192,8 @@ backend/
 │       ├── customErrors.go
 │       └── faTranslation.go
 └── pkg/
+    ├── request/
+    │   └── parser.go             # تابع سراسری ParseBody (بایند، نرمال‌سازی و اعتبارسنجی)
     └── sms/
         ├── sms.go                # اینترفیس ارسال پیامک
         ├── mock.go               # پیاده‌سازی Mock برای تست رایگان

@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"strconv"
+	"sync"
 
 	"github.com/joho/godotenv"
 )
@@ -37,6 +38,18 @@ type OTPConfig struct {
 	MsgWayTemplateID  int
 }
 
+var (
+	activeConfig Config
+	onceLoader   sync.Once
+)
+
+func Get() Config {
+	onceLoader.Do(func() {
+		activeConfig = Load()
+	})
+	return activeConfig
+}
+
 func Load() Config {
 	_ = godotenv.Load()
 
@@ -45,7 +58,7 @@ func Load() Config {
 	otpCooldownSeconds, _ := strconv.Atoi(fetchEnvironment("OTP_COOLDOWN_SECONDS", "120"))
 	msgwayTemplateID, _ := strconv.Atoi(fetchEnvironment("MSGWAY_TEMPLATE_ID", "1"))
 
-	return Config{
+	loadedConfig := Config{
 		AppEnv:  fetchEnvironment("APP_ENV", "development"),
 		AppPort: fetchEnvironment("APP_PORT", "8080"),
 		AppName: fetchEnvironment("APP_NAME", "DYF Private Catalog"),
@@ -68,6 +81,9 @@ func Load() Config {
 			MsgWayTemplateID:  msgwayTemplateID,
 		},
 	}
+
+	activeConfig = loadedConfig
+	return loadedConfig
 }
 
 func fetchEnvironment(keyName, fallbackValue string) string {

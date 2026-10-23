@@ -1,11 +1,7 @@
 package auth
 
-type LogoutService struct{}
+import "net/http"
 
-func NewLogoutService() LogoutService {
-	return LogoutService{}
-}
-
-func (service LogoutService) Execute() error {
-	return nil
+func (service Service) Logout() (int, error) {
+	return http.StatusOK, nil
 }

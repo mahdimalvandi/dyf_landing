@@ -1,11 +1,3 @@
-CREATE TABLE IF NOT EXISTS "adminUsers" (
-    "ID" BIGINT PRIMARY KEY,
-    "firstName" VARCHAR(100) NOT NULL,
-    "lastName" VARCHAR(100) NOT NULL,
-    "phoneNumber" VARCHAR(20) NOT NULL UNIQUE,
-    "isActive" BOOLEAN NOT NULL DEFAULT TRUE
-);
-
 CREATE TABLE IF NOT EXISTS "otpVerifications" (
     "ID" BIGINT PRIMARY KEY,
     "phoneNumber" VARCHAR(20) NOT NULL,

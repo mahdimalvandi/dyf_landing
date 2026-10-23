@@ -65,12 +65,15 @@
 - **`internal/entity/<family>/`:**
   - `entity.go` (تنها تگ مجاز GORM تگ `column` است).
 - **`internal/handler/<family>/`:**
-  - **به ازای هر API یک فایل مجزا** به نام همان API (مثال: `customer/detail.go`, `customer/create.go`).
+  - **یک استراکت واحد به نام `Handler` در `handler.go`** همراه با سازنده `NewHandler(service service.Service) Handler`.
+  - هر API به صورت یک **متد (Receiver)** روی همان استراکت `Handler` در فایلی به نام همان API نوشته می‌شود (`sendOTP.go`, `verifyOTP.go`, ...).
+  - استفاده سراسری از `request.ParseBody(fiberContext, &req)` برای بایندینگ، نرمال‌سازی و هندل خودکار خطاهای ولیدیشن.
 - **`internal/service/<family>/`:**
-  - **به ازای هر API یک فایل مجزا** به نام همان API (مثال: `customer/detail.go`, `customer/create.go`).
+  - **یک استراکت واحد به نام `Service` در `service.go`** همراه با سازنده `NewService(...) Service`.
+  - هر API یک متد روی استراکت `Service` است و علاوه بر دیتا و ارور، کد وضعیت HTTP (`statusCode int`) را بازمی‌گرداند (`(res, statusCode, err)`). بدین ترتیب لایه هندلر نیازی به `if/else`های طولانی ندارد.
   - لایه سرویس هیچ وابستگی به فریمورک Fiber ندارد.
 - **`internal/repository/<family>/`:**
-  - کدهای مربوط به دسترسی به داده‌های آن خانواده.
+  - یک استراکت واحد به نام `Repository` در `repository.go` که تمام کوئری‌ها متدهای آن هستند.
 - **`statics/constants/<family>/`:**
   - `constants.go` (ثابت‌های اختصاصی همان خانواده).
 
@@ -81,14 +84,17 @@
    - یک ارور استاندارد Go: `var ErrUserNotFound = errors.New(UserNotFound)`
 3. در `statics/errors/faTranslation.go`:
    - مپ `PersianErrorRegistry` با کلید نام خطا و مقدار ترجمه فارسی: `UserNotFound: "کاربر مورد نظر یافت نشد"`.
-4. لایه سرویس صرفاً ارور را برمی‌گرداند؛ لایه هندلر/کنترلر کد وضعیت HTTP را تعیین کرده و پیام فارسی را با `response.FromError(fiberContext, statusCode, err, details)` برمی‌گرداند.
+4. لایه سرویس علاوه بر ارور، کد وضعیت HTTP متناظر را هم برمی‌گرداند؛ لایه هندلر بدون if/else اضافی پیام فارسی را با `response.FromError(fiberContext, statusCode, err, details)` برمی‌گرداند.
 
-### ۳.۳. ساختار راه‌اندازی و فایل‌های ریشه سرور (`cmd/server/`)
-- **`cmd/server/main.go`:** بسیار تمیز و متمرکز؛ صرفاً لود کانفیگ از `.env`، فراخوانی `service.New(appConfig)` از پکیج `pkg/service`، فراخوانی `SetupRoutes` و استارت سرور.
-- **`cmd/server/route.go`:** شامل تابع `SetupRoutes` که توابع ثبت روت خانواده‌ها (نظیر `SetupCustomerRoute`, `SetupShoeRoute` و...) را صدا می‌زند.
+### ۳.۳. ساختار راه‌اندازی و ثبت ماژولار روت‌ها (`cmd/server/`)
+- **`cmd/server/main.go`:** لود کانفیگ و راه‌اندازی سرور.
+- **`cmd/server/routes/<family>.go`:** به ازای هر خانواده API یک فایل ثبت مسیر حاوی تابع `Register<Family>Routes(apiGroup, db)` که اینیشیالایز ریپازیتوری، سرویس و هندلر در آن انجام می‌شود.
+- **`cmd/server/route.go`:** صرفاً توابع ماژولار پکیج `routes` را صدا می‌زند.
+- **دسترسی سراسری به کانفیگ (`config.Get()`):** نیازی به ارسال زنجیره‌ای `appConfig` در ورودی سازنده‌ها نیست؛ هر پکیج مستقیماً `config.Get()` را می‌خواند.
 
 ### ۳.۴. پایگاه داده و مایگریشن با `golang-migrate`
-- جدول `"schemaMigrations"` نسخه‌ها را ردیابی می‌کند.
+- **قانون قطعی: به ازای هر جدول دیتابیس دقیقاً یک فایل مایگریشن.** هیچ‌وقت چند جدول در یک فایل قرار داده نمی‌شوند.
+- جدول `"schemaMigrations"` به صورت خودکار توسط کتابخانه ساخته و رهگیری می‌شود و نیازی به مایگریشن دستی ندارد.
 - تمام خطاها و موفقیت‌ها به صورت شفاف با `[MIGRATE ERROR]` و `[MIGRATE SUCCESS]` در کنسول لاگ می‌شوند.
 
 ---
@@ -101,7 +107,8 @@
 4. **سیاست مقداری (Value-Type):** تا جای ممکن از ساختارهای مقداری استفاده کنید و از تعریف پوینترهای غیرضروری پرهیز کنید تا ریسک خطای `nil pointer` از بین برود.
 5. **قرارداد ۳ خروجی در Getهای ریپازیتوری:** `(item, found, error)` که در صورت نیافتن رکورد `found = false` و `error = nil` است.
 6. **احراز هویت توکن‌محور و هش MD5 (حذف کامل JWT):** احراز هویت با توکن‌های مات تصادفی است؛ هش MD5 توکن در جدول دیتابیس ذخیره و کوئری می‌شود.
-7. **پیکربندی کامل از طریق `.env`:** تمام اتصالات و مشخصات بدون هاردکد شدن از متغیرهای محیطی خوانده می‌شوند.
+7. **پیکربندی کامل از طریق `.env` و متد `config.Get()`:** تمام اتصالات و مشخصات بدون هاردکد شدن از طریق `config.Get()` در دسترس کل سیستم هستند.
+8. **پاکسازی فایل‌های تست:** فایل‌های تست آزمایشی نباید پس از پایان تست در مخزن پروژه رها شوند.
 
 ---
 
