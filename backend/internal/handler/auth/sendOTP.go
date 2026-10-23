@@ -4,6 +4,7 @@ import (
 	dtoauth "dyf-backend/internal/dto/auth"
 	"dyf-backend/pkg/request"
 	"dyf-backend/pkg/response"
+	constantsauth "dyf-backend/statics/constants/auth"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -19,5 +20,5 @@ func (handler Handler) SendOTP(fiberContext fiber.Ctx) error {
 		return response.FromError(fiberContext, statusCode, executeError, nil)
 	}
 
-	return response.Success(fiberContext, statusCode, "کد تایید با موفقیت ارسال شد", serviceResponse, nil)
+	return response.Success(fiberContext, statusCode, constantsauth.MsgOTPSentSuccessfully, serviceResponse, nil)
 }
