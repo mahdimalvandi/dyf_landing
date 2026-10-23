@@ -94,6 +94,17 @@
 | ۵ | `PATCH` | `/api/v1/customers/:id/status` | **بله (ادمین)** | [مستند status.md](./customers/status.md) |
 | ۶ | `DELETE` | `/api/v1/customers/:id` | **بله (ادمین)** | [مستند delete.md](./customers/delete.md) |
 
+### خانواده لینک‌های دسترسی اختصاصی (`links`):
+| ردیف | متد | مسیر (Endpoint) | نیاز به توکن | فایل داکیومنت اختصاصی |
+|:---:|:---:|:---|:---:|:---|
+| ۱ | `GET` | `/api/v1/links` | **بله (ادمین)** | [مستند list.md](./links/list.md) |
+| ۲ | `GET` | `/api/v1/links/:id` | **بله (ادمین)** | [مستند detail.md](./links/detail.md) |
+| ۳ | `POST` | `/api/v1/links` | **بله (ادمین)** | [مستند create.md](./links/create.md) |
+| ۴ | `PUT` | `/api/v1/links/:id` | **بله (ادمین)** | [مستند update.md](./links/update.md) |
+| ۵ | `PATCH` | `/api/v1/links/:id/revoke` | **بله (ادمین)** | [مستند revoke.md](./links/revoke.md) |
+| ۶ | `PATCH` | `/api/v1/links/:id/reactivate` | **بله (ادمین)** | [مستند reactivate.md](./links/reactivate.md) |
+| ۷ | `DELETE` | `/api/v1/links/:id` | **بله (ادمین)** | [مستند delete.md](./links/delete.md) |
+
 ---
 
 ## ۴. چرخه احراز هویت در فرانت‌اند (Authentication Flow)

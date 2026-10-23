@@ -25,4 +25,5 @@ func SetupRoutes(fiberApp *fiber.App, databaseConnection *gorm.DB) {
 	routes.RegisterCategoryRoutes(apiGroup, databaseConnection)
 	routes.RegisterShoeRoutes(apiGroup, databaseConnection)
 	routes.RegisterCustomerRoutes(apiGroup, databaseConnection)
+	routes.RegisterLinkRoutes(apiGroup, databaseConnection)
 }
