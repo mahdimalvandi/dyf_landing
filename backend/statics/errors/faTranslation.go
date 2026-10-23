@@ -32,6 +32,10 @@ var PersianErrorRegistry = map[string]string{
 	UploadFailed:            "خطا در بارگذاری و ذخیره فایل رسانه",
 	CustomerNotFound:        "مشتری مورد نظر یافت نشد",
 	InvalidCustomerID:       "شناسه مشتری نامعتبر است",
+	LinkNotFound:            "لینک دسترسی مورد نظر یافت نشد",
+	InvalidLinkID:           "شناسه لینک نامعتبر است",
+	NoShoesSelectedForLink:  "حداقل یک مدل کفش باید برای این لینک انتخاب شود",
+	InvalidAuthMethod:       "روش ورود انتخابی نامعتبر است (تنها DIRECT یا OTP مجاز است)",
 }
 
 func TranslateToPersian(targetError error) string {

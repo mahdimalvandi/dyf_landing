@@ -34,6 +34,10 @@ const (
 	UploadFailed            = "uploadFailed"
 	CustomerNotFound        = "customerNotFound"
 	InvalidCustomerID       = "invalidCustomerID"
+	LinkNotFound            = "linkNotFound"
+	InvalidLinkID           = "invalidLinkID"
+	NoShoesSelectedForLink  = "noShoesSelectedForLink"
+	InvalidAuthMethod       = "invalidAuthMethod"
 )
 
 var (
@@ -68,4 +72,8 @@ var (
 	ErrUploadFailed            = errors.New(UploadFailed)
 	ErrCustomerNotFound        = errors.New(CustomerNotFound)
 	ErrInvalidCustomerID       = errors.New(InvalidCustomerID)
+	ErrLinkNotFound            = errors.New(LinkNotFound)
+	ErrInvalidLinkID           = errors.New(InvalidLinkID)
+	ErrNoShoesSelectedForLink  = errors.New(NoShoesSelectedForLink)
+	ErrInvalidAuthMethod       = errors.New(InvalidAuthMethod)
 )
