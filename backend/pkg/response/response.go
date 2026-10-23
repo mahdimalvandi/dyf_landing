@@ -1,13 +1,13 @@
 package response
 
 import (
-	staticerrors "dyf-backend/statics/errors"
+	staticErrors "dyf-backend/statics/errors"
 
 	"github.com/gofiber/fiber/v3"
-	jsoniter "github.com/json-iterator/go"
+	jsonIter "github.com/json-iterator/go"
 )
 
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
+var json = jsonIter.ConfigCompatibleWithStandardLibrary
 
 type Envelope struct {
 	Success    bool        `json:"success"`
@@ -69,11 +69,11 @@ func Error(fiberContext fiber.Ctx, statusCode int, errorCode string, message str
 	return fiberContext.Send(responseBytes)
 }
 
-func FromError(fiberContext fiber.Ctx, statusCode int, err error, details interface{}) error {
-	if err == nil {
+func FromError(fiberContext fiber.Ctx, statusCode int, targetError error, details interface{}) error {
+	if targetError == nil {
 		return Success(fiberContext, statusCode, "", nil, nil)
 	}
-	errorCode := err.Error()
-	persianMessage := staticerrors.TranslateToPersian(err)
+	errorCode := targetError.Error()
+	persianMessage := staticErrors.TranslateToPersian(targetError)
 	return Error(fiberContext, statusCode, errorCode, persianMessage, details)
 }

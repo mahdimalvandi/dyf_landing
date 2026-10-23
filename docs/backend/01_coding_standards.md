@@ -43,6 +43,7 @@
   - `internal/handler/auth/handler.go` (تعریف استراکت `Handler` و متد سازنده)
   - `internal/handler/auth/sendOTP.go` (`func (handler Handler) SendOTP(fiberContext fiber.Ctx) error`)
   - `internal/handler/auth/verifyOTP.go` (`func (handler Handler) VerifyOTP(fiberContext fiber.Ctx) error`)
+- **قانون نام‌گذاری شتری (camelCase) برای کلیه متغیرها و ایمپورت‌ها:** تمام متغیرها، پکیج‌های مستعار (Import Aliases) و فیلدها باید دقیقاً از قرارداد camelCase پیروی کنند (مانند `constantsAuth`, `dtoAuth`, `entityAuth`, `repoAuth`, `serviceAuth`, `handlerAuth`, `staticErrors`). هرگونه چسباندن کلمات با حروف کوچک (مثل `constantsauth` یا `repoauth`) اکیداً ممنوع است.
 - **تابع مشترک پردازش ورودی (`request.ParseBody`):** کلیه هندلرها برای عملیات بایندینگ، نرمال‌سازی و اعتبارسنجی ورودی از تابع کمکی سراسری `request.ParseBody(fiberContext, &targetStruct)` استفاده می‌کنند.
 
 ### ۲.۴. لایه سرویس (`internal/service/<family>/`)

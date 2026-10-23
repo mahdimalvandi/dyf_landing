@@ -13,7 +13,7 @@ import (
 	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/gofiber/fiber/v3/middleware/logger"
 	"github.com/gofiber/fiber/v3/middleware/recover"
-	jsoniter "github.com/json-iterator/go"
+	jsonIter "github.com/json-iterator/go"
 	"gorm.io/gorm"
 )
 
@@ -29,7 +29,7 @@ func New(appConfig config.Config) CoreService {
 		log.Printf("[DATABASE ERROR] failed to connect: %v", connectionError)
 	}
 
-	fastJSON := jsoniter.ConfigCompatibleWithStandardLibrary
+	fastJSON := jsonIter.ConfigCompatibleWithStandardLibrary
 
 	fiberApplication := fiber.New(fiber.Config{
 		AppName:      appConfig.AppName,
