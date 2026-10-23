@@ -13,7 +13,7 @@ func main() {
 
 	coreService := service.New(appConfig)
 
-	SetupRoutes(coreService.FiberApp, coreService.DatabaseConnection)
+	SetupRoutes(coreService.FiberApp, coreService.DatabaseConnection, appConfig)
 
 	serverAddress := fmt.Sprintf(":%s", appConfig.AppPort)
 	log.Printf("%s is running on port %s", appConfig.AppName, appConfig.AppPort)

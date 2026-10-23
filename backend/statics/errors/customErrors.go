@@ -15,6 +15,10 @@ const (
 	LinkExpired          = "linkExpired"
 	LinkInactive         = "linkInactive"
 	CustomerInactive     = "customerInactive"
+	AdminInactive        = "adminInactive"
+	OTPCooldownActive    = "otpCooldownActive"
+	TooManyRequests      = "tooManyRequests"
+	SMSDeliveryFailed    = "smsDeliveryFailed"
 	InternalServerError  = "internalServerError"
 	InvalidRequestBody   = "invalidRequestBody"
 	InvalidIDParam       = "invalidIDParam"
@@ -33,6 +37,10 @@ var (
 	ErrLinkExpired         = errors.New(LinkExpired)
 	ErrLinkInactive        = errors.New(LinkInactive)
 	ErrCustomerInactive    = errors.New(CustomerInactive)
+	ErrAdminInactive       = errors.New(AdminInactive)
+	ErrOTPCooldownActive   = errors.New(OTPCooldownActive)
+	ErrTooManyRequests     = errors.New(TooManyRequests)
+	ErrSMSDeliveryFailed   = errors.New(SMSDeliveryFailed)
 	ErrInternalServerError = errors.New(InternalServerError)
 	ErrInvalidRequestBody  = errors.New(InvalidRequestBody)
 	ErrInvalidIDParam      = errors.New(InvalidIDParam)

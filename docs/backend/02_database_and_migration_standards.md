@@ -17,17 +17,17 @@
 
 ### ۱.۲. نگهداری زمان‌ها با نوع `BIGINT` (Unix Timestamps)
 - هیچ ستونی از نوع `TIMESTAMP` یا `TIMESTAMPTZ` استفاده نمی‌شود.
-- تمامی فیلدهای زمانی (نظیر `"updatedAt"`, `"expiresAt"`, `"startedAt"`) از نوع **`BIGINT`** (یونیکس تایم‌استمپ برحسب ثانیه) هستند.
+- تمامی فیلدهای زمانی (نظیر `"expiresAt"`, `"startedAt"`) از نوع **`BIGINT`** (یونیکس تایم‌استمپ برحسب ثانیه) هستند.
+- **حذف فیلد `updatedAt`:** در هیچ جدولی فیلد `"updatedAt"` اضافه نمی‌شود مگر اینکه کاربر در مشخصات یک تسک صریحاً وجود آن را درخواست کرده باشد.
 
 ### ۱.۳. نام‌گذاری دقیق camelCase با دابل‌کوتیشن (`"`)
 - از آنجا که PostgreSQL شناسه‌های فاقد کوتیشن را به حروف کوچک تبدیل می‌کند، در کلیه فایل‌های SQL نام تمامی جداول و ستون‌ها با دابل‌کوتیشن درج می‌شوند:
-  - جدول‌ها: `"shoeModels"`, `"categories"`, `"customers"`, `"accessLinks"`, `"adminTokens"`, `"catalogTokens"`, `"schemaMigrations"`
-  - ستون‌ها: `"ID"`, `"shoeTitle"`, `"primaryImageURL"`, `"updatedAt"`, `"categoryIDs"`, `"tokenHash"`
+  - جدول‌ها: `"shoeModels"`, `"categories"`, `"customers"`, `"accessLinks"`, `"adminUsers"`, `"adminTokens"`, `"catalogTokens"`, `"schemaMigrations"`
+  - ستون‌ها: `"ID"`, `"shoeTitle"`, `"primaryImageURL"`, `"categoryIDs"`, `"tokenHash"`
 
-### ۱.۴. ایندکس‌گذاری اجباری فیلدهای مورد کوئری (Mandatory Indexing)
-- **قاعده قطعی:** هر ستونی که در عملیات فیلترینگ، جست‌وجو، شرط‌های `WHERE` یا کلید خارجی قرار می‌گیرد، باید به صورت صریح با `CREATE INDEX IF NOT EXISTS` ایندکس شود.
-- ایندکس روی فیلدهای متنی حساس، اسلاگ‌ها و هش‌ها: B-Tree Index
-- ایندکس روی فیلدهای آرایه‌ای یا JSONB (مانند دسته‌بندی‌ها یا مدل‌های مجاز): GIN Index
+### ۱.۴. قاعده ایندکس‌گذاری (Indexing Policy)
+- **قاعده قطعی:** برای جداول کم‌حجم یا موقت (مانند `"adminUsers"` با نهایتاً ۳ الی ۴ رکورد، یا `"otpVerifications"`) **هیچ ایندکس اضافه‌ای ساخته نمی‌شود** تا سربار بیهوده ایجاد نگردد.
+- ساخت ایندکس تنها برای جداول پرحجم و صرفاً در صورت اعلام صریح کاربر انجام می‌شود.
 
 ---
 

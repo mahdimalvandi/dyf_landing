@@ -32,6 +32,9 @@ type AuthConfig struct {
 type OTPConfig struct {
 	Provider          string
 	ExpirationMinutes int
+	CooldownSeconds   int
+	MsgWayAPIKey      string
+	MsgWayTemplateID  int
 }
 
 func Load() Config {
@@ -39,6 +42,8 @@ func Load() Config {
 
 	tokenExpirationHours, _ := strconv.Atoi(fetchEnvironment("AUTH_TOKEN_EXPIRATION_HOURS", "72"))
 	otpExpirationMinutes, _ := strconv.Atoi(fetchEnvironment("OTP_EXPIRATION_MINUTES", "2"))
+	otpCooldownSeconds, _ := strconv.Atoi(fetchEnvironment("OTP_COOLDOWN_SECONDS", "120"))
+	msgwayTemplateID, _ := strconv.Atoi(fetchEnvironment("MSGWAY_TEMPLATE_ID", "1"))
 
 	return Config{
 		AppEnv:  fetchEnvironment("APP_ENV", "development"),
@@ -58,6 +63,9 @@ func Load() Config {
 		OTP: OTPConfig{
 			Provider:          fetchEnvironment("OTP_PROVIDER", "mock"),
 			ExpirationMinutes: otpExpirationMinutes,
+			CooldownSeconds:   otpCooldownSeconds,
+			MsgWayAPIKey:      fetchEnvironment("MSGWAY_API_KEY", "006587c3c4c9daedb39f97bd9dec59e4"),
+			MsgWayTemplateID:  msgwayTemplateID,
 		},
 	}
 }
