@@ -17,17 +17,17 @@
 
 ### ۱.۲. نگهداری زمان‌ها با نوع `BIGINT` (Unix Timestamps)
 - هیچ ستونی از نوع `TIMESTAMP` یا `TIMESTAMPTZ` استفاده نمی‌شود.
-- تمامی فیلدهای زمانی (نظیر `"updatedAt"`, `"expiresAt"`, `"startedAt"`) از نوع **`BIGINT`** (یونیکس تایم‌استمپ برحسب ثانیه) هستند.
+- تمامی فیلدهای زمانی (نظیر `"expiresAt"`, `"startedAt"`) از نوع **`BIGINT`** (یونیکس تایم‌استمپ برحسب ثانیه) هستند.
+- **حذف فیلد `updatedAt`:** در هیچ جدولی فیلد `"updatedAt"` اضافه نمی‌شود مگر اینکه کاربر در مشخصات یک تسک صریحاً وجود آن را درخواست کرده باشد.
 
 ### ۱.۳. نام‌گذاری دقیق camelCase با دابل‌کوتیشن (`"`)
 - از آنجا که PostgreSQL شناسه‌های فاقد کوتیشن را به حروف کوچک تبدیل می‌کند، در کلیه فایل‌های SQL نام تمامی جداول و ستون‌ها با دابل‌کوتیشن درج می‌شوند:
-  - جدول‌ها: `"shoeModels"`, `"categories"`, `"customers"`, `"accessLinks"`, `"adminTokens"`, `"catalogTokens"`, `"schemaMigrations"`
-  - ستون‌ها: `"ID"`, `"shoeTitle"`, `"primaryImageURL"`, `"updatedAt"`, `"categoryIDs"`, `"tokenHash"`
+  - جدول‌ها: `"shoeModels"`, `"categories"`, `"customers"`, `"accessLinks"`, `"adminUsers"`, `"adminTokens"`, `"catalogTokens"`, `"schemaMigrations"`
+  - ستون‌ها: `"ID"`, `"shoeTitle"`, `"primaryImageURL"`, `"categoryIDs"`, `"tokenHash"`
 
-### ۱.۴. ایندکس‌گذاری اجباری فیلدهای مورد کوئری (Mandatory Indexing)
-- **قاعده قطعی:** هر ستونی که در عملیات فیلترینگ، جست‌وجو، شرط‌های `WHERE` یا کلید خارجی قرار می‌گیرد، باید به صورت صریح با `CREATE INDEX IF NOT EXISTS` ایندکس شود.
-- ایندکس روی فیلدهای متنی حساس، اسلاگ‌ها و هش‌ها: B-Tree Index
-- ایندکس روی فیلدهای آرایه‌ای یا JSONB (مانند دسته‌بندی‌ها یا مدل‌های مجاز): GIN Index
+### ۱.۴. قاعده ایندکس‌گذاری (Indexing Policy)
+- **قاعده قطعی:** برای جداول کم‌حجم یا موقت (مانند `"adminUsers"` با نهایتاً ۳ الی ۴ رکورد، یا `"otpVerifications"`) **هیچ ایندکس اضافه‌ای ساخته نمی‌شود** تا سربار بیهوده ایجاد نگردد.
+- ساخت ایندکس تنها برای جداول پرحجم و صرفاً در صورت اعلام صریح کاربر انجام می‌شود.
 
 ---
 
@@ -36,19 +36,16 @@
 مدیریت ساختار پایگاه داده و نسخه‌بندی آن با ابزار استاندارد Go یعنی **`golang-migrate/migrate/v4`** انجام می‌شود و از نوشتن اسکریپت‌های دستی خودداری شده است.
 
 ### ۲.۱. ساختار فایل‌های مایگریشن در پوشه `backend/migrations/`
+- **قانون قطعی (یک جدول به ازای هر مایگریشن):** به ازای هر جدول دیتابیس، دقیقاً **یک فایل مایگریشن** مجزا (`.up.sql` و `.down.sql`) ایجاد می‌شود. به هیچ عنوان چند جدول نباید در یک فایل مایگریشن تجمیع شوند.
+- **عدم ساخت مایگریشن دستی برای `schemaMigrations`:** جدول رهگیری نسخه‌ها به صورت خودکار توسط کتابخانه `golang-migrate` مدیریت و ساخته می‌شود و نسخه `000001` به اولین جدول بیزینسی پروژه اختصاص دارد.
 فایل‌ها با شماره‌گذاری عددی ۶ رقمی و دو فایل رو به جلو (`.up.sql`) و بازگشت (`.down.sql`) ایجاد می‌شوند:
 ```text
 backend/migrations/
-├── 000001_create_categories.up.sql
-├── 000001_create_categories.down.sql
-├── 000002_create_shoe_models.up.sql
-├── 000002_create_shoe_models.down.sql
-├── 000003_create_customers.up.sql
-├── 000003_create_customers.down.sql
-├── 000004_create_access_links.up.sql
-├── 000004_create_access_links.down.sql
-├── 000005_create_admins_and_tokens.up.sql
-└── 000005_create_admins_and_tokens.down.sql
+├── 000001_create_admin_users.up.sql
+├── 000001_create_admin_users.down.sql
+├── 000002_create_otp_verifications.up.sql
+├── 000002_create_otp_verifications.down.sql
+└── ...
 ```
 
 ### ۲.۲. دستورات اجرایی CLI مایگریشن (`cmd/migrate/main.go`)

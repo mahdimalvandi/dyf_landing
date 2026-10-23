@@ -3,8 +3,7 @@ package entity
 import "time"
 
 type BaseEntity struct {
-	ID        int64 `gorm:"column:ID" json:"ID"`
-	UpdatedAt int64 `gorm:"column:updatedAt" json:"updatedAt"`
+	ID int64 `gorm:"column:ID" json:"ID"`
 }
 
 func GenerateNanosecondID() int64 {
