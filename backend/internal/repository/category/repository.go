@@ -68,3 +68,16 @@ func (repository Repository) DeleteCategory(categoryID int64) error {
 	deleteResult := repository.databaseConnection.Where(`"ID" = ?`, categoryID).Delete(&entityCategory.Category{})
 	return deleteResult.Error
 }
+
+func (repository Repository) FindCategoriesByIDs(categoryIDs []int64) ([]entityCategory.Category, error) {
+	if len(categoryIDs) == 0 {
+		return []entityCategory.Category{}, nil
+	}
+	var categoriesList []entityCategory.Category
+	findResult := repository.databaseConnection.Where(`"ID" IN ?`, categoryIDs).Find(&categoriesList)
+	if findResult.Error != nil {
+		return nil, findResult.Error
+	}
+	return categoriesList, nil
+}
+

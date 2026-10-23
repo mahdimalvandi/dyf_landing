@@ -72,6 +72,18 @@
 | ۴ | `PUT` | `/api/v1/categories/:id` | **بله (ادمین)** | [مستند update.md](./category/update.md) |
 | ۵ | `DELETE` | `/api/v1/categories/:id` | **بله (ادمین)** | [مستند delete.md](./category/delete.md) |
 
+### خانواده مدل‌های کفش (`shoes`):
+| ردیف | متد | مسیر (Endpoint) | نیاز به توکن | فایل داکیومنت اختصاصی |
+|:---:|:---:|:---|:---:|:---|
+| ۱ | `GET` | `/api/v1/shoes` | **بله (ادمین)** | [مستند list.md](./shoes/list.md) |
+| ۲ | `GET` | `/api/v1/shoes/:id` | **بله (ادمین)** | [مستند detail.md](./shoes/detail.md) |
+| ۳ | `POST` | `/api/v1/shoes` | **بله (ادمین)** | [مستند create.md](./shoes/create.md) |
+| ۴ | `PUT` | `/api/v1/shoes/:id` | **بله (ادمین)** | [مستند update.md](./shoes/update.md) |
+| ۵ | `DELETE` | `/api/v1/shoes/:id` | **بله (ادمین)** | [مستند delete.md](./shoes/delete.md) |
+| ۶ | `POST` | `/api/v1/shoes/upload` | **بله (ادمین)** | [مستند upload.md](./shoes/upload.md) |
+| ۷ | `PUT` | `/api/v1/shoes/:id/cover` | **بله (ادمین)** | [مستند cover.md](./shoes/cover.md) |
+| ۸ | `DELETE` | `/api/v1/shoes/:id/media` | **بله (ادمین)** | [مستند media.md](./shoes/media.md) |
+
 ---
 
 ## ۴. چرخه احراز هویت در فرانت‌اند (Authentication Flow)
