@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	jsoniter "github.com/json-iterator/go"
+	jsonIter "github.com/json-iterator/go"
 )
 
 type MsgWaySender struct {
@@ -44,7 +44,7 @@ func NewMsgWaySender(apiKey string, templateID int) Sender {
 }
 
 func (msgWay MsgWaySender) SendOTP(payload MessagePayload) error {
-	fastJSON := jsoniter.ConfigCompatibleWithStandardLibrary
+	fastJSON := jsonIter.ConfigCompatibleWithStandardLibrary
 
 	targetTemplateID := payload.TemplateID
 	if targetTemplateID <= 0 {

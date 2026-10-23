@@ -1,12 +1,12 @@
 package auth
 
-import serviceauth "dyf-backend/internal/service/auth"
+import serviceAuth "dyf-backend/internal/service/auth"
 
 type Handler struct {
-	service serviceauth.Service
+	service serviceAuth.Service
 }
 
-func NewHandler(service serviceauth.Service) Handler {
+func NewHandler(service serviceAuth.Service) Handler {
 	return Handler{
 		service: service,
 	}
