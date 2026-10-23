@@ -8,7 +8,9 @@ import (
 )
 
 func (handler Handler) Logout(fiberContext fiber.Ctx) error {
-	statusCode, executeError := handler.service.Logout()
+	tokenHash, _ := fiberContext.Locals("tokenHash").(string)
+
+	statusCode, executeError := handler.service.Logout(tokenHash)
 	if executeError != nil {
 		return response.FromError(fiberContext, statusCode, executeError, nil)
 	}

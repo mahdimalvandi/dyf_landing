@@ -24,3 +24,16 @@ type OTPVerification struct {
 func (OTPVerification) TableName() string {
 	return "otpVerifications"
 }
+
+type Device struct {
+	ID        int64  `gorm:"column:ID" json:"ID"`
+	UserID    int64  `gorm:"column:userID" json:"userID"`
+	UserType  string `gorm:"column:userType" json:"userType"`
+	TokenHash string `gorm:"column:tokenHash" json:"tokenHash"`
+	ExpiresAt int64  `gorm:"column:expiresAt" json:"expiresAt"`
+	Status    string `gorm:"column:status" json:"status"`
+}
+
+func (Device) TableName() string {
+	return "devices"
+}

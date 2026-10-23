@@ -53,7 +53,7 @@ func Get() Config {
 func Load() Config {
 	_ = godotenv.Load()
 
-	tokenExpirationHours, _ := strconv.Atoi(fetchEnvironment("AUTH_TOKEN_EXPIRATION_HOURS", "72"))
+	tokenExpirationHours, _ := strconv.Atoi(fetchEnvironment("AUTH_TOKEN_EXPIRATION_HOURS", "720"))
 	otpExpirationMinutes, _ := strconv.Atoi(fetchEnvironment("OTP_EXPIRATION_MINUTES", "2"))
 	otpCooldownSeconds, _ := strconv.Atoi(fetchEnvironment("OTP_COOLDOWN_SECONDS", "120"))
 	msgwayTemplateID, _ := strconv.Atoi(fetchEnvironment("MSGWAY_TEMPLATE_ID", "1"))

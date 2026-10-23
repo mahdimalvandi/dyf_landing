@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	entityauth "dyf-backend/internal/entity/auth"
+	constantsauth "dyf-backend/statics/constants/auth"
 
 	"gorm.io/gorm"
 )
@@ -21,6 +22,18 @@ func NewRepository(databaseConnection *gorm.DB) Repository {
 func (repository Repository) FindAdminByPhoneNumber(phoneNumber string) (entityauth.AdminUser, bool, error) {
 	var adminUser entityauth.AdminUser
 	findResult := repository.databaseConnection.Where(`"phoneNumber" = ?`, phoneNumber).First(&adminUser)
+	if findResult.Error != nil {
+		if errors.Is(findResult.Error, gorm.ErrRecordNotFound) {
+			return entityauth.AdminUser{}, false, nil
+		}
+		return entityauth.AdminUser{}, false, findResult.Error
+	}
+	return adminUser, true, nil
+}
+
+func (repository Repository) FindAdminByID(adminID int64) (entityauth.AdminUser, bool, error) {
+	var adminUser entityauth.AdminUser
+	findResult := repository.databaseConnection.Where(`"ID" = ?`, adminID).First(&adminUser)
 	if findResult.Error != nil {
 		if errors.Is(findResult.Error, gorm.ErrRecordNotFound) {
 			return entityauth.AdminUser{}, false, nil
@@ -75,6 +88,39 @@ func (repository Repository) MarkOTPAsUsed(otpID int64) error {
 	updateResult := repository.databaseConnection.Model(&entityauth.OTPVerification{}).
 		Where(`"ID" = ?`, otpID).
 		Update("isUsed", true)
+
+	return updateResult.Error
+}
+
+func (repository Repository) CreateDevice(deviceRecord entityauth.Device) error {
+	createResult := repository.databaseConnection.Create(&deviceRecord)
+	return createResult.Error
+}
+
+func (repository Repository) FindDeviceByTokenHash(tokenHash string) (entityauth.Device, bool, error) {
+	var deviceRecord entityauth.Device
+	findResult := repository.databaseConnection.Where(`"tokenHash" = ?`, tokenHash).First(&deviceRecord)
+	if findResult.Error != nil {
+		if errors.Is(findResult.Error, gorm.ErrRecordNotFound) {
+			return entityauth.Device{}, false, nil
+		}
+		return entityauth.Device{}, false, findResult.Error
+	}
+	return deviceRecord, true, nil
+}
+
+func (repository Repository) UpdateDeviceStatus(deviceID int64, newStatus string) error {
+	updateResult := repository.databaseConnection.Model(&entityauth.Device{}).
+		Where(`"ID" = ?`, deviceID).
+		Update("status", newStatus)
+
+	return updateResult.Error
+}
+
+func (repository Repository) DeactivateDeviceByTokenHash(tokenHash string) error {
+	updateResult := repository.databaseConnection.Model(&entityauth.Device{}).
+		Where(`"tokenHash" = ?`, tokenHash).
+		Update("status", constantsauth.DeviceStatusInactive)
 
 	return updateResult.Error
 }

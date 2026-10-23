@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS "devices" (
+    "ID" BIGINT PRIMARY KEY,
+    "userID" BIGINT NOT NULL,
+    "userType" VARCHAR(20) NOT NULL,
+    "tokenHash" VARCHAR(32) NOT NULL UNIQUE,
+    "expiresAt" BIGINT NOT NULL,
+    "status" VARCHAR(20) NOT NULL DEFAULT 'ACTIVE'
+);
