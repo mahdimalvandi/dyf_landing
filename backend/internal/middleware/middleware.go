@@ -9,6 +9,10 @@ import (
 )
 
 func GlobalErrorHandler(fiberContext fiber.Ctx, uncaughtError error) error {
+	if len(fiberContext.Response().Body()) > 0 {
+		return nil
+	}
+
 	statusCode := fiber.StatusInternalServerError
 	errorMessage := "خطای غیرمنتظره در سرور رخ داده است"
 	errorCode := "INTERNAL_SERVER_ERROR"

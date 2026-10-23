@@ -63,6 +63,15 @@
 | ۳ | `GET` | `/api/v1/auth/admin/me` | **بله** | [مستند me.md](./auth/me.md) |
 | ۴ | `POST` | `/api/v1/auth/admin/logout` | **بله** | [مستند logout.md](./auth/logout.md) |
 
+### خانواده دسته‌بندی‌ها (`category`):
+| ردیف | متد | مسیر (Endpoint) | نیاز به توکن | فایل داکیومنت اختصاصی |
+|:---:|:---:|:---|:---:|:---|
+| ۱ | `GET` | `/api/v1/categories` | خیر (عمومی) | [مستند list.md](./category/list.md) |
+| ۲ | `GET` | `/api/v1/categories/:id` | خیر (عمومی) | [مستند detail.md](./category/detail.md) |
+| ۳ | `POST` | `/api/v1/categories` | **بله (ادمین)** | [مستند create.md](./category/create.md) |
+| ۴ | `PUT` | `/api/v1/categories/:id` | **بله (ادمین)** | [مستند update.md](./category/update.md) |
+| ۵ | `DELETE` | `/api/v1/categories/:id` | **بله (ادمین)** | [مستند delete.md](./category/delete.md) |
+
 ---
 
 ## ۴. چرخه احراز هویت در فرانت‌اند (Authentication Flow)

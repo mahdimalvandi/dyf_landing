@@ -15,4 +15,5 @@ func SetupRoutes(fiberApp *fiber.App, databaseConnection *gorm.DB) {
 	apiGroup.Get("/health", baseHandler.HealthCheck)
 
 	routes.RegisterAuthRoutes(apiGroup, databaseConnection)
+	routes.RegisterCategoryRoutes(apiGroup, databaseConnection)
 }
