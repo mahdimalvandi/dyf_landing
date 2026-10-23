@@ -84,6 +84,16 @@
 | ۷ | `PUT` | `/api/v1/shoes/:id/cover` | **بله (ادمین)** | [مستند cover.md](./shoes/cover.md) |
 | ۸ | `DELETE` | `/api/v1/shoes/:id/media` | **بله (ادمین)** | [مستند media.md](./shoes/media.md) |
 
+### خانواده مشتریان و همکاران تجاری (`customers`):
+| ردیف | متد | مسیر (Endpoint) | نیاز به توکن | فایل داکیومنت اختصاصی |
+|:---:|:---:|:---|:---:|:---|
+| ۱ | `GET` | `/api/v1/customers` | **بله (ادمین)** | [مستند list.md](./customers/list.md) |
+| ۲ | `GET` | `/api/v1/customers/:id` | **بله (ادمین)** | [مستند detail.md](./customers/detail.md) |
+| ۳ | `POST` | `/api/v1/customers` | **بله (ادمین)** | [مستند create.md](./customers/create.md) |
+| ۴ | `PUT` | `/api/v1/customers/:id` | **بله (ادمین)** | [مستند update.md](./customers/update.md) |
+| ۵ | `PATCH` | `/api/v1/customers/:id/status` | **بله (ادمین)** | [مستند status.md](./customers/status.md) |
+| ۶ | `DELETE` | `/api/v1/customers/:id` | **بله (ادمین)** | [مستند delete.md](./customers/delete.md) |
+
 ---
 
 ## ۴. چرخه احراز هویت در فرانت‌اند (Authentication Flow)

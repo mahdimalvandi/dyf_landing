@@ -30,6 +30,8 @@ var PersianErrorRegistry = map[string]string{
 	InvalidMediaFile:        "فرمت فایل ارسالی مجاز نمی‌باشد (تنها تصاویر و ویدیوهای استاندارد)",
 	MediaSizeExceeded:       "حجم فایل بیش از حد مجاز است",
 	UploadFailed:            "خطا در بارگذاری و ذخیره فایل رسانه",
+	CustomerNotFound:        "مشتری مورد نظر یافت نشد",
+	InvalidCustomerID:       "شناسه مشتری نامعتبر است",
 }
 
 func TranslateToPersian(targetError error) string {
