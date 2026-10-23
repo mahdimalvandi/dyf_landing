@@ -32,6 +32,8 @@ const (
 	InvalidMediaFile        = "invalidMediaFile"
 	MediaSizeExceeded       = "mediaSizeExceeded"
 	UploadFailed            = "uploadFailed"
+	CustomerNotFound        = "customerNotFound"
+	InvalidCustomerID       = "invalidCustomerID"
 )
 
 var (
@@ -64,4 +66,6 @@ var (
 	ErrInvalidMediaFile        = errors.New(InvalidMediaFile)
 	ErrMediaSizeExceeded       = errors.New(MediaSizeExceeded)
 	ErrUploadFailed            = errors.New(UploadFailed)
+	ErrCustomerNotFound        = errors.New(CustomerNotFound)
+	ErrInvalidCustomerID       = errors.New(InvalidCustomerID)
 )
