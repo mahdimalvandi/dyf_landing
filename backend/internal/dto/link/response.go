@@ -18,6 +18,7 @@ type LinkItemResponse struct {
 	ViewingExpiresAt       int64  `json:"viewingExpiresAt"`
 	IsActive               bool   `json:"isActive"`
 	Status                 string `json:"status"`
+	LastAccessedAt         int64  `json:"lastAccessedAt"`
 }
 
 type LinkDetailResponse struct {
@@ -28,4 +29,21 @@ type LinkDetailResponse struct {
 type LinkListResponse struct {
 	Items      []LinkItemResponse    `json:"items"`
 	Pagination pagination.Pagination `json:"pagination"`
+}
+
+type CatalogAccessResponse struct {
+	LinkID           int64  `json:"linkID"`
+	RecipientName    string `json:"recipientName"`
+	AuthMethod       string `json:"authMethod"`
+	Status           string `json:"status"`
+	FirstViewedAt    int64  `json:"firstViewedAt"`
+	ViewingExpiresAt int64  `json:"viewingExpiresAt"`
+	LastAccessedAt   int64  `json:"lastAccessedAt"`
+	RemainingSeconds int64  `json:"remainingSeconds"`
+	ShoesCount       int    `json:"shoesCount"`
+}
+
+type CatalogStatsResponse struct {
+	Last7DaysViews     int64 `json:"last7DaysViews"`
+	TotalAccessedLinks int64 `json:"totalAccessedLinks"`
 }

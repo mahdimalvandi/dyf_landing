@@ -20,6 +20,7 @@ func (service Service) Reactivate(linkID int64) (dtoLink.LinkDetailResponse, int
 	existingLink.IsActive = true
 	existingLink.FirstViewedAt = 0
 	existingLink.ViewingExpiresAt = 0
+	existingLink.LastAccessedAt = 0
 	existingLink.Status = constantsLink.StatusPending
 
 	if saveError := service.linkRepository.UpdateLink(existingLink); saveError != nil {

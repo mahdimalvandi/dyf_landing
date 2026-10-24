@@ -37,6 +37,7 @@ func (service Service) Detail(identifier int64) (dtoLink.LinkDetailResponse, int
 			ViewingExpiresAt:       linkRecord.ViewingExpiresAt,
 			IsActive:               linkRecord.IsActive,
 			Status:                 linkRecord.Status,
+			LastAccessedAt:         linkRecord.LastAccessedAt,
 		},
 		ShoeIDs: linkRecord.ShoeIDs,
 	}, http.StatusOK, nil

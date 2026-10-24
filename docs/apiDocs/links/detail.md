@@ -50,6 +50,7 @@
     "expiresAt": 1793380000,
     "firstViewedAt": 0,
     "viewingExpiresAt": 0,
+    "lastAccessedAt": 0,
     "isActive": true,
     "status": "PENDING"
   },

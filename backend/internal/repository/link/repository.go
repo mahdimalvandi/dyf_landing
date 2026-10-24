@@ -118,3 +118,15 @@ func (repository Repository) ListLinks(searchTerm string, statusFilter string, c
 
 	return linksList, totalCount, nil
 }
+
+func (repository Repository) CountAccessedSince(timestamp int64) (int64, error) {
+	var totalCount int64
+	countResult := repository.databaseConnection.Model(&entityLink.AccessLink{}).Where(`"lastAccessedAt" >= ?`, timestamp).Count(&totalCount)
+	return totalCount, countResult.Error
+}
+
+func (repository Repository) CountAllAccessed() (int64, error) {
+	var totalCount int64
+	countResult := repository.databaseConnection.Model(&entityLink.AccessLink{}).Where(`"lastAccessedAt" > 0`).Count(&totalCount)
+	return totalCount, countResult.Error
+}

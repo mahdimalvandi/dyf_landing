@@ -52,5 +52,6 @@ func (service Service) mapToLinkItemResponse(linkRecord entityLink.AccessLink) d
 		ViewingExpiresAt:       linkRecord.ViewingExpiresAt,
 		IsActive:               linkRecord.IsActive,
 		Status:                 linkRecord.Status,
+		LastAccessedAt:         linkRecord.LastAccessedAt,
 	}
 }
