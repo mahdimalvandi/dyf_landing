@@ -1,7 +1,8 @@
 /**
- * DYF Landing — Scroll Animations & Motion Management
+ * DYF Landing — Scroll Animations & Motion Management (FE-007)
  * Coordinates Lenis Smooth Scroll, GSAP ScrollTrigger transitions,
  * section reveals, Defender visual clip paths, and header elevation.
+ * Hardened for 60fps performance, jitter-free scrolling, and debounced resizing.
  */
 
 import type { MobileMenuController } from './mobileMenu';
@@ -10,6 +11,7 @@ export interface ScrollController {
   lenis: any;
   scrollTo(target: string | HTMLElement, options?: { offset?: number; duration?: number }): void;
   refresh(): void;
+  destroy(): void;
 }
 
 export function initScrollAnimations(menuController?: MobileMenuController): ScrollController {
@@ -20,6 +22,8 @@ export function initScrollAnimations(menuController?: MobileMenuController): Scr
   const LenisConstructor = (window as any).Lenis;
   const gsap = (window as any).gsap;
   const ScrollTrigger = (window as any).ScrollTrigger;
+
+  let tickerFn: ((time: number) => void) | null = null;
 
   if (!prefersReducedMotion && typeof LenisConstructor !== 'undefined') {
     lenis = new LenisConstructor({
@@ -40,35 +44,50 @@ export function initScrollAnimations(menuController?: MobileMenuController): Scr
       gsap.registerPlugin(ScrollTrigger);
       lenis.on('scroll', ScrollTrigger.update);
 
-      gsap.ticker.add((time: number) => {
+      tickerFn = (time: number) => {
         lenis.raf(time * 1000);
-      });
-      gsap.ticker.lagSmoothing(0);
+      };
+
+      gsap.ticker.add(tickerFn);
+      // lagSmoothing with 500ms max lag absorbs micro-freezes without sudden frame jumping
+      gsap.ticker.lagSmoothing(500, 33);
     } else {
+      let rafId: number;
       const raf = (time: number) => {
         lenis.raf(time);
-        requestAnimationFrame(raf);
+        rafId = requestAnimationFrame(raf);
       };
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
   } else if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
   }
 
-  // 2. Header Scroll Elevation
+  // 2. Header Scroll Elevation (Synchronized with Lenis or native scroll)
   const siteHeader = document.querySelector<HTMLElement>('.site-header');
+  const updateHeaderElevation = (scrollY: number) => {
+    if (!siteHeader) return;
+    if (scrollY > 25) {
+      siteHeader.classList.add('is-scrolled');
+    } else {
+      siteHeader.classList.remove('is-scrolled');
+    }
+  };
+
   if (siteHeader) {
-    window.addEventListener(
-      'scroll',
-      () => {
-        if (window.scrollY > 25) {
-          siteHeader.classList.add('is-scrolled');
-        } else {
-          siteHeader.classList.remove('is-scrolled');
-        }
-      },
-      { passive: true }
-    );
+    if (lenis) {
+      lenis.on('scroll', (e: { scroll: number }) => {
+        updateHeaderElevation(e.scroll);
+      });
+    } else {
+      window.addEventListener(
+        'scroll',
+        () => {
+          updateHeaderElevation(window.scrollY);
+        },
+        { passive: true }
+      );
+    }
   }
 
   // Helper for smooth navigation
@@ -133,16 +152,38 @@ export function initScrollAnimations(menuController?: MobileMenuController): Scr
       });
     });
 
+  // 6. Debounced Resize & Orientation Handling (Layout Jitter Prevention)
+  let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+  const handleResize = () => {
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (lenis && typeof lenis.resize === 'function') {
+        lenis.resize();
+      }
+      if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.refresh();
+      }
+    }, 150);
+  };
+
+  window.addEventListener('resize', handleResize, { passive: true });
+  window.addEventListener('orientationchange', handleResize, { passive: true });
+
   // If user prefers reduced motion or GSAP is not present, skip animations
   if (prefersReducedMotion || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
     return {
       lenis,
       scrollTo: navigateTo,
       refresh: () => {},
+      destroy: () => {
+        window.removeEventListener('resize', handleResize);
+        window.removeEventListener('orientationchange', handleResize);
+        if (lenis) lenis.destroy();
+      },
     };
   }
 
-  // 6. Section Fade Up Reveals
+  // 7. Section Fade Up Reveals with Dynamic will-change Management
   const revealConfigs = [
     {
       trigger: '.hero-content-top',
@@ -212,7 +253,7 @@ export function initScrollAnimations(menuController?: MobileMenuController): Scr
     const triggerEl = document.querySelector<HTMLElement>(cfg.trigger);
     if (!triggerEl) return;
 
-    const items = triggerEl.querySelectorAll(cfg.elements);
+    const items = triggerEl.querySelectorAll<HTMLElement>(cfg.elements);
     if (!items.length) return;
 
     gsap.from(items, {
@@ -226,11 +267,21 @@ export function initScrollAnimations(menuController?: MobileMenuController): Scr
       duration: 0.68,
       ease: 'power2.out',
       stagger: cfg.stagger || 0.07,
-      clearProps: 'transform,opacity',
+      onStart: () => {
+        items.forEach((item) => {
+          item.style.willChange = 'transform, opacity';
+        });
+      },
+      onComplete: () => {
+        items.forEach((item) => {
+          item.style.willChange = 'auto';
+        });
+      },
+      clearProps: 'transform,opacity,willChange',
     });
   });
 
-  // 7. Defender Showcase Clip Reveal
+  // 8. Defender Showcase Clip Reveal with Scoped Compositing
   const defenderTriptych = document.querySelector<HTMLElement>('.defender-visual-triptych');
   if (defenderTriptych) {
     const masterImg = defenderTriptych.querySelector<HTMLElement>('.defender-master-img');
@@ -242,6 +293,14 @@ export function initScrollAnimations(menuController?: MobileMenuController): Scr
         trigger: defenderTriptych,
         start: 'top 78%',
         once: true,
+      },
+      onStart: () => {
+        if (masterImg) masterImg.style.willChange = 'clip-path, transform';
+        detailImgs.forEach((img) => (img.style.willChange = 'clip-path, transform'));
+      },
+      onComplete: () => {
+        if (masterImg) masterImg.style.willChange = 'auto';
+        detailImgs.forEach((img) => (img.style.willChange = 'auto'));
       },
     });
 
@@ -273,7 +332,7 @@ export function initScrollAnimations(menuController?: MobileMenuController): Scr
     }
   }
 
-  // 8. Story Section Sticky Scrollytelling
+  // 9. Story Section Sticky Scrollytelling
   const storySection = document.querySelector<HTMLElement>('.story-section');
   if (storySection && window.innerWidth >= 993) {
     const pointItems = storySection.querySelectorAll<HTMLElement>('.story-point-item');
@@ -290,7 +349,7 @@ export function initScrollAnimations(menuController?: MobileMenuController): Scr
     }
   }
 
-  // Refresh ScrollTrigger on window load
+  // 10. Refresh ScrollTrigger on window load
   window.addEventListener('load', () => {
     if (typeof ScrollTrigger !== 'undefined') {
       ScrollTrigger.refresh();
@@ -303,6 +362,19 @@ export function initScrollAnimations(menuController?: MobileMenuController): Scr
     refresh: () => {
       if (typeof ScrollTrigger !== 'undefined') {
         ScrollTrigger.refresh();
+      }
+    },
+    destroy: () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+      if (tickerFn && gsap) {
+        gsap.ticker.remove(tickerFn);
+      }
+      if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.getAll().forEach((st: any) => st.kill());
+      }
+      if (lenis) {
+        lenis.destroy();
       }
     },
   };
