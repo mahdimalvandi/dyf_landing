@@ -1,34 +1,30 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCatalogAccessStore } from '../stores/access';
 import { useToast } from '@/admin/stores/toast';
+import OtpModal from '../components/OtpModal.vue';
 
 const router = useRouter();
 const accessStore = useCatalogAccessStore();
 const toast = useToast();
 
+type GateAuthMode = 'otp' | 'passcode';
+
+const authMode = ref<GateAuthMode>('otp');
 const phone = ref('09121112233');
 const phoneError = ref('');
-const otpStep = ref<'phone' | 'otp'>('phone');
-const otpDigits = ref(['', '', '', '', '']);
-const otpInputs = ref<HTMLInputElement[]>([]);
+const passcode = ref('');
+const passcodeError = ref('');
 const isSendingOtp = ref(false);
-const isVerifyingOtp = ref(false);
-const otpTimer = ref(60);
-let otpInterval: ReturnType<typeof setInterval> | null = null;
-
-const displayPhone = computed(() => phone.value);
-const formattedOtpTimer = computed(() => {
-  const mins = Math.floor(otpTimer.value / 60);
-  const secs = otpTimer.value % 60;
-  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-});
+const isVerifyingPasscode = ref(false);
+const isOtpModalOpen = ref(false);
+const isUnlocked = ref(false);
+const otpExpiresIn = ref(120);
 
 onMounted(async () => {
   const resultStatus = await accessStore.initAccess();
   if (resultStatus === 'GRANTED') {
-    // If access is already granted directly, we can either navigate to grid or show the direct entry box
     if (accessStore.isDirect.value) {
       router.push('/grid');
     }
@@ -38,7 +34,9 @@ onMounted(async () => {
 });
 
 function handleEnterDirect() {
-  router.push('/grid');
+  triggerUnlockAnimation(() => {
+    router.push('/grid');
+  });
 }
 
 function handlePhoneInput(e: Event) {
@@ -48,19 +46,13 @@ function handlePhoneInput(e: Event) {
   phoneError.value = '';
 }
 
-function startOtpTimer() {
-  if (otpInterval) clearInterval(otpInterval);
-  otpTimer.value = 60;
-  otpInterval = setInterval(() => {
-    otpTimer.value -= 1;
-    if (otpTimer.value <= 0) {
-      if (otpInterval) clearInterval(otpInterval);
-      otpInterval = null;
-    }
-  }, 1000);
+function handlePasscodeInput(e: Event) {
+  const input = e.target as HTMLInputElement;
+  passcode.value = input.value.trim();
+  passcodeError.value = '';
 }
 
-function handleSendOtp() {
+async function handleSendOtp() {
   const cleanPhone = phone.value.trim();
   if (!/^09\d{9}$/.test(cleanPhone)) {
     phoneError.value = 'لطفاً شماره موبایل معتبر ۱۱ رقمی وارد نمایید (مانند 09121112233).';
@@ -69,96 +61,93 @@ function handleSendOtp() {
   phoneError.value = '';
   isSendingOtp.value = true;
 
-  setTimeout(() => {
+  try {
+    const res = await accessStore.sendOtp(cleanPhone);
+    if (res.success) {
+      otpExpiresIn.value = res.expiresInSeconds || 120;
+      isOtpModalOpen.value = true;
+      toast.success('کد تأیید به شماره شما ارسال شد.', 'ارسال پیامک');
+    } else {
+      phoneError.value = res.message || 'خطا در ارسال پیامک تأیید.';
+      toast.error(phoneError.value, 'خطا');
+    }
+  } catch {
+    phoneError.value = 'خطا در برقراری ارتباط با سرور.';
+    toast.error(phoneError.value, 'خطا');
+  } finally {
     isSendingOtp.value = false;
-    otpStep.value = 'otp';
-    startOtpTimer();
-    toast.success('کد تأیید ۵ رقمی به شماره شما پیامک شد.', 'ارسال پیامک');
-    setTimeout(() => {
-      otpInputs.value[0]?.focus();
-    }, 100);
-  }, 600);
-}
-
-function handleOtpDigitInput(index: number, e: Event) {
-  const input = e.target as HTMLInputElement;
-  const val = input.value.replace(/\D/g, '').slice(-1);
-  otpDigits.value[index] = val;
-
-  if (val && index < 4) {
-    otpInputs.value[index + 1]?.focus();
   }
 }
 
-function handleOtpKeyDown(index: number, e: KeyboardEvent) {
-  if (e.key === 'Backspace' && !otpDigits.value[index] && index > 0) {
-    otpInputs.value[index - 1]?.focus();
-  } else if (e.key === 'Enter') {
-    handleVerifyOtp();
-  }
-}
-
-function handleOtpPaste(e: ClipboardEvent) {
-  e.preventDefault();
-  const text = e.clipboardData?.getData('text') || '';
-  const digits = text.replace(/\D/g, '').slice(0, 5);
-  for (let i = 0; i < 5; i++) {
-    otpDigits.value[i] = digits[i] || '';
-  }
-  if (digits.length > 0) {
-    const nextIdx = Math.min(digits.length, 4);
-    otpInputs.value[nextIdx]?.focus();
-  }
-}
-
-function handleVerifyOtp() {
-  const code = otpDigits.value.join('');
-  if (code.length < 5) {
-    toast.warning('لطفاً هر ۵ رقم کد تایید را وارد کنید.', 'کد ناقص');
+async function handleVerifyPasscode() {
+  const cleanPin = passcode.value.trim();
+  if (!cleanPin) {
+    passcodeError.value = 'لطفاً رمز عبور اختصاصی را وارد فرمایید.';
     return;
   }
+  passcodeError.value = '';
+  isVerifyingPasscode.value = true;
 
-  isVerifyingOtp.value = true;
-  setTimeout(() => {
-    isVerifyingOtp.value = false;
-    if (code === '12345' || code.length === 5) {
-      if (otpInterval) clearInterval(otpInterval);
-      toast.success('هویت شما تأیید شد. در حال بارگذاری کاتالوگ...', 'خوش آمدید');
-      accessStore.setAccessGranted(
-        {
-          linkID: accessStore.linkID.value || 9081,
-          recipientName: accessStore.recipientName.value || 'همکار گرامی',
-          authMethod: 'OTP',
-          status: 'ACTIVE',
-          firstViewedAt: Math.floor(Date.now() / 1000),
-          viewingExpiresAt: Math.floor(Date.now() / 1000) + 7200,
-          lastAccessedAt: Math.floor(Date.now() / 1000),
-          remainingSeconds: 7200,
-          shoesCount: accessStore.shoesCount.value || 4,
-        },
-        accessStore.token.value || 'vip_session'
-      );
-      router.push('/grid');
+  try {
+    const res = await accessStore.verifyPasscode(cleanPin);
+    if (res.success) {
+      toast.success('رمز عبور اختصاصی تأیید شد.', 'دسترسی مجاز');
+      triggerUnlockAnimation(() => {
+        router.push('/grid');
+      });
     } else {
-      toast.error('کد وارد شده صحیح نمی‌باشد. کد آزمایشی: ۱۲۳۴۵', 'خطای تأیید');
+      passcodeError.value = res.message || 'رمز عبور وارد شده نادرست است.';
+      toast.error(passcodeError.value, 'خطای رمز عبور');
     }
-  }, 600);
+  } catch {
+    passcodeError.value = 'خطا در برقراری ارتباط با سرور.';
+    toast.error(passcodeError.value, 'خطا');
+  } finally {
+    isVerifyingPasscode.value = false;
+  }
 }
 
-function handleChangePhone() {
-  otpStep.value = 'phone';
-  if (otpInterval) clearInterval(otpInterval);
+function handleOtpVerified() {
+  isOtpModalOpen.value = false;
+  triggerUnlockAnimation(() => {
+    router.push('/grid');
+  });
 }
 
-function handleResendOtp() {
-  if (otpTimer.value > 0) return;
-  startOtpTimer();
-  toast.info('کد تأیید جدید مجدداً برای شماره شما ارسال شد.', 'ارسال مجدد');
+function triggerUnlockAnimation(callback: () => void) {
+  isUnlocked.value = true;
+  setTimeout(() => {
+    callback();
+  }, 900);
 }
 </script>
 
 <template>
-  <div class="dyf-auth-view">
+  <div class="dyf-auth-view" style="position: relative;">
+    <!-- افکت بصری باشکوه باز شدن قفل کاتالوگ -->
+    <transition name="dyf-unlock">
+      <div
+        v-if="isUnlocked"
+        class="dyf-unlock-overlay"
+        style="position: fixed; inset: 0; background: radial-gradient(circle at center, rgba(30, 24, 20, 0.98) 0%, rgba(12, 10, 9, 0.99) 100%); z-index: 999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem;"
+      >
+        <div
+          class="dyf-unlock-crest"
+          style="width: 100px; height: 100px; border-radius: 50%; background: radial-gradient(circle, rgba(212, 163, 89, 0.3) 0%, rgba(212, 163, 89, 0.05) 70%); border: 2.5px solid var(--gold-primary); display: flex; align-items: center; justify-content: center; color: var(--gold-light); margin-bottom: 1.5rem; box-shadow: 0 0 35px var(--gold-glow); animation: dyfPulseCrest 1s infinite alternate;"
+        >
+          <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </div>
+        <h2 style="font-family: var(--font-title); font-size: 1.6rem; font-weight: 900; color: var(--gold-light); margin-bottom: 0.6rem;">
+          دسترسی VIP با موفقیت تایید شد
+        </h2>
+        <p style="font-size: 0.95rem; color: var(--text-ivory); margin: 0; line-height: 1.7; max-width: 480px;">
+          خوش آمدید <strong v-if="accessStore.recipientName.value" style="color: var(--gold-light);">{{ accessStore.recipientName.value }}</strong>. در حال انتقال به آتلیه انحصاری کفش DYF...
+        </p>
+      </div>
+    </transition>
+
     <div class="dyf-auth-card">
       <!-- برند و عنوان بالای فرم -->
       <div class="dyf-auth-brand">
@@ -184,7 +173,11 @@ function handleResendOtp() {
         style="background: rgba(224, 86, 74, 0.12); border: 1px solid rgba(224, 86, 74, 0.35); border-radius: var(--r-md); padding: 1.25rem; margin-bottom: 1.5rem; text-align: right;"
       >
         <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--status-danger); font-weight: 800; font-size: 0.95rem; margin-bottom: 0.35rem;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" x2="12" y1="8" y2="12" />
+            <line x1="12" x2="12.01" y1="16" y2="16" />
+          </svg>
           <span>{{ accessStore.errorTitle.value || 'لینک دسترسی نامعتبر است' }}</span>
         </div>
         <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; margin: 0;">
@@ -212,16 +205,55 @@ function handleResendOtp() {
           @click="handleEnterDirect"
         >
           <span>ورود مستقیم به کاتالوگ</span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" x2="19" y1="12" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
         </button>
       </div>
 
-      <!-- فرم احراز هویت پیامکی همکاران یا لینک‌های دارای OTP (FE-020) -->
+      <!-- درگاه ورود VIP با قابلیت انتخاب احراز هویت پیامکی یا Passcode (FE-020) -->
       <div v-else>
-        <!-- مرحله اول: شماره موبایل -->
-        <div v-if="otpStep === 'phone'" class="dyf-auth-step">
+        <!-- سوئیچر روش ورود (OTP vs VIP Passcode) -->
+        <div style="display: flex; background: rgba(0, 0, 0, 0.25); border-radius: var(--r-md); padding: 0.25rem; margin-bottom: 1.5rem; border: 1px solid var(--border-subtle);">
+          <button
+            type="button"
+            class="dyf-btn dyf-btn-sm"
+            :style="{
+              flex: 1,
+              justifyContent: 'center',
+              background: authMode === 'otp' ? 'var(--gold-primary)' : 'transparent',
+              color: authMode === 'otp' ? '#0c0a09' : 'var(--text-muted)',
+              fontWeight: authMode === 'otp' ? '800' : '500',
+              border: 'none',
+              borderRadius: 'var(--r-sm)',
+            }"
+            @click="authMode = 'otp'"
+          >
+            تأیید هویت پیامکی
+          </button>
+          <button
+            type="button"
+            class="dyf-btn dyf-btn-sm"
+            :style="{
+              flex: 1,
+              justifyContent: 'center',
+              background: authMode === 'passcode' ? 'var(--gold-primary)' : 'transparent',
+              color: authMode === 'passcode' ? '#0c0a09' : 'var(--text-muted)',
+              fontWeight: authMode === 'passcode' ? '800' : '500',
+              border: 'none',
+              borderRadius: 'var(--r-sm)',
+            }"
+            @click="authMode = 'passcode'"
+          >
+            رمز عبور اختصاصی (PIN)
+          </button>
+        </div>
+
+        <!-- حالت الف: ورود با پیامک تأیید مشتری (BE-GAP-02) -->
+        <div v-if="authMode === 'otp'" class="dyf-auth-step">
           <p class="dyf-auth-note">
-            جهت تأیید هویت و مشاهده مدل‌های انحصاری، شماره همراه خود را وارد فرمایید.
+            جهت احراز هویت و بازگشایی کاتالوگ VIP، شماره موبایل ثبت‌شده خود را وارد فرمایید.
           </p>
 
           <div class="dyf-form-group">
@@ -253,67 +285,90 @@ function handleResendOtp() {
             :disabled="isSendingOtp"
             @click="handleSendOtp"
           >
-            <span>ارسال کد تأیید یک‌بارمصرف</span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+            <span>ارسال کد تأیید پیامکی</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
           </button>
         </div>
 
-        <!-- مرحله دوم: ورود کد ۵ رقمی OTP -->
+        <!-- حالت ب: ورود با رمز عبور اختصاصی (VIP Passcode) -->
         <div v-else class="dyf-auth-step">
           <p class="dyf-auth-note">
-            کد تأیید ۵ رقمی به شماره <span class="dyf-auth-phone-display">{{ displayPhone }}</span> پیامک شد.
+            رمز عبور اختصاصی اعلام‌شده از سوی کارشناس فروش برند DYF را وارد نمایید.
           </p>
 
-          <div class="dyf-otp-grid" @paste="handleOtpPaste">
-            <input
-              v-for="(digit, idx) in otpDigits"
-              :key="idx"
-              ref="otpInputs"
-              v-model="otpDigits[idx]"
-              type="text"
-              maxlength="1"
-              inputmode="numeric"
-              class="dyf-otp-digit"
-              :class="{ 'is-filled': Boolean(otpDigits[idx]) }"
-              autocomplete="one-time-code"
-              @input="handleOtpDigitInput(idx, $event)"
-              @keydown="handleOtpKeyDown(idx, $event)"
-            >
-          </div>
-
-          <div class="dyf-otp-timer-wrap">
-            <div>زمان اعتبار کد: <span class="dyf-otp-timer">{{ formattedOtpTimer }}</span></div>
-            <button
-              type="button"
-              class="dyf-otp-resend"
-              :disabled="otpTimer > 0"
-              @click="handleResendOtp"
-            >
-              ارسال مجدد کد
-            </button>
+          <div class="dyf-form-group">
+            <label for="catPasscodeInput" class="dyf-form-label dyf-form-label-required">رمز عبور / PIN امنیتی</label>
+            <div class="dyf-input-wrap">
+              <input
+                id="catPasscodeInput"
+                type="password"
+                class="dyf-input"
+                :class="{ 'dyf-input-error': passcodeError }"
+                placeholder="••••"
+                dir="ltr"
+                maxlength="16"
+                autocomplete="current-password"
+                :value="passcode"
+                @input="handlePasscodeInput"
+                @keydown.enter="handleVerifyPasscode"
+              >
+            </div>
+            <p v-if="passcodeError" class="dyf-form-hint" style="color: var(--status-danger);">{{ passcodeError }}</p>
+            <p v-else class="dyf-form-hint">رمز آزمایشی پیش‌فرض: 1234 یا 12345</p>
           </div>
 
           <button
             type="button"
             class="dyf-btn dyf-btn-primary dyf-btn-lg"
-            :class="{ 'is-loading': isVerifyingOtp }"
-            style="width: 100%; margin-bottom: 0.85rem; justify-content: center;"
-            :disabled="isVerifyingOtp"
-            @click="handleVerifyOtp"
+            :class="{ 'is-loading': isVerifyingPasscode }"
+            style="width: 100%; justify-content: center;"
+            :disabled="isVerifyingPasscode"
+            @click="handleVerifyPasscode"
           >
-            <span>تأیید و ورود به کاتالوگ</span>
-          </button>
-
-          <button
-            type="button"
-            class="dyf-btn dyf-btn-outline"
-            style="width: 100%; font-size: 0.82rem; justify-content: center;"
-            @click="handleChangePhone"
-          >
-            ویرایش شماره موبایل
+            <span>تأیید رمز عبور و باز کردن قفل</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
           </button>
         </div>
       </div>
     </div>
+
+    <!-- مودال مستقل OTP -->
+    <OtpModal
+      :is-open="isOtpModalOpen"
+      :phone="phone"
+      :expires-in-seconds="otpExpiresIn"
+      :token="accessStore.token.value"
+      @close="isOtpModalOpen = false"
+      @change-phone="isOtpModalOpen = false"
+      @verified="handleOtpVerified"
+    />
   </div>
 </template>
+
+<style scoped>
+@keyframes dyfPulseCrest {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 20px var(--gold-glow);
+  }
+  100% {
+    transform: scale(1.05);
+    box-shadow: 0 0 45px var(--gold-glow);
+  }
+}
+
+.dyf-unlock-enter-active,
+.dyf-unlock-leave-active {
+  transition: opacity 0.4s ease;
+}
+
+.dyf-unlock-enter-from,
+.dyf-unlock-leave-to {
+  opacity: 0;
+}
+</style>

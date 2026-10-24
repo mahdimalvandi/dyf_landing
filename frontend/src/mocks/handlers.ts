@@ -491,6 +491,30 @@ export function handleMockRequest(req: MockRequest): MockResponse | null {
     );
   }
 
+  // BE-GAP-02 Part B: Direct VIP customer OTP send & verify
+  if (subPath === '/auth/customer/otp/send' && method === 'POST') {
+    return ok({ expiresInSeconds: 120 }, 'کد تایید ورود مشتری با موفقیت ارسال شد');
+  }
+
+  if (subPath === '/auth/customer/otp/verify' && method === 'POST') {
+    const { phoneNumber } = body || {};
+    const customer = mockDb.customers.find((c) => c.phoneNumber === phoneNumber) || mockDb.customers[0];
+    return ok(
+      {
+        linkID: 0,
+        recipientName: customer ? `${customer.firstNameFa} ${customer.lastNameFa}` : 'همکار گرامی',
+        authMethod: 'OTP',
+        status: 'ACTIVE',
+        firstViewedAt: Math.floor(Date.now() / 1000),
+        viewingExpiresAt: Math.floor(Date.now() / 1000) + 86400,
+        lastAccessedAt: Math.floor(Date.now() / 1000),
+        remainingSeconds: 86400,
+        shoesCount: mockDb.shoes.length,
+      },
+      'احراز هویت مشتری با موفقیت انجام شد'
+    );
+  }
+
   // Customer direct catalog endpoints
   if (subPath === '/customer/shoes' || subPath === '/catalog/shoes') {
     return ok({ items: mockDb.shoes }, 'فهرست مدل‌های کفش');

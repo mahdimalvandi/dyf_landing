@@ -3,6 +3,7 @@
  */
 
 import { runCatalogAccessTests } from './access.test';
+import { runGateOtpTests } from './gate-otp.test';
 
 export interface CatalogSuiteSummary {
   suite: string;
@@ -20,6 +21,7 @@ export async function runAllCatalogTests(): Promise<{
 
   const runners = [
     { suite: 'VIP Catalog Access Store & Tokens (FE-019)', fn: runCatalogAccessTests },
+    { suite: 'VIP Gate, Passcode & Customer OTP (FE-020)', fn: runGateOtpTests },
   ];
 
   let allPassed = true;
