@@ -22,6 +22,17 @@ async function bootstrap() {
   const app = createApp(App);
   app.use(router);
   app.mount('#app');
+
+  // Expose admin test suite in development
+  if (import.meta.env.DEV) {
+    import('./__tests__/index')
+      .then(({ runAllAdminTests }) => {
+        (window as unknown as { __runAdminTests: typeof runAllAdminTests }).__runAdminTests = runAllAdminTests;
+      })
+      .catch((err) => {
+        console.warn('Failed to load admin test suite:', err);
+      });
+  }
 }
 
 bootstrap();
