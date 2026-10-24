@@ -58,7 +58,6 @@ export interface ApiClientConfig {
   defaultHeaders?: Record<string, string>;
   timeout?: number;
   onUnauthorized?: () => void | Promise<void>;
-  onRefreshToken?: () => Promise<string | null>;
 }
 
 // ==========================================

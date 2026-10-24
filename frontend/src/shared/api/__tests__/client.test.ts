@@ -223,6 +223,9 @@ export async function runApiClientTests(): Promise<TestResult[]> {
       );
 
     try {
+      const tokenManager = new TokenManager('test_401_token');
+      tokenManager.setToken('initial-token');
+
       let unauthorizedCalled = false;
       const client = new ApiClient({
         baseUrl: '/api/v1',
@@ -230,6 +233,7 @@ export async function runApiClientTests(): Promise<TestResult[]> {
           unauthorizedCalled = true;
         },
       });
+      client.setTokenManager(tokenManager);
 
       let thrown: ApiError | null = null;
       try {
@@ -243,6 +247,7 @@ export async function runApiClientTests(): Promise<TestResult[]> {
       assert(thrown !== null, 'Should throw ApiError on 401');
       assert(thrown?.isAuthError === true, 'isAuthError must be true');
       assert(unauthorizedCalled === true, 'onUnauthorized hook must be called');
+      assert(tokenManager.hasToken() === false, 'Token must be cleared from storage on 401');
     } finally {
       globalThis.fetch = originalFetch;
     }

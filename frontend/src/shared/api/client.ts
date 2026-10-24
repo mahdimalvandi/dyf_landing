@@ -20,7 +20,6 @@ export class ApiClient {
   private timeoutMs: number;
   private tokenManager: TokenManager;
   private onUnauthorizedCallback?: () => void | Promise<void>;
-  private onRefreshTokenCallback?: () => Promise<string | null>;
 
   constructor(config: ApiClientConfig = {}) {
     // Resolve base URL from Vite environment or fallback to standard /api/v1 prefix
@@ -41,7 +40,6 @@ export class ApiClient {
     this.timeoutMs = config.timeout && config.timeout > 0 ? config.timeout : 30000;
     this.tokenManager = adminTokenManager;
     this.onUnauthorizedCallback = config.onUnauthorized;
-    this.onRefreshTokenCallback = config.onRefreshToken;
   }
 
   /**
@@ -53,18 +51,10 @@ export class ApiClient {
   }
 
   /**
-   * Register unauthorized (401) listener
+   * Register unauthorized (401) listener — invoked when token expires or is invalid
    */
   public onUnauthorized(callback: () => void | Promise<void>): this {
     this.onUnauthorizedCallback = callback;
-    return this;
-  }
-
-  /**
-   * Register token refresh handler
-   */
-  public onRefreshToken(callback: () => Promise<string | null>): this {
-    this.onRefreshTokenCallback = callback;
     return this;
   }
 
@@ -120,16 +110,9 @@ export class ApiClient {
         timeoutId = null;
       }
 
-      // Check for 401 Unauthorized
+      // Check for 401 Unauthorized (expired or invalid token)
       if (response.status === 401) {
-        // Attempt token refresh if configured
-        if (this.onRefreshTokenCallback && options.auth !== false) {
-          const newToken = await this.onRefreshTokenCallback();
-          if (newToken) {
-            this.tokenManager.setToken(newToken);
-            return this.request<T>(path, { ...options, token: newToken });
-          }
-        }
+        this.tokenManager.removeToken();
 
         if (this.onUnauthorizedCallback) {
           try {
