@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { linksService } from '@/shared/api/services';
 import type { LinkItemResponse } from '@/shared/api/types';
+import LinkWizardModal from '../components/links/LinkWizardModal.vue';
+
+const route = useRoute();
 
 const isLoading = ref(true);
 const links = ref<LinkItemResponse[]>([]);
@@ -10,9 +14,31 @@ const statusFilter = ref<'all' | 'active' | 'pending' | 'expired'>('all');
 const viewMode = ref<'table' | 'grid'>('table');
 const copiedId = ref<number | null>(null);
 
+// Wizard Modal state
+const isWizardOpen = ref(false);
+const preselectedCustomerId = ref<number | undefined>(undefined);
+
 onMounted(async () => {
   await fetchLinks();
+  checkRouteActions();
 });
+
+watch(
+  () => route.query,
+  () => {
+    checkRouteActions();
+  }
+);
+
+function checkRouteActions() {
+  if (route.query.action === 'create') {
+    isWizardOpen.value = true;
+  }
+  if (route.query.customerID) {
+    preselectedCustomerId.value = Number(route.query.customerID);
+    isWizardOpen.value = true;
+  }
+}
 
 async function fetchLinks() {
   try {
@@ -74,6 +100,41 @@ async function copyLinkUrl(link: LinkItemResponse) {
     console.error('Could not copy link:', err);
   }
 }
+
+async function toggleRevoke(link: LinkItemResponse) {
+  const isCurrentlyActive = link.isActive && !link.isExpired;
+  const actionText = isCurrentlyActive ? 'ابطال دسترسی' : 'فعال‌سازی مجدد';
+  if (!confirm(`آیا از ${actionText} لینک «${link.recipientName}» اطمینان دارید؟`)) {
+    return;
+  }
+
+  try {
+    if (isCurrentlyActive) {
+      await linksService.revoke(link.ID);
+    } else {
+      await linksService.reactivate(link.ID);
+    }
+    await fetchLinks();
+  } catch (err: any) {
+    alert(err.message || 'خطا در تغییر وضعیت لینک');
+  }
+}
+
+async function handleDelete(link: LinkItemResponse) {
+  if (!confirm(`آیا از حذف کامل لینک «${link.recipientName}» اطمینان دارید؟`)) {
+    return;
+  }
+  try {
+    await linksService.delete(link.ID);
+    await fetchLinks();
+  } catch (err: any) {
+    alert(err.message || 'خطا در حذف لینک');
+  }
+}
+
+function handleLinkCreated() {
+  fetchLinks();
+}
 </script>
 
 <template>
@@ -83,10 +144,15 @@ async function copyLinkUrl(link: LinkItemResponse) {
       <div class="dyf-dashboard-hero-text">
         <div style="display: flex; align-items: center; gap: 0.75rem;">
           <h1>مدیریت لینک‌های دسترسی اختصاصی کاتالوگ</h1>
+          <span class="dyf-badge dyf-badge-active">{{ counts.all }} لینک صادرشده</span>
         </div>
       </div>
       <div class="dyf-dashboard-hero-meta">
-        <button type="button" class="dyf-btn dyf-btn-primary dyf-btn-lg">
+        <button
+          type="button"
+          class="dyf-btn dyf-btn-primary dyf-btn-lg"
+          @click="isWizardOpen = true; preselectedCustomerId = undefined;"
+        >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
             <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
@@ -179,8 +245,36 @@ async function copyLinkUrl(link: LinkItemResponse) {
       </div>
     </div>
 
+    <!-- حالت اسکلتون لودینگ -->
+    <div v-if="isLoading" class="dyf-panel-card">
+      <div class="dyf-table-container">
+        <table class="dyf-table">
+          <thead>
+            <tr>
+              <th>شناسه و توکن</th>
+              <th>نام گیرنده</th>
+              <th>تعداد مدل</th>
+              <th>مدت مشاهده</th>
+              <th>وضعیت</th>
+              <th style="text-align: center;">عملیات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="i in 5" :key="`link-skel-${i}`">
+              <td><div class="dyf-skeleton" style="height: 22px; width: 90px;"></div></td>
+              <td><div class="dyf-skeleton" style="height: 20px; width: 140px;"></div></td>
+              <td><div class="dyf-skeleton" style="height: 20px; width: 60px;"></div></td>
+              <td><div class="dyf-skeleton" style="height: 20px; width: 70px;"></div></td>
+              <td><div class="dyf-skeleton" style="height: 24px; width: 60px;"></div></td>
+              <td><div class="dyf-skeleton" style="height: 28px; width: 120px; margin: auto;"></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- جدول داده‌های لینک‌های اختصاصی (حالت پیش‌فرض) -->
-    <div v-if="viewMode === 'table'" class="dyf-panel-card">
+    <div v-else-if="viewMode === 'table'" class="dyf-panel-card">
       <div class="dyf-table-container">
         <table class="dyf-table">
           <thead>
@@ -221,7 +315,7 @@ async function copyLinkUrl(link: LinkItemResponse) {
                 </span>
               </td>
               <td style="text-align: center;">
-                <div style="display: inline-flex; gap: 0.4rem;">
+                <div style="display: inline-flex; gap: 0.35rem; align-items: center;">
                   <button
                     type="button"
                     class="dyf-btn dyf-btn-outline dyf-btn-xs"
@@ -239,6 +333,23 @@ async function copyLinkUrl(link: LinkItemResponse) {
                   >
                     کاتالوگ
                   </a>
+                  <button
+                    type="button"
+                    class="dyf-btn dyf-btn-outline dyf-btn-xs"
+                    :title="link.isActive && !link.isExpired ? 'ابطال دسترسی' : 'فعال‌سازی مجدد'"
+                    @click="toggleRevoke(link)"
+                  >
+                    {{ link.isActive && !link.isExpired ? 'ابطال' : 'فعال‌سازی' }}
+                  </button>
+                  <button
+                    type="button"
+                    class="dyf-btn dyf-btn-outline dyf-btn-xs"
+                    style="color: #e06d53; border-color: rgba(224, 109, 83, 0.4);"
+                    title="حذف کامل لینک"
+                    @click="handleDelete(link)"
+                  >
+                    حذف
+                  </button>
                 </div>
               </td>
             </tr>
@@ -277,7 +388,7 @@ async function copyLinkUrl(link: LinkItemResponse) {
             <strong>{{ link.durationHours ? `${link.durationHours} ساعت` : 'نامحدود' }}</strong>
           </div>
         </div>
-        <div class="dyf-link-card-footer" style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+        <div class="dyf-link-card-footer" style="display: flex; gap: 0.4rem; margin-top: 1rem;">
           <button
             type="button"
             class="dyf-btn dyf-btn-outline dyf-btn-xs"
@@ -295,8 +406,23 @@ async function copyLinkUrl(link: LinkItemResponse) {
           >
             مشاهده
           </a>
+          <button
+            type="button"
+            class="dyf-btn dyf-btn-outline dyf-btn-xs"
+            @click="toggleRevoke(link)"
+          >
+            {{ link.isActive && !link.isExpired ? 'ابطال' : 'فعال' }}
+          </button>
         </div>
       </div>
     </div>
+
+    <!-- مودال ویزارد صدور لینک VIP -->
+    <LinkWizardModal
+      :show="isWizardOpen"
+      :preselected-customer-id="preselectedCustomerId"
+      @close="isWizardOpen = false"
+      @created="handleLinkCreated"
+    />
   </section>
 </template>
