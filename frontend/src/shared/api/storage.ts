@@ -68,7 +68,12 @@ export class TokenManager implements TokenStorage {
   public clear(): void {
     this.removeToken();
   }
+
+  public clearToken(): void {
+    this.removeToken();
+  }
 }
 
 export const adminTokenManager = new TokenManager(DEFAULT_ADMIN_TOKEN_KEY);
 export const catalogTokenManager = new TokenManager(DEFAULT_CATALOG_TOKEN_KEY);
+export const tokenManager = adminTokenManager;

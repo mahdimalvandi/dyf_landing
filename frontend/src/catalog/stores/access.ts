@@ -141,6 +141,9 @@ export function useCatalogAccessStore() {
   }
 
   function saveSessionToStorage() {
+    if (token.value) {
+      catalogTokenManager.setToken(token.value);
+    }
     try {
       if (typeof window === 'undefined' || !token.value) return;
       const data: StoredCatalogSession = {
@@ -153,7 +156,6 @@ export function useCatalogAccessStore() {
         savedAt: Math.floor(Date.now() / 1000),
       };
       sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(data));
-      catalogTokenManager.setToken(token.value);
     } catch {
       // Storage access disabled or quota exceeded
     }
@@ -289,9 +291,9 @@ export function useCatalogAccessStore() {
       errorMessage.value = response.error?.message || 'لینک کاتالوگ مورد نظر در سامانه یافت نشد.';
       return false;
     } catch (err: unknown) {
-      const apiErr = err as { status?: number; error?: { message?: string } };
-      const statusCode = apiErr?.status;
-      const message = apiErr?.error?.message;
+      const apiErr = err as { statusCode?: number; status?: number; message?: string; error?: { message?: string } };
+      const statusCode = apiErr?.statusCode ?? apiErr?.status;
+      const message = apiErr?.message || apiErr?.error?.message;
 
       if (statusCode === 410) {
         status.value = 'EXPIRED';

@@ -8,13 +8,18 @@ import { handleMockRequest } from './handlers';
 let isMockInstalled = false;
 
 export function setupMockServer(): void {
-  if (isMockInstalled || typeof window === 'undefined') {
+  if (isMockInstalled) {
     return;
   }
 
-  const originalFetch = window.fetch.bind(window);
+  const globalScope = typeof window !== 'undefined' ? window : (globalThis as unknown as Window);
+  if (!globalScope || typeof globalScope.fetch !== 'function') {
+    return;
+  }
 
-  window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+  const originalFetch = globalScope.fetch.bind(globalScope);
+
+  globalScope.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
     let url: string;
     let method = 'GET';
     let headers = new Headers(init?.headers);

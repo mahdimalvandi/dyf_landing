@@ -411,11 +411,11 @@ export function handleMockRequest(req: MockRequest): MockResponse | null {
     if (!link) {
       return err(404, 'linkNotFound', 'لینک دسترسی معتبر نیست یا وجود ندارد');
     }
+    if (link.status === 'EXPIRED' || (link.expiresAt > 0 && link.expiresAt < Math.floor(Date.now() / 1000))) {
+      return err(410, 'linkExpired', 'مهلت زمانی این لینک به پایان رسیده است');
+    }
     if (!link.isActive || link.status === 'INACTIVE') {
       return err(403, 'linkInactive', 'این لینک توسط مدیریت غیرفعال شده است');
-    }
-    if (link.status === 'EXPIRED') {
-      return err(410, 'linkExpired', 'مهلت زمانی این لینک به پایان رسیده است');
     }
 
     link.lastAccessedAt = Math.floor(Date.now() / 1000);
@@ -497,7 +497,7 @@ export function handleMockRequest(req: MockRequest): MockResponse | null {
   }
 
   if (subPath === '/auth/customer/otp/verify' && method === 'POST') {
-    const { phoneNumber } = body || {};
+    const { phoneNumber } = req.body || {};
     const customer = mockDb.customers.find((c) => c.phoneNumber === phoneNumber) || mockDb.customers[0];
     return ok(
       {

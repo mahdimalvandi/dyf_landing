@@ -4,6 +4,9 @@
 
 import { runCatalogAccessTests } from './access.test';
 import { runGateOtpTests } from './gate-otp.test';
+import { runCatalogGridTests } from './grid.test';
+import { runDetailLightboxTests } from './detail-lightbox.test';
+import { runSecurityAnalyticsTests } from './security-analytics.test';
 
 export interface CatalogSuiteSummary {
   suite: string;
@@ -22,6 +25,9 @@ export async function runAllCatalogTests(): Promise<{
   const runners = [
     { suite: 'VIP Catalog Access Store & Tokens (FE-019)', fn: runCatalogAccessTests },
     { suite: 'VIP Gate, Passcode & Customer OTP (FE-020)', fn: runGateOtpTests },
+    { suite: 'VIP Catalog Grid & Category Filtering (FE-021)', fn: runCatalogGridTests },
+    { suite: 'VIP Shoe Detail Dossier, Lightbox & 3D (FE-022)', fn: runDetailLightboxTests },
+    { suite: 'VIP Session Security, Timer & Analytics (FE-023)', fn: runSecurityAnalyticsTests },
   ];
 
   let allPassed = true;

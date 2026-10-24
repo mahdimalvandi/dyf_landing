@@ -10,7 +10,7 @@ function handleRetry() {
 </script>
 
 <template>
-  <div class="dyf-cat-lock-screen">
+  <div id="catExpiredView" class="dyf-cat-lock-screen">
     <div class="dyf-cat-lock-box">
       <div class="dyf-cat-lock-icon">
         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -19,12 +19,12 @@ function handleRetry() {
         </svg>
       </div>
 
-      <h2 style="font-family: var(--font-title); font-size: 1.35rem; font-weight: 900; color: var(--text-ivory); margin-bottom: 0.5rem;">
+      <h2 id="catExpiredTitle" style="font-family: var(--font-title); font-size: 1.35rem; font-weight: 900; color: var(--text-ivory); margin-bottom: 0.5rem;">
         {{ accessStore.errorTitle.value || 'زمان مشاهده کاتالوگ به پایان رسید' }}
       </h2>
 
-      <p style="font-size: 0.86rem; color: var(--text-muted); line-height: 1.65; margin-bottom: 1.75rem;">
-        {{ accessStore.errorMessage.value || 'مدت زمان مجاز برای نشست شما منقضی گردید. جهت تمدید مهلت دسترسی یا استعلام سفارش با دفتر مرکزی آتلیه DYF ارتباط برقرار فرمایید.' }}
+      <p id="catExpiredDesc" style="font-size: 0.86rem; color: var(--text-muted); line-height: 1.65; margin-bottom: 1.75rem;">
+        {{ accessStore.errorMessage.value || 'مدت زمان مجاز برای نشست شما منقضی گردید. جهت تمدید مهلت دسترسی یا استعلام پیش‌فاکتور با مدیریت کارگاه DYF ارتباط برقرار نمایید.' }}
       </p>
 
       <div style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
