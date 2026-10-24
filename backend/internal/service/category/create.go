@@ -28,7 +28,8 @@ func (service Service) Create(request dtoCategory.CreateCategoryRequest) (dtoCat
 	}
 
 	return dtoCategory.CategoryResponse{
-		ID:    categoryRecord.ID,
-		Title: categoryRecord.Title,
+		ID:        categoryRecord.ID,
+		Title:     categoryRecord.Title,
+		ShoeCount: 0,
 	}, http.StatusCreated, nil
 }

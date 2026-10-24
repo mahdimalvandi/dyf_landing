@@ -33,7 +33,8 @@
   "message": "اطلاعات دسته‌بندی با موفقیت دریافت شد",
   "data": {
     "ID": 1792757059582788000,
-    "title": "کفش رسمی دست‌دوز"
+    "title": "کفش رسمی دست‌دوز",
+    "shoeCount": 12
   },
   "meta": null
 }
@@ -71,6 +72,7 @@ import axios from "axios";
 export interface Category {
   ID: number;
   title: string;
+  shoeCount: number;
 }
 
 export async function fetchCategoryDetail(categoryID: number): Promise<Category> {

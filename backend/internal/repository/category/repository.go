@@ -2,6 +2,7 @@ package category
 
 import (
 	"errors"
+	"fmt"
 
 	entityCategory "dyf-backend/internal/entity/category"
 
@@ -79,5 +80,31 @@ func (repository Repository) FindCategoriesByIDs(categoryIDs []int64) ([]entityC
 		return nil, findResult.Error
 	}
 	return categoriesList, nil
+}
+
+func (repository Repository) ListCategoriesWithShoeCount() ([]entityCategory.CategoryWithCount, error) {
+	var categoriesList []entityCategory.CategoryWithCount
+	query := `
+		SELECT 
+			c."ID", 
+			c."title", 
+			(SELECT COUNT(*) FROM "shoeModels" s WHERE s."categoryIDs" @> jsonb_build_array(c."ID")) AS "shoeCount"
+		FROM "categories" c
+		ORDER BY c."ID" ASC
+	`
+	findResult := repository.databaseConnection.Raw(query).Scan(&categoriesList)
+	if findResult.Error != nil {
+		return nil, findResult.Error
+	}
+	return categoriesList, nil
+}
+
+func (repository Repository) CountShoesForCategory(categoryID int64) (int64, error) {
+	var totalCount int64
+	categoryJSON := fmt.Sprintf("[%d]", categoryID)
+	countResult := repository.databaseConnection.Table("shoeModels").
+		Where(`"categoryIDs" @> ?::jsonb`, categoryJSON).
+		Count(&totalCount)
+	return totalCount, countResult.Error
 }
 

@@ -7,16 +7,18 @@ import (
 )
 
 func (service Service) List() ([]dtoCategory.CategoryResponse, int, error) {
-	categoriesList, findError := service.repository.ListCategories()
+	categoriesList, findError := service.repository.ListCategoriesWithShoeCount()
 	if findError != nil {
 		return nil, http.StatusInternalServerError, findError
 	}
 
 	responseList := make([]dtoCategory.CategoryResponse, 0, len(categoriesList))
-	for _, categoryRecord := range categoriesList {
+	for index := range categoriesList {
+		categoryRecord := categoriesList[index]
 		responseList = append(responseList, dtoCategory.CategoryResponse{
-			ID:    categoryRecord.ID,
-			Title: categoryRecord.Title,
+			ID:        categoryRecord.ID,
+			Title:     categoryRecord.Title,
+			ShoeCount: categoryRecord.ShoeCount,
 		})
 	}
 
