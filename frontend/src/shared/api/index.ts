@@ -8,5 +8,6 @@ export * from './errors';
 export * from './storage';
 export * from './client';
 export * from './endpoints';
+export * from './services';
 
 export { apiClient as default } from './client';
