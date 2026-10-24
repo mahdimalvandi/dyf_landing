@@ -2,7 +2,12 @@
 import { ref, onMounted, computed } from 'vue';
 import { categoriesService } from '@/shared/api/services';
 import type { CategoryResponse } from '@/shared/api/types';
+import { useToast } from '../stores/toast';
+import { useConfirm } from '../stores/confirm';
 import CategoryFormModal from './categories/CategoryFormModal.vue';
+
+const toast = useToast();
+const { confirm } = useConfirm();
 
 const isLoading = ref(true);
 const categories = ref<CategoryResponse[]>([]);
@@ -49,22 +54,28 @@ function openEditModal(cat: CategoryResponse) {
 async function handleDelete(cat: CategoryResponse) {
   const confirmMsg =
     cat.shoeCount && cat.shoeCount > 0
-      ? `توجه: این دسته‌بندی دارای ${cat.shoeCount} مدل کفش وابسته است.\nآیا از حذف دسته‌بندی «${cat.title}» اطمینان دارید؟`
+      ? `توجه: این دسته‌بندی دارای ${cat.shoeCount} مدل کفش وابسته است. آیا از حذف دسته‌بندی «${cat.title}» اطمینان دارید؟`
       : `آیا از حذف دسته‌بندی «${cat.title}» اطمینان دارید؟`;
 
-  if (!confirm(confirmMsg)) {
-    return;
-  }
+  const confirmed = await confirm({
+    title: 'حذف دسته‌بندی',
+    message: confirmMsg,
+    confirmText: 'حذف دسته‌بندی',
+    isDestructive: true,
+  });
+
+  if (!confirmed) return;
 
   try {
     const res = await categoriesService.delete(cat.ID);
     if (res.success) {
+      toast.success(`دسته‌بندی «${cat.title}» با موفقیت حذف گردید.`);
       await loadCategories();
     } else {
-      alert(res.message || 'خطا در حذف دسته‌بندی');
+      toast.error(res.message || 'خطا در حذف دسته‌بندی');
     }
   } catch (err: any) {
-    alert(err.message || 'خطا در برقراری ارتباط با سرور');
+    toast.error(err.message || 'خطا در برقراری ارتباط با سرور');
   }
 }
 </script>

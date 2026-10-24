@@ -3,10 +3,14 @@ import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { customersService } from '@/shared/api/services';
 import type { CustomerResponse, CustomerStatus } from '@/shared/api/types';
+import { useToast } from '../stores/toast';
+import { useConfirm } from '../stores/confirm';
 import CustomerFormModal from './customers/CustomerFormModal.vue';
 import CustomerDetailsModal from './customers/CustomerDetailsModal.vue';
 
 const router = useRouter();
+const toast = useToast();
+const { confirm } = useConfirm();
 
 const isLoading = ref(true);
 const customers = ref<CustomerResponse[]>([]);
@@ -86,35 +90,49 @@ function issueLinkForCustomer(c: CustomerResponse) {
 async function toggleStatus(c: CustomerResponse) {
   const newStatus: CustomerStatus = c.isActive ? 'inactive' : 'active';
   const actionText = c.isActive ? 'غیرفعال‌سازی' : 'فعال‌سازی';
-  if (!confirm(`آیا از ${actionText} حساب کاربری «${c.firstNameFa} ${c.lastNameFa}» اطمینان دارید؟`)) {
-    return;
-  }
+
+  const confirmed = await confirm({
+    title: `${actionText} حساب مشتری`,
+    message: `آیا از ${actionText} حساب کاربری «${c.firstNameFa} ${c.lastNameFa}» اطمینان دارید؟`,
+    confirmText: actionText,
+    isDestructive: c.isActive,
+  });
+
+  if (!confirmed) return;
 
   try {
     const res = await customersService.changeStatus(c.ID, { status: newStatus });
     if (res.success) {
+      toast.success(`وضعیت حساب به ${c.isActive ? 'غیرفعال' : 'فعال'} تغییر یافت.`);
       await loadCustomers();
     } else {
-      alert(res.message || 'خطا در تغییر وضعیت مشتری');
+      toast.error(res.message || 'خطا در تغییر وضعیت مشتری');
     }
   } catch (err: any) {
-    alert(err.message || 'خطا در ارتباط با سرور');
+    toast.error(err.message || 'خطا در ارتباط با سرور');
   }
 }
 
 async function handleDelete(c: CustomerResponse) {
-  if (!confirm(`آیا از حذف کامل مشتری «${c.firstNameFa} ${c.lastNameFa}» اطمینان دارید؟`)) {
-    return;
-  }
+  const confirmed = await confirm({
+    title: 'حذف مشتری',
+    message: `آیا از حذف کامل مشتری «${c.firstNameFa} ${c.lastNameFa}» اطمینان دارید؟`,
+    confirmText: 'حذف مشتری',
+    isDestructive: true,
+  });
+
+  if (!confirmed) return;
+
   try {
     const res = await customersService.delete(c.ID);
     if (res.success) {
+      toast.success(`مشتری «${c.firstNameFa} ${c.lastNameFa}» با موفقیت حذف شد.`);
       await loadCustomers();
     } else {
-      alert(res.message || 'خطا در حذف مشتری');
+      toast.error(res.message || 'خطا در حذف مشتری');
     }
   } catch (err: any) {
-    alert(err.message || 'خطا در ارتباط با سرور');
+    toast.error(err.message || 'خطا در ارتباط با سرور');
   }
 }
 </script>

@@ -3,9 +3,13 @@ import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { linksService } from '@/shared/api/services';
 import type { LinkItemResponse } from '@/shared/api/types';
+import { useToast } from '../stores/toast';
+import { useConfirm } from '../stores/confirm';
 import LinkWizardModal from '../components/links/LinkWizardModal.vue';
 
 const route = useRoute();
+const toast = useToast();
+const { confirm } = useConfirm();
 
 const isLoading = ref(true);
 const links = ref<LinkItemResponse[]>([]);
@@ -104,31 +108,46 @@ async function copyLinkUrl(link: LinkItemResponse) {
 async function toggleRevoke(link: LinkItemResponse) {
   const isCurrentlyActive = link.isActive && !link.isExpired;
   const actionText = isCurrentlyActive ? 'ابطال دسترسی' : 'فعال‌سازی مجدد';
-  if (!confirm(`آیا از ${actionText} لینک «${link.recipientName}» اطمینان دارید؟`)) {
-    return;
-  }
+
+  const confirmed = await confirm({
+    title: `${actionText} لینک اختصاصی`,
+    message: `آیا از ${actionText} لینک کاتالوگ «${link.recipientName}» اطمینان دارید؟`,
+    confirmText: actionText,
+    isDestructive: isCurrentlyActive,
+  });
+
+  if (!confirmed) return;
 
   try {
     if (isCurrentlyActive) {
       await linksService.revoke(link.ID);
+      toast.warning(`دسترسی لینک «${link.recipientName}» با موفقیت لغو شد.`);
     } else {
       await linksService.reactivate(link.ID);
+      toast.success(`لینک «${link.recipientName}» مجدداً فعال گردید.`);
     }
     await fetchLinks();
   } catch (err: any) {
-    alert(err.message || 'خطا در تغییر وضعیت لینک');
+    toast.error(err.message || 'خطا در تغییر وضعیت لینک');
   }
 }
 
 async function handleDelete(link: LinkItemResponse) {
-  if (!confirm(`آیا از حذف کامل لینک «${link.recipientName}» اطمینان دارید؟`)) {
-    return;
-  }
+  const confirmed = await confirm({
+    title: 'حذف لینک اختصاصی',
+    message: `آیا از حذف کامل لینک «${link.recipientName}» اطمینان دارید؟`,
+    confirmText: 'حذف لینک',
+    isDestructive: true,
+  });
+
+  if (!confirmed) return;
+
   try {
     await linksService.delete(link.ID);
+    toast.success('لینک مورد نظر با موفقیت حذف شد.');
     await fetchLinks();
   } catch (err: any) {
-    alert(err.message || 'خطا در حذف لینک');
+    toast.error(err.message || 'خطا در حذف لینک');
   }
 }
 

@@ -1,7 +1,10 @@
 <script setup lang="ts">
-// DYF Admin Root Component
+import ToastNotification from './components/ToastNotification.vue';
+import ConfirmDialog from './components/ConfirmDialog.vue';
 </script>
 
 <template>
   <router-view />
+  <ToastNotification />
+  <ConfirmDialog />
 </template>

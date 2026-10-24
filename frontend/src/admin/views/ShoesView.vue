@@ -2,8 +2,13 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import { shoesService, categoriesService } from '@/shared/api/services';
 import type { ShoeItemResponse, ShoeDetailResponse, CategoryResponse } from '@/shared/api/types';
+import { useToast } from '../stores/toast';
+import { useConfirm } from '../stores/confirm';
 import ShoeFormModal from './shoes/ShoeFormModal.vue';
 import ShoeDossierModal from './shoes/ShoeDossierModal.vue';
+
+const toast = useToast();
+const { confirm } = useConfirm();
 
 const isLoading = ref(true);
 const shoes = ref<ShoeItemResponse[]>([]);
@@ -130,18 +135,25 @@ async function openDossierModal(shoe: ShoeItemResponse) {
 }
 
 async function handleDeleteShoe(shoe: ShoeItemResponse) {
-  if (!confirm(`آیا از حذف مدل کفش «${shoe.title}» اطمینان دارید؟ این عمل غیرقابل بازگشت است.`)) {
-    return;
-  }
+  const confirmed = await confirm({
+    title: 'حذف مدل کفش',
+    message: `آیا از حذف مدل کفش «${shoe.title}» اطمینان دارید؟ این عمل غیرقابل بازگشت است.`,
+    confirmText: 'حذف مدل',
+    isDestructive: true,
+  });
+
+  if (!confirmed) return;
+
   try {
     const res = await shoesService.delete(shoe.ID);
     if (res.success) {
+      toast.success(`مدل کفش «${shoe.title}» با موفقیت حذف شد.`);
       await loadData();
     } else {
-      alert(res.message || 'خطا در حذف مدل کفش');
+      toast.error(res.message || 'خطا در حذف مدل کفش');
     }
   } catch (err: any) {
-    alert(err.message || 'خطا در برقراری ارتباط با سرور');
+    toast.error(err.message || 'خطا در برقراری ارتباط با سرور');
   }
 }
 </script>
