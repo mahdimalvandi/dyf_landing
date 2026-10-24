@@ -13,6 +13,8 @@ const (
 
 	CatalogURLPrefix = "/catalog"
 
+	CatalogStatsDaysWindow = 7
+
 	StatusPending  = "PENDING"
 	StatusActive   = "ACTIVE"
 	StatusExpired  = "EXPIRED"
