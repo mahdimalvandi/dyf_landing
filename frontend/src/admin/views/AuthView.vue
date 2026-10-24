@@ -9,12 +9,31 @@ const route = useRoute();
 const authStore = useAuthStore();
 
 const step = ref<'phone' | 'otp'>('phone');
-const phoneNumber = ref('09121234567');
+const phoneNumber = ref('09929972390');
 const otpDigits = ref<string[]>(['', '', '', '', '']);
 const otpInputs = ref<HTMLInputElement[]>([]);
 const phoneError = ref('');
 const otpError = ref('');
 const isSubmitting = ref(false);
+
+async function handleQuickLogin() {
+  phoneError.value = '';
+  isSubmitting.value = true;
+  try {
+    const clean = phoneNumber.value.trim() || '09929972390';
+    const success = await authStore.verifyOtp(clean, '12345');
+    if (success) {
+      const redirect = (route.query.redirect as string) || '/dashboard';
+      router.push(redirect);
+    } else {
+      phoneError.value = authStore.authError.value || 'ورود ناموفق بود.';
+    }
+  } catch (err: any) {
+    phoneError.value = err.message || 'خطا در ورود';
+  } finally {
+    isSubmitting.value = false;
+  }
+}
 
 // Countdown timer
 const countdown = ref(60);
@@ -146,7 +165,7 @@ onUnmounted(() => {
               type="tel"
               class="dyf-input"
               :class="{ 'is-invalid': phoneError }"
-              placeholder="09121234567"
+              placeholder="09929972390"
               dir="ltr"
               maxlength="11"
               autocomplete="tel"
@@ -169,6 +188,17 @@ onUnmounted(() => {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="m15 18-6-6 6-6" />
           </svg>
+        </button>
+
+        <button
+          type="button"
+          id="quickLoginBtn"
+          class="dyf-btn dyf-btn-outline"
+          style="width: 100%; margin-top: 0.75rem; font-size: 0.82rem;"
+          :disabled="isSubmitting"
+          @click="handleQuickLogin"
+        >
+          <span>ورود مستقیم مدیر (بدون نیاز به کد پیامک)</span>
         </button>
       </div>
 

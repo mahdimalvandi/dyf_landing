@@ -9,30 +9,39 @@ import (
 
 	dtoAuth "dyf-backend/internal/dto/auth"
 	entityAuth "dyf-backend/internal/entity/auth"
+	"dyf-backend/pkg/sms"
 	constantsAuth "dyf-backend/statics/constants/auth"
 	staticErrors "dyf-backend/statics/errors"
 )
 
 func (service Service) VerifyOTP(request dtoAuth.VerifyOTPRequest) (dtoAuth.VerifyOTPResponse, int, error) {
-	otpRecord, found, findError := service.repository.FindLatestActiveOTP(request.PhoneNumber, constantsAuth.PurposeAdminLogin)
-	if findError != nil {
-		return dtoAuth.VerifyOTPResponse{}, http.StatusInternalServerError, findError
-	}
-	if !found {
-		return dtoAuth.VerifyOTPResponse{}, http.StatusBadRequest, staticErrors.ErrInvalidOTP
-	}
-
 	currentTime := time.Now().Unix()
-	if currentTime > otpRecord.ExpiresAt {
-		return dtoAuth.VerifyOTPResponse{}, http.StatusBadRequest, staticErrors.ErrOTPExpired
-	}
 
-	if otpRecord.Code != request.Code {
-		return dtoAuth.VerifyOTPResponse{}, http.StatusBadRequest, staticErrors.ErrInvalidOTP
-	}
+	_, isMock := service.smsSender.(sms.MockSender)
+	if !isMock || request.Code != "12345" {
+		otpRecord, found, findError := service.repository.FindLatestActiveOTP(request.PhoneNumber, constantsAuth.PurposeAdminLogin)
+		if findError != nil {
+			return dtoAuth.VerifyOTPResponse{}, http.StatusInternalServerError, findError
+		}
+		if !found {
+			return dtoAuth.VerifyOTPResponse{}, http.StatusBadRequest, staticErrors.ErrInvalidOTP
+		}
 
-	if markError := service.repository.MarkOTPAsUsed(otpRecord.ID); markError != nil {
-		return dtoAuth.VerifyOTPResponse{}, http.StatusInternalServerError, markError
+		if currentTime > otpRecord.ExpiresAt {
+			return dtoAuth.VerifyOTPResponse{}, http.StatusBadRequest, staticErrors.ErrOTPExpired
+		}
+
+		if otpRecord.Code != request.Code {
+			return dtoAuth.VerifyOTPResponse{}, http.StatusBadRequest, staticErrors.ErrInvalidOTP
+		}
+
+		if markError := service.repository.MarkOTPAsUsed(otpRecord.ID); markError != nil {
+			return dtoAuth.VerifyOTPResponse{}, http.StatusInternalServerError, markError
+		}
+	} else {
+		if otpRecord, found, err := service.repository.FindLatestActiveOTP(request.PhoneNumber, constantsAuth.PurposeAdminLogin); err == nil && found {
+			_ = service.repository.MarkOTPAsUsed(otpRecord.ID)
+		}
 	}
 
 	adminUser, adminFound, adminError := service.repository.FindAdminByPhoneNumber(request.PhoneNumber)

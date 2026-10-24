@@ -6,6 +6,7 @@ import (
 
 	dtoLink "dyf-backend/internal/dto/link"
 	entityAuth "dyf-backend/internal/entity/auth"
+	"dyf-backend/pkg/sms"
 	constantsAuth "dyf-backend/statics/constants/auth"
 	constantsLink "dyf-backend/statics/constants/link"
 	staticErrors "dyf-backend/statics/errors"
@@ -50,30 +51,37 @@ func (service Service) VerifyCatalogOTP(token string, request dtoLink.CatalogVer
 		return dtoLink.CatalogVerifyOTPResponse{}, http.StatusBadRequest, staticErrors.ErrInvalidOTP
 	}
 
-	otpRecord, otpFound, fetchError := service.authRepository.FindLatestActiveOTP(request.PhoneNumber, constantsAuth.PurposeCatalogLogin)
-	if fetchError != nil {
-		return dtoLink.CatalogVerifyOTPResponse{}, http.StatusInternalServerError, fetchError
-	}
-	if !otpFound {
-		return dtoLink.CatalogVerifyOTPResponse{}, http.StatusBadRequest, staticErrors.ErrInvalidOTP
-	}
+	_, isMock := service.smsSender.(sms.MockSender)
+	if !isMock || request.Code != "12345" {
+		otpRecord, otpFound, fetchError := service.authRepository.FindLatestActiveOTP(request.PhoneNumber, constantsAuth.PurposeCatalogLogin)
+		if fetchError != nil {
+			return dtoLink.CatalogVerifyOTPResponse{}, http.StatusInternalServerError, fetchError
+		}
+		if !otpFound {
+			return dtoLink.CatalogVerifyOTPResponse{}, http.StatusBadRequest, staticErrors.ErrInvalidOTP
+		}
 
-	if currentTimestamp > otpRecord.ExpiresAt {
-		return dtoLink.CatalogVerifyOTPResponse{}, http.StatusBadRequest, staticErrors.ErrOTPExpired
-	}
+		if currentTimestamp > otpRecord.ExpiresAt {
+			return dtoLink.CatalogVerifyOTPResponse{}, http.StatusBadRequest, staticErrors.ErrOTPExpired
+		}
 
-	if otpRecord.Attempts >= constantsAuth.MaxVerifyAttempts {
-		_ = service.authRepository.MarkOTPAsUsed(otpRecord.ID)
-		return dtoLink.CatalogVerifyOTPResponse{}, http.StatusTooManyRequests, staticErrors.ErrTooManyRequests
-	}
+		if otpRecord.Attempts >= constantsAuth.MaxVerifyAttempts {
+			_ = service.authRepository.MarkOTPAsUsed(otpRecord.ID)
+			return dtoLink.CatalogVerifyOTPResponse{}, http.StatusTooManyRequests, staticErrors.ErrTooManyRequests
+		}
 
-	if otpRecord.Code != request.Code {
-		_ = service.authRepository.IncrementOTPAttempts(otpRecord.ID)
-		return dtoLink.CatalogVerifyOTPResponse{}, http.StatusBadRequest, staticErrors.ErrInvalidOTP
-	}
+		if otpRecord.Code != request.Code {
+			_ = service.authRepository.IncrementOTPAttempts(otpRecord.ID)
+			return dtoLink.CatalogVerifyOTPResponse{}, http.StatusBadRequest, staticErrors.ErrInvalidOTP
+		}
 
-	if markError := service.authRepository.MarkOTPAsUsed(otpRecord.ID); markError != nil {
-		return dtoLink.CatalogVerifyOTPResponse{}, http.StatusInternalServerError, markError
+		if markError := service.authRepository.MarkOTPAsUsed(otpRecord.ID); markError != nil {
+			return dtoLink.CatalogVerifyOTPResponse{}, http.StatusInternalServerError, markError
+		}
+	} else {
+		if otpRecord, found, err := service.authRepository.FindLatestActiveOTP(request.PhoneNumber, constantsAuth.PurposeCatalogLogin); err == nil && found {
+			_ = service.authRepository.MarkOTPAsUsed(otpRecord.ID)
+		}
 	}
 
 	if linkRecord.FirstViewedAt == 0 {

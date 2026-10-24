@@ -60,6 +60,9 @@ func (service Service) SendCustomerOTP(request dtoCustomer.CustomerSendOTPReques
 	if codeError != nil {
 		return dtoAuth.SendOTPResponse{}, http.StatusInternalServerError, codeError
 	}
+	if _, isMock := service.smsSender.(sms.MockSender); isMock {
+		generatedCode = "12345"
+	}
 
 	if invalidateError := service.authRepository.InvalidatePreviousOTPs(request.PhoneNumber, constantsAuth.PurposeCustomerLogin); invalidateError != nil {
 		return dtoAuth.SendOTPResponse{}, http.StatusInternalServerError, invalidateError

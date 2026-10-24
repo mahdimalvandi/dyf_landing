@@ -80,6 +80,9 @@ func (service Service) SendCatalogOTP(token string, request dtoLink.CatalogSendO
 	if codeError != nil {
 		return dtoAuth.SendOTPResponse{}, http.StatusInternalServerError, codeError
 	}
+	if _, isMock := service.smsSender.(sms.MockSender); isMock {
+		generatedCode = "12345"
+	}
 
 	if invalidateError := service.authRepository.InvalidatePreviousOTPs(request.PhoneNumber, constantsAuth.PurposeCatalogLogin); invalidateError != nil {
 		return dtoAuth.SendOTPResponse{}, http.StatusInternalServerError, invalidateError
