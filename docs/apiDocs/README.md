@@ -105,6 +105,12 @@
 | ۶ | `PATCH` | `/api/v1/links/:id/reactivate` | **بله (ادمین)** | [مستند reactivate.md](./links/reactivate.md) |
 | ۷ | `DELETE` | `/api/v1/links/:id` | **بله (ادمین)** | [مستند delete.md](./links/delete.md) |
 
+### خانواده کاتالوگ و ردیابی بازدیدها (`catalog`):
+| ردیف | متد | مسیر (Endpoint) | نیاز به توکن | فایل داکیومنت اختصاصی |
+|:---:|:---:|:---|:---:|:---|
+| ۱ | `POST` | `/api/v1/catalog/:token/access` | خیر (عمومی) | [مستند access.md](./catalog/access.md) |
+| ۲ | `GET` | `/api/v1/catalog/stats/views` | **بله (ادمین)** | [مستند stats.md](./catalog/stats.md) |
+
 ---
 
 ## ۴. چرخه احراز هویت در فرانت‌اند (Authentication Flow)

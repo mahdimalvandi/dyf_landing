@@ -15,6 +15,7 @@ type AccessLink struct {
 	ViewingExpiresAt       int64      `gorm:"column:viewingExpiresAt" json:"viewingExpiresAt"`
 	IsActive               bool       `gorm:"column:isActive" json:"isActive"`
 	Status                 string     `gorm:"column:status" json:"status"`
+	LastAccessedAt         int64      `gorm:"column:lastAccessedAt" json:"lastAccessedAt"`
 }
 
 type Int64List []int64

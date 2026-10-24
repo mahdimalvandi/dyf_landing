@@ -31,4 +31,9 @@ func RegisterLinkRoutes(apiGroup fiber.Router, databaseConnection *gorm.DB) {
 	linksGroup.Patch("/:id/revoke", linkHandler.Revoke)
 	linksGroup.Patch("/:id/reactivate", linkHandler.Reactivate)
 	linksGroup.Delete("/:id", linkHandler.Delete)
+
+	apiGroup.Post("/catalog/:token/access", linkHandler.Access)
+
+	catalogGroup := apiGroup.Group("/catalog", adminAuthMiddleware)
+	catalogGroup.Get("/stats/views", linkHandler.Stats)
 }
