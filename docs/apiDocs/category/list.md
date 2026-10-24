@@ -38,11 +38,18 @@
   "data": [
     {
       "ID": 1792757059582788000,
-      "title": "کفش رسمی دست‌دوز"
+      "title": "کفش رسمی دست‌دوز",
+      "shoeCount": 12
     },
     {
       "ID": 1792757059584828900,
-      "title": "کالج و لوفر"
+      "title": "کالج و لوفر",
+      "shoeCount": 5
+    },
+    {
+      "ID": 1792757059586900000,
+      "title": "بوت و نیم‌بوت",
+      "shoeCount": 0
     }
   ],
   "meta": null
@@ -61,6 +68,7 @@ import axios from "axios";
 export interface Category {
   ID: number;
   title: string;
+  shoeCount: number;
 }
 
 export async function fetchCategories(): Promise<Category[]> {

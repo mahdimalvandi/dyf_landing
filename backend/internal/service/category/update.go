@@ -30,8 +30,14 @@ func (service Service) Update(categoryID int64, request dtoCategory.UpdateCatego
 		return dtoCategory.CategoryResponse{}, http.StatusInternalServerError, updateError
 	}
 
+	shoeCount, countError := service.repository.CountShoesForCategory(categoryID)
+	if countError != nil {
+		return dtoCategory.CategoryResponse{}, http.StatusInternalServerError, countError
+	}
+
 	return dtoCategory.CategoryResponse{
-		ID:    categoryID,
-		Title: request.Title,
+		ID:        categoryID,
+		Title:     request.Title,
+		ShoeCount: shoeCount,
 	}, http.StatusOK, nil
 }

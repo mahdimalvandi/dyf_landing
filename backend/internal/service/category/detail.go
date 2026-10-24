@@ -16,8 +16,14 @@ func (service Service) Detail(categoryID int64) (dtoCategory.CategoryResponse, i
 		return dtoCategory.CategoryResponse{}, http.StatusNotFound, staticErrors.ErrCategoryNotFound
 	}
 
+	shoeCount, countError := service.repository.CountShoesForCategory(categoryID)
+	if countError != nil {
+		return dtoCategory.CategoryResponse{}, http.StatusInternalServerError, countError
+	}
+
 	return dtoCategory.CategoryResponse{
-		ID:    categoryRecord.ID,
-		Title: categoryRecord.Title,
+		ID:        categoryRecord.ID,
+		Title:     categoryRecord.Title,
+		ShoeCount: shoeCount,
 	}, http.StatusOK, nil
 }
