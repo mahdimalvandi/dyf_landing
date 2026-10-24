@@ -1,0 +1,129 @@
+/* ==========================================================================
+   DYF Design System v4 — Official Local Typography & Font Definitions
+   100% Offline / Local Fonts (Estedad, Vazirmatn, Cormorant Garamond)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   ۱. فونت تیترهای فارسی (Display & Headings): Estedad
+   وزن‌های Bold (700)، ExtraBold (800) و Black (900)
+   -------------------------------------------------------------------------- */
+@font-face {
+  font-family: 'Estedad';
+  src: url('../../../assets/fonts/estedad/Estedad-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Estedad';
+  src: url('../../../assets/fonts/estedad/Estedad-ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Estedad';
+  src: url('../../../assets/fonts/estedad/Estedad-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --------------------------------------------------------------------------
+   ۲. فونت متن بدنه و پاراگراف‌ها (Body & UI): Vazirmatn
+   وزن‌های Light (300)، Regular (400)، Medium (500)، SemiBold (600)،
+   Bold (700)، ExtraBold (800) و Black (900)
+   -------------------------------------------------------------------------- */
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('../../../assets/fonts/vazirmatn/Vazirmatn-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('../../../assets/fonts/vazirmatn/Vazirmatn-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('../../../assets/fonts/vazirmatn/Vazirmatn-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('../../../assets/fonts/vazirmatn/Vazirmatn-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('../../../assets/fonts/vazirmatn/Vazirmatn-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('../../../assets/fonts/vazirmatn/Vazirmatn-ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('../../../assets/fonts/vazirmatn/Vazirmatn-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --------------------------------------------------------------------------
+   ۳. فونت لاتین ادیتوریال و اعداد (Serif & Kickers): Cormorant Garamond
+   وزن‌های SemiBold (600) و Bold (700) با استایل‌های نرمال و ایتالیک
+   -------------------------------------------------------------------------- */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('../../../assets/fonts/cormorant-garamond/CormorantGaramond-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('../../../assets/fonts/cormorant-garamond/CormorantGaramond-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('../../../assets/fonts/cormorant-garamond/CormorantGaramond-SemiBoldItalic.woff2') format('woff2');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('../../../assets/fonts/cormorant-garamond/CormorantGaramond-BoldItalic.woff2') format('woff2');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}

@@ -25,6 +25,14 @@ function copyStaticAssets(): Plugin {
         fs.mkdirSync(imagesDest, { recursive: true });
         fs.cpSync(imagesSrc, imagesDest, { recursive: true });
       }
+
+      // Copy local fonts to dist/assets/fonts for standalone runtime font access
+      const fontsSrc = resolve(rootDir, 'frontend/assets/fonts');
+      const fontsDest = resolve(distDir, 'assets/fonts');
+      if (fs.existsSync(fontsSrc)) {
+        fs.mkdirSync(fontsDest, { recursive: true });
+        fs.cpSync(fontsSrc, fontsDest, { recursive: true });
+      }
     },
   };
 }
@@ -32,6 +40,14 @@ function copyStaticAssets(): Plugin {
 export default defineConfig({
   root: 'frontend',
   base: '/',
+  resolve: {
+    alias: {
+      '@': resolve(rootDir, 'frontend/src'),
+      '@shared': resolve(rootDir, 'frontend/src/shared'),
+      '@admin': resolve(rootDir, 'frontend/src/admin'),
+      '@catalog': resolve(rootDir, 'frontend/src/catalog'),
+    },
+  },
   plugins: [
     vue(),
     copyStaticAssets(),

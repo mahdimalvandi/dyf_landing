@@ -1,0 +1,90 @@
+/* ==========================================================================
+   DYF (Defender Your Foot) — Official Design System Tokens (v4)
+   Single Source of Truth for Colors, Typography, Radii, Elevation & Layout
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   ۱. استانداردسازی لود فونت‌های اختصاصی محلی (Local Font Face Declarations)
+   بارگذاری ۱۰۰٪ آفلاین و محلی فونت‌های Estedad، Vazirmatn و Cormorant Garamond
+   -------------------------------------------------------------------------- */
+@import './fonts.css';
+
+/* --------------------------------------------------------------------------
+   ۲. متغیرهای ریشه و توکن‌های طراحی (Root Design Tokens)
+   -------------------------------------------------------------------------- */
+:root {
+  /* ۲.۱. پالت رنگ پایه و سطوح چرم کارگاهی (Base & Leather Surfaces) */
+  --bg-deep: #141210;               /* مشکی عمیق با گرمای چرم سوخته - بستر مادر */
+  --bg-surface: #1B1714;            /* سطح پایه کارت‌ها و سکشن‌ها */
+  --bg-surface-elevated: #241E19;   /* سطوح برجسته، فیلدها و کانتینرهای لایه دوم */
+  --bg-surface-hover: #2C241E;      /* حالت هاور سطوح تعاملی */
+  --leather-dark: #3D2415;          /* قهوه‌ای شکلاتی سوخته (Dark Espresso) */
+  --leather-caramel: #C29553;       /* عسلی کاراملی چرم دباغی‌شده تبریز */
+
+  /* ۲.۲. طیف طلای اختصاصی و بازتاب‌های نوری (Signature Gold Palette) */
+  --gold-primary: #D8B264;          /* طلای مات پرستیژ (Signature Gold) */
+  --gold-rgb: 216, 178, 100;        /* مقادیر عددی برای استفاده با تابع rgba */
+  --gold-light: #F6E7B2;            /* طلایی روشن متالیک برای هاور و هایلایت */
+  --gold-glow: rgba(216, 178, 100, 0.35);        /* هاله درخشش طلایی پررنگ */
+  --gold-glow-subtle: rgba(216, 178, 100, 0.16); /* هاله درخشش طلایی ملایم */
+
+  /* ۲.۳. نمادهای اصالت دوزندگی (Saddle Stitch & Leatherwork) */
+  --stitch-line: #E8E4D9;           /* خط دوخت سراجی چرم دست‌دوز */
+  --stitch-alpha: rgba(232, 228, 217, 0.35); /* خطوط راه‌راه و کوک محو */
+
+  /* ۲.۴. تایپوگرافی و متون ارگونومیک (Typography Hierarchy Colors) */
+  --text-ivory: #FDFBF7;            /* سفید عاجی دست‌نخورده برای تیترهای H1 تا H3 */
+  --text-main: #E8E4D9;             /* عاجی کدر برای متون بدنه و پاراگراف‌ها */
+  --text-muted: #9E9587;            /* خاکستری گرم برای متادیتا و توضیحات فرعی */
+  --text-dim: #6E6659;              /* خاکستری تیره برای برچسب‌های کم‌اهمیت و ایندکس */
+
+  /* ۲.۵. کادرها و مرزهای ظریف (Borders & Dividers) */
+  --border-subtle: rgba(216, 178, 100, 0.12); /* مرز ملایم بدون جلب توجه */
+  --border-medium: rgba(216, 178, 100, 0.24); /* مرز استاندارد کارت‌ها و المان‌ها */
+  --border-strong: rgba(216, 178, 100, 0.45); /* مرز فعال، فوکوس و هایلایت */
+
+  /* ۲.۶. کارت‌ها و محفظه‌های شیشه‌ای (Glassmorphism & Cards) */
+  --card-bg: rgba(32, 22, 16, 0.85);
+  --card-border: rgba(216, 178, 100, 0.16);
+
+  /* ۲.۷. رنگ‌های وضعیت استاندارد کارگاه (Operational Status Colors) */
+  --status-published: #2EA043;
+  --status-published-bg: rgba(46, 160, 67, 0.14);
+  --status-draft: #D29922;
+  --status-draft-bg: rgba(210, 153, 34, 0.15);
+  --status-archived: #8B949E;
+  --status-archived-bg: rgba(139, 148, 158, 0.14);
+  --status-danger: #F85149;
+  --status-danger-bg: rgba(248, 81, 73, 0.15);
+  --status-info: #58A6FF;
+  --status-info-bg: rgba(88, 166, 255, 0.14);
+
+  /* ۲.۸. مقیاس شعاع انحنای گوشه‌ها (Border Radii Scale) */
+  --r-xs: 3px;                      /* نشانگرها، برچسب‌های خیلی ریز */
+  --r-sm: 6px;                      /* ورودی‌های فرم، دکمه‌های کوچک، پیل‌های مشخصات */
+  --r-md: 12px;                     /* فریم تصاویر کارگاهی، کادرهای اطلاعاتی پنل */
+  --r-lg: 20px;                     /* کارت‌های شاخص هیرو، مودال‌ها، پاپ‌آپ‌ها */
+  --r-full: 9999px;                 /* پیل‌ها و کپسول‌های تمام‌گرد */
+
+  /* ۲.۹. خانواده‌های قلم معماری سه‌سطحی (Font Families) */
+  --font-body: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-title: 'Estedad', 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+
+  /* ۲.۱۰. سایه‌ها و عمق میدان (Elevation & Shadow System) */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-elevated: 0 20px 40px rgba(0, 0, 0, 0.6);
+  --shadow-gold-glow: 0 0 16px rgba(216, 178, 100, 0.35);
+
+  /* ۲.۱۱. ترنزیشن‌ها و زمان‌بندی انیمیشن (Transitions & Timing) */
+  --transition-fast: 0.18s ease;
+  --transition-normal: 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ۲.۱۲. ابعاد ساختاری لایه‌بندی (Layout Dimensions) */
+  --sidebar-width: 270px;
+  --sidebar-collapsed-width: 76px;
+  --header-height: 70px;
+  --container-max-width: 1240px;
+}

@@ -11,7 +11,14 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["frontend/src/*"],
+      "@shared/*": ["frontend/src/shared/*"],
+      "@admin/*": ["frontend/src/admin/*"],
+      "@catalog/*": ["frontend/src/catalog/*"]
+    }
   },
   "include": ["vite.config.ts", "frontend/**/*.d.ts", "frontend/**/*.ts", "frontend/**/*.vue"]
 }

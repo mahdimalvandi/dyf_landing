@@ -1,58 +1,18 @@
+@import '../../src/shared/styles/tokens.css';
+
 /* ==========================================================================
    DYF Private Catalog — Admin Panel Stylesheet (Design System v4)
    ========================================================================== */
 
 :root {
-  /* پالت رنگ رسمی DYF */
-  --bg-deep: #141210;
-  --bg-surface: #1B1714;
-  --bg-surface-elevated: #241E19;
-  --bg-surface-hover: #2C241E;
-  --leather-dark: #3D2415;
-  --leather-caramel: #C29553;
-  --gold-primary: #D8B264;
-  --gold-light: #F6E7B2;
+  /* ==========================================================================
+     تنظیمات محلی و Overrideهای اختصاصی پنل مدیریت DYF
+     --gold-glow: در پنل مدیریت شدت درخشش طلایی برای کاهش خستگی چشم و افزایش خوانایی
+     جداول و داده‌های مدیریتی روی 0.28 تنظیم شده است (در برابر 0.35 لندینگ پیج).
+     تمامی توکن‌های مشترک (رنگ‌ها، تایپوگرافی، شعاع‌ها، فواصل و ابعاد)
+     به‌طور یکپارچه از tokens.css ارث‌بری می‌شوند.
+     ========================================================================== */
   --gold-glow: rgba(216, 178, 100, 0.28);
-  --stitch-line: #E8E4D9;
-  --text-ivory: #FDFBF7;
-  --text-main: #E8E4D9;
-  --text-muted: #9E9587;
-  --text-dim: #6E6659;
-
-  /* مرزها و جداکننده‌ها */
-  --border-subtle: rgba(216, 178, 100, 0.12);
-  --border-medium: rgba(216, 178, 100, 0.24);
-  --border-strong: rgba(216, 178, 100, 0.45);
-
-  /* رنگ‌های وضعیت استاندارد با هماهنگی پالت چرم */
-  --status-published: #2EA043;
-  --status-published-bg: rgba(46, 160, 67, 0.14);
-  --status-draft: #D29922;
-  --status-draft-bg: rgba(210, 153, 34, 0.15);
-  --status-archived: #8B949E;
-  --status-archived-bg: rgba(139, 148, 158, 0.14);
-  --status-danger: #F85149;
-  --status-danger-bg: rgba(248, 81, 73, 0.15);
-  --status-info: #58A6FF;
-  --status-info-bg: rgba(88, 166, 255, 0.14);
-
-  /* شعاع گوشه‌ها */
-  --r-sm: 6px;
-  --r-md: 12px;
-  --r-lg: 20px;
-  --r-full: 9999px;
-
-  /* تایپوگرافی */
-  --font-body: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-title: 'Estedad', 'Vazirmatn', sans-serif;
-  --font-serif: 'Cormorant Garamond', Georgia, serif;
-
-  /* ابعاد ساختار */
-  --sidebar-width: 270px;
-  --sidebar-collapsed-width: 76px;
-  --header-height: 70px;
-  --transition-fast: 0.18s ease;
-  --transition-normal: 0.26s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ==========================================================================
