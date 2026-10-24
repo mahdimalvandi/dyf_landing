@@ -10,6 +10,9 @@ const (
 	MsgLinkListFetchedSuccessfully = "فهرست لینک‌های دسترسی با موفقیت دریافت شد"
 	MsgCatalogAccessRecorded       = "ورود به کاتالوگ با موفقیت ثبت شد"
 	MsgCatalogStatsFetched         = "آمار بازدیدهای کاتالوگ با موفقیت دریافت شد"
+	MsgShoesFetchedSuccessfully   = "فهرست محصولات مجاز با موفقیت دریافت شد"
+	MsgOTPSentSuccessfully        = "کد تایید با موفقیت ارسال شد"
+	MsgLoginSuccessfully          = "ورود با موفقیت انجام شد"
 
 	CatalogURLPrefix = "/catalog"
 

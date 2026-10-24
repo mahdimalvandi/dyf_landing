@@ -104,3 +104,15 @@ func (repository Repository) ListShoes(categoryID int64, searchTerm string, pagi
 
 	return shoesList, totalCount, nil
 }
+
+func (repository Repository) FindShoesByIDs(shoeIDs []int64) ([]entityShoe.ShoeModel, error) {
+	if len(shoeIDs) == 0 {
+		return []entityShoe.ShoeModel{}, nil
+	}
+	var shoesList []entityShoe.ShoeModel
+	findResult := repository.databaseConnection.Where(`"ID" IN ? OR "modelID" IN ?`, shoeIDs, shoeIDs).Order(`"modelID" ASC`).Find(&shoesList)
+	if findResult.Error != nil {
+		return nil, findResult.Error
+	}
+	return shoesList, nil
+}

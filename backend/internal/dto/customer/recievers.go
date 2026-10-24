@@ -29,3 +29,12 @@ func (filter *ListCustomersFilter) Normalize() {
 	filter.Search = strings.TrimSpace(filter.Search)
 	filter.Status = strings.ToLower(strings.TrimSpace(filter.Status))
 }
+
+func (request *CustomerSendOTPRequest) Normalize() {
+	request.PhoneNumber = strings.TrimSpace(request.PhoneNumber)
+}
+
+func (request *CustomerVerifyOTPRequest) Normalize() {
+	request.PhoneNumber = strings.TrimSpace(request.PhoneNumber)
+	request.Code = strings.TrimSpace(request.Code)
+}

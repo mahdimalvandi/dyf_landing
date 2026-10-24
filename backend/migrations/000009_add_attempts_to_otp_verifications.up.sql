@@ -1,0 +1,1 @@
+ALTER TABLE "otpVerifications" ADD COLUMN IF NOT EXISTS "attempts" INT NOT NULL DEFAULT 0;

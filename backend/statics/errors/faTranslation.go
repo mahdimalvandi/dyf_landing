@@ -36,6 +36,8 @@ var PersianErrorRegistry = map[string]string{
 	InvalidLinkID:           "شناسه لینک نامعتبر است",
 	NoShoesSelectedForLink:  "حداقل یک مدل کفش باید برای این لینک انتخاب شود",
 	InvalidAuthMethod:       "روش ورود انتخابی نامعتبر است (تنها DIRECT یا OTP مجاز است)",
+	NoActivePermission:      "مجوز دسترسی فعالی برای این حساب یافت نشد",
+	PhoneNotAuthorized:      "شماره همراه وارد شده برای این پیوند مجاز نمی‌باشد",
 }
 
 func TranslateToPersian(targetError error) string {

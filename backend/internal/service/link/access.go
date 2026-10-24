@@ -40,11 +40,13 @@ func (service Service) Access(token string) (dtoLink.CatalogAccessResponse, int,
 		return dtoLink.CatalogAccessResponse{}, http.StatusGone, staticErrors.ErrLinkExpired
 	}
 
-	if linkRecord.FirstViewedAt == 0 {
-		linkRecord.FirstViewedAt = currentTimestamp
-		linkRecord.Status = constantsLink.StatusActive
-		if linkRecord.ViewingDurationMinutes > 0 {
-			linkRecord.ViewingExpiresAt = currentTimestamp + int64(linkRecord.ViewingDurationMinutes*60)
+	if linkRecord.AuthMethod == constantsLink.AuthMethodDirect {
+		if linkRecord.FirstViewedAt == 0 {
+			linkRecord.FirstViewedAt = currentTimestamp
+			linkRecord.Status = constantsLink.StatusActive
+			if linkRecord.ViewingDurationMinutes > 0 {
+				linkRecord.ViewingExpiresAt = currentTimestamp + int64(linkRecord.ViewingDurationMinutes*60)
+			}
 		}
 	}
 
@@ -60,6 +62,8 @@ func (service Service) Access(token string) (dtoLink.CatalogAccessResponse, int,
 		if remainingSeconds < 0 {
 			remainingSeconds = 0
 		}
+	} else if linkRecord.FirstViewedAt == 0 && linkRecord.ViewingDurationMinutes > 0 {
+		remainingSeconds = int64(linkRecord.ViewingDurationMinutes * 60)
 	} else if linkRecord.ExpiresAt > 0 {
 		remainingSeconds = linkRecord.ExpiresAt - currentTimestamp
 		if remainingSeconds < 0 {

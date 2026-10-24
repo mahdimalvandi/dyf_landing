@@ -17,3 +17,11 @@ type CustomerListResponse struct {
 	Items      []CustomerResponse    `json:"items"`
 	Pagination pagination.Pagination `json:"pagination"`
 }
+
+type CustomerLoginResponse struct {
+	Customer         CustomerResponse `json:"customer"`
+	Token            string           `json:"token"`
+	CatalogToken     string           `json:"catalogToken,omitempty"`
+	LinkID           int64            `json:"linkID,omitempty"`
+	RemainingSeconds int64            `json:"remainingSeconds,omitempty"`
+}

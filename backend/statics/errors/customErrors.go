@@ -38,6 +38,8 @@ const (
 	InvalidLinkID           = "invalidLinkID"
 	NoShoesSelectedForLink  = "noShoesSelectedForLink"
 	InvalidAuthMethod       = "invalidAuthMethod"
+	NoActivePermission      = "noActivePermission"
+	PhoneNotAuthorized      = "phoneNotAuthorized"
 )
 
 var (
@@ -76,4 +78,6 @@ var (
 	ErrInvalidLinkID           = errors.New(InvalidLinkID)
 	ErrNoShoesSelectedForLink  = errors.New(NoShoesSelectedForLink)
 	ErrInvalidAuthMethod       = errors.New(InvalidAuthMethod)
+	ErrNoActivePermission      = errors.New(NoActivePermission)
+	ErrPhoneNotAuthorized      = errors.New(PhoneNotAuthorized)
 )

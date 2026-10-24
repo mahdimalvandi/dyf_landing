@@ -31,3 +31,12 @@ type ListCustomersFilter struct {
 	Search string `query:"search"`
 	Status string `query:"status"`
 }
+
+type CustomerSendOTPRequest struct {
+	PhoneNumber string `json:"phoneNumber" validate:"required,numeric,len=11"`
+}
+
+type CustomerVerifyOTPRequest struct {
+	PhoneNumber string `json:"phoneNumber" validate:"required,numeric,len=11"`
+	Code        string `json:"code" validate:"required,numeric,len=5"`
+}

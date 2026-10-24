@@ -130,3 +130,21 @@ func (repository Repository) CountAllAccessed() (int64, error) {
 	countResult := repository.databaseConnection.Model(&entityLink.AccessLink{}).Where(`"lastAccessedAt" > 0`).Count(&totalCount)
 	return totalCount, countResult.Error
 }
+
+func (repository Repository) FindActiveLinksByCustomerID(customerID int64) ([]entityLink.AccessLink, error) {
+	var linksList []entityLink.AccessLink
+	findResult := repository.databaseConnection.Where(`"customerID" = ? AND "isActive" = true`, customerID).Order(`"ID" DESC`).Find(&linksList)
+	if findResult.Error != nil {
+		return nil, findResult.Error
+	}
+	return linksList, nil
+}
+
+func (repository Repository) FindActiveLinksByPhoneNumber(phoneNumber string) ([]entityLink.AccessLink, error) {
+	var linksList []entityLink.AccessLink
+	findResult := repository.databaseConnection.Where(`"phoneNumber" = ? AND "isActive" = true`, phoneNumber).Order(`"ID" DESC`).Find(&linksList)
+	if findResult.Error != nil {
+		return nil, findResult.Error
+	}
+	return linksList, nil
+}

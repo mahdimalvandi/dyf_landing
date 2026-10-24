@@ -28,3 +28,12 @@ type ListLinksFilter struct {
 	Status     string `query:"status"`
 	CustomerID int64  `query:"customerID"`
 }
+
+type CatalogSendOTPRequest struct {
+	PhoneNumber string `json:"phoneNumber" validate:"required,numeric,len=11"`
+}
+
+type CatalogVerifyOTPRequest struct {
+	PhoneNumber string `json:"phoneNumber" validate:"required,numeric,len=11"`
+	Code        string `json:"code" validate:"required,numeric,len=5"`
+}

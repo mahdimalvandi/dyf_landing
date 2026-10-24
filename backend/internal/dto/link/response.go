@@ -1,6 +1,9 @@
 package link
 
-import "dyf-backend/pkg/pagination"
+import (
+	dtoShoe "dyf-backend/internal/dto/shoe"
+	"dyf-backend/pkg/pagination"
+)
 
 type LinkItemResponse struct {
 	ID                     int64  `json:"ID"`
@@ -46,4 +49,16 @@ type CatalogAccessResponse struct {
 type CatalogStatsResponse struct {
 	Last7DaysViews     int64 `json:"last7DaysViews"`
 	TotalAccessedLinks int64 `json:"totalAccessedLinks"`
+}
+
+type CatalogShoesResponse struct {
+	LinkID           int64                      `json:"linkID"`
+	RecipientName    string                     `json:"recipientName"`
+	RemainingSeconds int64                      `json:"remainingSeconds"`
+	Items            []dtoShoe.ShoeItemResponse `json:"items"`
+}
+
+type CatalogVerifyOTPResponse struct {
+	CatalogAccessResponse
+	Token string `json:"token"`
 }

@@ -92,6 +92,14 @@ func (repository Repository) MarkOTPAsUsed(otpID int64) error {
 	return updateResult.Error
 }
 
+func (repository Repository) IncrementOTPAttempts(otpID int64) error {
+	updateResult := repository.databaseConnection.Model(&entityAuth.OTPVerification{}).
+		Where(`"ID" = ?`, otpID).
+		UpdateColumn("attempts", gorm.Expr(`"attempts" + 1`))
+
+	return updateResult.Error
+}
+
 func (repository Repository) CreateDevice(deviceRecord entityAuth.Device) error {
 	createResult := repository.databaseConnection.Create(&deviceRecord)
 	return createResult.Error

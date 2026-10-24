@@ -19,6 +19,7 @@ type OTPVerification struct {
 	Purpose     string `gorm:"column:purpose" json:"purpose"`
 	ExpiresAt   int64  `gorm:"column:expiresAt" json:"expiresAt"`
 	IsUsed      bool   `gorm:"column:isUsed" json:"isUsed"`
+	Attempts    int    `gorm:"column:attempts" json:"attempts"`
 }
 
 func (OTPVerification) TableName() string {

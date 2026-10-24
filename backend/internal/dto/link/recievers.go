@@ -47,3 +47,12 @@ func (filter *ListLinksFilter) Normalize() {
 	filter.Search = strings.TrimSpace(filter.Search)
 	filter.Status = strings.ToUpper(strings.TrimSpace(filter.Status))
 }
+
+func (request *CatalogSendOTPRequest) Normalize() {
+	request.PhoneNumber = strings.TrimSpace(request.PhoneNumber)
+}
+
+func (request *CatalogVerifyOTPRequest) Normalize() {
+	request.PhoneNumber = strings.TrimSpace(request.PhoneNumber)
+	request.Code = strings.TrimSpace(request.Code)
+}
