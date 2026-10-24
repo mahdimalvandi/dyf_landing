@@ -111,6 +111,11 @@
 | ۱ | `POST` | `/api/v1/catalog/:token/access` | خیر (عمومی) | [مستند access.md](./catalog/access.md) |
 | ۲ | `GET` | `/api/v1/catalog/stats/views` | **بله (ادمین)** | [مستند stats.md](./catalog/stats.md) |
 
+### خانواده پیشخوان و داشبورد مدیریت (`dashboard`):
+| ردیف | متد | مسیر (Endpoint) | نیاز به توکن | فایل داکیومنت اختصاصی |
+|:---:|:---:|:---|:---:|:---|
+| ۱ | `GET` | `/api/v1/dashboard` | **بله (ادمین)** | [مستند overview.md](./dashboard/overview.md) |
+
 ---
 
 ## ۴. چرخه احراز هویت در فرانت‌اند (Authentication Flow)
