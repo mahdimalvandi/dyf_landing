@@ -507,6 +507,62 @@
       height: 0 !important;
     }
 
+    /* استایل‌های لودینگ اسکلتی و فال‌بک تصویری نشان سه‌بعدی هیرو (FE-008) */
+    .hero-3d-skeleton {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, rgba(38, 24, 16, 0.45) 0%, rgba(18, 15, 12, 0.85) 75%);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .hero-3d-skeleton::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent 0%, rgba(216, 178, 100, 0.1) 50%, transparent 100%);
+      animation: dyf-shimmer 2.2s infinite ease-in-out;
+    }
+
+    @keyframes dyf-shimmer {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(200%); }
+    }
+
+    .hero-poster-img,
+    .hero-fallback-emblem {
+      max-width: 78%;
+      max-height: 78%;
+      object-fit: contain;
+      filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.7));
+      transition: opacity 0.5s ease-out;
+    }
+
+    .hero-3d-fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .hero-3d-fallback .hero-fallback-emblem {
+      animation: dyf-emblem-float 5s ease-in-out infinite alternate;
+    }
+
+    @keyframes dyf-emblem-float {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-8px); }
+    }
+
     /* کارت محتوا و معرفی B2B (سمت چپ در چیدمان راست‌به‌چپ) */
     .hero-content-card {
       position: relative;

@@ -8,6 +8,8 @@
   <link rel="shortcut icon" href="favicon.ico">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.css">
   <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="preload" href="assets/images/logo.webp" as="image" type="image/webp">
+  <link rel="preload" href="assets/models/emblem_3d.glb" as="fetch" type="model/gltf-binary" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
@@ -84,7 +86,7 @@
             <div class="hero-3d-wrapper">
               <model-viewer
                 src="assets/models/emblem_3d.glb"
-                poster="assets/images/logo.png"
+                poster="assets/images/logo.webp"
                 alt="نشان سه‌بعدی رسمی برند DYF"
                 camera-controls
                 auto-rotate
@@ -103,6 +105,20 @@
                 camera-orbit="0deg 85deg 94%"
                 loading="eager"
                 class="hero-model-viewer">
+                <div slot="poster" class="hero-3d-skeleton">
+                  <picture>
+                    <source srcset="assets/images/logo.webp" type="image/webp">
+                    <img
+                      src="assets/images/logo.png"
+                      alt="نشان رسمی برند DYF"
+                      class="hero-poster-img"
+                      width="380"
+                      height="380"
+                      loading="eager"
+                      fetchpriority="high"
+                      decoding="async">
+                  </picture>
+                </div>
                 <div slot="progress-bar" style="display: none;"></div>
               </model-viewer>
             </div>
