@@ -1,25 +1,92 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { dashboardService } from '@/shared/api/services';
-import type { DashboardResponse, LinkItemResponse, CustomerResponse } from '@/shared/api/types';
+import type { DashboardResponse, LinkItemResponse } from '@/shared/api/types';
 
 const isLoading = ref(true);
+const isRefreshing = ref(false);
+const fetchError = ref<string | null>(null);
 const dashboardData = ref<DashboardResponse | null>(null);
 
-const todayFaDate = ref('دوشنبه ۲۸ مهر ۱۴۰۵ — ساعت ۱۰:۳۰');
+// Persian Solar Date Formatting
+const todayFaDate = computed(() => {
+  try {
+    const formatter = new Intl.DateTimeFormat('fa-IR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    return formatter.format(new Date());
+  } catch {
+    return 'امروز';
+  }
+});
 
-onMounted(async () => {
+async function loadDashboard(showRefreshing = false) {
+  if (showRefreshing) isRefreshing.value = true;
+  else isLoading.value = true;
+  fetchError.value = null;
+
   try {
     const res = await dashboardService.getOverview();
     if (res.success && res.data) {
       dashboardData.value = res.data;
+    } else {
+      fetchError.value = res.message || 'خطا در دریافت اطلاعات پیشخوان';
     }
-  } catch (err) {
-    console.error('Failed to load dashboard data:', err);
+  } catch (err: any) {
+    fetchError.value = err.message || 'عدم برقراری ارتباط با سرور';
   } finally {
     isLoading.value = false;
+    isRefreshing.value = false;
   }
+}
+
+onMounted(() => {
+  loadDashboard();
 });
+
+// Check for links expiring within 24 hours or already expired
+const expiringLinksCount = computed(() => {
+  if (!dashboardData.value?.recentLinks) return 0;
+  const now = Date.now();
+  const dayMs = 24 * 60 * 60 * 1000;
+
+  return dashboardData.value.recentLinks.filter((link) => {
+    if (link.isExpired) return true;
+    const targetDate = link.validUntil || link.expiresAt;
+    if (!targetDate) return false;
+    const expiryTime = new Date(targetDate).getTime();
+    return expiryTime > now && expiryTime - now < dayMs;
+  }).length;
+});
+
+function getLinkBadgeClass(link: LinkItemResponse) {
+  if (link.isExpired || !link.isActive) return 'dyf-badge-expired';
+  const targetDate = link.validUntil || link.expiresAt;
+  if (targetDate) {
+    const expiryTime = new Date(targetDate).getTime();
+    const now = Date.now();
+    if (expiryTime > now && expiryTime - now < 24 * 60 * 60 * 1000) {
+      return 'dyf-badge-pending';
+    }
+  }
+  return 'dyf-badge-active';
+}
+
+function getLinkStatusLabel(link: LinkItemResponse) {
+  if (link.isExpired || !link.isActive) return 'منقضی شده';
+  const targetDate = link.validUntil || link.expiresAt;
+  if (targetDate) {
+    const expiryTime = new Date(targetDate).getTime();
+    const now = Date.now();
+    if (expiryTime > now && expiryTime - now < 24 * 60 * 60 * 1000) {
+      return 'در آستانه انقضا';
+    }
+  }
+  return 'فعال';
+}
 </script>
 
 <template>
@@ -29,7 +96,7 @@ onMounted(async () => {
       <div class="dyf-dashboard-hero-text">
         <h1>پیشخوان مدیریت کاتالوگ خصوصی DYF</h1>
       </div>
-      <div class="dyf-dashboard-hero-meta">
+      <div class="dyf-dashboard-hero-meta" style="display: flex; gap: 0.75rem; align-items: center;">
         <div class="dyf-date-pill">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
@@ -39,11 +106,63 @@ onMounted(async () => {
           </svg>
           <span>{{ todayFaDate }}</span>
         </div>
+
+        <button
+          type="button"
+          class="dyf-btn dyf-btn-outline dyf-btn-sm"
+          :disabled="isLoading || isRefreshing"
+          title="به‌روزرسانی آمار"
+          @click="loadDashboard(true)"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            :class="{ 'dyf-spin': isRefreshing }"
+          >
+            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+            <path d="M16 21h5v-5" />
+          </svg>
+          <span>{{ isRefreshing ? 'در حال دریافت...' : 'تازه سازی' }}</span>
+        </button>
       </div>
     </div>
 
-    <!-- گرید ۴ کارت شاخص KPI -->
+    <!-- هشدار وضعیت و خطای ارتباط -->
+    <div v-if="fetchError" class="dyf-alert dyf-alert-danger" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+      <span>{{ fetchError }}</span>
+      <button type="button" class="dyf-btn dyf-btn-outline dyf-btn-xs" @click="loadDashboard()">تلاش مجدد</button>
+    </div>
+
+    <!-- اعلان هشدارهای انقضای لینک‌ها -->
+    <div
+      v-if="expiringLinksCount > 0"
+      class="dyf-alert dyf-alert-warning"
+      style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; background: rgba(224, 159, 36, 0.12); border: 1px solid rgba(224, 159, 36, 0.4); padding: 0.85rem 1.2rem; border-radius: var(--r-sm);"
+    >
+      <div style="display: flex; align-items: center; gap: 0.75rem; color: #e5a93c;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" x2="12" y1="8" y2="12" />
+          <line x1="12" x2="12.01" y1="16" y2="16" />
+        </svg>
+        <span style="font-size: 0.86rem; font-weight: 500;">
+          توجه: {{ expiringLinksCount }} لینک اختصاصی در آستانه پایان مهلت مشاهده یا منقضی‌شده می‌باشند.
+        </span>
+      </div>
+      <router-link to="/access-links" class="dyf-btn dyf-btn-outline dyf-btn-xs">
+        بررسی لینک‌ها
+      </router-link>
+    </div>
+
+    <!-- گرید ۴ کارت شاخص KPI با ساپورت اسکلتون -->
     <div class="dyf-stats-grid">
+      <!-- کارت ۱: مدل‌های کفش -->
       <div class="dyf-stat-card">
         <div class="dyf-stat-header">
           <span class="dyf-stat-title">مدل‌های فعال در کاتالوگ</span>
@@ -54,28 +173,32 @@ onMounted(async () => {
             </svg>
           </div>
         </div>
-        <div class="dyf-stat-value">
-          {{ dashboardData?.stats?.activeShoesCount ?? 18 }}
+        <div v-if="isLoading" class="dyf-skeleton" style="height: 38px; width: 80px; margin-top: 0.5rem;"></div>
+        <div v-else class="dyf-stat-value">
+          {{ dashboardData?.stats?.activeShoesCount ?? 0 }}
           <span style="font-size: 1.05rem; font-weight: 500; color: var(--text-muted);">مدل</span>
         </div>
       </div>
 
+      <!-- کارت ۲: مشتریان -->
       <div class="dyf-stat-card">
         <div class="dyf-stat-header">
           <span class="dyf-stat-title">مشتریان و بنکداران همکار</span>
           <div class="dyf-stat-icon-wrap">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: block; margin: auto;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
               <circle cx="12" cy="7" r="4" />
             </svg>
           </div>
         </div>
-        <div class="dyf-stat-value">
-          {{ dashboardData?.stats?.totalCustomersCount ?? 24 }}
+        <div v-if="isLoading" class="dyf-skeleton" style="height: 38px; width: 80px; margin-top: 0.5rem;"></div>
+        <div v-else class="dyf-stat-value">
+          {{ dashboardData?.stats?.totalCustomersCount ?? 0 }}
           <span style="font-size: 1.05rem; font-weight: 500; color: var(--text-muted);">مشتری</span>
         </div>
       </div>
 
+      <!-- کارت ۳: لینک‌های فعال -->
       <div class="dyf-stat-card">
         <div class="dyf-stat-header">
           <span class="dyf-stat-title">لینک‌های اختصاصی معتبر</span>
@@ -86,12 +209,14 @@ onMounted(async () => {
             </svg>
           </div>
         </div>
-        <div class="dyf-stat-value">
-          {{ dashboardData?.stats?.activeLinksCount ?? 9 }}
+        <div v-if="isLoading" class="dyf-skeleton" style="height: 38px; width: 80px; margin-top: 0.5rem;"></div>
+        <div v-else class="dyf-stat-value">
+          {{ dashboardData?.stats?.activeLinksCount ?? 0 }}
           <span style="font-size: 1.05rem; font-weight: 500; color: var(--text-muted);">لینک فعال</span>
         </div>
       </div>
 
+      <!-- کارت ۴: بازدیدهای ۷ روز اخیر -->
       <div class="dyf-stat-card">
         <div class="dyf-stat-header">
           <span class="dyf-stat-title">مشاهده کاتالوگ (۷ روز اخیر)</span>
@@ -102,8 +227,9 @@ onMounted(async () => {
             </svg>
           </div>
         </div>
-        <div class="dyf-stat-value">
-          {{ dashboardData?.stats?.last7DaysViewsCount ?? 142 }}
+        <div v-if="isLoading" class="dyf-skeleton" style="height: 38px; width: 80px; margin-top: 0.5rem;"></div>
+        <div v-else class="dyf-stat-value">
+          {{ dashboardData?.stats?.last7DaysViewsCount ?? 0 }}
           <span style="font-size: 1.05rem; font-weight: 500; color: var(--text-muted);">بازدید</span>
         </div>
       </div>
@@ -139,7 +265,17 @@ onMounted(async () => {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="link in dashboardData?.recentLinks || []" :key="link.ID">
+                <!-- ردیف‌های اسکلتون در زمان لودینگ -->
+                <tr v-if="isLoading" v-for="i in 3" :key="`skel-link-${i}`">
+                  <td><div class="dyf-skeleton" style="height: 20px; width: 65px;"></div></td>
+                  <td><div class="dyf-skeleton" style="height: 20px; width: 110px;"></div></td>
+                  <td><div class="dyf-skeleton" style="height: 20px; width: 50px;"></div></td>
+                  <td><div class="dyf-skeleton" style="height: 20px; width: 60px;"></div></td>
+                  <td><div class="dyf-skeleton" style="height: 24px; width: 65px;"></div></td>
+                </tr>
+
+                <!-- ردیف‌های داده واقعی -->
+                <tr v-else v-for="link in dashboardData?.recentLinks || []" :key="link.ID">
                   <td>
                     <span class="dyf-code-tag">LNK-{{ link.linkID || link.ID }}</span>
                   </td>
@@ -151,11 +287,8 @@ onMounted(async () => {
                   </td>
                   <td>{{ link.shoesCount }} مدل</td>
                   <td>
-                    <span
-                      class="dyf-badge"
-                      :class="link.isActive ? 'dyf-badge-active' : 'dyf-badge-expired'"
-                    >
-                      {{ link.isActive ? 'فعال' : 'منقضی' }}
+                    <span class="dyf-badge" :class="getLinkBadgeClass(link)">
+                      {{ getLinkStatusLabel(link) }}
                     </span>
                   </td>
                   <td>
@@ -170,6 +303,8 @@ onMounted(async () => {
                     </a>
                   </td>
                 </tr>
+
+                <!-- حالت خالی -->
                 <tr v-if="!dashboardData?.recentLinks?.length && !isLoading">
                   <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">
                     هنوز هیچ لینک اختصاصی ثبت نشده است.
@@ -203,7 +338,15 @@ onMounted(async () => {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="c in dashboardData?.recentCustomers || []" :key="c.ID">
+                <!-- ردیف‌های اسکلتون مشتریان -->
+                <tr v-if="isLoading" v-for="i in 3" :key="`skel-cust-${i}`">
+                  <td><div class="dyf-skeleton" style="height: 20px; width: 100px;"></div></td>
+                  <td><div class="dyf-skeleton" style="height: 20px; width: 120px;"></div></td>
+                  <td><div class="dyf-skeleton" style="height: 20px; width: 50px;"></div></td>
+                </tr>
+
+                <!-- داده واقعی مشتریان -->
+                <tr v-else v-for="c in dashboardData?.recentCustomers || []" :key="c.ID">
                   <td style="font-weight: 700; color: var(--text-ivory);">
                     {{ c.firstNameFa }} {{ c.lastNameFa }}
                   </td>
@@ -212,6 +355,8 @@ onMounted(async () => {
                     <span class="dyf-badge dyf-badge-active">فعال</span>
                   </td>
                 </tr>
+
+                <!-- حالت خالی -->
                 <tr v-if="!dashboardData?.recentCustomers?.length && !isLoading">
                   <td colspan="3" style="text-align: center; color: var(--text-muted); padding: 2rem;">
                     هیچ مشتری ثبت‌شده‌ای یافت نشد.
@@ -225,3 +370,14 @@ onMounted(async () => {
     </div>
   </section>
 </template>
+
+<style scoped>
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.dyf-spin {
+  animation: spin 1s linear infinite;
+}
+</style>
