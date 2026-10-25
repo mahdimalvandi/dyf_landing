@@ -4,6 +4,7 @@
  * @module landing/main
  */
 
+import '../styles/style.css';
 import { initMobileMenu, closeMobileMenu, bindLenis } from './modules/mobile-menu.js';
 import { initSpecularHighlight } from './modules/specular.js';
 import { initInquiryForm } from './modules/inquiry-form.js';

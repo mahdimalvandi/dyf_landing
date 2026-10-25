@@ -1,0 +1,168 @@
+/**
+ * استایل‌های فوتر رسمی کارگاه B2B و نوار ثابت پایین صفحه در موبایل
+ * @module styles/landing/footer
+ */
+
+.site-footer {
+  background: #0d0a08;
+  border-top: 1px solid rgba(216, 178, 100, 0.16);
+  padding: 3.5rem 0 2rem;
+  position: relative;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 2.5rem;
+  margin-bottom: 3rem;
+}
+
+.footer-brand h3 {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--gold-light);
+  margin-bottom: 0.5rem;
+}
+
+.footer-brand p {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.8;
+  max-width: 360px;
+}
+
+.footer-col h4 {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-ivory);
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(216, 178, 100, 0.2);
+  padding-bottom: 0.5rem;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.footer-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.25s ease, padding-right 0.25s ease;
+}
+
+.footer-link:hover {
+  color: var(--gold-light);
+  padding-right: 4px;
+}
+
+.footer-info-item {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  display: block;
+}
+
+.footer-link.footer-cta-link {
+  color: var(--gold-light);
+  font-weight: 700;
+}
+
+.footer-social-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.1rem;
+}
+
+.footer-social-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(35, 23, 16, 0.85);
+  border: 1px solid rgba(216, 178, 100, 0.3);
+  color: var(--gold-light);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease, border-color 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+  text-decoration: none;
+}
+
+.footer-social-icon:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold-light);
+  background: rgba(61, 36, 21, 0.95);
+  color: #fff;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(216, 178, 100, 0.12);
+  padding-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* نوار ثابت ارتباط سریع پایین صفحه در موبایل (تماس | واتساپ) */
+.mobile-bottom-dock {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .mobile-bottom-dock {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 120;
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px)) 1rem;
+    background: rgba(18, 14, 11, 0.94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(216, 178, 100, 0.24);
+    box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.6);
+  }
+
+  .dock-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 44px;
+    border-radius: var(--r-md);
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.2s ease, filter 0.2s ease;
+  }
+
+  .dock-btn-call {
+    background: rgba(61, 36, 21, 0.88);
+    color: var(--gold-light);
+    border: 1px solid rgba(216, 178, 100, 0.32);
+  }
+
+  .dock-btn-whatsapp {
+    background: #1f7a42;
+    color: #ffffff;
+    border: 1px solid rgba(37, 211, 102, 0.4);
+  }
+
+  .dock-action-btn:active {
+    transform: scale(0.97);
+  }
+
+  body {
+    padding-bottom: calc(65px + env(safe-area-inset-bottom, 0px));
+  }
+}
