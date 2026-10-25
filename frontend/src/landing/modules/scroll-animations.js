@@ -1,7 +1,22 @@
 /**
  * ماژول اسکرول نرم (Lenis) و انیمیشن‌های ظهور و تعاملات مبتنی بر اسکرول (GSAP ScrollTrigger)
+ * بارگذاری ۱۰۰٪ بومی از پکیج‌های محلی، بدون هیچ وابستگی به CDNهای خارجی
  * @module landing/modules/scroll-animations
  */
+
+import Lenis from 'lenis';
+import 'lenis/dist/lenis.css';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
+
+// تعریف سراسری برای سازگاری با سایر کدها و ابزارهای توسعه
+if (typeof window !== 'undefined') {
+  window.Lenis = Lenis;
+  window.gsap = gsap;
+  window.ScrollTrigger = ScrollTrigger;
+}
 
 /**
  * پیکربندی و راه‌اندازی اسکرول روان و انیمیشن‌های صفحه
@@ -14,8 +29,8 @@ export function initScrollAnimations({ onNavClick } = {}) {
 
   // ۱. راه‌اندازی Lenis Smooth Scroll
   let lenis = null;
-  if (!prefersReducedMotion && typeof window.Lenis !== 'undefined') {
-    lenis = new window.Lenis({
+  if (!prefersReducedMotion) {
+    lenis = new Lenis({
       duration: 1.05,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
@@ -26,23 +41,12 @@ export function initScrollAnimations({ onNavClick } = {}) {
     });
 
     // پیوند رویدادهای اسکرول Lenis با GSAP ScrollTrigger
-    if (typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined') {
-      window.gsap.registerPlugin(window.ScrollTrigger);
-      lenis.on('scroll', window.ScrollTrigger.update);
+    lenis.on('scroll', ScrollTrigger.update);
 
-      window.gsap.ticker.add((time) => {
-        lenis.raf(time * 1000);
-      });
-      window.gsap.ticker.lagSmoothing(0);
-    } else {
-      const raf = (time) => {
-        lenis.raf(time);
-        requestAnimationFrame(raf);
-      };
-      requestAnimationFrame(raf);
-    }
-  } else if (typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined') {
-    window.gsap.registerPlugin(window.ScrollTrigger);
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
   }
 
   // ۲. تغییر ظاهر هدر با اسکرول
@@ -132,8 +136,8 @@ export function initScrollAnimations({ onNavClick } = {}) {
     });
   });
 
-  // اگر کاهش انیمیشن فعال باشد یا GSAP بارگذاری نشده باشد، سایر انیمیشن‌ها را لغو می‌کنیم
-  if (prefersReducedMotion || typeof window.gsap === 'undefined' || typeof window.ScrollTrigger === 'undefined') {
+  // اگر کاهش انیمیشن فعال باشد، سایر انیمیشن‌ها را لغو می‌کنیم
+  if (prefersReducedMotion) {
     return { lenis };
   }
 
@@ -210,7 +214,7 @@ export function initScrollAnimations({ onNavClick } = {}) {
     const items = triggerEl.querySelectorAll(cfg.elements);
     if (!items.length) return;
 
-    window.gsap.from(items, {
+    gsap.from(items, {
       scrollTrigger: {
         trigger: triggerEl,
         start: cfg.start || 'top 85%',
@@ -227,9 +231,7 @@ export function initScrollAnimations({ onNavClick } = {}) {
 
   // بازنشانی موقعیت‌های ScrollTrigger پس از لود کامل صفحه و استایل‌ها
   window.addEventListener('load', () => {
-    if (typeof window.ScrollTrigger !== 'undefined') {
-      window.ScrollTrigger.refresh();
-    }
+    ScrollTrigger.refresh();
   });
 
   // ۷. نمایان‌شدن تصویری — Clip Reveal در سکشن Defender
@@ -239,7 +241,7 @@ export function initScrollAnimations({ onNavClick } = {}) {
     const detailImgs = defenderTriptych.querySelectorAll('.defender-detail-img');
     const captions = defenderTriptych.querySelectorAll('.defender-frame-caption');
 
-    const clipTl = window.gsap.timeline({
+    const clipTl = gsap.timeline({
       scrollTrigger: {
         trigger: defenderTriptych,
         start: 'top 78%',
@@ -282,7 +284,7 @@ export function initScrollAnimations({ onNavClick } = {}) {
 
     if (pointItems.length) {
       pointItems.forEach((item) => {
-        window.ScrollTrigger.create({
+        ScrollTrigger.create({
           trigger: item,
           start: 'top 75%',
           end: 'bottom 45%',

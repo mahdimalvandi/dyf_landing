@@ -184,7 +184,7 @@ export function initInquiryForm() {
       `سلام، درخواست استعلام کاتالوگ عمده DYF:\nنام فروشگاه: ${storeName}\nشهر: ${cityMarket}\nتلفن: ${payload.phone_number}\nلاین موردنظر: ${lineNames[linePreference] || linePreference}`
     );
     if (errorWaLink) {
-      errorWaLink.href = `https://wa.me/98912XXXXXXX?text=${waText}`;
+      errorWaLink.href = `https://wa.me/989153177455?text=${waText}`;
     }
 
     // وضعیت در حال ارسال (Loading state)

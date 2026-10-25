@@ -47,7 +47,9 @@ describe('B2B Inquiry Form - Input Normalization & Validation', () => {
 
     it('should accept numbers with +98 prefix', () => {
       assert.equal(validateIranPhoneNumber('+989123456789'), true);
+      assert.equal(validateIranPhoneNumber('+989153177455'), true);
       assert.equal(validateIranPhoneNumber('+۹۸۹۱۲۳۴۵۶۷۸۹'), true);
+      assert.equal(validateIranPhoneNumber('+۹۸۹۱۵۳۱۷۷۴۵۵'), true);
     });
 
     it('should accept numbers with 98 prefix without plus', () => {
@@ -81,6 +83,8 @@ describe('B2B Inquiry Form - Input Normalization & Validation', () => {
 
     it('should convert +98912XXXXXXX to 0912XXXXXXX', () => {
       assert.equal(formatPhoneNumberForApi('+989123456789'), '09123456789');
+      assert.equal(formatPhoneNumberForApi('+989153177455'), '09153177455');
+      assert.equal(formatPhoneNumberForApi('+۹۸۹۱۵۳۱۷۷۴۵۵'), '09153177455');
     });
 
     it('should convert 98912XXXXXXX to 0912XXXXXXX', () => {
