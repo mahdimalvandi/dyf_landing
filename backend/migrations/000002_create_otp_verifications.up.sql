@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS "otpVerifications" (
+    "ID" BIGINT PRIMARY KEY,
+    "phoneNumber" VARCHAR(20) NOT NULL,
+    "code" VARCHAR(10) NOT NULL,
+    "purpose" VARCHAR(50) NOT NULL DEFAULT 'ADMIN_LOGIN',
+    "expiresAt" BIGINT NOT NULL,
+    "isUsed" BOOLEAN NOT NULL DEFAULT FALSE
+);

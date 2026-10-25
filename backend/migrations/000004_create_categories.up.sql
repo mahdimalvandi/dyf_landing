@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS "categories" (
+    "ID" BIGINT PRIMARY KEY,
+    "title" VARCHAR(100) NOT NULL UNIQUE
+);
