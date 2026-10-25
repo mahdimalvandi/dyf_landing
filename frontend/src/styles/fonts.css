@@ -1,11 +1,14 @@
 /**
- * تعاریف فونت‌های وب سیستم دیزاین DYF
- * بارگذاری قلم رسمی استعداد (Estedad) در اوزان مختلف
+ * تعاریف فونت‌های بومی دیزاین سیستم DYF (Local WebFonts)
+ * بارگذاری ۱۰۰٪ محلی بدون وابستگی به سرورها و CDNهای خارجی
  */
 
+/* ==========================================================================
+   ۱. فونت تیترهای شاخص: استعداد (Estedad)
+   ========================================================================== */
 @font-face {
   font-family: 'Estedad';
-  src: url('https://cdn.jsdelivr.net/gh/aminabedi68/Estedad@master/fonts/webfonts/Estedad-Bold.woff2') format('woff2');
+  src: url('/assets/fonts/Estedad-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -13,7 +16,7 @@
 
 @font-face {
   font-family: 'Estedad';
-  src: url('https://cdn.jsdelivr.net/gh/aminabedi68/Estedad@master/fonts/webfonts/Estedad-ExtraBold.woff2') format('woff2');
+  src: url('/assets/fonts/Estedad-ExtraBold.woff2') format('woff2');
   font-weight: 800;
   font-style: normal;
   font-display: swap;
@@ -21,8 +24,70 @@
 
 @font-face {
   font-family: 'Estedad';
-  src: url('https://cdn.jsdelivr.net/gh/aminabedi68/Estedad@master/fonts/webfonts/Estedad-Black.woff2') format('woff2');
+  src: url('/assets/fonts/Estedad-Black.woff2') format('woff2');
   font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ==========================================================================
+   ۲. فونت متن اصلی و رابط کاربری: وزیرمتن (Vazirmatn)
+   ========================================================================== */
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/assets/fonts/Vazirmatn-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/assets/fonts/Vazirmatn-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/assets/fonts/Vazirmatn-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/assets/fonts/Vazirmatn-ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ==========================================================================
+   ۳. فونت سریفی حروف لاتین و اعداد کلاسیک: Cormorant Garamond
+   ========================================================================== */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/assets/fonts/CormorantGaramond-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/assets/fonts/CormorantGaramond-SemiBoldItalic.woff2') format('woff2');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/assets/fonts/CormorantGaramond-SemiBold.woff2') format('woff2');
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }

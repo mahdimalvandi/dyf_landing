@@ -89,6 +89,23 @@
   transform: translateX(10px);
 }
 
+.hero-fallback-emblem {
+  display: none;
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.7));
+  pointer-events: none;
+}
+
+.hero-3d-wrapper.has-model-error .hero-model-viewer {
+  display: none !important;
+}
+
+.hero-3d-wrapper.has-model-error .hero-fallback-emblem {
+  display: block !important;
+}
+
 .hero-model-viewer {
   width: 100%;
   height: 100%;

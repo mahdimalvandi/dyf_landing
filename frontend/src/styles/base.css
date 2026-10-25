@@ -43,6 +43,40 @@ summary:focus-visible,
   outline-offset: 3px;
 }
 
+/* لینک پرش مستقیم به محتوای اصلی برای کاربران کیبورد */
+.skip-to-content {
+  position: fixed;
+  top: -100px;
+  right: 1.5rem;
+  background: var(--gold-primary);
+  color: var(--bg-deep);
+  font-weight: 800;
+  font-size: 0.9rem;
+  padding: 0.75rem 1.4rem;
+  border-radius: var(--r-sm);
+  z-index: 9999;
+  text-decoration: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+  transition: top 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.skip-to-content:focus {
+  top: 1rem;
+}
+
+/* کلاس کمکی برای متن‌های اسکرین‌ریدر و سئو */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
 html {
   overflow-x: clip;
   scroll-padding-top: 85px;
