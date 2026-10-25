@@ -1,7 +1,3 @@
-/**
- * ریست و تنظیمات پایه سراسری (Global Base Styles & Resets)
- */
-
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -31,7 +27,6 @@ h1, h2, h3, h4, h5, h6,
   font-family: var(--font-serif);
 }
 
-/* استایل یکنواخت فوکوس کیبورد و دسترس‌پذیری */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -43,7 +38,6 @@ summary:focus-visible,
   outline-offset: 3px;
 }
 
-/* لینک پرش مستقیم به محتوای اصلی برای کاربران کیبورد */
 .skip-to-content {
   position: fixed;
   top: -100px;
@@ -64,7 +58,6 @@ summary:focus-visible,
   top: 1rem;
 }
 
-/* کلاس کمکی برای متن‌های اسکرین‌ریدر و سئو */
 .visually-hidden {
   position: absolute !important;
   width: 1px !important;
@@ -89,7 +82,6 @@ body {
   min-height: 100vh;
 }
 
-/* بافت نامحسوس چرم کروکو در پس‌زمینه */
 body::before {
   content: '';
   position: fixed;
@@ -105,7 +97,6 @@ body::before {
   opacity: 0.85;
 }
 
-/* ۱. نوار دوخت چرمی بالای هدر (یکی از دو جایگاه مجاز کوک سراجی) */
 .top-saddle-stitch {
   width: 100%;
   height: 3px;

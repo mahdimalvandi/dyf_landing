@@ -1,9 +1,3 @@
-/**
- * استایل‌های هدر سایت، ناوبری دسکتاپ و دراور منوی کشویی موبایل
- * @module styles/landing/header
- */
-
-/* هدر اصلی */
 .site-header {
   position: sticky;
   top: 0;
@@ -17,7 +11,6 @@
   border-bottom: 1px solid rgba(216, 178, 100, 0.18);
 }
 
-/* برند و لوگو */
 .brand-logo {
   display: flex;
   align-items: center;
@@ -61,7 +54,6 @@
   display: block;
 }
 
-/* منوی میانی دسکتاپ */
 .desktop-nav ul {
   display: flex;
   list-style: none;
@@ -79,7 +71,6 @@
   display: inline-block;
 }
 
-/* انیمیشن خط طلایی از گوشه راست */
 .nav-item::after {
   content: '';
   position: absolute;
@@ -106,7 +97,6 @@
   gap: 12px;
 }
 
-/* دکمه همبرگری (سه خط) */
 .hamburger-btn {
   display: none;
   flex-direction: column;
@@ -134,7 +124,6 @@
   transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* انیمیشن تبدیل سه خط به ضربدر هنگام باز بودن */
 .hamburger-btn.active span:nth-child(1) {
   transform: translateY(7.5px) rotate(45deg);
 }
@@ -148,7 +137,6 @@
   transform: translateY(-7.5px) rotate(-45deg);
 }
 
-/* دراور منوی موبایل (Drawer) با شتاب‌دهنده گرافیکی GPU */
 .mobile-menu-overlay {
   position: fixed;
   inset: 0;
@@ -227,7 +215,6 @@
   text-align: center;
 }
 
-/* کانتینر مشترک و پترن دوخت */
 .saddle-stitched {
   border: 1px solid rgba(216, 178, 100, 0.16);
   border-radius: var(--r-md);

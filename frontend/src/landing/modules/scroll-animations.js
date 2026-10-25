@@ -1,9 +1,3 @@
-/**
- * ماژول اسکرول نرم (Lenis) و انیمیشن‌های ظهور و تعاملات مبتنی بر اسکرول (GSAP ScrollTrigger)
- * بارگذاری ۱۰۰٪ بومی از پکیج‌های محلی، بدون هیچ وابستگی به CDNهای خارجی
- * @module landing/modules/scroll-animations
- */
-
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 import { gsap } from 'gsap';
@@ -11,23 +5,15 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// تعریف سراسری برای سازگاری با سایر کدها و ابزارهای توسعه
 if (typeof window !== 'undefined') {
   window.Lenis = Lenis;
   window.gsap = gsap;
   window.ScrollTrigger = ScrollTrigger;
 }
 
-/**
- * پیکربندی و راه‌اندازی اسکرول روان و انیمیشن‌های صفحه
- * @param {object} [options]
- * @param {() => void} [options.onNavClick] کال‌بک در زمان کلیک روی ناوبری جهت بستن منوی موبایل
- * @returns {{ lenis: object|null }} شیء اسکرولر جهت هماهنگی با سایر ماژول‌ها
- */
 export function initScrollAnimations({ onNavClick } = {}) {
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // ۱. راه‌اندازی Lenis Smooth Scroll
   let lenis = null;
   if (!prefersReducedMotion) {
     lenis = new Lenis({
@@ -40,7 +26,6 @@ export function initScrollAnimations({ onNavClick } = {}) {
       touchMultiplier: 1.15,
     });
 
-    // پیوند رویدادهای اسکرول Lenis با GSAP ScrollTrigger
     lenis.on('scroll', ScrollTrigger.update);
 
     gsap.ticker.add((time) => {
@@ -49,7 +34,6 @@ export function initScrollAnimations({ onNavClick } = {}) {
     gsap.ticker.lagSmoothing(0);
   }
 
-  // ۲. تغییر ظاهر هدر با اسکرول
   const siteHeader = document.querySelector('.site-header');
   if (siteHeader) {
     window.addEventListener('scroll', () => {
@@ -61,7 +45,6 @@ export function initScrollAnimations({ onNavClick } = {}) {
     }, { passive: true });
   }
 
-  // ۳. مدیریت ناوبری لینک‌های داخلی با اسکرول نرم
   const internalAnchors = document.querySelectorAll('a[href^="#"]');
   internalAnchors.forEach((anchor) => {
     anchor.addEventListener('click', function(e) {
@@ -87,7 +70,6 @@ export function initScrollAnimations({ onNavClick } = {}) {
     });
   });
 
-  // ۴. انتخاب هوشمند لاین کاتالوگ و اسکرول به فرم استعلام
   const lineLinks = document.querySelectorAll('.js-select-line');
   lineLinks.forEach((link) => {
     link.addEventListener('click', function(e) {
@@ -113,7 +95,6 @@ export function initScrollAnimations({ onNavClick } = {}) {
     });
   });
 
-  // ۵. دکمه‌های اقدام به استعلام
   const inquiryButtons = document.querySelectorAll('.js-scroll-inquiry, .hero-btn-primary');
   inquiryButtons.forEach((btn) => {
     btn.addEventListener('click', function(e) {
@@ -136,12 +117,10 @@ export function initScrollAnimations({ onNavClick } = {}) {
     });
   });
 
-  // اگر کاهش انیمیشن فعال باشد، سایر انیمیشن‌ها را لغو می‌کنیم
   if (prefersReducedMotion) {
     return { lenis };
   }
 
-  // ۶. ظاهر شدن نرم بخش‌ها هنگام اسکرول — Fade Up Reveal با ScrollTrigger
   const revealConfigs = [
     {
       trigger: '.hero-content-top',
@@ -229,12 +208,10 @@ export function initScrollAnimations({ onNavClick } = {}) {
     });
   });
 
-  // بازنشانی موقعیت‌های ScrollTrigger پس از لود کامل صفحه و استایل‌ها
   window.addEventListener('load', () => {
     ScrollTrigger.refresh();
   });
 
-  // ۷. نمایان‌شدن تصویری — Clip Reveal در سکشن Defender
   const defenderTriptych = document.querySelector('.defender-visual-triptych');
   if (defenderTriptych) {
     const masterImg = defenderTriptych.querySelector('.defender-master-img');
@@ -277,7 +254,6 @@ export function initScrollAnimations({ onNavClick } = {}) {
     }
   }
 
-  // ۸. روایت تصویری محدود — Sticky Scrollytelling در سکشن داستان برند
   const storySection = document.querySelector('.story-section');
   if (storySection && window.innerWidth >= 993) {
     const pointItems = storySection.querySelectorAll('.story-point-item');

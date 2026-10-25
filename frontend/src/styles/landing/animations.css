@@ -1,10 +1,3 @@
-/**
- * استایل‌های انیمیشن، اسکرولی‌تلینگ و اسکرول روان (Animations & Motion)
- * هماهنگ با Lenis و GSAP ScrollTrigger
- * @module styles/landing/animations
- */
-
-/* استایل‌های پایه و هماهنگ‌سازی Lenis برای اسکرول روان */
 html.lenis,
 html.lenis body {
   height: auto;
@@ -26,7 +19,6 @@ html.lenis body {
   pointer-events: none;
 }
 
-/* تثبیت نوار کوک سراجی و هدر سایت در اسکرول طبیعی */
 .top-saddle-stitch {
   position: sticky;
   top: 0;
@@ -46,7 +38,6 @@ html.lenis body {
   border-bottom-color: rgba(216, 178, 100, 0.25);
 }
 
-/* روایت تصویری استیکی (Sticky Scrollytelling) در سکشن داستان برند */
 @media (min-width: 993px) {
   .story-section {
     position: relative;
@@ -94,7 +85,6 @@ html.lenis body {
   }
 }
 
-/* آماده‌سازی نمایان‌شدن تصویری (Clip Reveal) در سکشن Defender */
 .defender-master-frame,
 .defender-detail-frame {
   overflow: hidden;
@@ -111,12 +101,10 @@ html.lenis body {
   will-change: opacity, transform;
 }
 
-/* آماده‌سازی Fade Up Reveal برای المان‌های کلیدی بدون مخفی‌سازی استاتیک در غیاب JS */
 .reveal-item {
   will-change: transform, opacity;
 }
 
-/* رعایت کامل تنظیمات کاهش حرکت سیستم‌عامل (prefers-reduced-motion) */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto !important;

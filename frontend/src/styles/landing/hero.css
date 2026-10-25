@@ -1,9 +1,3 @@
-/**
- * استایل‌های سکشن هیرو (Hero Section)، مدل سه‌بعدی و کارت معرفی B2B
- * @module styles/landing/hero
- */
-
-/* بخش هیرو با چیدمان دو ستونه لوکس و پس‌زمینه اختصاصی کارگاه چرم ۲T */
 .hero-section {
   position: relative;
   min-height: 88vh;
@@ -48,7 +42,6 @@
   align-items: center;
 }
 
-/* بخش نشان رسمی سه‌بعدی برند (بدون باکس پس‌زمینه و شناور روی صفحه) */
 .hero-logo-card {
   position: relative;
   background: transparent;
@@ -78,7 +71,7 @@
 
 .hero-3d-wrapper {
   position: relative;
-  /* متغیر واحد کنترل سایز نشان سه‌بعدی */
+
   --emblem-size: 500px;
   width: var(--emblem-size);
   height: calc(var(--emblem-size) * 1.18);
@@ -125,7 +118,6 @@
   cursor: grabbing;
 }
 
-/* حذف کامل بوردر آبی و اوت‌لاین هنگام فوکوس روی مدل سه بعدی */
 model-viewer,
 .hero-model-viewer,
 model-viewer:focus,
@@ -143,7 +135,6 @@ model-viewer:focus-within,
   -webkit-tap-highlight-color: transparent !important;
 }
 
-/* حذف نوار پیشرفت پیش‌فرض و هاله سیاه بالای مدل هنگام لود اولیه */
 .hero-model-viewer::part(default-progress-bar),
 .hero-model-viewer::part(default-progress-mask) {
   display: none !important;
@@ -152,7 +143,6 @@ model-viewer:focus-within,
   height: 0 !important;
 }
 
-/* کارت محتوا و معرفی B2B (سمت چپ در چیدمان راست‌به‌چپ) */
 .hero-content-card {
   position: relative;
   background: linear-gradient(160deg, rgba(38, 24, 16, 0.85) 0%, rgba(18, 15, 12, 0.95) 100%);

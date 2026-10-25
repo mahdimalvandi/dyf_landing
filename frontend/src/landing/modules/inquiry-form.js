@@ -1,14 +1,3 @@
-/**
- * ماژول مدیریت فرم استعلام سفارش عمده B2B
- * شامل اعتبارسنجی ورودی‌های فارسی، نرمال‌سازی شماره تلفن، اتصال به سرویس و مدیریت حالات خطا و موفقیت
- * @module landing/modules/inquiry-form
- */
-
-/**
- * تبدیل ارقام فارسی و عربی به ارقام انگلیسی
- * @param {string} str
- * @returns {string}
- */
 export function normalizeDigits(str) {
   if (!str) return '';
   const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
@@ -21,23 +10,13 @@ export function normalizeDigits(str) {
   return res.trim();
 }
 
-/**
- * اعتبارسنجی شماره همراه ایرانی
- * @param {string} phone
- * @returns {boolean}
- */
 export function validateIranPhoneNumber(phone) {
   const normalized = normalizeDigits(phone).replace(/\s+/g, '').replace(/^-+/, '');
-  // پشتیبانی از فرمت‌های 0912xxxxxxx یا +98912xxxxxxx یا 98912xxxxxxx
+
   const regex = /^(?:(?:\+?98)|0)?9\d{9}$/;
   return regex.test(normalized);
 }
 
-/**
- * فرمت‌بندی استاندارد شماره همراه برای ارسال به بک‌اند (0912xxxxxxx)
- * @param {string} phone
- * @returns {string}
- */
 export function formatPhoneNumberForApi(phone) {
   let normalized = normalizeDigits(phone).replace(/[\s\-+]/g, '');
   if (normalized.startsWith('989')) {
@@ -48,9 +27,6 @@ export function formatPhoneNumberForApi(phone) {
   return normalized;
 }
 
-/**
- * راه‌اندازی و مدیریت رویدادهای فرم استعلام
- */
 export function initInquiryForm() {
   const inquiryForm = document.getElementById('inquiryForm');
   const formSuccessBanner = document.getElementById('formSuccessBanner');
@@ -103,7 +79,6 @@ export function initInquiryForm() {
     }
   }
 
-  // پاک کردن خطای فیلد به محض شروع تایپ کاربر
   [storeNameInput, cityMarketInput, phoneNumberInput].forEach((input) => {
     input?.addEventListener('input', () => {
       if (input.classList.contains('has-error')) {
@@ -174,7 +149,6 @@ export function initInquiryForm() {
       source: 'landing_page',
     };
 
-    // آماده‌سازی متن واتساپ برای اقدام جایگزین در صورت خطا
     const lineNames = {
       both: 'هر دو لاین (رسمی + اسپرت)',
       executive: 'لاین رسمی و چرمی (FORMAL)',
@@ -187,7 +161,6 @@ export function initInquiryForm() {
       errorWaLink.href = `https://wa.me/989153177455?text=${waText}`;
     }
 
-    // وضعیت در حال ارسال (Loading state)
     if (submitBtn) {
       submitBtn.classList.add('is-loading');
       submitBtn.disabled = true;
@@ -211,7 +184,6 @@ export function initInquiryForm() {
 
       clearTimeout(timeoutId);
 
-      // بررسی پاسخ موفق سرور
       if (response.ok || response.status === 201) {
         inquiryForm.style.display = 'none';
         if (formSuccessBanner) {
@@ -221,7 +193,6 @@ export function initInquiryForm() {
         return;
       }
 
-      // خطای اعتبارسنجی سرور یا خطای سرویس
       let errorMsg = `خطای سرور (${response.status}): سرویس ثبت استعلام در حال حاضر در دسترس نیست.`;
       try {
         const errorData = await response.json();
@@ -229,7 +200,6 @@ export function initInquiryForm() {
           errorMsg = errorData.message;
         }
       } catch {
-        // نادیده‌گرفتن خطای پارس JSON
       }
 
       showGeneralError(
@@ -237,7 +207,6 @@ export function initInquiryForm() {
         errorMsg + ' برای ثبت سریع استعلام، می‌توانید مشخصات را مستقیماً از طریق واتساپ ارسال فرمایید.'
       );
     } catch (err) {
-      // خطای شبکه / قطع ارتباط / تایم‌اوت
       const isAbort = err.name === 'AbortError';
       const networkMsg = isAbort
         ? 'مهلت ارتباط با سرور به پایان رسید (Timeout). لطفاً اتصال شبکه خود را بررسی کنید.'

@@ -1,9 +1,3 @@
-/**
- * ماژول انیمیشن Specular Highlight تعاملی روی دکمه‌های دیزاین سیستم
- * پیاده‌سازی افکت انعکاس نور بر اساس موقعیت اشاره‌گر ماوس و تاچ
- * @module landing/modules/specular
- */
-
 export function initSpecularHighlight() {
   const buttons = document.querySelectorAll('.js-specular');
   if (!buttons.length) return;

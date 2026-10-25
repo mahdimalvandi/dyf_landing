@@ -1,20 +1,10 @@
-/**
- * استایل‌شیت اصلی و نقطه ورود صفحه فرود DYF (Landing Entry Stylesheet)
- * سیستم دیزاین نگارش ۴.۰
- * هماهنگی دقیق ترتیب آبشاری (Cascade Order) برای ماژول‌های مجزا
- */
-
-/* ۱. لایه توکن‌های پایه و سیستم طراحی مرکزی (قابل اشتراک با کاتالوگ و ادمین) */
 @import './tokens.css';
 @import './fonts.css';
 
-/* ۲. لایه تنظیمات پایه و ریست عمومی */
 @import './base.css';
 
-/* ۳. لایه کامپوننت‌های اشتراکی دیزاین سیستم */
 @import './components.css';
 
-/* ۴. لایه سکشن‌های مجزای صفحه اصلی (Landing Page Sections) */
 @import './landing/header.css';
 @import './landing/hero.css';
 @import './landing/story.css';
@@ -25,8 +15,6 @@
 @import './landing/faq.css';
 @import './landing/footer.css';
 
-/* ۵. لایه واکنش‌گرایی و مدیاکوئری‌ها */
 @import './landing/responsive.css';
 
-/* ۶. لایه انیمیشن‌ها، اسکرولی‌تلینگ و اسکرول نرم (Lenis & GSAP) */
 @import './landing/animations.css';

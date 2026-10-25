@@ -1,9 +1,3 @@
-/**
- * استایل‌های واکنش‌گرایی، مدیاکوئری‌های موبایل و تبلت (Responsive Breakpoints)
- * @module styles/landing/responsive
- */
-
-/* واکنش‌گرایی: تغییر چیدمان در تبلت (≤ 992px) */
 @media (max-width: 992px) {
   .hero-main-desc {
     display: -webkit-box;
@@ -153,7 +147,6 @@
   }
 }
 
-/* واکنش‌گرایی: ناوبری موبایل (≤ 920px) */
 @media (max-width: 920px) {
   .desktop-nav {
     display: none;
@@ -166,7 +159,6 @@
   }
 }
 
-/* واکنش‌گرایی: تغییر چیدمان در موبایل‌های کوچک (≤ 640px) */
 @media (max-width: 640px) {
   .container {
     padding: 0 1.1rem;

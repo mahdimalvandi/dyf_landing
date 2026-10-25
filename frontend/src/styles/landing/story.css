@@ -1,8 +1,3 @@
-/**
- * استایل‌های سکشن داستان برند DYF (Brand Story Editorial Section)
- * @module styles/landing/story
- */
-
 .story-section {
   position: relative;
   padding: 6.5rem 0 6rem;
@@ -32,7 +27,6 @@
   align-items: center;
 }
 
-/* ستون متن و داستان تحریریه‌ای (سمت راست در چیدمان راست‌به‌چپ) */
 .story-text-col {
   display: flex;
   flex-direction: column;
@@ -77,7 +71,6 @@
   margin-bottom: 2.2rem;
 }
 
-/* سه نکته کوتاه */
 .story-points {
   display: flex;
   flex-direction: column;
@@ -117,7 +110,6 @@
   line-height: 1.5;
 }
 
-/* ستون تصویر کارگاه و ابزارها (سمت چپ در چیدمان راست‌به‌چپ) */
 .story-image-col {
   position: relative;
 }
@@ -158,7 +150,6 @@
   pointer-events: none;
 }
 
-/* تیترهای مشترک سکشن‌ها */
 .section-header {
   text-align: center;
   margin-bottom: 3.5rem;

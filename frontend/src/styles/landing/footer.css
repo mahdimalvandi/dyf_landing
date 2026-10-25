@@ -1,8 +1,3 @@
-/**
- * استایل‌های فوتر رسمی کارگاه B2B و نوار ثابت پایین صفحه در موبایل
- * @module styles/landing/footer
- */
-
 .site-footer {
   background: #0d0a08;
   border-top: 1px solid rgba(216, 178, 100, 0.16);
@@ -110,7 +105,6 @@
   color: var(--text-muted);
 }
 
-/* نوار ثابت ارتباط سریع پایین صفحه در موبایل (تماس | واتساپ) */
 .mobile-bottom-dock {
   display: none;
 }

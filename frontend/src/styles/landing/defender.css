@@ -1,8 +1,3 @@
-/**
- * استایل‌های مطالعه متریال و ساخت Defender (The Defender Material Study Showcase)
- * @module styles/landing/defender
- */
-
 .defender-section {
   padding: 7.5rem 0 6.5rem;
   background:
@@ -15,7 +10,6 @@
   overflow: hidden;
 }
 
-/* ۱. هدر ادیتوریال بالا */
 .defender-showcase-header {
   text-align: right;
   max-width: 1020px;
@@ -51,7 +45,6 @@
   font-weight: 400;
 }
 
-/* ۲. ترکیب تصاویر (تصویر شاخص و دو تصویر جزئیات) */
 .defender-visual-triptych {
   display: grid;
   grid-template-columns: 1.45fr 1fr;
@@ -103,7 +96,6 @@
   transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* تنظیم کانون توجه و کراپ هر تصویر جزئیات */
 .defender-detail-frame:first-child .defender-detail-img {
   object-position: center center;
 }
@@ -117,7 +109,6 @@
   transform: scale(1.02);
 }
 
-/* بج مینیمال عنوان و مشخصه در گوشه تصویر کارگاهی */
 .defender-frame-caption {
   position: absolute;
   bottom: 14px;
@@ -162,7 +153,6 @@
   white-space: nowrap;
 }
 
-/* ۳. انتهای سکشن: امضای برند DYF */
 .defender-showcase-footer {
   text-align: center;
   padding-top: 0.5rem;

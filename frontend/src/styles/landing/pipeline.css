@@ -1,8 +1,3 @@
-/**
- * استایل‌های فرآیند ۴ مرحله‌ای سفارش عمده (The Order Journey - Editorial Horizontal Timeline)
- * @module styles/landing/pipeline
- */
-
 .pipeline-section {
   background-color: var(--bg-deep);
   background-image: radial-gradient(ellipse 70% 50% at 50% 25%, rgba(61, 36, 21, 0.25) 0%, transparent 100%);
@@ -53,7 +48,6 @@
   margin: 0 auto 3.8rem;
 }
 
-/* خط اتصال افقی پیوسته بین دایره‌ها */
 .pipeline-timeline::before {
   content: '';
   position: absolute;
