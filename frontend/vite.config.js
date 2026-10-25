@@ -23,6 +23,9 @@ export default defineConfig({
           if (pathname === '/catalog' || pathname === '/catalog.html') {
             req.url = '/catalog/' + (search ? '?' + search : '');
           }
+          if (pathname === '/admin' || pathname === '/admin.html') {
+            req.url = '/admin/' + (search ? '?' + search : '');
+          }
           next();
         });
       },
@@ -31,6 +34,9 @@ export default defineConfig({
           const [pathname, search] = req.url.split('?');
           if (pathname === '/catalog' || pathname === '/catalog.html') {
             req.url = '/catalog/' + (search ? '?' + search : '');
+          }
+          if (pathname === '/admin' || pathname === '/admin.html') {
+            req.url = '/admin/' + (search ? '?' + search : '');
           }
           next();
         });
@@ -56,7 +62,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        admin: resolve(__dirname, 'admin.html'),
+        admin: resolve(__dirname, 'admin/index.html'),
         catalog: resolve(__dirname, 'catalog/index.html'),
       },
     },
