@@ -9,4 +9,6 @@
 /backend/bin/
 /backend/tmp/
 node_modules/
+dist/
+frontend/dist/
 .DS_Store
