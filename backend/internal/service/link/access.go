@@ -22,6 +22,15 @@ func (service Service) Access(token string) (dtoLink.CatalogAccessResponse, int,
 	if !linkRecord.IsActive {
 		return dtoLink.CatalogAccessResponse{}, http.StatusForbidden, staticErrors.ErrLinkInactive
 	}
+	if linkRecord.IsDirectAccess {
+		customer, customerFound, customerError := service.customerRepository.FindCustomerByID(linkRecord.CustomerID)
+		if customerError != nil {
+			return dtoLink.CatalogAccessResponse{}, http.StatusInternalServerError, customerError
+		}
+		if !customerFound || !customer.IsActive {
+			return dtoLink.CatalogAccessResponse{}, http.StatusForbidden, staticErrors.ErrLinkInactive
+		}
+	}
 	if linkRecord.AuthMethod != constantsLink.AuthMethodDirect {
 		return dtoLink.CatalogAccessResponse{}, http.StatusForbidden, staticErrors.ErrInvalidAuthMethod
 	}

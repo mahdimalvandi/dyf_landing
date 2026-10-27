@@ -25,10 +25,14 @@ func (service Service) SendOTP(request dtoAuth.SendOTPRequest) (dtoAuth.SendOTPR
 	if !adminUser.IsActive {
 		return dtoAuth.SendOTPResponse{}, http.StatusForbidden, staticErrors.ErrAdminInactive
 	}
+	return service.sendOTP(request.PhoneNumber, constantsAuth.PurposeAdminLogin)
+}
+
+func (service Service) sendOTP(phoneNumber, purpose string) (dtoAuth.SendOTPResponse, int, error) {
 
 	currentTime := time.Now().Unix()
 
-	latestOTP, otpFound, fetchError := service.repository.FindLatestActiveOTP(request.PhoneNumber, constantsAuth.PurposeAdminLogin)
+	latestOTP, otpFound, fetchError := service.repository.FindLatestActiveOTP(phoneNumber, purpose)
 	if fetchError != nil {
 		return dtoAuth.SendOTPResponse{}, http.StatusInternalServerError, fetchError
 	}
@@ -41,7 +45,7 @@ func (service Service) SendOTP(request dtoAuth.SendOTPRequest) (dtoAuth.SendOTPR
 	}
 
 	nanosecondsThreshold := (currentTime - constantsAuth.MaxRequestsWindowSec) * int64(time.Second)
-	recentCount, countError := service.repository.CountRecentOTPRequests(request.PhoneNumber, constantsAuth.PurposeAdminLogin, nanosecondsThreshold)
+	recentCount, countError := service.repository.CountRecentOTPRequests(phoneNumber, purpose, nanosecondsThreshold)
 	if countError != nil {
 		return dtoAuth.SendOTPResponse{}, http.StatusInternalServerError, countError
 	}
@@ -54,15 +58,15 @@ func (service Service) SendOTP(request dtoAuth.SendOTPRequest) (dtoAuth.SendOTPR
 		return dtoAuth.SendOTPResponse{}, http.StatusInternalServerError, codeError
 	}
 
-	if invalidateError := service.repository.InvalidatePreviousOTPs(request.PhoneNumber, constantsAuth.PurposeAdminLogin); invalidateError != nil {
+	if invalidateError := service.repository.InvalidatePreviousOTPs(phoneNumber, purpose); invalidateError != nil {
 		return dtoAuth.SendOTPResponse{}, http.StatusInternalServerError, invalidateError
 	}
 
 	otpRecord := entityAuth.OTPVerification{
 		ID:          time.Now().UnixNano(),
-		PhoneNumber: request.PhoneNumber,
+		PhoneNumber: phoneNumber,
 		Code:        generatedCode,
-		Purpose:     constantsAuth.PurposeAdminLogin,
+		Purpose:     purpose,
 		ExpiresAt:   currentTime + int64(service.expirationSec),
 		IsUsed:      false,
 	}
@@ -72,7 +76,7 @@ func (service Service) SendOTP(request dtoAuth.SendOTPRequest) (dtoAuth.SendOTPR
 	}
 
 	deliveryPayload := sms.MessagePayload{
-		Mobile:           request.PhoneNumber,
+		Mobile:           phoneNumber,
 		Code:             generatedCode,
 		TemplateID:       service.msgWayTemplate,
 		ExpiresInSeconds: service.expirationSec,

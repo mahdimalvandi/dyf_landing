@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	entityAuth "dyf-backend/internal/entity/auth"
+	entityLink "dyf-backend/internal/entity/link"
 	constantsAuth "dyf-backend/statics/constants/auth"
 
 	"gorm.io/gorm"
@@ -11,6 +12,17 @@ import (
 
 type Repository struct {
 	databaseConnection *gorm.DB
+}
+
+func (repository Repository) FindCustomerAccess(phoneNumber string) (entityLink.AccessLink, bool, error) {
+	var record entityLink.AccessLink
+	result := repository.databaseConnection.Table(`"accessLinks" AS links`).Select("links.*").
+		Joins(`JOIN customers ON customers."ID" = links."customerID"`).
+		Where(`customers."phoneNumber" = ? AND customers."isActive" = true AND links."isDirectAccess" = true`, phoneNumber).Take(&record)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return record, false, nil
+	}
+	return record, result.Error == nil, result.Error
 }
 
 func NewRepository(databaseConnection *gorm.DB) Repository {

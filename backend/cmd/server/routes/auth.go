@@ -21,6 +21,17 @@ func RegisterAuthRoutes(apiGroup fiber.Router, databaseConnection *gorm.DB) {
 	adminAuthMiddleware := middleware.RequireAdminAuth(authRepository)
 
 	adminAuthGroup := apiGroup.Group("/auth/admin")
+	customerAuthGroup := apiGroup.Group("/auth/customer")
+	customerAuthGroup.Post("/otp/send", authHandler.SendCustomerOTP, limiter.New(limiter.Config{Max: 5, Expiration: time.Minute,
+		LimitReached: func(context fiber.Ctx) error {
+			return response.FromError(context, fiber.StatusTooManyRequests, staticErrors.ErrTooManyRequests, nil)
+		},
+	}))
+	customerAuthGroup.Post("/otp/verify", authHandler.VerifyCustomerOTP, limiter.New(limiter.Config{Max: 10, Expiration: time.Minute,
+		LimitReached: func(context fiber.Ctx) error {
+			return response.FromError(context, fiber.StatusTooManyRequests, staticErrors.ErrTooManyRequests, nil)
+		},
+	}))
 	adminAuthGroup.Post("/otp/send", authHandler.SendOTP)
 	adminAuthGroup.Post("/otp/verify", authHandler.VerifyOTP, limiter.New(limiter.Config{
 		Max: 10, Expiration: time.Minute,

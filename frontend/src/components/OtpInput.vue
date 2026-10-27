@@ -3,6 +3,9 @@
     <input
       v-for="(digit, index) in digits"
       :key="index"
+      :id="'otpDigit' + index"
+      :name="'otpDigit' + index"
+      :aria-label="'رقم ' + (index + 1) + ' کد تأیید'"
       ref="inputRefs"
       type="text"
       maxlength="1"
