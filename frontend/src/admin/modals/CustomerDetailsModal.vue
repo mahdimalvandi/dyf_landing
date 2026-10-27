@@ -31,6 +31,7 @@
           <div style="text-align: left;">
             <div id="custDetailsPhone" style="font-family: var(--font-title); font-size: 0.95rem; font-weight: 700; color: var(--gold-light); direction: ltr;">{{ customer.phone }}</div>
           </div>
+          <a v-if="customer.directAccess?.enabled && customer.directAccess?.url" :href="customer.directAccess.url" target="_blank" rel="noopener" class="dyf-btn dyf-btn-outline" style="margin-top: 1rem;">مشاهده کاتالوگ مشتری</a>
         </div>
 
         <!-- پنل مستقل مدیریت دسترسی مستقیم مشتری -->
@@ -93,7 +94,7 @@
               <div class="dyf-form-group" style="margin: 0;">
                 <label class="dyf-form-label">آخرین مهلت شروع دسترسی (انقضای ورود)</label>
                 <div class="dyf-time-input-group">
-                  <input type="number" id="directAccessDeadlineValue" v-model.number="deadlineValue" class="dyf-input dyf-time-val" min="1" max="999" placeholder="مقدار" :disabled="deadlineUnit === 'none'">
+                  <input type="number" id="directAccessDeadlineValue" v-model.number="deadlineValue" class="dyf-input dyf-time-val" min="1" max="999999" placeholder="مقدار" :disabled="deadlineUnit === 'none'">
                   <select id="directAccessDeadlineUnit" v-model="deadlineUnit" class="dyf-select dyf-time-unit">
                     <option value="d">روز</option>
                     <option value="h">ساعت</option>

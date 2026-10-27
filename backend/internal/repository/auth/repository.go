@@ -86,9 +86,11 @@ func (repository Repository) CreateOTP(otpRecord entityAuth.OTPVerification) err
 
 func (repository Repository) MarkOTPAsUsed(otpID int64) error {
 	updateResult := repository.databaseConnection.Model(&entityAuth.OTPVerification{}).
-		Where(`"ID" = ?`, otpID).
+		Where(`"ID" = ? AND "isUsed" = false`, otpID).
 		Update("isUsed", true)
-
+	if updateResult.Error == nil && updateResult.RowsAffected != 1 {
+		return errors.New("invalidOTP")
+	}
 	return updateResult.Error
 }
 

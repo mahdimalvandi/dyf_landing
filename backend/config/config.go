@@ -77,7 +77,7 @@ func Load() Config {
 			Provider:          fetchEnvironment("OTP_PROVIDER", "mock"),
 			ExpirationMinutes: otpExpirationMinutes,
 			CooldownSeconds:   otpCooldownSeconds,
-			MsgWayAPIKey:      fetchEnvironment("MSGWAY_API_KEY", "006587c3c4c9daedb39f97bd9dec59e4"),
+			MsgWayAPIKey:      fetchEnvironment("MSGWAY_API_KEY", ""),
 			MsgWayTemplateID:  msgwayTemplateID,
 		},
 	}

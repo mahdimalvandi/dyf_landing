@@ -4,10 +4,12 @@ import (
 	handlerLink "dyf-backend/internal/handler/link"
 	"dyf-backend/internal/middleware"
 	repoAuth "dyf-backend/internal/repository/auth"
+	repoCategory "dyf-backend/internal/repository/category"
 	repoCustomer "dyf-backend/internal/repository/customer"
 	repoLink "dyf-backend/internal/repository/link"
 	repoShoe "dyf-backend/internal/repository/shoe"
 	serviceLink "dyf-backend/internal/service/link"
+	serviceShoe "dyf-backend/internal/service/shoe"
 
 	"github.com/gofiber/fiber/v3"
 	"gorm.io/gorm"
@@ -17,7 +19,8 @@ func RegisterLinkRoutes(apiGroup fiber.Router, databaseConnection *gorm.DB) {
 	linkRepository := repoLink.NewRepository(databaseConnection)
 	shoeRepository := repoShoe.NewRepository(databaseConnection)
 	customerRepository := repoCustomer.NewRepository(databaseConnection)
-	linkService := serviceLink.NewService(linkRepository, shoeRepository, customerRepository)
+	shoeService := serviceShoe.NewService(shoeRepository, repoCategory.NewRepository(databaseConnection))
+	linkService := serviceLink.NewService(linkRepository, shoeRepository, customerRepository, shoeService)
 	linkHandler := handlerLink.NewHandler(linkService)
 
 	authRepository := repoAuth.NewRepository(databaseConnection)

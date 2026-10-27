@@ -37,6 +37,7 @@ func (service Service) mapToLinkItemResponse(linkRecord entityLink.AccessLink) d
 	publicCatalogURL := fmt.Sprintf("%s/%s", constantsLink.CatalogURLPrefix, linkRecord.Token)
 
 	return dtoLink.LinkItemResponse{
+		IsDirectAccess:         linkRecord.IsDirectAccess,
 		ID:                     linkRecord.ID,
 		LinkID:                 linkRecord.LinkID,
 		Token:                  linkRecord.Token,

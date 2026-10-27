@@ -26,7 +26,7 @@ type CoreService struct {
 func New(appConfig config.Config) CoreService {
 	databaseConnection, connectionError := database.ConnectPostgres(appConfig)
 	if connectionError != nil {
-		log.Printf("[DATABASE ERROR] failed to connect: %v", connectionError)
+		log.Fatalf("[DATABASE ERROR] failed to connect: %v", connectionError)
 	}
 
 	fastJSON := jsonIter.ConfigCompatibleWithStandardLibrary

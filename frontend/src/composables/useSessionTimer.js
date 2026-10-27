@@ -24,7 +24,7 @@ export function useSessionTimer() {
 
     isUnlimited.value = false;
 
-    let totalSeconds = 15 * 60;
+    let totalSeconds = session.remainingSeconds ?? 15 * 60;
     const match = String(session.duration || '').match(/^(\d+)([mhd])$/);
     if (match) {
       const val = parseInt(match[1], 10);
@@ -51,7 +51,10 @@ export function useSessionTimer() {
       isWarning.value = remainingSeconds.value < 120;
     };
 
-    tick();
+    if (remainingSeconds.value <= 0) {
+      onExpireCallback?.();
+      return;
+    }
     timerInterval.value = setInterval(tick, 1000);
   }
 

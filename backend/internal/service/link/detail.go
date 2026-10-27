@@ -22,6 +22,7 @@ func (service Service) Detail(identifier int64) (dtoLink.LinkDetailResponse, int
 
 	return dtoLink.LinkDetailResponse{
 		LinkItemResponse: dtoLink.LinkItemResponse{
+			IsDirectAccess:         linkRecord.IsDirectAccess,
 			ID:                     linkRecord.ID,
 			LinkID:                 linkRecord.LinkID,
 			Token:                  linkRecord.Token,

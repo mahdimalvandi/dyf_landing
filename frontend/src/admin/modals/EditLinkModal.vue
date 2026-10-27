@@ -77,7 +77,7 @@
                 id="editLinkDeadlineValue"
                 class="dyf-input dyf-time-val"
                 min="1"
-                max="999"
+                max="999999"
                 placeholder="مقدار"
                 :disabled="deadlineUnit === 'none'"
               >
@@ -99,7 +99,7 @@
                 id="editLinkDurationValue"
                 class="dyf-input dyf-time-val"
                 min="1"
-                max="999"
+                max="999999"
                 placeholder="مقدار"
                 :disabled="durationUnit === 'unlimited'"
               >
@@ -206,6 +206,7 @@ function handleSave() {
     recipientFa: recipientFa.value.trim(),
     addModels: [...allowedShoeIds.value],
     startDeadline: deadlineStr,
+    expiresAt: deadlineUnit.value === 'none' ? 0 : Math.floor(Date.now() / 1000) + deadlineValue.value * (deadlineUnit.value === 'd' ? 86400 : deadlineUnit.value === 'h' ? 3600 : 60),
     viewingDuration: durationStr,
   });
 }

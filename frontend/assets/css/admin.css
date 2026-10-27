@@ -2622,6 +2622,7 @@ textarea:focus-visible {
 /* گروه ورودی زمان (عدد + واحد زمان) */
 .dyf-time-input-group {
   display: flex;
+  flex-direction: row-reverse;
   align-items: center;
   gap: 0.5rem;
   width: 100%;
@@ -4739,7 +4740,6 @@ textarea:focus-visible {
     padding: 0.35rem 0.6rem !important;
   }
 }
-
 
 
 

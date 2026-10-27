@@ -23,7 +23,7 @@ func (service Service) VerifyOTP(request dtoAuth.VerifyOTPRequest) (dtoAuth.Veri
 	}
 
 	currentTime := time.Now().Unix()
-	if currentTime > otpRecord.ExpiresAt {
+	if currentTime >= otpRecord.ExpiresAt {
 		return dtoAuth.VerifyOTPResponse{}, http.StatusBadRequest, staticErrors.ErrOTPExpired
 	}
 
@@ -41,6 +41,9 @@ func (service Service) VerifyOTP(request dtoAuth.VerifyOTPRequest) (dtoAuth.Veri
 	}
 	if !adminFound {
 		return dtoAuth.VerifyOTPResponse{}, http.StatusNotFound, staticErrors.ErrUserNotFound
+	}
+	if !adminUser.IsActive {
+		return dtoAuth.VerifyOTPResponse{}, http.StatusForbidden, staticErrors.ErrAdminInactive
 	}
 
 	rawToken, tokenHash, tokenError := generateSecureOpaqueToken()

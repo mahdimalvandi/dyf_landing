@@ -68,7 +68,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import CatalogAuth from './components/CatalogAuth.vue';
 import CatalogHeader from './components/CatalogHeader.vue';
 import CatalogToolbar from './components/CatalogToolbar.vue';
@@ -83,6 +83,7 @@ import { useSessionTimer } from '../composables/useSessionTimer.js';
 import { useToast } from '../composables/useToast.js';
 
 const viewMode = ref('auth');
+let validationInterval;
 
 const {
   shoes,
@@ -117,9 +118,14 @@ const isLightboxOpen = ref(false);
 const lightboxSrc = ref('');
 const lightboxCaption = ref('');
 
-function handleLoginDirect(link) {
-  const session = createLinkSession(link);
-  startCatalogSession(session);
+async function handleLoginDirect(link) {
+  try {
+    const session = await createLinkSession(link);
+    startCatalogSession(session);
+  } catch (error) {
+    showToast({ type: 'error', title: 'دسترسی ناموفق', message: error.message });
+    if ([403, 404, 410].includes(error.status)) viewMode.value = 'expired';
+  }
 }
 
 function handleLoginOtpLink(link) {
@@ -133,6 +139,16 @@ function handleLoginCustomer(customer) {
 }
 
 function startCatalogSession(session) {
+  clearInterval(validationInterval);
+  validationInterval = setInterval(async () => {
+    try {
+      const refreshed = await createLinkSession({ token: session.token });
+      startTimer(refreshed, handleSessionExpired);
+    } catch (error) {
+      handleSessionExpired();
+      showToast({ type: 'error', title: 'دسترسی متوقف شد', message: error.message });
+    }
+  }, 30000);
   viewMode.value = 'catalog';
   startTimer(session, () => {
     handleSessionExpired();
@@ -146,6 +162,9 @@ function startCatalogSession(session) {
 }
 
 function handleSessionExpired() {
+  clearInterval(validationInterval);
+  isDossierOpen.value = false;
+  isLightboxOpen.value = false;
   stopTimer();
   clearSession();
   viewMode.value = 'expired';
@@ -182,4 +201,5 @@ onMounted(() => {
     handleOpenLightbox({ url, caption: title });
   };
 });
+onUnmounted(() => { clearInterval(validationInterval); stopTimer(); delete window.openShoeLightbox; });
 </script>

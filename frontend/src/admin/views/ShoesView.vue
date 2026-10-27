@@ -191,10 +191,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { normalizeImageUrl } from '../../shared/utils/format.js';
 
 const props = defineProps({
+  initialCategory: { type: String, default: 'all' },
   shoes: {
     type: Array,
     default: () => [],
@@ -208,9 +209,14 @@ const props = defineProps({
 defineEmits(['create', 'edit', 'delete', 'open-dossier', 'open-lightbox']);
 
 const searchQuery = ref('');
-const selectedCategory = ref('all');
+const selectedCategory = ref(props.initialCategory);
 const viewMode = ref('grid');
 const currentPage = ref(1);
+watch(() => props.initialCategory, (category) => {
+  selectedCategory.value = category;
+  searchQuery.value = '';
+  currentPage.value = 1;
+});
 const pageSize = 12;
 
 const getCategoryCount = (catName) => {

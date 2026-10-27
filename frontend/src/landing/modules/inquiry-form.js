@@ -172,7 +172,7 @@ export function initInquiryForm() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 12000);
 
-      const response = await fetch('/api/v1/inquiries', {
+      const response = await fetch(`${(import.meta.env?.VITE_API_BASE_URL || '').replace(/\/$/, '')}/api/v1/inquiries`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -196,8 +196,8 @@ export function initInquiryForm() {
       let errorMsg = `خطای سرور (${response.status}): سرویس ثبت استعلام در حال حاضر در دسترس نیست.`;
       try {
         const errorData = await response.json();
-        if (errorData.message) {
-          errorMsg = errorData.message;
+        if (errorData.error?.message || errorData.message) {
+          errorMsg = errorData.error?.message || errorData.message;
         }
       } catch {
       }

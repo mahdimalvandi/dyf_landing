@@ -10,6 +10,7 @@
     <div v-else id="adminApp" class="dyf-admin-app">
       <!-- سایدبار منو -->
       <AdminSidebar
+        :admin-name="admin ? `${admin.firstName} ${admin.lastName}` : 'مدیر کارگاه'"
         :is-open="isSidebarOpen"
         :active-route="activeRoute"
         :total-shoes="shoes.length"
@@ -46,6 +47,7 @@
 
           <!-- ویو ۲: مدل‌های کفش -->
           <ShoesView
+            :initial-category="shoeCategoryFilter"
             v-else-if="activeRoute === '#shoes'"
             :shoes="shoes"
             :categories="categories"
@@ -224,7 +226,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, onErrorCaptured } from 'vue';
 import { useAdminData } from '../composables/useAdminData.js';
 import { useToast } from '../composables/useToast.js';
 
@@ -257,6 +259,7 @@ import LinkDetailsModal from './modals/LinkDetailsModal.vue';
 import PermittedShoesViewerModal from './modals/PermittedShoesViewerModal.vue';
 
 const {
+  admin,
   shoes,
   categories,
   customers,
@@ -266,6 +269,7 @@ const {
   initData,
   login,
   logout,
+  clearAuth,
   addShoe,
   updateShoe,
   deleteShoe,
@@ -284,8 +288,13 @@ const {
 } = useAdminData();
 
 const { showToast } = useToast();
+onErrorCaptured((error) => {
+  showToast({ type: 'error', title: 'عملیات انجام نشد', message: error.message });
+  return false;
+});
 
 const isSidebarOpen = ref(false);
+const shoeCategoryFilter = ref('all');
 const activeRoute = ref('#dashboard');
 
 const routesMap = {
@@ -324,10 +333,10 @@ function openConfirm({ title, message, confirmText = 'تأیید', cancelText = 
   };
 }
 
-function handleConfirmAction() {
+async function handleConfirmAction() {
   confirmState.value.isOpen = false;
   if (confirmState.value.onConfirm) {
-    confirmState.value.onConfirm();
+    await confirmState.value.onConfirm();
   }
 }
 
@@ -380,12 +389,13 @@ function handleHashChange() {
 }
 
 function navigateTo(route) {
+  if (route === '#shoes') shoeCategoryFilter.value = 'all';
   window.location.hash = route;
   activeRoute.value = route;
 }
 
-function handleLoginSuccess() {
-  login();
+async function handleLoginSuccess() {
+  await login();
   handleHashChange();
 }
 
@@ -396,8 +406,8 @@ function confirmLogout() {
     confirmText: 'خروج از پنل',
     cancelText: 'انصراف',
     isDanger: true,
-    onConfirm: () => {
-      logout();
+    onConfirm: async () => {
+      await logout();
       showToast({
         type: 'info',
         title: 'خروج موفق',
@@ -418,16 +428,16 @@ function openShoeEdit(shoe) {
   isShoeFormOpen.value = true;
 }
 
-function handleSaveShoe(shoeData) {
+async function handleSaveShoe(shoeData) {
   if (editingShoe.value) {
-    updateShoe(editingShoe.value.id, shoeData);
+    await updateShoe(editingShoe.value.id, shoeData);
     showToast({
       type: 'success',
       title: 'ویرایش مدل',
       message: 'مشخصات مدل کفش با موفقیت به‌روزرسانی شد.',
     });
   } else {
-    addShoe(shoeData);
+    await addShoe(shoeData);
     showToast({
       type: 'success',
       title: 'ثبت مدل کفش جدید',
@@ -445,8 +455,8 @@ function confirmDeleteShoe(id) {
     confirmText: 'حذف دائمی',
     cancelText: 'انصراف',
     isDanger: true,
-    onConfirm: () => {
-      deleteShoe(id);
+    onConfirm: async () => {
+      await deleteShoe(id);
       showToast({
         type: 'success',
         title: 'مدل حذف شد',
@@ -509,16 +519,16 @@ function openCategoryEdit(cat) {
   isCategoryFormOpen.value = true;
 }
 
-function handleSaveCategory(data) {
+async function handleSaveCategory(data) {
   if (editingCategory.value) {
-    updateCategory(editingCategory.value.id, data);
+    await updateCategory(editingCategory.value.id, data);
     showToast({
       type: 'success',
       title: 'ویرایش دسته‌بندی',
       message: 'دسته‌بندی با موفقیت به‌روزرسانی شد.',
     });
   } else {
-    addCategory(data);
+    await addCategory(data);
     showToast({
       type: 'success',
       title: 'دسته‌بندی جدید',
@@ -536,8 +546,8 @@ function confirmDeleteCategory(id) {
     confirmText: 'حذف دسته‌بندی',
     cancelText: 'انصراف',
     isDanger: true,
-    onConfirm: () => {
-      deleteCategory(id);
+    onConfirm: async () => {
+      await deleteCategory(id);
       showToast({
         type: 'success',
         title: 'دسته‌بندی حذف شد',
@@ -549,6 +559,7 @@ function confirmDeleteCategory(id) {
 
 function handleViewCategoryShoes(categoryName) {
   navigateTo('#shoes');
+  shoeCategoryFilter.value = categoryName;
 }
 
 // Customer Actions
@@ -562,16 +573,16 @@ function openCustomerEdit(cust) {
   isCustomerFormOpen.value = true;
 }
 
-function handleSaveCustomer(data) {
+async function handleSaveCustomer(data) {
   if (editingCustomer.value) {
-    updateCustomer(editingCustomer.value.id, data);
+    await updateCustomer(editingCustomer.value.id, data);
     showToast({
       type: 'success',
       title: 'ویرایش مشتری',
       message: 'اطلاعات مشتری با موفقیت ذخیره شد.',
     });
   } else {
-    addCustomer(data);
+    await addCustomer(data);
     showToast({
       type: 'success',
       title: 'مشتری جدید',
@@ -589,8 +600,8 @@ function confirmDeleteCustomer(id) {
     confirmText: 'حذف همکار',
     cancelText: 'انصراف',
     isDanger: true,
-    onConfirm: () => {
-      deleteCustomer(id);
+    onConfirm: async () => {
+      await deleteCustomer(id);
       showToast({
         type: 'success',
         title: 'خریدار حذف شد',
@@ -609,8 +620,8 @@ function openCustomerDetails(cust) {
   isCustomerDetailsOpen.value = true;
 }
 
-function handleSaveCustomerDirectAccess({ id, directAccess }) {
-  updateCustomerDirectAccess(id, directAccess);
+async function handleSaveCustomerDirectAccess({ id, directAccess }) {
+  await updateCustomerDirectAccess(id, directAccess);
   showToast({
     type: 'success',
     title: 'ذخیره دسترسی مستقیم',
@@ -644,8 +655,8 @@ function openLinkWizardPrefilled(cust) {
   isLinkWizardOpen.value = true;
 }
 
-function handleLinkCreated(data, done) {
-  const newLink = createLink(data);
+async function handleLinkCreated(data, done) {
+  const newLink = await createLink(data);
   showToast({
     type: 'success',
     title: 'لینک صادر شد',
@@ -664,8 +675,8 @@ function openEditLink(lnk) {
   isEditLinkOpen.value = true;
 }
 
-function handleSaveEditLink(data) {
-  updateLink(data.id, data);
+async function handleSaveEditLink(data) {
+  await updateLink(data.id, data);
   showToast({
     type: 'success',
     title: 'ویرایش لینک',
@@ -689,8 +700,8 @@ function openEditLinkFromDetails(lnk) {
   openEditLink(lnk);
 }
 
-function handleRevokeLink(id) {
-  revokeLink(id);
+async function handleRevokeLink(id) {
+  await revokeLink(id);
   showToast({
     type: 'warning',
     title: 'ابطال دسترسی',
@@ -701,12 +712,12 @@ function handleRevokeLink(id) {
   }
 }
 
-function handleExtendLink(id) {
-  extendLink(id, '24h');
+async function handleExtendLink(id) {
+  await extendLink(id);
   showToast({
     type: 'success',
     title: 'تمدید دسترسی',
-    message: 'اعتبار لینک به مدت ۲۴ ساعت تمدید شد.',
+    message: 'لینک مجدداً فعال شد؛ مهلت‌های قبلی مطابق قوانین سرور برقرارند.',
   });
   if (selectedLink.value && selectedLink.value.id === id) {
     selectedLink.value = links.value.find((l) => l.id === id);
@@ -720,8 +731,8 @@ function confirmDeleteLink(id) {
     confirmText: 'حذف لینک',
     cancelText: 'انصراف',
     isDanger: true,
-    onConfirm: () => {
-      deleteLink(id);
+    onConfirm: async () => {
+      await deleteLink(id);
       showToast({
         type: 'success',
         title: 'لینک حذف شد',
@@ -757,8 +768,8 @@ function handleChangeLinkStatus({ link, action }) {
       confirmText: 'غیرفعال‌سازی لینک',
       cancelText: 'انصراف',
       isDanger: true,
-      onConfirm: () => {
-        updateLink(link.id, { status: 'expired', reason: 'توسط مدیر غیرفعال شد' });
+      onConfirm: async () => {
+        await revokeLink(link.id);
         showToast({
           type: 'info',
           title: 'لینک غیرفعال شد',
@@ -773,8 +784,8 @@ function handleChangeLinkStatus({ link, action }) {
       confirmText: 'فعال‌سازی مجدد',
       cancelText: 'انصراف',
       isDanger: false,
-      onConfirm: () => {
-        updateLink(link.id, { status: 'active', reason: null });
+      onConfirm: async () => {
+        await extendLink(link.id);
         showToast({
           type: 'success',
           title: 'لینک فعال شد',
@@ -792,27 +803,28 @@ function handleEditPermittedFromViewer() {
   const currentLink = currentPermittedLink;
   handleOpenPickerFromModal({
     initialShoeIds: currentLink.addModels || [],
-    onConfirm: (selectedIds) => {
-      currentLink.addModels = selectedIds;
-      updateLink(currentLink.id, { addModels: selectedIds });
+    onConfirm: async (selectedIds) => {
+      await updateLink(currentLink.id, { addModels: selectedIds });
       permittedViewerIds.value = selectedIds;
       showToast({
         type: 'success',
         title: 'مدل‌های مجاز لینک',
         message: 'فهرست مدل‌های مجاز برای این لینک با موفقیت به‌روزرسانی شد.',
       });
-      openPermittedShoesViewer(currentLink);
+      openPermittedShoesViewer(links.value.find((link) => link.id === currentLink.id));
     },
   });
 }
 
-onMounted(() => {
-  initData();
+onMounted(async () => {
+  window.addEventListener('dyf:unauthorized', clearAuth);
+  try { await initData(); } catch (error) { showToast({ type: 'error', title: 'اتصال ناموفق', message: error.message }); }
   handleHashChange();
   window.addEventListener('hashchange', handleHashChange);
 });
 
 onUnmounted(() => {
+  window.removeEventListener('dyf:unauthorized', clearAuth);
   window.removeEventListener('hashchange', handleHashChange);
 });
 </script>

@@ -219,6 +219,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { formatAccessDuration } from '../../shared/utils/format.js';
 
 const props = defineProps({
   links: {
@@ -237,21 +238,8 @@ const activeCount = computed(() => props.links.filter((l) => l.status === 'activ
 const pendingCount = computed(() => props.links.filter((l) => l.status === 'pending').length);
 const expiredCount = computed(() => props.links.filter((l) => l.status === 'expired').length);
 
-const formatDeadline = (dl) => {
-  if (!dl || dl === 'none') return 'نامحدود';
-  if (dl === '24h') return '۲۴ ساعت';
-  if (dl === '3d') return '۳ روز';
-  if (dl === '7d') return '۷ روز';
-  return dl;
-};
-
-const formatDuration = (dur) => {
-  if (!dur || dur === 'unlimited') return 'نامحدود';
-  if (dur === '15m') return '۱۵ دقیقه';
-  if (dur === '10m') return '۱۰ دقیقه';
-  if (dur === '1h') return '۱ ساعت';
-  return dur;
-};
+const formatDeadline = formatAccessDuration;
+const formatDuration = formatAccessDuration;
 
 const filteredLinks = computed(() => {
   return props.links.filter((l) => {

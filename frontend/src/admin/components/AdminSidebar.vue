@@ -111,7 +111,7 @@
 
       <!-- پروفایل و دکمه خروج در پایین سایدبار -->
       <div class="dyf-sidebar-footer">
-        <div class="dyf-admin-name" style="font-weight: 700; color: var(--text-ivory); font-size: 0.92rem;">مهدی مالوندی</div>
+        <div class="dyf-admin-name" style="font-weight: 700; color: var(--text-ivory); font-size: 0.92rem;">{{ adminName }}</div>
         <button
           type="button"
           class="dyf-btn dyf-btn-outline dyf-btn-sm js-admin-logout"
@@ -128,6 +128,7 @@
 
 <script setup>
 const props = defineProps({
+  adminName: { type: String, default: 'مدیر کارگاه' },
   isOpen: {
     type: Boolean,
     default: false,

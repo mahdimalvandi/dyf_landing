@@ -1,10 +1,17 @@
 import { resolve } from 'path';
+import { cpSync } from 'node:fs';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
   plugins: [
     vue(),
+    {
+      name: 'catalog-runtime-images',
+      writeBundle() {
+        cpSync(resolve(__dirname, 'assets/images'), resolve(__dirname, 'dist/assets/images'), { recursive: true });
+      },
+    },
     {
       name: 'clean-catalog-urls',
       configureServer(server) {
@@ -20,6 +27,9 @@ export default defineConfig({
           res.setHeader('Keep-Alive', 'timeout=65');
 
           const [pathname, search] = req.url.split('?');
+          if (/^\/catalog\/[^/]+\/?$/.test(pathname)) {
+            req.url = '/catalog/?token=' + encodeURIComponent(pathname.split('/')[2]);
+          }
           if (pathname === '/catalog' || pathname === '/catalog.html') {
             req.url = '/catalog/' + (search ? '?' + search : '');
           }
@@ -32,6 +42,9 @@ export default defineConfig({
       configurePreviewServer(server) {
         server.middlewares.use((req, res, next) => {
           const [pathname, search] = req.url.split('?');
+          if (/^\/catalog\/[^/]+\/?$/.test(pathname)) {
+            req.url = '/catalog/?token=' + encodeURIComponent(pathname.split('/')[2]);
+          }
           if (pathname === '/catalog' || pathname === '/catalog.html') {
             req.url = '/catalog/' + (search ? '?' + search : '');
           }

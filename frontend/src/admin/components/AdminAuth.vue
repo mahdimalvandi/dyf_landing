@@ -7,6 +7,7 @@
         <p class="dyf-auth-subtitle">کاتالوگ خصوصی محصولات چرمی کارگاه DYF</p>
       </div>
 
+      <p v-if="errorMessage" role="alert" style="color: #e8a49a; margin-bottom: 1rem;">{{ errorMessage }}</p>
       <!-- مرحله اول: ورود شماره موبایل -->
       <div id="authStepPhone" class="dyf-auth-step" :class="{ 'is-hidden': step !== 'phone' }">
         <p class="dyf-auth-note">
@@ -32,7 +33,7 @@
           <p class="dyf-form-hint">شماره باید با ۰۹ آغاز شده و ۱۱ رقم باشد.</p>
         </div>
 
-        <button type="button" id="sendOtpBtn" class="dyf-btn dyf-btn-primary dyf-btn-lg" style="width: 100%;" @click="handleSendPhone">
+        <button type="button" id="sendOtpBtn" :disabled="busy" class="dyf-btn dyf-btn-primary dyf-btn-lg" style="width: 100%;" @click="handleSendPhone">
           <span>ارسال کد تأیید یک‌بارمصرف</span>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
         </button>
@@ -48,6 +49,9 @@
           <input 
             v-for="(digit, idx) in otpDigits" 
             :key="idx"
+            :id="'adminOtpDigit' + idx"
+            :name="'adminOtpDigit' + idx"
+            :aria-label="'رقم ' + (idx + 1) + ' کد تأیید'"
             :ref="el => digitRefs[idx] = el"
             v-model="otpDigits[idx]"
             type="text" 
@@ -67,7 +71,7 @@
           <button type="button" id="resendOtpBtn" class="dyf-otp-resend" :disabled="timeLeft > 0" @click="handleResendOtp">ارسال مجدد کد</button>
         </div>
 
-        <button type="button" id="verifyOtpBtn" class="dyf-btn dyf-btn-primary dyf-btn-lg" style="width: 100%; margin-bottom: 0.85rem;" @click="handleVerifyOtp">
+        <button type="button" id="verifyOtpBtn" :disabled="busy" class="dyf-btn dyf-btn-primary dyf-btn-lg" style="width: 100%; margin-bottom: 0.85rem;" @click="handleVerifyOtp">
           <span>تأیید و ورود به پیشخوان</span>
         </button>
 
@@ -81,11 +85,15 @@
 
 <script setup>
 import { ref, computed, nextTick, onUnmounted } from 'vue';
+import { api, setToken } from '../../shared/api.js';
 
 const emit = defineEmits(['login-success']);
 
 const step = ref('phone');
-const phone = ref('09121234567');
+const phone = ref('');
+const errorMessage = ref('');
+const busy = ref(false);
+let expiresInSeconds = 120;
 const otpDigits = ref(['', '', '', '', '']);
 const digitRefs = ref([]);
 const timeLeft = ref(60);
@@ -107,12 +115,20 @@ const onPhoneInput = (e) => {
   phone.value = toEnglishDigits(e.target.value).replace(/\D/g, '');
 };
 
-const handleSendPhone = () => {
+const handleSendPhone = async () => {
+  if (busy.value) return;
+  errorMessage.value = '';
   const cleanPhone = toEnglishDigits(phone.value).replace(/\D/g, '');
   if (!cleanPhone || !cleanPhone.match(/^09\d{9}$/)) {
     alert('شماره تلفن همراه معتبر نیست. لطفاً یک شماره ۱۱ رقمی با فرمت ۰۹ وارد فرمایید.');
     return;
   }
+  busy.value = true;
+  try {
+  const result = await api('/auth/admin/otp/send', { method: 'POST', auth: false, body: { phoneNumber: cleanPhone } });
+  expiresInSeconds = result.expiresInSeconds;
+  phone.value = cleanPhone;
+  otpDigits.value = ['', '', '', '', ''];
   step.value = 'otp';
   startTimer();
   nextTick(() => {
@@ -120,6 +136,15 @@ const handleSendPhone = () => {
       digitRefs.value[0].focus();
     }
   });
+  } catch (error) {
+    errorMessage.value = error.message;
+    if (error.status === 429) {
+      phone.value = cleanPhone;
+      step.value = 'otp';
+      startTimer();
+    }
+  }
+  finally { busy.value = false; }
 };
 
 const changePhone = () => {
@@ -130,7 +155,7 @@ const changePhone = () => {
 
 const startTimer = () => {
   stopTimer();
-  timeLeft.value = 60;
+  timeLeft.value = expiresInSeconds;
   timerInterval = setInterval(() => {
     if (timeLeft.value > 0) {
       timeLeft.value--;
@@ -149,9 +174,7 @@ const stopTimer = () => {
 
 const handleResendOtp = () => {
   if (timeLeft.value > 0) return;
-  startTimer();
-  otpDigits.value = ['', '', '', '', ''];
-  if (digitRefs.value[0]) digitRefs.value[0].focus();
+  handleSendPhone();
 };
 
 const onDigitInput = (e, idx) => {
@@ -184,14 +207,22 @@ const onDigitPaste = (e) => {
   }
 };
 
-const handleVerifyOtp = () => {
+const handleVerifyOtp = async () => {
+  if (busy.value) return;
+  errorMessage.value = '';
   const code = otpDigits.value.join('');
   if (code.length < 5) {
     alert('لطفاً تمام ۵ رقم کد یک‌بارمصرف را وارد نمایید.');
     return;
   }
-  stopTimer();
-  emit('login-success');
+  busy.value = true;
+  try {
+    const result = await api('/auth/admin/otp/verify', { method: 'POST', auth: false, body: { phoneNumber: phone.value, code } });
+    setToken(result.token);
+    stopTimer();
+    emit('login-success');
+  } catch (error) { errorMessage.value = error.message; }
+  finally { busy.value = false; }
 };
 
 onUnmounted(() => {

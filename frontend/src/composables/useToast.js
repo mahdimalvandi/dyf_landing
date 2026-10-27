@@ -5,9 +5,6 @@ let toastIdCounter = 0;
 
 export function useToast() {
   function showToast({ type = 'info', title = '', message = '', duration = 4000 }) {
-    if (typeof window !== 'undefined' && (window.innerWidth <= 768 || (window.matchMedia && window.matchMedia('(max-width: 768px)').matches))) {
-      return;
-    }
 
     const id = ++toastIdCounter;
     const toast = {

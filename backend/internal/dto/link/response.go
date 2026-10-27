@@ -1,8 +1,12 @@
 package link
 
-import "dyf-backend/pkg/pagination"
+import (
+	dtoShoe "dyf-backend/internal/dto/shoe"
+	"dyf-backend/pkg/pagination"
+)
 
 type LinkItemResponse struct {
+	IsDirectAccess         bool   `json:"isDirectAccess"`
 	ID                     int64  `json:"ID"`
 	LinkID                 int64  `json:"linkID"`
 	Token                  string `json:"token"`
@@ -32,15 +36,16 @@ type LinkListResponse struct {
 }
 
 type CatalogAccessResponse struct {
-	LinkID           int64  `json:"linkID"`
-	RecipientName    string `json:"recipientName"`
-	AuthMethod       string `json:"authMethod"`
-	Status           string `json:"status"`
-	FirstViewedAt    int64  `json:"firstViewedAt"`
-	ViewingExpiresAt int64  `json:"viewingExpiresAt"`
-	LastAccessedAt   int64  `json:"lastAccessedAt"`
-	RemainingSeconds int64  `json:"remainingSeconds"`
-	ShoesCount       int    `json:"shoesCount"`
+	Shoes            []dtoShoe.ShoeItemResponse `json:"shoes"`
+	LinkID           int64                      `json:"linkID"`
+	RecipientName    string                     `json:"recipientName"`
+	AuthMethod       string                     `json:"authMethod"`
+	Status           string                     `json:"status"`
+	FirstViewedAt    int64                      `json:"firstViewedAt"`
+	ViewingExpiresAt int64                      `json:"viewingExpiresAt"`
+	LastAccessedAt   int64                      `json:"lastAccessedAt"`
+	RemainingSeconds int64                      `json:"remainingSeconds"`
+	ShoesCount       int                        `json:"shoesCount"`
 }
 
 type CatalogStatsResponse struct {

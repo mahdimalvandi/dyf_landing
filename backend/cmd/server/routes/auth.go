@@ -5,6 +5,10 @@ import (
 	"dyf-backend/internal/middleware"
 	repoAuth "dyf-backend/internal/repository/auth"
 	serviceAuth "dyf-backend/internal/service/auth"
+	"dyf-backend/pkg/response"
+	staticErrors "dyf-backend/statics/errors"
+	"github.com/gofiber/fiber/v3/middleware/limiter"
+	"time"
 
 	"github.com/gofiber/fiber/v3"
 	"gorm.io/gorm"
@@ -18,7 +22,12 @@ func RegisterAuthRoutes(apiGroup fiber.Router, databaseConnection *gorm.DB) {
 
 	adminAuthGroup := apiGroup.Group("/auth/admin")
 	adminAuthGroup.Post("/otp/send", authHandler.SendOTP)
-	adminAuthGroup.Post("/otp/verify", authHandler.VerifyOTP)
+	adminAuthGroup.Post("/otp/verify", authHandler.VerifyOTP, limiter.New(limiter.Config{
+		Max: 10, Expiration: time.Minute,
+		LimitReached: func(fiberContext fiber.Ctx) error {
+			return response.FromError(fiberContext, fiber.StatusTooManyRequests, staticErrors.ErrTooManyRequests, nil)
+		},
+	}))
 
 	protectedAdminGroup := adminAuthGroup.Group("", adminAuthMiddleware)
 	protectedAdminGroup.Post("/logout", authHandler.Logout)

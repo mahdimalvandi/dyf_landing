@@ -11,7 +11,7 @@
       <div class="dyf-dashboard-hero-meta">
         <div class="dyf-date-pill">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-          <span>دوشنبه ۲۸ مهر ۱۴۰۵ — ساعت ۱۰:۳۰</span>
+          <span>{{ new Date().toLocaleString('fa-IR', { dateStyle: 'full', timeStyle: 'short' }) }}</span>
         </div>
       </div>
     </div>
@@ -142,7 +142,7 @@
             </div>
           </div>
           <div id="dashboardActiveCustomersList" class="dyf-dashboard-active-cust-list" style="padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: 0.85rem;">
-            <div
+    <div
               v-for="c in activeCustomersList"
               :key="c.id"
               style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.65rem 0.85rem; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--r-sm);"
@@ -170,6 +170,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import { formatAccessDuration } from '../../shared/utils/format.js';
 
 const props = defineProps({
   stats: {
@@ -207,21 +208,8 @@ const getInitials = (name) => {
   return name.split(' ').map((p) => p[0]).slice(0, 2).join('‌') || 'م';
 };
 
-const formatDeadline = (dl) => {
-  if (!dl || dl === 'none') return 'نامحدود';
-  if (dl === '24h') return 'مهلت: 24h';
-  if (dl === '3d') return 'مهلت: 3d';
-  if (dl === '7d') return 'مهلت: 7d';
-  return `مهلت: ${dl}`;
-};
-
-const formatDuration = (dur) => {
-  if (!dur || dur === 'unlimited') return 'نامحدود';
-  if (dur === '15m') return 'مدت: 15m';
-  if (dur === '10m') return 'مدت: 10m';
-  if (dur === '1h') return 'مدت: 1h';
-  return `مدت: ${dur}`;
-};
+const formatDeadline = formatAccessDuration;
+const formatDuration = formatAccessDuration;
 
 const handleCopyLink = (lnk) => {
   const url = lnk.url || `${window.location.origin}/catalog?token=${lnk.token}`;

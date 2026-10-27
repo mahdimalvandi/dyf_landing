@@ -10,6 +10,9 @@ import (
 )
 
 func (service Service) Update(linkID int64, request dtoLink.UpdateLinkRequest) (dtoLink.LinkDetailResponse, int, error) {
+	if request.IsDirectAccess && request.CustomerID <= 0 {
+		return dtoLink.LinkDetailResponse{}, http.StatusBadRequest, staticErrors.ErrCustomerNotFound
+	}
 	existingLink, found, findError := service.linkRepository.FindLinkByID(linkID)
 	if findError != nil {
 		return dtoLink.LinkDetailResponse{}, http.StatusInternalServerError, findError
@@ -20,6 +23,9 @@ func (service Service) Update(linkID int64, request dtoLink.UpdateLinkRequest) (
 
 	if len(request.ShoeIDs) == 0 {
 		return dtoLink.LinkDetailResponse{}, http.StatusBadRequest, staticErrors.ErrNoShoesSelectedForLink
+	}
+	if validationError := service.validateShoes(request.ShoeIDs); validationError != nil {
+		return dtoLink.LinkDetailResponse{}, http.StatusBadRequest, validationError
 	}
 
 	if request.AuthMethod != constantsLink.AuthMethodDirect && request.AuthMethod != constantsLink.AuthMethodOTP {
@@ -41,6 +47,7 @@ func (service Service) Update(linkID int64, request dtoLink.UpdateLinkRequest) (
 	}
 
 	existingLink.CustomerID = request.CustomerID
+	existingLink.IsDirectAccess = request.IsDirectAccess
 	existingLink.RecipientName = request.RecipientName
 	existingLink.PhoneNumber = request.PhoneNumber
 	existingLink.AuthMethod = request.AuthMethod

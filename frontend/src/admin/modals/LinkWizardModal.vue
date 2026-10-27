@@ -322,17 +322,14 @@ function prevStep() {
 }
 
 function generateLink() {
-  const token = 'dyf_' + Math.random().toString(36).substring(2, 10);
-  generatedToken.value = token;
 
   const durationStr = durationUnit.value === 'unlimited' ? 'unlimited' : `${durationValue.value}${durationUnit.value}`;
   const deadlineStr = deadlineUnit.value === 'none' ? 'none' : `${deadlineValue.value}${deadlineUnit.value}`;
 
   const linkData = {
-    id: `LNK-${Math.floor(100 + Math.random() * 900)}`,
-    token,
     recipientFa: recipientFa.value.trim(),
-    recipientPhone: recipientPhone.value.trim(),
+    phone: recipientPhone.value.trim(),
+    customerId: props.prefillCustomer?.id || null,
     startDeadline: deadlineStr,
     viewingDuration: durationStr,
     addModels: [...allowedShoeIds.value],
@@ -341,8 +338,10 @@ function generateLink() {
     createdAt: new Date().toLocaleDateString('fa-IR'),
   };
 
-  emit('link-created', linkData);
-  currentStep.value = 4;
+  emit('link-created', linkData, (link) => {
+    generatedToken.value = link.token;
+    currentStep.value = 4;
+  });
 }
 
 function copyUrl() {

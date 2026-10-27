@@ -3,6 +3,7 @@ package link
 import "dyf-backend/pkg/pagination"
 
 type CreateLinkRequest struct {
+	IsDirectAccess         bool    `json:"isDirectAccess"`
 	CustomerID             int64   `json:"customerID"`
 	RecipientName          string  `json:"recipientName" validate:"required,min=2,max=200"`
 	PhoneNumber            string  `json:"phoneNumber"`
@@ -13,6 +14,7 @@ type CreateLinkRequest struct {
 }
 
 type UpdateLinkRequest struct {
+	IsDirectAccess         bool    `json:"isDirectAccess"`
 	CustomerID             int64   `json:"customerID"`
 	RecipientName          string  `json:"recipientName" validate:"required,min=2,max=200"`
 	PhoneNumber            string  `json:"phoneNumber"`

@@ -14,8 +14,14 @@ import (
 )
 
 func (service Service) Create(request dtoLink.CreateLinkRequest) (dtoLink.LinkDetailResponse, int, error) {
+	if request.IsDirectAccess && request.CustomerID <= 0 {
+		return dtoLink.LinkDetailResponse{}, http.StatusBadRequest, staticErrors.ErrCustomerNotFound
+	}
 	if len(request.ShoeIDs) == 0 {
 		return dtoLink.LinkDetailResponse{}, http.StatusBadRequest, staticErrors.ErrNoShoesSelectedForLink
+	}
+	if validationError := service.validateShoes(request.ShoeIDs); validationError != nil {
+		return dtoLink.LinkDetailResponse{}, http.StatusBadRequest, validationError
 	}
 
 	if request.AuthMethod != constantsLink.AuthMethodDirect && request.AuthMethod != constantsLink.AuthMethodOTP {
@@ -43,6 +49,7 @@ func (service Service) Create(request dtoLink.CreateLinkRequest) (dtoLink.LinkDe
 	generatedToken := hex.EncodeToString(tokenBytes)
 
 	linkRecord := entityLink.AccessLink{
+		IsDirectAccess:         request.IsDirectAccess,
 		ID:                     time.Now().UnixNano(),
 		Token:                  generatedToken,
 		CustomerID:             request.CustomerID,
@@ -67,6 +74,7 @@ func (service Service) Create(request dtoLink.CreateLinkRequest) (dtoLink.LinkDe
 
 	return dtoLink.LinkDetailResponse{
 		LinkItemResponse: dtoLink.LinkItemResponse{
+			IsDirectAccess:         createdRecord.IsDirectAccess,
 			ID:                     createdRecord.ID,
 			LinkID:                 createdRecord.LinkID,
 			Token:                  createdRecord.Token,

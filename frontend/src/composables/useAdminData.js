@@ -1,466 +1,177 @@
 import { ref, computed } from 'vue';
-import {
-  FALLBACK_SHOES,
-  FALLBACK_CATEGORIES,
-  FALLBACK_CUSTOMERS,
-  FALLBACK_LINKS,
-} from '../mocks/fallbackData.js';
-import { toEnglishDigits, toPersianDigits, normalizeImageUrl } from '../shared/utils/format.js';
+import { api, allPages, getToken, setToken, assetURL } from '../shared/api.js';
+import { toEnglishDigits, toPersianDigits, compactDuration } from '../shared/utils/format.js';
 
-// Global singleton reactive state
-const shoes = ref([]);
-const categories = ref([]);
-const customers = ref([]);
-const links = ref([]);
-const isAuthenticated = ref(false);
-const isInitialized = ref(false);
+const shoes = ref([]), categories = ref([]), customers = ref([]), links = ref([]);
+const directLinks = ref([]);
+const admin = ref(null);
+const isAuthenticated = ref(false), isInitialized = ref(false), dashboard = ref(null);
 
-const STORAGE_KEYS = {
-  SHOES: 'dyf_admin_shoes_v1',
-  CATEGORIES: 'dyf_admin_categories_v2',
-  CUSTOMERS: 'dyf_admin_customers_v1',
-  LINKS: 'dyf_admin_links_v1',
-  AUTH: 'dyf_admin_auth',
-};
-
-function sanitizeShoe(s) {
-  if (!s) return s;
-  const image = normalizeImageUrl(s.image);
-  const media = Array.isArray(s.media) && s.media.length > 0
-    ? s.media.map((m) => ({ ...m, url: normalizeImageUrl(m.url) }))
-    : [{ url: image, type: 'image', isPrimary: true }];
-  const gallery = Array.isArray(s.gallery) && s.gallery.length > 0
-    ? s.gallery.map(normalizeImageUrl)
-    : media.map((m) => m.url);
+export function mapShoe(item) {
+  const image = assetURL(item.coverImage) || '/assets/images/shoes.jpeg';
+  const media = [
+    ...(item.images || []).map((url) => ({ url: assetURL(url), type: 'image', isPrimary: url === item.coverImage })),
+    ...(item.videos || []).map((url) => ({ url: assetURL(url), type: 'video', isPrimary: false })),
+  ];
   return {
-    ...s,
-    image,
-    media,
-    gallery,
+    id: item.modelID, recordID: item.ID, title: item.title, description: item.description,
+    categories: (item.categories || []).map((category) => category.title), category: item.categories?.[0]?.title || '',
+    colors: item.colors || [], sizes: (item.sizes || []).map((size) => toPersianDigits(String(size))),
+    image, gallery: media.filter((entry) => entry.type === 'image').map((entry) => entry.url),
+    media: media.length ? media : [{ url: image, type: 'image', isPrimary: true }], status: 'published',
   };
 }
 
-export function useAdminData() {
-  function initData() {
-    if (isInitialized.value) return;
-
-    // Check auth
-    try {
-      isAuthenticated.value = localStorage.getItem(STORAGE_KEYS.AUTH) === 'true';
-    } catch {
-      isAuthenticated.value = false;
-    }
-
-    // Load Shoes
-    try {
-      const savedShoes = localStorage.getItem(STORAGE_KEYS.SHOES);
-      if (savedShoes) {
-        shoes.value = JSON.parse(savedShoes).map(sanitizeShoe);
-      } else {
-        shoes.value = JSON.parse(JSON.stringify(FALLBACK_SHOES)).map(sanitizeShoe);
-        saveShoes();
-      }
-    } catch {
-      shoes.value = JSON.parse(JSON.stringify(FALLBACK_SHOES)).map(sanitizeShoe);
-    }
-
-    // Load Categories
-    try {
-      const savedCategories = localStorage.getItem(STORAGE_KEYS.CATEGORIES);
-      if (savedCategories) {
-        categories.value = JSON.parse(savedCategories);
-      } else {
-        categories.value = JSON.parse(JSON.stringify(FALLBACK_CATEGORIES));
-        saveCategories();
-      }
-    } catch {
-      categories.value = JSON.parse(JSON.stringify(FALLBACK_CATEGORIES));
-    }
-
-    // Load Customers
-    try {
-      const savedCustomers = localStorage.getItem(STORAGE_KEYS.CUSTOMERS);
-      if (savedCustomers) {
-        customers.value = JSON.parse(savedCustomers);
-      } else {
-        customers.value = JSON.parse(JSON.stringify(FALLBACK_CUSTOMERS));
-        saveCustomers();
-      }
-    } catch {
-      customers.value = JSON.parse(JSON.stringify(FALLBACK_CUSTOMERS));
-    }
-
-    // Load Links
-    try {
-      const savedLinks = localStorage.getItem(STORAGE_KEYS.LINKS);
-      if (savedLinks) {
-        links.value = JSON.parse(savedLinks);
-      } else {
-        links.value = JSON.parse(JSON.stringify(FALLBACK_LINKS));
-        saveLinks();
-      }
-    } catch {
-      links.value = JSON.parse(JSON.stringify(FALLBACK_LINKS));
-    }
-
-    isInitialized.value = true;
-  }
-
-  // --- Auth methods ---
-  function login() {
-    isAuthenticated.value = true;
-    try {
-      localStorage.setItem(STORAGE_KEYS.AUTH, 'true');
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  function logout() {
-    isAuthenticated.value = false;
-    try {
-      localStorage.removeItem(STORAGE_KEYS.AUTH);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  // --- Persistence helpers ---
-  function saveShoes() {
-    try {
-      localStorage.setItem(STORAGE_KEYS.SHOES, JSON.stringify(shoes.value));
-    } catch (e) {
-      console.error('Error saving shoes:', e);
-    }
-  }
-
-  function saveCategories() {
-    try {
-      localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories.value));
-    } catch (e) {
-      console.error('Error saving categories:', e);
-    }
-  }
-
-  function saveCustomers() {
-    try {
-      localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(customers.value));
-    } catch (e) {
-      console.error('Error saving customers:', e);
-    }
-  }
-
-  function saveLinks() {
-    try {
-      localStorage.setItem(STORAGE_KEYS.LINKS, JSON.stringify(links.value));
-    } catch (e) {
-      console.error('Error saving links:', e);
-    }
-  }
-
-  // --- Shoes CRUD ---
-  function addShoe(data) {
-    const nextId = shoes.value.length > 0 ? Math.max(...shoes.value.map((s) => Number(s.id) || 100)) + 1 : 101;
-    const rawShoe = {
-      id: nextId,
-      title: data.title,
-      category: data.categories?.[0] || 'کفش رسمی و اداری',
-      categories: data.categories || [],
-      colors: data.colors || [],
-      sizes: data.sizes || ['۴۰', '۴۱', '۴۲', '۴۳', '۴۴'],
-      status: data.status || 'published',
-      description: data.description || '',
-      media: data.media && data.media.length ? data.media : [
-        { url: '/assets/images/shoes.jpeg', type: 'image', isPrimary: true }
-      ],
-      image: data.media?.[0]?.url || '/assets/images/shoes.jpeg',
-      gallery: (data.media || []).map((m) => m.url),
-    };
-    const newShoe = sanitizeShoe(rawShoe);
-    shoes.value.unshift(newShoe);
-    saveShoes();
-    return newShoe;
-  }
-
-  function updateShoe(id, data) {
-    const index = shoes.value.findIndex((s) => s.id === Number(id));
-    if (index === -1) return null;
-
-    const existing = shoes.value[index];
-    const updated = sanitizeShoe({
-      ...existing,
-      ...data,
-      id: existing.id,
-      image: data.media?.find((m) => m.isPrimary)?.url || data.media?.[0]?.url || existing.image,
-      gallery: data.media?.map((m) => m.url) || existing.gallery,
-    });
-    shoes.value[index] = updated;
-    saveShoes();
-    return updated;
-  }
-
-  function deleteShoe(id) {
-    shoes.value = shoes.value.filter((s) => s.id !== Number(id));
-    saveShoes();
-  }
-
-  function toggleShoeStatus(id) {
-    const shoe = shoes.value.find((s) => s.id === Number(id));
-    if (shoe) {
-      shoe.status = shoe.status === 'published' ? 'draft' : 'published';
-      saveShoes();
-    }
-  }
-
-  // --- Categories CRUD ---
-  function addCategory(data) {
-    const slug = 'cat-' + Date.now().toString(36);
-    const newCategory = {
-      id: data.id || slug,
-      name: data.name.trim(),
-      status: data.status || 'active',
-      icon: data.icon || 'briefcase',
-    };
-    categories.value.push(newCategory);
-    saveCategories();
-    return newCategory;
-  }
-
-  function updateCategory(id, data) {
-    const index = categories.value.findIndex((c) => c.id === id);
-    if (index === -1) return null;
-    const oldName = categories.value[index].name;
-    const updated = {
-      ...categories.value[index],
-      ...data,
-      id,
-    };
-    categories.value[index] = updated;
-
-    // If name changed, optionally sync with shoes
-    if (data.name && data.name !== oldName) {
-      shoes.value.forEach((shoe) => {
-        if (shoe.categories) {
-          shoe.categories = shoe.categories.map((c) => (c === oldName ? data.name : c));
-        }
-      });
-      saveShoes();
-    }
-
-    saveCategories();
-    return updated;
-  }
-
-  function deleteCategory(id) {
-    categories.value = categories.value.filter((c) => c.id !== id);
-    saveCategories();
-  }
-
-  function toggleCategoryStatus(id) {
-    const cat = categories.value.find((c) => c.id === id);
-    if (cat) {
-      cat.status = cat.status === 'active' ? 'inactive' : 'active';
-      saveCategories();
-    }
-  }
-
-  function getModelCountForCategory(categoryName) {
-    if (!categoryName) return 0;
-    const clean = categoryName.replace(/^لاین\s+/, '').trim();
-    return shoes.value.filter((shoe) => {
-      if (shoe.categories && shoe.categories.length) {
-        return shoe.categories.some((c) => c.replace(/^لاین\s+/, '').trim() === clean);
-      }
-      return (shoe.category || '').replace(/^لاین\s+/, '').trim() === clean;
-    }).length;
-  }
-
-  // --- Customers CRUD ---
-  function addCustomer(data) {
-    const nextId = customers.value.length > 0 ? Math.max(...customers.value.map((c) => Number(c.id) || 100)) + 1 : 101;
-    const newCustomer = {
-      id: nextId,
-      code: `CUST-${nextId}`,
-      nameFa: data.nameFa.trim(),
-      nameEn: data.nameEn || '',
-      shop: data.shop || '',
-      phone: toEnglishDigits(data.phone).replace(/\D/g, ''),
-      status: data.status || 'active',
-      tier: data.tier || 'wholesale',
-      directAccess: data.directAccess || {
-        enabled: false,
-        categories: categories.value.map((c) => c.name),
-        addModels: [],
-        excludeModels: [],
-        duration: '15m',
-        deadline: '3d',
-        lastLogin: '-',
-      },
-    };
-    customers.value.unshift(newCustomer);
-    saveCustomers();
-    return newCustomer;
-  }
-
-  function updateCustomer(id, data) {
-    const index = customers.value.findIndex((c) => c.id === Number(id));
-    if (index === -1) return null;
-    const updated = {
-      ...customers.value[index],
-      ...data,
-      id: Number(id),
-    };
-    customers.value[index] = updated;
-    saveCustomers();
-    return updated;
-  }
-
-  function deleteCustomer(id) {
-    customers.value = customers.value.filter((c) => c.id !== Number(id));
-    saveCustomers();
-  }
-
-  function toggleCustomerStatus(id) {
-    const cust = customers.value.find((c) => c.id === Number(id));
-    if (cust) {
-      cust.status = cust.status === 'active' ? 'inactive' : 'active';
-      saveCustomers();
-    }
-  }
-
-  function updateCustomerDirectAccess(id, directAccessSettings) {
-    const cust = customers.value.find((c) => c.id === Number(id));
-    if (cust) {
-      cust.directAccess = {
-        ...cust.directAccess,
-        ...directAccessSettings,
-      };
-      saveCustomers();
-    }
-  }
-
-  // --- Access Links CRUD ---
-  function createLink(data) {
-    const token = Math.random().toString(16).substring(2, 10);
-    const idNum = Math.floor(1000 + Math.random() * 9000);
-    const newLink = {
-      id: `LNK-${idNum}`,
-      token,
-      recipientFa: data.recipientFa.trim(),
-      recipientEn: data.recipientEn || '',
-      customer: data.customer || '',
-      customerId: data.customerId || null,
-      phone: data.phone || '',
-      authType: data.authType || 'direct',
-      categories: data.categories || categories.value.map((c) => c.name),
-      addModels: data.addModels || [],
-      excludeModels: data.excludeModels || [],
-      startDeadline: data.startDeadline || '3d',
-      viewingDuration: data.viewingDuration || '15m',
-      createdAt: data.createdAt || new Date().toLocaleDateString('fa-IR'),
-      status: 'active',
-      reason: null,
-      views: 0,
-      url: `/catalog?token=${token}`,
-    };
-    links.value.unshift(newLink);
-    saveLinks();
-    return newLink;
-  }
-
-  function updateLink(id, data) {
-    const index = links.value.findIndex((l) => l.id === id);
-    if (index === -1) return null;
-    const updated = {
-      ...links.value[index],
-      ...data,
-      id,
-    };
-    links.value[index] = updated;
-    saveLinks();
-    return updated;
-  }
-
-  function revokeLink(id) {
-    const link = links.value.find((l) => l.id === id);
-    if (link) {
-      link.status = 'revoked';
-      link.reason = 'ابطال شده توسط مدیر';
-      saveLinks();
-    }
-  }
-
-  function extendLink(id, duration = '24h') {
-    const link = links.value.find((l) => l.id === id);
-    if (link) {
-      link.status = 'active';
-      link.startDeadline = duration;
-      link.reason = null;
-      saveLinks();
-    }
-  }
-
-  function deleteLink(id) {
-    links.value = links.value.filter((l) => l.id !== id);
-    saveLinks();
-  }
-
-  // --- Computed Stats ---
-  const stats = computed(() => {
-    const totalShoes = shoes.value.length;
-    const publishedShoes = shoes.value.filter((s) => s.status === 'published').length;
-    const totalCats = categories.value.length;
-    const activeCusts = customers.value.filter((c) => c.status === 'active').length;
-    const activeLnk = links.value.filter((l) => l.status === 'active').length;
-    const totalViews = links.value.reduce((acc, l) => acc + (Number(l.views) || 0), 0);
-
-    return {
-      totalShoes,
-      publishedShoes,
-      totalCategories: totalCats,
-      activeCustomers: activeCusts,
-      activeLinks: activeLnk,
-      totalViews,
-    };
-  });
-
+function mapCustomer(item) {
   return {
-    shoes,
-    categories,
-    customers,
-    links,
-    isAuthenticated,
-    isInitialized,
-    stats,
-    initData,
-    login,
-    logout,
-    saveShoes,
-    saveCategories,
-    saveCustomers,
-    saveLinks,
-    // Shoe operations
-    addShoe,
-    updateShoe,
-    deleteShoe,
-    toggleShoeStatus,
-    // Category operations
-    addCategory,
-    updateCategory,
-    deleteCategory,
-    toggleCategoryStatus,
-    getModelCountForCategory,
-    // Customer operations
-    addCustomer,
-    updateCustomer,
-    deleteCustomer,
-    toggleCustomerStatus,
-    updateCustomerDirectAccess,
-    // Link operations
-    createLink,
-    updateLink,
-    revokeLink,
-    extendLink,
-    deleteLink,
+    id: item.ID, code: item.ID, nameFa: `${item.firstNameFa} ${item.lastNameFa}`.trim(),
+    nameEn: `${item.firstNameEn} ${item.lastNameEn}`.trim(), shop: item.storeName,
+    phone: item.phoneNumber, status: item.isActive ? 'active' : 'inactive',
+    directAccess: { enabled: false, categories: [], addModels: [], excludeModels: [], duration: '15m', deadline: '3d' },
   };
+}
+
+function mapLink(item) {
+  return {
+    id: `LNK-${item.linkID}`, apiID: item.linkID, token: item.token,
+    url: `${window.location.origin}/catalog?token=${encodeURIComponent(item.token)}`,
+    recipientFa: item.recipientName, recipientEn: '', customerId: item.customerID,
+    customer: customers.value.find((customer) => customer.id === item.customerID)?.shop || '',
+    recordID: item.ID,
+    phone: item.phoneNumber, authType: item.authMethod.toLowerCase(), categories: [], addModels: (item.shoeIDs || []).map((id) => shoes.value.find((shoe) => String(shoe.recordID) === String(id))?.id).filter(Boolean), excludeModels: [],
+    viewingDuration: item.viewingDurationMinutes ? compactDuration(item.viewingDurationMinutes) : 'unlimited',
+    startDeadline: item.expiresAt > 0 ? compactDuration(Math.max(1, Math.ceil((item.expiresAt - Date.now() / 1000) / 60))) : 'none', expiresAt: item.expiresAt,
+    status: item.status === 'INACTIVE' ? 'revoked' : item.status === 'EXPIRED' ? 'expired' : item.status === 'PENDING' ? 'pending' : 'active',
+    views: item.lastAccessedAt ? 1 : 0, lastAccessedAt: item.lastAccessedAt,
+  };
+}
+
+function minutes(value) {
+  if (!value || value === 'unlimited') return 0;
+  return (parseInt(value, 10) || 0) * (value.endsWith('d') ? 1440 : value.endsWith('h') ? 60 : 1);
+}
+const linkID = (id) => [...links.value, ...directLinks.value].find((item) => item.id === id)?.recordID || String(id).replace(/^LNK-/, '');
+
+export function useAdminData() {
+  async function refreshData() {
+    const [categoryItems, shoeItems, customerItems, linkItems, overview] = await Promise.all([
+      api('/categories'), allPages('/shoes'), allPages('/customers'), allPages('/links'), api('/dashboard'),
+    ]);
+    categories.value = (categoryItems || []).map((item) => ({ id: item.ID, name: item.title, status: 'active', icon: 'briefcase', shoeCount: item.shoeCount }));
+    shoes.value = shoeItems.map(mapShoe);
+    customers.value = customerItems.map(mapCustomer);
+    const details = await Promise.all(linkItems.map((item) => api(`/links/${item.linkID}`)));
+    links.value = details.filter((item) => !item.isDirectAccess).map(mapLink);
+    directLinks.value = details.filter((item) => item.isDirectAccess).map(mapLink);
+    customers.value.forEach((customer) => {
+      const link = directLinks.value.find((item) => item.customerId === customer.id);
+      if (link) customer.directAccess = {
+        enabled: link.status === 'active' || link.status === 'pending', linkId: link.id, url: link.url,
+        addModels: link.addModels, categories: [], excludeModels: [], duration: link.viewingDuration,
+        deadline: link.startDeadline, lastLogin: link.lastAccessedAt ? new Date(link.lastAccessedAt * 1000).toLocaleString('fa-IR') : '-',
+      };
+    });
+    dashboard.value = overview.stats;
+  }
+  function clearAuth() {
+    setToken(''); isAuthenticated.value = false;
+    shoes.value = []; categories.value = []; customers.value = []; links.value = []; dashboard.value = null;
+    directLinks.value = [];
+    admin.value = null;
+  }
+  async function initData() {
+    if (isInitialized.value) return;
+    try { if (getToken()) await login(); }
+    finally { isInitialized.value = true; }
+  }
+  async function login() {
+    const profile = await api('/auth/admin/me'); admin.value = profile.admin || profile;
+    await refreshData(); isAuthenticated.value = true;
+  }
+  async function logout() { await api('/auth/admin/logout', { method: 'POST' }); clearAuth(); }
+
+  async function shoePayload(data) {
+    const media = await Promise.all((data.media || []).map(async (item) => {
+      if (!item.url.startsWith('data:') && !item.url.startsWith('blob:')) return item;
+      const file = await (await fetch(item.url)).blob();
+      const form = new FormData();
+      form.append('file', file, `media.${file.type.split('/')[1] || 'jpg'}`);
+      const uploaded = await api('/shoes/upload', { method: 'POST', body: form });
+      return { ...item, url: uploaded.url };
+    }));
+    const strip = (url) => url?.includes('/uploads/') ? url.slice(url.indexOf('/uploads/')) : url;
+    return {
+      title: data.title, description: data.description || '',
+      categoryIDs: categories.value.filter((category) => data.categories?.includes(category.name)).map((category) => category.id),
+      colors: data.colors || [], sizes: (data.sizes || []).map((size) => Number(toEnglishDigits(String(size)))),
+      coverImage: strip(media.find((item) => item.isPrimary && item.type !== 'video')?.url || media.find((item) => item.type !== 'video')?.url || ''),
+      images: media.filter((item) => item.type !== 'video').map((item) => strip(item.url)), videos: media.filter((item) => item.type === 'video').map((item) => strip(item.url)),
+    };
+  }
+  function customerPayload(data) {
+    const split = (name) => { const [first = '', ...rest] = (name || '').trim().split(/\s+/); return [first, rest.join(' ')]; };
+    const [firstNameFa, lastNameFa] = split(data.nameFa), [firstNameEn, lastNameEn] = split(data.nameEn);
+    if (firstNameFa.length < 2 || lastNameFa.length < 2) throw new Error('نام و نام خانوادگی را کامل وارد کنید (هرکدام حداقل دو حرف).');
+    return { firstNameFa, lastNameFa, firstNameEn, lastNameEn, storeName: data.shop || '', phoneNumber: toEnglishDigits(data.phone || '').replace(/\D/g, ''), isActive: data.status !== 'inactive' };
+  }
+  function linkPayload(data) {
+    const selected = shoes.value.filter((shoe) => !(data.excludeModels || []).includes(shoe.id) && ((data.addModels || []).includes(shoe.id) || shoe.categories.some((name) => (data.categories || []).includes(name))));
+    return {
+      isDirectAccess: !!data.isDirectAccess,
+      recipientName: data.recipientFa, phoneNumber: data.phone || '', customerID: data.customerId || 0,
+      authMethod: (data.authType || 'direct').toUpperCase(), shoeIDs: selected.map((shoe) => shoe.recordID), viewingDurationMinutes: minutes(data.viewingDuration),
+      expiresAt: data.expiresAt ?? (minutes(data.startDeadline) ? Math.floor(Date.now() / 1000) + minutes(data.startDeadline) * 60 : 0),
+    };
+  }
+  async function mutate(path, method, body) {
+    const result = await api(path, { method, body }); await refreshData(); return result;
+  }
+  const addShoe = async (data) => mutate('/shoes', 'POST', await shoePayload(data));
+  const updateShoe = async (id, data) => mutate(`/shoes/${shoes.value.find((shoe) => shoe.id === id)?.recordID}`, 'PUT', await shoePayload(data));
+  const deleteShoe = (id) => mutate(`/shoes/${shoes.value.find((shoe) => shoe.id === id)?.recordID}`, 'DELETE');
+  const addCategory = (data) => mutate('/categories', 'POST', { title: data.name.trim() });
+  const updateCategory = (id, data) => mutate(`/categories/${id}`, 'PUT', { title: data.name.trim() });
+  const deleteCategory = (id) => mutate(`/categories/${id}`, 'DELETE');
+  const addCustomer = (data) => mutate('/customers', 'POST', customerPayload(data));
+  const updateCustomer = (id, data) => mutate(`/customers/${id}`, 'PUT', customerPayload(data));
+  const deleteCustomer = (id) => mutate(`/customers/${id}`, 'DELETE');
+  const toggleCustomerStatus = (id) => mutate(`/customers/${id}/status`, 'PATCH', { isActive: customers.value.find((item) => item.id === id)?.status !== 'active' });
+  const updateCustomerDirectAccess = async (id, settings) => {
+    const customer = customers.value.find((item) => item.id === id);
+    const existing = directLinks.value.find((item) => item.customerId === id);
+    if (!settings.enabled) {
+      if (existing) await revokeLink(existing.id);
+      return;
+    }
+    const body = linkPayload({
+      isDirectAccess: true, customerId: id, recipientFa: customer.nameFa, phone: customer.phone,
+      authType: 'direct', addModels: settings.addModels, viewingDuration: settings.duration, startDeadline: settings.deadline,
+    });
+    if (existing) {
+      await api(`/links/${existing.recordID}`, { method: 'PUT', body });
+      if (existing.status === 'revoked' || existing.status === 'expired') {
+        await api(`/links/${existing.recordID}/reactivate`, { method: 'PATCH' });
+      }
+    } else {
+      await api('/links', { method: 'POST', body });
+    }
+    await refreshData();
+  };
+  const createLink = async (data) => {
+    const result = await mutate('/links', 'POST', linkPayload(data)); return links.value.find((item) => item.apiID === result.linkID);
+  };
+  const revokeLink = (id) => mutate(`/links/${linkID(id)}/revoke`, 'PATCH');
+  const extendLink = (id) => mutate(`/links/${linkID(id)}/reactivate`, 'PATCH');
+  const updateLink = (id, data) => {
+    return mutate(`/links/${linkID(id)}`, 'PUT', linkPayload({ ...links.value.find((item) => item.id === id), ...data }));
+  };
+  const deleteLink = (id) => mutate(`/links/${linkID(id)}`, 'DELETE');
+  const getModelCountForCategory = (name) => shoes.value.filter((shoe) => shoe.categories.includes(name)).length;
+  const stats = computed(() => ({ totalShoes: dashboard.value?.activeShoesCount || 0, publishedShoes: dashboard.value?.activeShoesCount || 0,
+    totalCategories: categories.value.length, activeCustomers: dashboard.value?.totalCustomersCount || 0,
+    activeLinks: dashboard.value?.activeLinksCount || 0, totalViews: dashboard.value?.last7DaysViewsCount || 0 }));
+  return { admin, shoes, categories, customers, links, isAuthenticated, isInitialized, stats, initData, refreshData, login, logout, clearAuth,
+    addShoe, updateShoe, deleteShoe, addCategory, updateCategory, deleteCategory, getModelCountForCategory,
+    addCustomer, updateCustomer, deleteCustomer, toggleCustomerStatus, updateCustomerDirectAccess,
+    createLink, updateLink, revokeLink, extendLink, deleteLink };
 }
