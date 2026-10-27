@@ -1,0 +1,52 @@
+.btn-specular {
+  --x: 50%;
+  --y: 50%;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.6rem;
+  border-radius: var(--r-md);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  background: linear-gradient(145deg, #281a12 0%, #170f0a 100%);
+  border: 1px solid rgba(216, 178, 100, 0.35);
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow:
+    0 4px 15px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+  user-select: none;
+}
+
+.btn-specular::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle 90px at var(--x) var(--y),
+    rgba(246, 231, 178, 0.45) 0%,
+    rgba(216, 178, 100, 0.15) 40%,
+    transparent 80%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  mix-blend-mode: screen;
+}
+
+.btn-specular:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold-primary);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.25);
+}
+
+.btn-specular:hover::before {
+  opacity: 1;
+}

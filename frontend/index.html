@@ -4,35 +4,50 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DYF | تولید و پخش عمده کفش چرم و اسپرت مردانه</title>
-  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.css">
-  <link rel="stylesheet" href="assets/css/style.css?v=4">
-  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+  <meta name="description" content="کارگاه تولید و پخش عمده کفش تمام‌چرم طبیعی مردانه DYF تبریز. تأمین تخصصی سری‌های ۱۰ تا ۱۰۰ جفتی ویژه بنکداران، عمده‌فروشان و بوتیک‌های کفش سراسر کشور.">
+  <meta name="theme-color" content="#141210">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dyfshoes.com/">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dyfshoes.com/">
+  <meta property="og:locale" content="fa_IR">
+  <meta property="og:site_name" content="DYF - Defender Your Foot">
+  <meta property="og:title" content="DYF | تولید و پخش عمده کفش چرم و اسپرت مردانه">
+  <meta property="og:description" content="کارگاه تولید و پخش عمده کفش تمام‌چرم طبیعی مردانه DYF تبریز. تأمین تخصصی سری‌های ۱۰ تا ۱۰۰ جفتی ویژه بنکداران و بوتیک‌های کفش.">
+  <meta property="og:image" content="https://dyfshoes.com/assets/images/hero-bg.jpeg">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="DYF | تولید و پخش عمده کفش چرم و اسپرت مردانه">
+  <meta name="twitter:description" content="کارگاه تولید و پخش عمده کفش تمام‌چرم طبیعی مردانه DYF تبریز.">
+  <meta name="twitter:image" content="https://dyfshoes.com/assets/images/hero-bg.jpeg">
+
+  <link rel="stylesheet" href="/src/styles/style.css">
   <script type="module" src="assets/js/model-viewer.min.js"></script>
 </head>
 <body>
 
-  <!-- نوار دوخت چرمی -->
-  <div class="top-saddle-stitch"></div>
+  <a href="#main-content" class="skip-to-content">پرش به محتوای اصلی</a>
 
-  <!-- هدر سایت -->
   <header class="site-header">
-    <!-- لوگو -->
-    <a href="#" class="brand-logo" aria-label="DYF - DEFENDER YOUR FOOT">
-      <img src="assets/images/logo.png" alt="لوگو برند DYF" class="brand-logo-img">
+
+    <a href="#" class="brand-logo">
+      <picture>
+        <source srcset="assets/images/logo.webp" type="image/webp">
+        <img src="assets/images/logo.png" alt="لوگو کارگاه کفش DYF" class="brand-logo-img" width="61" height="70" fetchpriority="high" decoding="async">
+      </picture>
       <div class="logo-text-group">
         <span class="logo-brand-name">DYF</span>
         <span class="logo-brand-sub">DEFENDER YOUR FOOT</span>
       </div>
     </a>
 
-    <!-- منوی دسکتاپ -->
-    <nav class="desktop-nav">
+    <nav class="desktop-nav" aria-label="ناوبری اصلی دسکتاپ">
       <ul>
         <li><a href="#about" class="nav-item">درباره ما</a></li>
         <li><a href="#editorial-lines" class="nav-item">لاین‌های تولید</a></li>
@@ -41,15 +56,13 @@
       </ul>
     </nav>
 
-    <!-- بخش اقدامات (دکمه دسکتاپ + همبرگر موبایل) -->
     <div class="header-actions">
-      <!-- دکمه ورود به کاتالوگ در دسکتاپ -->
-      <a href="catalog.html" class="btn-specular btn-desktop js-specular" style="text-decoration: none;">
+
+      <a href="/catalog" class="btn-specular btn-desktop js-specular" style="text-decoration: none;">
         ورود به کاتالوگ خصوصی
       </a>
 
-      <!-- آیکون سه خط موبایل -->
-      <button class="hamburger-btn" id="hamburgerBtn" aria-label="منوی موبایل">
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="منوی موبایل" aria-expanded="false" aria-controls="mobileDrawer">
         <span></span>
         <span></span>
         <span></span>
@@ -57,10 +70,9 @@
     </div>
   </header>
 
-  <!-- پس‌زمینه تیره و منوی کشویی موبایل -->
   <div class="mobile-menu-overlay" id="mobileOverlay"></div>
 
-  <div class="mobile-menu-drawer" id="mobileDrawer">
+  <div class="mobile-menu-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="منوی ناوبری موبایل">
     <ul class="mobile-nav-list">
       <li><a href="#about" class="mobile-nav-link">درباره ما</a></li>
       <li><a href="#editorial-lines" class="mobile-nav-link">لاین‌های تولید</a></li>
@@ -68,19 +80,19 @@
       <li><a href="#contact" class="mobile-nav-link">تماس با ما</a></li>
     </ul>
 
-    <!-- دکمه‌ای که در موبایل به داخل منو منتقل شد -->
     <div class="mobile-drawer-bottom">
-      <a href="catalog.html" class="btn-specular js-specular" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">
+      <a href="/catalog" class="btn-specular js-specular" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">
         ورود به کاتالوگ خصوصی
       </a>
     </div>
   </div>
 
-  <!-- ==================== HERO SECTION ==================== -->
+  <main id="main-content">
+
   <section class="hero-section" id="hero">
     <div class="container">
       <div class="hero-layout">
-        <!-- بخش نشان رسمی سه‌بعدی برند (سمت راست در چیدمان راست‌به‌چپ) -->
+
         <div class="hero-logo-card" id="heroLogoBox">
           <div class="hero-emblem-showcase">
             <div class="hero-3d-wrapper">
@@ -107,11 +119,20 @@
                 class="hero-model-viewer">
                 <div slot="progress-bar" style="display: none;"></div>
               </model-viewer>
+
+              <img 
+                src="assets/images/logo.png" 
+                alt="نشان رسمی کارگاه کفش DYF" 
+                class="hero-fallback-emblem" 
+                width="420" 
+                height="480"
+                loading="lazy"
+                decoding="async"
+              >
             </div>
           </div>
         </div>
 
-        <!-- باکس ۲: محتوا و معرفی تجاری B2B (سمت چپ در چیدمان راست‌به‌چپ) -->
         <div class="hero-content-card">
           <div class="hero-content-top">
             <div class="hero-badge">
@@ -127,7 +148,6 @@
             </p>
           </div>
 
-          <!-- دکمه‌های اقدام -->
           <div class="hero-actions-group">
             <a href="#inquiry" class="btn-specular js-specular hero-btn-primary">
               <span>درخواست همکاری</span>
@@ -143,11 +163,10 @@
     </div>
   </section>
 
-  <!-- ==================== ۲. داستان برند DYF (Brand Story) ==================== -->
   <section class="story-section" id="about">
     <div class="container">
       <div class="story-grid">
-        <!-- ستون متن: برچسب، تیتر، توضیحات و ۳ نکته کوتاه (سمت راست در چیدمان راست‌به‌چپ) -->
+
         <div class="story-text-col">
           <div class="story-badge">
             <span class="story-badge-dot"></span>
@@ -180,16 +199,21 @@
           </div>
         </div>
 
-        <!-- ستون تصویر: میز کار کفاشی، ابزارهای تولید و متریال (سمت چپ در چیدمان راست‌به‌چپ) -->
         <div class="story-image-col">
           <div class="story-image-card">
             <div class="story-image-frame">
-              <img 
-                src="assets/images/story-workshop.jpeg" 
-                alt="میز کار کفاشی کارگاه DYF، ابزارهای اندازه‌گیری و متریال چرم طبیعی" 
-                class="story-workbench-img"
-                loading="lazy"
-              />
+              <picture>
+                <source srcset="assets/images/story-workshop.webp" type="image/webp">
+                <img 
+                  src="assets/images/story-workshop.jpeg" 
+                  alt="میز کار کفاشی کارگاه DYF، ابزارهای اندازه‌گیری و متریال چرم طبیعی" 
+                  class="story-workbench-img"
+                  loading="lazy"
+                  decoding="async"
+                  width="1540"
+                  height="944"
+                />
+              </picture>
               <div class="story-image-overlay"></div>
             </div>
           </div>
@@ -198,10 +222,9 @@
     </div>
   </section>
 
-  <!-- ==================== ۳. لاین‌های تولید DYF (The Editorial Lookbook) ==================== -->
   <section class="craft-editorial-section" id="editorial-lines">
     <div class="container">
-      <!-- هدر سکشن: تیتر بزرگ با فضای خالی کافی و توضیح کوتاه -->
+
       <div class="craft-editorial-header">
         <span class="craft-editorial-kicker">DYF LOOKBOOK — TWO LINES</span>
         <h2 class="craft-main-title">برای هر سبک، یک انتخاب.</h2>
@@ -217,23 +240,27 @@
         </div>
       </div>
 
-      <!-- دو ردیف افقی بزرگ و نامتقارن تحریریه‌ای -->
       <div class="craft-rows-wrap">
-        <!-- ردیف اول: لاین رسمی و چرمی (در RTL: تصویر عمودی سمت راست، متن سمت چپ) -->
+
         <article class="craft-editorial-row craft-row-formal">
-          <!-- ستون تصویر عمودی (سمت راست دسکتاپ در RTL) -->
+
           <div class="craft-media-col">
             <div class="craft-media-frame">
-              <img 
-                src="assets/images/craft-formal.jpeg" 
-                alt="استادکار در حال پرداخت و دوخت کفش چرمی در کارگاه - لاین رسمی و چرمی DYF" 
-                class="craft-editorial-img craft-img-formal"
-                decoding="async"
-              />
+              <picture>
+                <source srcset="assets/images/craft-formal.webp" type="image/webp">
+                <img 
+                  src="assets/images/craft-formal.jpeg" 
+                  alt="استادکار در حال پرداخت و دوخت کفش چرمی در کارگاه - لاین رسمی و چرمی DYF" 
+                  class="craft-editorial-img craft-img-formal"
+                  loading="lazy"
+                  decoding="async"
+                  width="2121"
+                  height="1414"
+                />
+              </picture>
             </div>
           </div>
 
-          <!-- ستون متن (سمت چپ دسکتاپ در RTL) -->
           <div class="craft-text-col">
             <div class="craft-line-meta">
               <span class="craft-line-num">01</span>
@@ -245,8 +272,7 @@
               مدل‌های مناسب استایل رسمی و محیط‌های کاری، برای فروشگاه‌هایی با نیازهای متنوع در بازار کفش مردانه.
             </p>
 
-            <!-- نوار مشخصات فنی ژورنالی -->
-            <div class="craft-spec-strip" aria-label="مشخصات شاخص لاین رسمی">
+            <div class="craft-spec-strip">
               <div class="craft-spec-pill">
                 <span class="spec-label">متریال اصلی رویه:</span>
                 <span class="spec-value">چرم طبیعی هورس و گاوی واکس‌خورده دستی</span>
@@ -268,16 +294,14 @@
           </div>
         </article>
 
-        <!-- خط جداکننده ساده و مینیمال بین دو ردیف -->
         <div class="craft-editorial-separator" aria-hidden="true">
           <span class="separator-line"></span>
           <span class="separator-symbol">✦</span>
           <span class="separator-line"></span>
         </div>
 
-        <!-- ردیف دوم: لاین اسپرت و کژوال (در RTL: متن سمت راست، تصویر عمودی سمت چپ) -->
         <article class="craft-editorial-row craft-row-sport">
-          <!-- ستون متن (سمت راست دسکتاپ در RTL) -->
+
           <div class="craft-text-col">
             <div class="craft-line-meta">
               <span class="craft-line-num">02</span>
@@ -289,8 +313,7 @@
               مدل‌های مناسب استفاده روزمره و سلیقه‌های متنوع بازار.
             </p>
 
-            <!-- نوار مشخصات فنی ژورنالی -->
-            <div class="craft-spec-strip" aria-label="مشخصات شاخص لاین اسپرت">
+            <div class="craft-spec-strip">
               <div class="craft-spec-pill">
                 <span class="spec-label">متریال اصلی رویه:</span>
                 <span class="spec-value">چرم نرم ناپا (Nappa) با لمس ابریشمی</span>
@@ -311,15 +334,20 @@
             </a>
           </div>
 
-          <!-- ستون تصویر عمودی (سمت چپ دسکتاپ در RTL) -->
           <div class="craft-media-col">
             <div class="craft-media-frame">
-              <img 
-                src="assets/images/craft-sport.jpg" 
-                alt="کارگاه ساخت و اتصال زیره کفش اسنیکر - لاین اسپرت و کژوال DYF" 
-                class="craft-editorial-img craft-img-sport"
-                decoding="async"
-              />
+              <picture>
+                <source srcset="assets/images/craft-sport.webp" type="image/webp">
+                <img 
+                  src="assets/images/craft-sport.jpg" 
+                  alt="کارگاه ساخت و اتصال زیره کفش اسنیکر - لاین اسپرت و کژوال DYF" 
+                  class="craft-editorial-img craft-img-sport"
+                  loading="lazy"
+                  decoding="async"
+                  width="1400"
+                  height="1400"
+                />
+              </picture>
             </div>
           </div>
         </article>
@@ -327,12 +355,9 @@
     </div>
   </section>
 
-
-
-  <!-- ==================== ۳. مطالعه متریال و ساخت DEFENDER (The Defender Material Study) ==================== -->
   <section class="defender-section" id="leather">
     <div class="container">
-      <!-- بخش اول: عنوان ادیتوریال و روایت هویت کارگاهی -->
+
       <header class="defender-showcase-header">
         <span class="defender-showcase-kicker">THE DEFENDER MATERIAL STUDY</span>
         <h2 class="defender-showcase-title">
@@ -344,49 +369,61 @@
         </p>
       </header>
 
-      <!-- بخش دوم: ترکیب‌بندی تصویر شاخص و دو تصویر جزئیات همراه با زیرنویس‌های مینیمال -->
       <div class="defender-visual-triptych">
-        <!-- تصویر اصلی: بزرگ‌ترین تصویر در سمت راست ترکیب‌بندی -->
+
         <div class="defender-master-frame">
-          <img 
-            src="assets/images/shoes.jpeg" 
-            alt="کفش تمام چرم رسمی مردانه DYF - تصویر شاخص فرم و کیفیت محصول" 
-            class="defender-master-img"
-            loading="lazy"
-            decoding="async"
-          />
+          <picture>
+            <source srcset="assets/images/shoes.webp" type="image/webp">
+            <img 
+              src="assets/images/shoes.jpeg" 
+              alt="کفش تمام چرم رسمی مردانه DYF - تصویر شاخص فرم و کیفیت محصول" 
+              class="defender-master-img"
+              loading="lazy"
+              decoding="async"
+              width="1024"
+              height="1024"
+            />
+          </picture>
           <div class="defender-frame-caption">
             <span class="caption-index">01</span>
             <span class="caption-title">فرم قالب و ساختار کفش</span>
           </div>
         </div>
 
-        <!-- دو تصویر کوچک‌تر: در سمت چپ تصویر اصلی، به‌صورت عمودی روی هم قرار بگیرند -->
         <div class="defender-details-stack">
-          <!-- تصویر دوم: نمای نزدیک از بافت چرم -->
+
           <div class="defender-detail-frame">
-            <img 
-              src="assets/images/bag.jpeg" 
-              alt="نمای نزدیک از بافت و دانه چرم طبیعی" 
-              class="defender-detail-img"
-              loading="eager"
-              decoding="async"
-            />
+            <picture>
+              <source srcset="assets/images/bag.webp" type="image/webp">
+              <img 
+                src="assets/images/bag.jpeg" 
+                alt="نمای نزدیک از بافت و دانه چرم طبیعی" 
+                class="defender-detail-img"
+                loading="lazy"
+                decoding="async"
+                width="1200"
+                height="1200"
+              />
+            </picture>
             <div class="defender-frame-caption">
               <span class="caption-index">02</span>
               <span class="caption-title">دانه و بافت چرم طبیعی</span>
             </div>
           </div>
 
-          <!-- تصویر سوم: نمای نزدیک از فرایند ساخت، اتصال و دوخت چرم -->
           <div class="defender-detail-frame">
-            <img 
-              src="assets/images/bag2.jpeg" 
-              alt="نمای نزدیک از فرایند دوخت سراجی و پرداخت دست‌دوز چرم" 
-              class="defender-detail-img"
-              loading="eager"
-              decoding="async"
-            />
+            <picture>
+              <source srcset="assets/images/bag2.webp" type="image/webp">
+              <img 
+                src="assets/images/bag2.jpeg" 
+                alt="نمای نزدیک از فرایند دوخت سراجی و پرداخت دست‌دوز چرم" 
+                class="defender-detail-img"
+                loading="lazy"
+                decoding="async"
+                width="1254"
+                height="1254"
+              />
+            </picture>
             <div class="defender-frame-caption">
               <span class="caption-index">03</span>
               <span class="caption-title">دوخت و پرداخت چرم</span>
@@ -395,10 +432,9 @@
         </div>
       </div>
 
-      <!-- بخش سوم: پایان‌بندی ظریف با امضای رسمی برند -->
       <footer class="defender-showcase-footer">
         <p class="defender-essence-tag">MATERIAL · CRAFT · DETAIL</p>
-        <div class="defender-brand-signoff" aria-label="امضای برند DYF">
+        <div class="defender-brand-signoff">
           <span class="signoff-hairline" aria-hidden="true"></span>
           <span class="signoff-label">DEFENDER YOUR FOOT — DYF</span>
           <span class="signoff-hairline" aria-hidden="true"></span>
@@ -407,7 +443,6 @@
     </div>
   </section>
 
-  <!-- ==================== ۴. فرآیند ۴ مرحله‌ای سفارش عمده ==================== -->
   <section class="pipeline-section" id="order">
     <div class="container">
       <header class="pipeline-header">
@@ -419,7 +454,7 @@
       </header>
 
       <div class="pipeline-timeline">
-        <!-- مرحله ۱ -->
+
         <article class="pipeline-node">
           <div class="pipeline-marker" aria-hidden="true">
             <span class="pipeline-number">۱</span>
@@ -432,7 +467,6 @@
           </div>
         </article>
 
-        <!-- مرحله ۲ -->
         <article class="pipeline-node">
           <div class="pipeline-marker" aria-hidden="true">
             <span class="pipeline-number">۲</span>
@@ -445,7 +479,6 @@
           </div>
         </article>
 
-        <!-- مرحله ۳ -->
         <article class="pipeline-node">
           <div class="pipeline-marker" aria-hidden="true">
             <span class="pipeline-number">۳</span>
@@ -458,7 +491,6 @@
           </div>
         </article>
 
-        <!-- مرحله ۴ -->
         <article class="pipeline-node">
           <div class="pipeline-marker" aria-hidden="true">
             <span class="pipeline-number">۴</span>
@@ -481,12 +513,11 @@
     </div>
   </section>
 
-  <!-- ==================== ۵. فرم اقدام نهایی (Wholesale Inquiry — The Final Brand Signature) ==================== -->
   <section class="inquiry-section" id="inquiry">
     <div class="inquiry-watermark" aria-hidden="true">DYF</div>
     <div class="container">
       <div class="inquiry-layout">
-        <!-- ستون راست: معرفی و هویت برند -->
+
         <div class="inquiry-intro-col">
           <div class="inquiry-meta">
             <span class="inquiry-kicker">WHOLESALE INQUIRY</span>
@@ -504,11 +535,31 @@
           </p>
         </div>
 
-        <!-- ستون چپ: پنل معماری فرم استعلام -->
         <div class="inquiry-form-sector">
           <div class="inquiry-form-header">
             <h3 class="inquiry-form-title">فرم ثبت درخواست همکاری</h3>
             <p class="inquiry-form-subtitle">اطلاعات زیر را تکمیل کنید تا کارشناس تأمین با شما تماس بگیرد.</p>
+          </div>
+
+          <div class="inquiry-error-banner" id="inquiryGeneralError" role="alert" aria-live="assertive">
+            <div class="inquiry-error-header">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <span class="inquiry-error-title">خطا در ثبت اطلاعات در سرور</span>
+            </div>
+            <p class="inquiry-error-text" id="inquiryErrorText"></p>
+            <div class="inquiry-error-actions">
+              <button type="button" class="inquiry-error-btn-retry" id="inquiryRetryBtn">تلاش مجدد</button>
+              <a href="https://wa.me/989153177455" target="_blank" rel="noopener noreferrer" class="inquiry-error-btn-wa" id="inquiryErrorWaLink">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.42 0-2.82-.37-4.06-1.08l-.29-.17-3.12.82.83-3.04-.19-.3a8.21 8.21 0 0 1-1.26-4.46c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.24-.75-.67-1.25-1.49-1.4-1.74-.14-.25-.02-.39.11-.51.11-.11.25-.29.38-.44.12-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.12.17 1.78 2.71 4.3 3.8.6.26 1.07.41 1.44.53.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.23-.17-.48-.3z"/>
+                </svg>
+                <span>ارسال مستقیم در واتساپ</span>
+              </a>
+            </div>
           </div>
 
           <form class="inquiry-form" id="inquiryForm">
@@ -521,8 +572,10 @@
                   name="storeName" 
                   class="inquiry-input" 
                   placeholder="مثال: فروشگاه آروین / محمد راد" 
+                  aria-describedby="storeNameError"
                   required
                 >
+                <span class="inquiry-field-error" id="storeNameError" role="alert"></span>
               </div>
 
               <div class="inquiry-form-group">
@@ -533,8 +586,10 @@
                   name="cityMarket" 
                   class="inquiry-input" 
                   placeholder="مثال: تهران - بازار بزرگ" 
+                  aria-describedby="cityMarketError"
                   required
                 >
+                <span class="inquiry-field-error" id="cityMarketError" role="alert"></span>
               </div>
 
               <div class="inquiry-form-group">
@@ -544,10 +599,12 @@
                   id="phoneNumber" 
                   name="phoneNumber" 
                   class="inquiry-input" 
-                  placeholder="۰۹۱۲XXXXXXX" 
+                  placeholder="۰۹۱۵۳۱۷۷۴۵۵" 
                   dir="ltr"
+                  aria-describedby="phoneNumberError"
                   required
                 >
+                <span class="inquiry-field-error" id="phoneNumberError" role="alert"></span>
               </div>
 
               <div class="inquiry-form-group">
@@ -564,8 +621,8 @@
               <button type="submit" class="inquiry-submit-btn">
                 ثبت درخواست همکاری
               </button>
-              <a href="https://wa.me/989120000000" target="_blank" rel="noopener noreferrer" class="inquiry-whatsapp-btn" aria-label="ارتباط مستقیم در واتساپ">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
+              <a href="https://wa.me/989153177455" target="_blank" rel="noopener noreferrer" class="inquiry-whatsapp-btn">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.42 0-2.82-.37-4.06-1.08l-.29-.17-3.12.82.83-3.04-.19-.3a8.21 8.21 0 0 1-1.26-4.46c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.24-.75-.67-1.25-1.49-1.4-1.74-.14-.25-.02-.39.11-.51.11-.11.25-.29.38-.44.12-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.12.17 1.78 2.71 4.3 3.8.6.26 1.07.41 1.44.53.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.23-.17-.48-.3z"/>
                 </svg>
                 <span>ارتباط مستقیم در واتساپ</span>
@@ -577,7 +634,6 @@
             </p>
           </form>
 
-          <!-- اعلان تایید پس از ثبت -->
           <div class="inquiry-success-panel" id="formSuccessBanner">
             <div class="inquiry-success-icon" aria-hidden="true">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -597,7 +653,6 @@
     </div>
   </section>
 
-  <!-- ==================== سؤال‌های پرتکرار همکاری (FAQ) ==================== -->
   <section class="faq-section" id="faq">
     <div class="container">
       <h2 class="faq-title">سؤال‌های پرتکرار همکاری</h2>
@@ -619,8 +674,8 @@
       </details>
     </div>
   </section>
+  </main>
 
-  <!-- ==================== فوتر تکمیلی سایت ==================== -->
   <footer class="site-footer" id="contact">
     <div class="container">
       <div class="footer-grid">
@@ -645,8 +700,7 @@
 
         <div class="footer-col">
           <h4>تماس و کانال‌های رسمی</h4>
-          
-          <!-- دکمه‌های آیکونی شبکه‌های رسمی -->
+
           <div class="footer-social-bar" aria-label="کانال‌های ارتباطی DYF">
             <a href="https://instagram.com/dyf.shoes" target="_blank" rel="noopener noreferrer" class="footer-social-icon" aria-label="اینستاگرام DYF">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -655,7 +709,7 @@
                 <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
               </svg>
             </a>
-            <a href="https://wa.me/98912XXXXXXX?text=%D8%B3%D9%84%D8%A7%D9%85%D8%8C%20%DA%A9%D8%A7%D8%AA%D8%A7%D9%84%D9%88%DA%AF%20DYF%20%D8%B1%D9%88%20%D9%85%DB%8C%E2%80%8C%D8%AE%D9%88%D8%A7%D9%85" target="_blank" rel="noopener noreferrer" class="footer-social-icon" aria-label="واتساپ کارگاه DYF">
+            <a href="https://wa.me/989153177455?text=%D8%B3%D9%84%D8%A7%D9%85%D8%8C%20%DA%A9%D8%A7%D8%AA%D8%A7%D9%84%D9%88%DA%AF%20DYF%20%D8%B1%D9%88%20%D9%85%DB%8C%E2%80%8C%D8%AE%D9%88%D8%A7%D9%85" target="_blank" rel="noopener noreferrer" class="footer-social-icon" aria-label="واتساپ کارگاه DYF">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.42 0-2.82-.37-4.06-1.08l-.29-.17-3.12.82.83-3.04-.19-.3a8.21 8.21 0 0 1-1.26-4.46c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.24-.75-.67-1.25-1.49-1.4-1.74-.14-.25-.02-.39.11-.51.11-.11.25-.29.38-.44.12-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.12.17 1.78 2.71 4.3 3.8.6.26 1.07.41 1.44.53.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.23-.17-.48-.3z"/>
               </svg>
@@ -664,8 +718,8 @@
 
           <ul class="footer-links">
             <li><span class="footer-info-item">کارگاه و دفتر: تبریز / تهران</span></li>
-            <li><span class="footer-info-item">تماس مستقیم B2B: ۰۹۱۲XXXXXXX</span></li>
-            <li><a href="https://wa.me/98912XXXXXXX?text=%D8%B3%D9%84%D8%A7%D9%85%D8%8C%20%DA%A9%D8%A7%D8%AA%D8%A7%D9%84%D9%88%DA%AF%20DYF%20%D8%B1%D9%88%20%D9%85%DB%8C%E2%80%8C%D8%AE%D9%88%D8%A7%D9%85" target="_blank" rel="noopener noreferrer" class="footer-link">ارتباط در واتساپ و مشاوره تیراژ</a></li>
+            <li><span class="footer-info-item">تماس مستقیم B2B: ۰۹۱۵۳۱۷۷۴۵۵</span></li>
+            <li><a href="https://wa.me/989153177455?text=%D8%B3%D9%84%D8%A7%D9%85%D8%8C%20%DA%A9%D8%A7%D8%AA%D8%A7%D9%84%D9%88%DA%AF%20DYF%20%D8%B1%D9%88%20%D9%85%DB%8C%E2%80%8C%D8%AE%D9%88%D8%A7%D9%85" target="_blank" rel="noopener noreferrer" class="footer-link">ارتباط در واتساپ و مشاوره تیراژ</a></li>
             <li><a href="https://t.me/dyf_footwear" target="_blank" rel="noopener noreferrer" class="footer-link">کانال تلگرام DYF</a></li>
             <li><a href="https://instagram.com/dyf.shoes" target="_blank" rel="noopener noreferrer" class="footer-link">صفحه اینستاگرام (dyf.shoes@)</a></li>
             <li><a href="#inquiry" class="footer-link footer-cta-link">ثبت فرم درخواست همکاری</a></li>
@@ -681,15 +735,14 @@
     </div>
   </footer>
 
-  <!-- نوار ثابت ارتباط سریع پایین صفحه در موبایل (تماس | واتساپ) -->
-  <aside class="mobile-bottom-dock" aria-label="ارتباط سریع">
-    <a href="tel:09120000000" class="dock-action-btn dock-btn-call">
+  <aside class="mobile-bottom-dock">
+    <a href="tel:+989153177455" class="dock-action-btn dock-btn-call">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
       </svg>
       <span>تماس مستقیم</span>
     </a>
-    <a href="https://wa.me/98912XXXXXXX?text=%D8%B3%D9%84%D8%A7%D9%85%D8%8C%20%DA%A9%D8%A7%D8%AA%D8%A7%D9%84%D9%88%DA%AF%20DYF%20%D8%B1%D9%88%20%D9%85%DB%8C%E2%80%8C%D8%AE%D9%88%D8%A7%D9%85" target="_blank" rel="noopener noreferrer" class="dock-action-btn dock-btn-whatsapp" aria-label="ارتباط مستقیم در واتساپ">
+    <a href="https://wa.me/989153177455?text=%D8%B3%D9%84%D8%A7%D9%85%D8%8C%20%DA%A9%D8%A7%D8%AA%D8%A7%D9%84%D9%88%DA%AF%20DYF%20%D8%B1%D9%88%20%D9%85%DB%8C%E2%80%8C%D8%AE%D9%88%D8%A7%D9%85" target="_blank" rel="noopener noreferrer" class="dock-action-btn dock-btn-whatsapp">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.42 0-2.82-.37-4.06-1.08l-.29-.17-3.12.82.83-3.04-.19-.3a8.21 8.21 0 0 1-1.26-4.46c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.24-.75-.67-1.25-1.49-1.4-1.74-.14-.25-.02-.39.11-.51.11-.11.25-.29.38-.44.12-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.12.17 1.78 2.71 4.3 3.8.6.26 1.07.41 1.44.53.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.23-.17-.48-.3z"/>
       </svg>
@@ -697,6 +750,6 @@
     </a>
   </aside>
 
-  <script src="assets/js/script.js?v=4"></script>
+  <script type="module" src="/src/landing/main.js"></script>
 </body>
 </html>
