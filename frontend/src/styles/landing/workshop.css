@@ -1,0 +1,49 @@
+.workshop-film { padding: 0; }
+
+.workshop-film__stage {
+  position: relative;
+  isolation: isolate;
+  height: clamp(380px, 42vw, 650px);
+  overflow: hidden;
+}
+
+.workshop-film__poster,
+.workshop-film__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 45%;
+}
+
+.workshop-film__video { opacity: 0; cursor: pointer; }
+.workshop-film.is-ready:not(.has-error) .workshop-film__video { opacity: 1; }
+.workshop-film__video:focus-visible { outline: 3px solid var(--gold-light); outline-offset: -5px; }
+
+.workshop-film__content {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 2.75rem;
+  width: min(1200px, calc(100% - 3rem));
+  margin-inline: auto;
+  color: var(--text-main);
+  pointer-events: none;
+  text-shadow: 0 2px 8px #000;
+}
+
+.workshop-film__content h2 {
+  margin: 0 0 0.65rem;
+  font-family: var(--font-title);
+  font-size: clamp(2rem, 4.2vw, 4rem);
+  font-weight: 800;
+  line-height: 1.65;
+}
+
+.workshop-film__content p { margin: 0; color: var(--gold-light); font-size: 1rem; }
+
+@media (max-width: 767px) {
+  .workshop-film__stage { height: 460px; }
+  .workshop-film__content { width: calc(100% - 2rem); bottom: 2rem; }
+  .workshop-film__content p { font-size: 0.9rem; }
+}

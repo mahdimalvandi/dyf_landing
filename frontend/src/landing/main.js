@@ -4,6 +4,7 @@ import { initSpecularHighlight } from './modules/specular.js';
 import { initInquiryForm } from './modules/inquiry-form.js';
 import { initModelViewerControl } from './modules/model-viewer.js';
 import { initScrollAnimations } from './modules/scroll-animations.js';
+import { initWorkshopVideo } from './modules/workshop-video.js';
 
 function bootstrapLanding() {
   initMobileMenu();
@@ -13,6 +14,7 @@ function bootstrapLanding() {
   initInquiryForm();
 
   initModelViewerControl();
+  initWorkshopVideo();
 
   const { lenis } = initScrollAnimations({
     onNavClick: () => {
