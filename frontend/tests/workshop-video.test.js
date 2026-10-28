@@ -13,7 +13,8 @@ test('workshop autoplay respects reduced motion and data saving', () => {
 test('workshop prototype follows about, stays out of hero, and loads video lazily', () => {
   const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
   assert.ok(html.indexOf('id="about"') < html.indexOf('id="workshop"'));
-  assert.ok(html.indexOf('id="workshop"') < html.indexOf('id="editorial-lines"'));
+  assert.ok(html.indexOf('id="hero"') < html.indexOf('id="editorial-lines"'));
+  assert.ok(html.indexOf('id="editorial-lines"') < html.indexOf('id="about"'));
   const video = html.match(/<video\b[^>]*class="workshop-film__video"[^>]*>/)?.[0];
   assert.ok(video);
   assert.match(video, /data-src="\/assets\/videos\/workshop-demo.mp4"/);

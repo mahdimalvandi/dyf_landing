@@ -162,6 +162,53 @@
     </div>
   </section>
 
+  <section class="collection-preview" id="editorial-lines" aria-labelledby="collection-title">
+    <div class="container collection-preview__grid">
+      <div class="collection-preview__intro">
+        <h2 id="collection-title">نگاهی به مدل‌ها</h2>
+        <p>چند انتخاب برای آشنایی با دنیای کفش‌های DYF.</p>
+        <a href="#inquiry" class="collection-preview__link">
+          <span>درخواست کاتالوگ خصوصی</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+        </a>
+      </div>
+      <div class="collection-preview__models" tabindex="0" role="region" aria-label="اسلایدر مدل‌های کفش" aria-roledescription="اسلایدر">
+      <figure class="collection-model">
+        <picture><source srcset="assets/images/shoes.webp" type="image/webp"><img src="assets/images/shoes.jpeg" alt="تصویر نمونه از یک جفت کفش بنددار قهوه‌ای با پنجه دوخت‌دار" width="1024" height="1024" loading="lazy" decoding="async"></picture>
+        <figcaption><h3>کفش بنددار کلاسیک</h3><p>فرم آشنا و خطوط ساده؛ انتخابی برای بررسی در مجموعهٔ رسمی.</p></figcaption>
+      </figure>
+      <figure class="collection-model">
+        <img src="assets/images/shoes.webp" alt="کفش بنددار قهوه‌ای، نمای رویه و بندها" width="1024" height="1024" loading="lazy" decoding="async">
+        <figcaption><h3>قهوه‌ای، با جزئیات نزدیک‌تر</h3><p>نگاهی به رنگ و پرداخت رویه؛ برای انتخاب ترکیب مناسب مجموعهٔ شما.</p></figcaption>
+      </figure>
+      <figure class="collection-model">
+        <img src="assets/images/shoes.webp" alt="کفش قهوه‌ای با پنجه دوخت‌دار" width="1024" height="1024" loading="lazy" decoding="async">
+        <figcaption><h3>پنجه دوخت‌دار</h3><p>خط دوخت روی پنجه، جزئیاتی که شخصیت این فرم را شکل می‌دهد.</p></figcaption>
+      </figure>
+      <figure class="collection-model">
+        <img src="assets/images/shoes.webp" alt="نمای نیم‌رخ کفش بنددار قهوه‌ای" width="1024" height="1024" loading="lazy" decoding="async">
+        <figcaption><h3>فرم و تناسب</h3><p>از خط پنجه تا پاشنه؛ نگاهی به تناسب کلی کفش.</p></figcaption>
+      </figure>
+      <figure class="collection-model">
+        <img src="assets/images/shoes.webp" alt="جزئیات بند و زبانه کفش قهوه‌ای" width="1024" height="1024" loading="lazy" decoding="async">
+        <figcaption><h3>جزئیات رویه</h3><p>بندها، زبانه و اتصال قطعات؛ بخش‌هایی که از نزدیک بهتر دیده می‌شوند.</p></figcaption>
+      </figure>
+      <figure class="collection-model">
+        <img src="assets/images/shoes.webp" alt="یک جفت کفش رسمی قهوه‌ای" width="1024" height="1024" loading="lazy" decoding="async">
+        <figcaption><h3>یک انتخاب برای مجموعهٔ شما</h3><p>برای آشنایی با مدل‌های قابل ارائه و بررسی انتخاب‌ها، گفت‌وگو کنیم.</p></figcaption>
+      </figure>
+      </div>
+      <div class="collection-controls" aria-label="کنترل نمایش مدل‌ها">
+        <div class="collection-controls__arrows">
+          <button type="button" data-collection-prev aria-label="مدل‌های قبلی"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+          <button type="button" data-collection-next aria-label="مدل‌های بعدی"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
+        </div>
+        <div class="collection-pages" aria-label="صفحه‌های مدل‌ها"></div>
+        <span class="collection-status" aria-live="polite" aria-atomic="true"></span>
+      </div>
+    </div>
+  </section>
+
   <section class="story-section" id="about">
     <div class="container">
       <div class="story-grid">
@@ -233,7 +280,8 @@
     </div>
   </section>
 
-  <section class="craft-editorial-section" id="editorial-lines">
+  <template id="previous-production-lines">
+  <section class="craft-editorial-section">
     <div class="container">
 
       <div class="craft-editorial-header">
@@ -365,6 +413,8 @@
       </div>
     </div>
   </section>
+
+  </template>
 
   <section class="defender-section" id="leather">
     <div class="container">

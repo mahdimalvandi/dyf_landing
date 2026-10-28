@@ -5,6 +5,8 @@ import { initInquiryForm } from './modules/inquiry-form.js';
 import { initModelViewerControl } from './modules/model-viewer.js';
 import { initScrollAnimations } from './modules/scroll-animations.js';
 import { initWorkshopVideo } from './modules/workshop-video.js';
+import { initCollectionSlider } from './modules/collection-slider.js';
+import { initHeroWriting } from './modules/hero-writing.js';
 
 function bootstrapLanding() {
   initMobileMenu();
@@ -15,6 +17,8 @@ function bootstrapLanding() {
 
   initModelViewerControl();
   initWorkshopVideo();
+  initCollectionSlider();
+  initHeroWriting();
 
   const { lenis } = initScrollAnimations({
     onNavClick: () => {

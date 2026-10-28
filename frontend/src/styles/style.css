@@ -7,6 +7,7 @@
 
 @import './landing/header.css';
 @import './landing/hero.css';
+@import './landing/collection.css';
 @import './landing/story.css';
 @import './landing/workshop.css';
 @import './landing/craft.css';
