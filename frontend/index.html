@@ -209,94 +209,51 @@
     </div>
   </section>
 
-  <section class="story-section" id="about">
+  <section class="brand-story" id="about" aria-labelledby="brand-story-title">
+    <div class="container brand-story__layout">
+      <div class="brand-story__text">
+        <h2 id="brand-story-title">تجربه‌ای که پیش از<br>نام <bdi lang="en">DYF</bdi> آغاز شد.</h2>
+        <p>DYF ادامهٔ تجربهٔ ما در بازار کفش مردانه است؛ این بار با نام و هویتی مستقل. شناخت سلیقهٔ مشتریان و گفت‌وگو با فروشندگان، بخشی از این مسیر بوده و هست.</p>
+        <p class="brand-story__closing">برای ما، معرفی یک مدل شروع گفت‌وگوست؛ دربارهٔ انتخاب‌هایی که با مجموعه و مشتریان شما تناسب دارند.</p>
+        <a class="brand-story__link" href="#inquiry"><span>گفت‌وگو دربارهٔ همکاری</span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg></a>
+      </div>
+      <figure class="brand-story__image">
+        <div class="brand-story__frame"><picture>
+          <source srcset="assets/images/story-workshop.webp" type="image/webp">
+          <img src="assets/images/story-workshop.jpeg" alt="ابزار کفاشی و قطعات چرم روی میز کار" width="1540" height="944" loading="lazy" decoding="async">
+        </picture></div>
+        <figcaption><span>روایت یک مسیر در دنیای کفش</span><span lang="en" dir="ltr">DYF</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="story-section" aria-labelledby="about-title">
     <div class="container">
       <div class="story-grid">
-
         <div class="story-text-col">
-          <div class="story-badge">
-            <span class="story-badge-dot"></span>
-            <span>داستان DYF</span>
-          </div>
-
-          <h2 class="story-title">
-            تجربه‌ای که پیش از نام DYF آغاز شد.
-          </h2>
-
-          <p class="story-description">
-            فعالیت ما در بازار کفش به بیش از یک دهه تجربه برمی‌گردد. DYF ادامه این مسیر با هویتی مستقل است؛ مسیری که شناخت نیاز بازار، ارتباط مستقیم با فروشندگان و شکل‌دادن به همکاری‌های ماندگار، بخش مهمی از آن بوده است.
-          </p>
-
-          <div class="story-points">
-            <div class="story-point-item">
-              <span class="point-accent-bullet" aria-hidden="true"></span>
-              <span class="point-label">تجربه در بازار کفش مردانه</span>
-            </div>
-
-            <div class="story-point-item">
-              <span class="point-accent-bullet" aria-hidden="true"></span>
-              <span class="point-label">همکاری با کسب‌وکارهای سراسر ایران</span>
-            </div>
-
-            <div class="story-point-item">
-              <span class="point-accent-bullet" aria-hidden="true"></span>
-              <span class="point-label">ارتباط مستقیم برای بررسی سفارش‌ها</span>
-            </div>
-          </div>
+          <h2 class="story-title" id="about-title">پیش از آنکه<br>یک جفت کفش شود.</h2>
+          <p class="story-description">از برش رویه تا آخرین دوخت، هر کفش مسیری را طی می‌کند. چند لحظه نزدیک‌تر ببینید؛ دست‌ها، ابزارها و جزئیاتی که شکل نهایی را می‌سازند.</p>
         </div>
 
-        <div class="story-image-col">
-          <div class="story-image-card">
-            <div class="story-image-frame">
-              <picture>
-                <source srcset="assets/images/story-workshop.webp" type="image/webp">
-                <img 
-                  src="assets/images/story-workshop.jpeg" 
-                  alt="میز کار کفاشی کارگاه DYF، ابزارهای اندازه‌گیری و متریال چرم طبیعی" 
-                  class="story-workbench-img"
-                  loading="lazy"
-                  decoding="async"
-                  width="1540"
-                  height="944"
-                />
-              </picture>
-              <div class="story-image-overlay"></div>
-            </div>
+        <!-- Prototype footage: not DYF's workshop. Source and license in docs/design/workshop-video.md. -->
+        <figure class="workshop-film" id="workshop" aria-label="ویدیوی مراحل ساخت کفش">
+          <div class="workshop-film__stage">
+            <img class="workshop-film__poster" src="/assets/videos/workshop-demo-poster.jpg" alt="نمای نزدیک دست یک کفاش هنگام کار روی زیره و رویهٔ کفش" width="854" height="480" loading="lazy">
+            <video id="workshop-video" class="workshop-film__video" data-src="/assets/videos/workshop-demo.mp4" poster="/assets/videos/workshop-demo-poster.jpg" muted loop playsinline preload="none" tabindex="0" aria-label="ویدیوی بی‌صدای مراحل ساخت کفش؛ برای پخش یا توقف کلیک کنید یا کلید فاصله را بزنید"></video>
           </div>
-        </div>
+        </figure>
       </div>
     </div>
   </section>
 
-  <!-- Prototype footage: not DYF's workshop. Source and license in docs/design/workshop-video.md. -->
-  <section class="workshop-film" id="workshop" aria-labelledby="workshop-title">
-    <div class="workshop-film__stage">
-      <img class="workshop-film__poster" src="/assets/videos/workshop-demo-poster.jpg" alt="نمای نزدیک دست یک کفاش هنگام کار روی زیره و رویهٔ کفش" width="854" height="480" loading="lazy">
-      <video id="workshop-video" class="workshop-film__video" data-src="/assets/videos/workshop-demo.mp4" poster="/assets/videos/workshop-demo-poster.jpg" muted loop playsinline preload="none" tabindex="0" aria-label="ویدیوی بی‌صدای مراحل ساخت کفش؛ برای پخش یا توقف کلیک کنید یا کلید فاصله را بزنید"></video>
-      <div class="workshop-film__content">
-        <h2 id="workshop-title">کفش، از نزدیک.</h2>
-        <p>دست‌ها، ابزارها و جزئیات ساخت.</p>
-      </div>
-    </div>
-  </section>
-
-  <template id="previous-production-lines">
   <section class="craft-editorial-section">
     <div class="container">
 
       <div class="craft-editorial-header">
-        <span class="craft-editorial-kicker">DYF LOOKBOOK — TWO LINES</span>
         <h2 class="craft-main-title">برای هر سبک، یک انتخاب.</h2>
         <p class="craft-main-desc">
-          تولید متمرکز بر دو لاین مستقل رسمی و اسپرت، متناسب با استانداردهای کیفی کارگاه و نیازهای متنوع در بازار کفش مردانه.
+          دو مسیر در کفش مردانه؛ برای استایل رسمی و استفادهٔ روزمره.
         </p>
-        <div class="craft-curation-badge">
-          <span>تولید اختصاصی کارگاهی تبریز</span>
-          <span class="badge-sep">•</span>
-          <span>سری‌های ۱۰ تا ۱۰۰ جفتی</span>
-          <span class="badge-sep">•</span>
-          <span>ویژه بنکداران و بوتیک‌های کفش</span>
-        </div>
       </div>
 
       <div class="craft-rows-wrap">
@@ -309,7 +266,7 @@
                 <source srcset="assets/images/craft-formal.webp" type="image/webp">
                 <img 
                   src="assets/images/craft-formal.jpeg" 
-                  alt="استادکار در حال پرداخت و دوخت کفش چرمی در کارگاه - لاین رسمی و چرمی DYF" 
+                  alt="پرداخت و دوخت کفش چرمی با ابزار کفاشی" 
                   class="craft-editorial-img craft-img-formal"
                   loading="lazy"
                   decoding="async"
@@ -321,35 +278,14 @@
           </div>
 
           <div class="craft-text-col">
-            <div class="craft-line-meta">
-              <span class="craft-line-num">01</span>
-              <span class="craft-line-divider" aria-hidden="true">/</span>
-              <span class="craft-line-en">FORMAL</span>
-            </div>
             <h3 class="craft-line-title">رسمی و چرمی</h3>
             <p class="craft-line-desc">
-              مدل‌های مناسب استایل رسمی و محیط‌های کاری، برای فروشگاه‌هایی با نیازهای متنوع در بازار کفش مردانه.
+              مدل‌های رسمی مردانه برای مشتریانی که کفش را برای محل کار، مهمانی یا همراه کت‌وشلوار انتخاب می‌کنند.
             </p>
-
-            <div class="craft-spec-strip">
-              <div class="craft-spec-pill">
-                <span class="spec-label">متریال اصلی رویه:</span>
-                <span class="spec-value">چرم طبیعی هورس و گاوی واکس‌خورده دستی</span>
-              </div>
-              <div class="craft-spec-pill">
-                <span class="spec-label">ساختار زیره:</span>
-                <span class="spec-value">نیولایت فشرده نشکن و چرم طبیعی لایه‌ای</span>
-              </div>
-              <div class="craft-spec-pill">
-                <span class="spec-label">تیراژ سفارش:</span>
-                <span class="spec-value">سری‌های ۱۰ تا ۱۰۰ جفتی کارگاهی</span>
-              </div>
-            </div>
-
-            <a href="#inquiry" class="craft-order-link js-select-line" data-line="executive">
-              <span class="craft-link-text">بررسی شرایط سفارش</span>
-              <span class="craft-link-arrow" aria-hidden="true">←</span>
-            </a>
+            <dl class="craft-line-details">
+              <div><dt>نوع مدل</dt><dd>کفش رسمی مردانه</dd></div>
+              <div><dt>مورد استفاده</dt><dd>محل کار، مهمانی و پوشش رسمی</dd></div>
+            </dl>
           </div>
         </article>
 
@@ -362,35 +298,14 @@
         <article class="craft-editorial-row craft-row-sport">
 
           <div class="craft-text-col">
-            <div class="craft-line-meta">
-              <span class="craft-line-num">02</span>
-              <span class="craft-line-divider" aria-hidden="true">/</span>
-              <span class="craft-line-en">SPORT &amp; CASUAL</span>
-            </div>
             <h3 class="craft-line-title">اسپرت و کژوال</h3>
             <p class="craft-line-desc">
-              مدل‌های مناسب استفاده روزمره و سلیقه‌های متنوع بازار.
+              مدل‌های اسپرت و کژوال مردانه برای مشتریانی که کفش را برای رفت‌وآمد و پوشش روزمره انتخاب می‌کنند.
             </p>
-
-            <div class="craft-spec-strip">
-              <div class="craft-spec-pill">
-                <span class="spec-label">متریال اصلی رویه:</span>
-                <span class="spec-value">چرم نرم ناپا (Nappa) با لمس ابریشمی</span>
-              </div>
-              <div class="craft-spec-pill">
-                <span class="spec-label">ساختار زیره:</span>
-                <span class="spec-value">ارگونومیک سبک PU ضدسایش و ضدانعکاس ضربه</span>
-              </div>
-              <div class="craft-spec-pill">
-                <span class="spec-label">تیراژ سفارش:</span>
-                <span class="spec-value">سری‌های ۱۰ تا ۱۰۰ جفتی کارگاهی</span>
-              </div>
-            </div>
-
-            <a href="#inquiry" class="craft-order-link js-select-line" data-line="sneaker">
-              <span class="craft-link-text">بررسی شرایط سفارش</span>
-              <span class="craft-link-arrow" aria-hidden="true">←</span>
-            </a>
+            <dl class="craft-line-details">
+              <div><dt>نوع مدل</dt><dd>کفش اسپرت و کژوال مردانه</dd></div>
+              <div><dt>مورد استفاده</dt><dd>رفت‌وآمد و پوشش روزمره</dd></div>
+            </dl>
           </div>
 
           <div class="craft-media-col">
@@ -399,7 +314,7 @@
                 <source srcset="assets/images/craft-sport.webp" type="image/webp">
                 <img 
                   src="assets/images/craft-sport.jpg" 
-                  alt="کارگاه ساخت و اتصال زیره کفش اسنیکر - لاین اسپرت و کژوال DYF" 
+                  alt="دوخت رویه و اتصال زیرهٔ کفش با چرخ کفاشی" 
                   class="craft-editorial-img craft-img-sport"
                   loading="lazy"
                   decoding="async"
@@ -413,8 +328,6 @@
       </div>
     </div>
   </section>
-
-  </template>
 
   <section class="defender-section" id="leather">
     <div class="container">

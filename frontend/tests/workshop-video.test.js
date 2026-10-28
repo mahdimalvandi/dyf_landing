@@ -15,6 +15,27 @@ test('workshop prototype follows about, stays out of hero, and loads video lazil
   assert.ok(html.indexOf('id="about"') < html.indexOf('id="workshop"'));
   assert.ok(html.indexOf('id="hero"') < html.indexOf('id="editorial-lines"'));
   assert.ok(html.indexOf('id="editorial-lines"') < html.indexOf('id="about"'));
+
+  const aboutSection = html.match(/<section\b[^>]*id="about"[^>]*>([\s\S]*?)<\/section>/)?.[0];
+  assert.ok(aboutSection, 'about section must exist');
+  assert.ok(aboutSection.includes('تجربه‌ای که پیش از'), 'independent brand story must remain');
+  assert.ok(aboutSection.includes('brand-story__frame'), 'story photograph must have its own frame');
+  assert.ok(!aboutSection.includes('<video'), 'story and workshop must be separate sections');
+  assert.doesNotMatch(html, /<section\b[^>]*id="workshop"/, 'workshop must not be a standalone section');
+  assert.match(html, /<figure\b[^>]*id="workshop"/, 'workshop must be a nested figure/region');
+
+  assert.ok(!html.includes('story-points'), 'old story points must be removed');
+  assert.ok(!html.includes('story-point-item'), 'old story point items must be removed');
+  assert.ok(!html.includes('story-badge'), 'old story badge must be removed');
+  assert.ok(!html.includes('story-workbench-img'), 'old static workbench image must be removed');
+  assert.ok(!html.includes('workshop-film__content'), 'duplicated overlaid workshop content must be removed');
+
+  assert.ok(html.includes('پیش از آنکه<br>یک جفت کفش شود.'));
+  assert.ok(!html.includes('workshop-film__control'), 'workshop control button must be removed');
+  assert.ok(!html.includes('workshop-film__footer'), 'workshop footer figcaption must be removed');
+  assert.ok(!html.includes('کفش، از نزدیک.'), 'workshop footer text must be removed');
+  assert.ok(!html.includes('برش، دوخت، پرداخت'), 'workshop footer text must be removed');
+
   const video = html.match(/<video\b[^>]*class="workshop-film__video"[^>]*>/)?.[0];
   assert.ok(video);
   assert.match(video, /data-src="\/assets\/videos\/workshop-demo.mp4"/);

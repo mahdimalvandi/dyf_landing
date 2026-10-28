@@ -25,7 +25,7 @@ export async function initHeroWriting() {
     let cancelled = false;
     const typeDelay = 320;
     const startDelay = 250;
-    const visiblePause = 3500;
+    const visiblePause = 2000;
     const eraseDelay = 150;
     const clear = () => {
       cancelled = true;

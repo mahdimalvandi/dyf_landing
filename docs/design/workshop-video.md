@@ -4,9 +4,9 @@
 
 ## محل و مرجع
 
-- جایگاه: سومین بخش اصلی لندینگ؛ بعد از `#about`، قبل از `#editorial-lines`.
-- مرجع ترکیب‌بندی: نوار ویدیویی پایین `https://beyazistanbul.us/gallery.html`، نه hero آن سایت. هیچ فایل آن سایت دانلود/کپی نشده است.
-- طراحی: قاب عریض لبه‌به‌لبه، متن کوتاه روی سایهٔ پایین، کنترل پخش/توقف بالا و ذکر آزمایشی‌بودن و منبع زیر آن.
+- جایگاه: ادغام‌شده در بخش معرفی برند `#about` پس از اسلایدر مدل‌ها (`#editorial-lines`).
+- مرجع ترکیب‌بندی: طراحی ادغام‌شدهٔ دو ستونه، نه هدر و نه قاب مجزای تمام‌عرض.
+- طراحی: قاب ویدیویی با نسبت طبیعی 16:9 در ستون چپ بخش در دسکتاپ و تمام‌عرض در موبایل، هماهنگ با ستون متن راست.
 
 ## منبع و مجوز
 
@@ -33,7 +33,7 @@
 
 ## پیاده‌سازی
 
-- markup: `frontend/index.html`، بخش `#workshop`.
+- markup: `frontend/index.html`، فیگور `#workshop` درون بخش `#about`.
 - CSS: `frontend/src/styles/landing/workshop.css`.
 - lifecycle: `frontend/src/landing/modules/workshop-video.js`.
 - سند کلی پروژه: `docs/product/dyf-review-and-handoff.md`.
