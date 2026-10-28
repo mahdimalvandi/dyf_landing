@@ -36,7 +36,7 @@
 
   <header class="site-header">
 
-    <a href="#" class="brand-logo">
+    <a href="/" class="brand-logo" aria-label="DYF، صفحه اصلی">
       <picture>
         <source srcset="assets/images/logo.webp" type="image/webp">
         <img src="assets/images/logo.png" alt="لوگو کارگاه کفش DYF" class="brand-logo-img" width="61" height="70" fetchpriority="high" decoding="async">
@@ -49,17 +49,18 @@
 
     <nav class="desktop-nav" aria-label="ناوبری اصلی دسکتاپ">
       <ul>
-        <li><a href="#about" class="nav-item">درباره ما</a></li>
-        <li><a href="#editorial-lines" class="nav-item">لاین‌های تولید</a></li>
-        <li><a href="#inquiry" class="nav-item">همکاری با ما</a></li>
-        <li><a href="#contact" class="nav-item">تماس با ما</a></li>
+        <li><a href="#about" class="nav-item">درباره DYF</a></li>
+        <li><a href="#editorial-lines" class="nav-item">گالری</a></li>
+        <li><a href="#order" class="nav-item">همکاری و سفارش</a></li>
+        <li><a href="#contact" class="nav-item">تماس</a></li>
       </ul>
     </nav>
 
     <div class="header-actions">
 
-      <a href="/catalog" class="btn-specular btn-desktop js-specular" style="text-decoration: none;">
-        ورود به کاتالوگ خصوصی
+      <a href="/catalog" class="btn-specular js-specular header-partner-link">
+        <span>ورود همکاران</span>
+        <svg class="partner-entry-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5M21 12H9m5-5-5 5 5 5"/></svg>
       </a>
 
       <button class="hamburger-btn" id="hamburgerBtn" aria-label="منوی موبایل" aria-expanded="false" aria-controls="mobileDrawer">
@@ -74,15 +75,17 @@
 
   <div class="mobile-menu-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="منوی ناوبری موبایل" inert>
     <ul class="mobile-nav-list">
-      <li><a href="#about" class="mobile-nav-link">درباره ما</a></li>
-      <li><a href="#editorial-lines" class="mobile-nav-link">لاین‌های تولید</a></li>
-      <li><a href="#inquiry" class="mobile-nav-link">همکاری با ما</a></li>
-      <li><a href="#contact" class="mobile-nav-link">تماس با ما</a></li>
+      <li><a href="/" class="mobile-nav-link">صفحه اصلی</a></li>
+      <li><a href="#about" class="mobile-nav-link">درباره DYF</a></li>
+      <li><a href="#editorial-lines" class="mobile-nav-link">گالری</a></li>
+      <li><a href="#order" class="mobile-nav-link">همکاری و سفارش</a></li>
+      <li><a href="#contact" class="mobile-nav-link">تماس</a></li>
     </ul>
 
     <div class="mobile-drawer-bottom">
-      <a href="/catalog" class="btn-specular js-specular" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">
-        ورود به کاتالوگ خصوصی
+      <a href="/catalog" class="btn-specular js-specular header-partner-link mobile-nav-link">
+        <span>ورود همکاران</span>
+        <svg class="partner-entry-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5M21 12H9m5-5-5 5 5 5"/></svg>
       </a>
     </div>
   </div>

@@ -27,9 +27,9 @@ html.lenis body {
 }
 
 .site-header.is-scrolled {
-  background: rgba(14, 11, 8, 0.96);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-  border-bottom-color: rgba(216, 178, 100, 0.25);
+  background: rgba(20, 18, 16, 0.98);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  border-bottom-color: rgba(216, 178, 100, 0.16);
 }
 
 @media (min-width: 993px) {

@@ -148,10 +148,13 @@
 }
 
 @media (max-width: 920px) {
-  .desktop-nav {
-    display: none;
+  .site-header {
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    min-height: 76px;
+    padding-inline: 4%;
   }
-  .header-actions .btn-desktop {
+  .desktop-nav {
     display: none;
   }
   .hamburger-btn {
@@ -168,11 +171,15 @@
     max-height: 56px;
   }
   .logo-brand-name {
-    font-size: 1.25rem;
+    font-size: 1.65rem;
   }
   .logo-brand-sub {
-    font-size: 0.8rem;
+    display: none;
   }
+  .header-actions { gap: 8px; }
+  .header-partner-link { padding-inline: 12px; font-size: 0.8rem; }
+  .brand-logo { gap: 7px; }
+  .header-actions .partner-entry-icon { display: none; }
   .hero-section {
     padding: 2.5rem 0.5rem 2rem;
   }
