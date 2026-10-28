@@ -21,20 +21,40 @@ export async function initHeroWriting() {
       return;
     }
     brand.classList.add('is-writing');
-    const timers = [];
-    const finish = () => {
-      timers.forEach(window.clearTimeout);
+    let timer;
+    let cancelled = false;
+    const typeDelay = 320;
+    const startDelay = 250;
+    const visiblePause = 3500;
+    const eraseDelay = 150;
+    const clear = () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+      text.textContent = '';
       brand.classList.remove('is-writing');
       overlay.remove();
-      reducedMotion.removeEventListener('change', finish);
+      reducedMotion.removeEventListener('change', clear);
     };
-    letters.forEach((letter, index) => {
-      timers.push(window.setTimeout(() => {
-        text.textContent += letter;
-      }, 250 + index * 320));
-    });
-    timers.push(window.setTimeout(finish, 250 + letters.length * 320 + 600));
-    reducedMotion.addEventListener('change', finish, { once: true });
+    const type = (index = 0) => {
+      if (cancelled) return;
+      if (index < letters.length) {
+        text.textContent += letters[index];
+        timer = window.setTimeout(() => type(index + 1), typeDelay);
+        return;
+      }
+      timer = window.setTimeout(erase, visiblePause);
+    };
+    const erase = (index = letters.length) => {
+      if (cancelled) return;
+      if (index > 0) {
+        text.textContent = letters.slice(0, index - 1).join('');
+        timer = window.setTimeout(() => erase(index - 1), eraseDelay);
+        return;
+      }
+      timer = window.setTimeout(() => type(0), 450);
+    };
+    timer = window.setTimeout(() => type(0), startDelay);
+    reducedMotion.addEventListener('change', clear, { once: true });
   }, { threshold: 0.8 });
   observer.observe(brand);
 }
