@@ -1,0 +1,65 @@
+# Install the frontend build at /var/www/dyf/frontend/dist.
+# Set up DNS and a real TLS certificate before enabling this configuration.
+server {
+    listen 80;
+    server_name dyfshoes.ir www.dyfshoes.ir;
+    return 301 https://dyfshoes.ir$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name www.dyfshoes.ir;
+    ssl_certificate /etc/letsencrypt/live/dyfshoes.ir/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/dyfshoes.ir/privkey.pem;
+    return 301 https://dyfshoes.ir$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name dyfshoes.ir;
+    ssl_certificate /etc/letsencrypt/live/dyfshoes.ir/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/dyfshoes.ir/privkey.pem;
+    root /var/www/dyf/frontend/dist;
+    index index.html;
+    client_max_body_size 55m;
+
+    # $uri excludes query strings; do not log bearer catalog tokens or signatures.
+    access_log off;
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy no-referrer always;
+    gzip on;
+    gzip_types text/css application/javascript application/json image/svg+xml;
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        # Do not trust arbitrary client-supplied forwarding headers.
+        proxy_set_header X-Forwarded-For $remote_addr;
+    }
+
+    # Never alias /uploads to disk or cache it: only the API may authorize media.
+    location /uploads/ {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+    }
+
+    location ~ ^/admin(?:/|\.html)?$ {
+        add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
+        add_header Cache-Control "private, no-store" always;
+        add_header Referrer-Policy no-referrer always;
+        try_files /admin/index.html =404;
+    }
+    location /admin/ {
+        add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
+        add_header Cache-Control "private, no-store" always;
+        add_header Referrer-Policy no-referrer always;
+        try_files /admin/index.html =404;
+    }
+    location ~ ^/catalog(?:/.*|\.html)?$ {
+        add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
+        add_header Cache-Control "private, no-store" always;
+        add_header Referrer-Policy no-referrer always;
+        try_files /catalog/index.html =404;
+    }
+    location / { try_files $uri $uri/ =404; }
+}

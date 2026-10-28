@@ -32,6 +32,9 @@ type ErrorInfo struct {
 }
 
 func Success(fiberContext fiber.Ctx, statusCode int, message string, data interface{}, meta interface{}) error {
+	if prepared, ok := data.(interface{ PrepareResponse() interface{} }); ok {
+		data = prepared.PrepareResponse()
+	}
 	fiberContext.Status(statusCode)
 	fiberContext.Set("Content-Type", "application/json; charset=utf-8")
 

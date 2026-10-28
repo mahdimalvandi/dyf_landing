@@ -1,9 +1,11 @@
 User-agent: *
 Allow: /
 Disallow: /admin.html
+Disallow: /admin
 Disallow: /catalog
 Disallow: /catalog/
 Disallow: /catalog.html
 Disallow: /api/
+Disallow: /uploads/
 
-Sitemap: https://dyfshoes.com/sitemap.xml
+Sitemap: https://dyfshoes.ir/sitemap.xml

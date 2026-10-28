@@ -2,6 +2,7 @@ package link
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	dtoLink "dyf-backend/internal/dto/link"
@@ -99,6 +100,11 @@ func (service Service) Access(token string) (dtoLink.CatalogAccessResponse, int,
 			}
 			return dtoLink.CatalogAccessResponse{}, statusCode, detailError
 		}
+		mediaExpiry := currentTimestamp + 3600
+		if remainingSeconds > 0 && currentTimestamp+remainingSeconds < mediaExpiry {
+			mediaExpiry = currentTimestamp + remainingSeconds
+		}
+		shoe.SignMedia(mediaExpiry, strconv.FormatInt(linkRecord.ID, 10))
 		shoes = append(shoes, shoe.ShoeItemResponse)
 	}
 	return dtoLink.CatalogAccessResponse{

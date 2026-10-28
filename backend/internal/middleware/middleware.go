@@ -27,6 +27,7 @@ func GlobalErrorHandler(fiberContext fiber.Ctx, uncaughtError error) error {
 		}
 	}
 
-	log.Printf("[ERROR] %s %s - %v", fiberContext.Method(), fiberContext.Path(), uncaughtError)
+	// Paths and error text can contain catalog tokens or signed media credentials.
+	log.Printf("[ERROR] method=%s status=%d type=%T", fiberContext.Method(), statusCode, uncaughtError)
 	return response.Error(fiberContext, statusCode, errorCode, errorMessage, nil)
 }

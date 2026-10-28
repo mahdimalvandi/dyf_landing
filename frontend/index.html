@@ -8,27 +8,27 @@
   <meta name="description" content="کارگاه تولید و پخش عمده کفش تمام‌چرم طبیعی مردانه DYF تبریز. تأمین تخصصی سری‌های ۱۰ تا ۱۰۰ جفتی ویژه بنکداران، عمده‌فروشان و بوتیک‌های کفش سراسر کشور.">
   <meta name="theme-color" content="#141210">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://dyfshoes.com/">
+  <link rel="canonical" href="https://dyfshoes.ir/">
+  <meta name="referrer" content="no-referrer">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://dyfshoes.com/">
+  <meta property="og:url" content="https://dyfshoes.ir/">
   <meta property="og:locale" content="fa_IR">
   <meta property="og:site_name" content="DYF - Defender Your Foot">
   <meta property="og:title" content="DYF | تولید و پخش عمده کفش چرم و اسپرت مردانه">
   <meta property="og:description" content="کارگاه تولید و پخش عمده کفش تمام‌چرم طبیعی مردانه DYF تبریز. تأمین تخصصی سری‌های ۱۰ تا ۱۰۰ جفتی ویژه بنکداران و بوتیک‌های کفش.">
-  <meta property="og:image" content="https://dyfshoes.com/assets/images/hero-bg.jpeg">
+  <meta property="og:image" content="https://dyfshoes.ir/assets/images/hero-bg.jpeg">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="DYF | تولید و پخش عمده کفش چرم و اسپرت مردانه">
   <meta name="twitter:description" content="کارگاه تولید و پخش عمده کفش تمام‌چرم طبیعی مردانه DYF تبریز.">
-  <meta name="twitter:image" content="https://dyfshoes.com/assets/images/hero-bg.jpeg">
+  <meta name="twitter:image" content="https://dyfshoes.ir/assets/images/hero-bg.jpeg">
 
   <link rel="stylesheet" href="/src/styles/style.css">
-  <script type="module" src="assets/js/model-viewer.min.js"></script>
 </head>
 <body>
 
@@ -72,7 +72,7 @@
 
   <div class="mobile-menu-overlay" id="mobileOverlay"></div>
 
-  <div class="mobile-menu-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="منوی ناوبری موبایل">
+  <div class="mobile-menu-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="منوی ناوبری موبایل" inert>
     <ul class="mobile-nav-list">
       <li><a href="#about" class="mobile-nav-link">درباره ما</a></li>
       <li><a href="#editorial-lines" class="mobile-nav-link">لاین‌های تولید</a></li>
@@ -97,11 +97,9 @@
           <div class="hero-emblem-showcase">
             <div class="hero-3d-wrapper">
               <model-viewer
-                src="assets/models/emblem_3d.glb"
-                poster="assets/images/logo.png"
+                data-src="/assets/models/emblem_3d.glb"
                 alt="نشان سه‌بعدی رسمی برند DYF"
                 camera-controls
-                auto-rotate
                 auto-rotate-delay="400"
                 rotation-per-second="20deg"
                 interaction-prompt="none"
@@ -126,7 +124,7 @@
                 class="hero-fallback-emblem" 
                 width="420" 
                 height="480"
-                loading="lazy"
+                loading="eager"
                 decoding="async"
               >
             </div>
