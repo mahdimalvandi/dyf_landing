@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Sahel';
+  src: url('../../assets/fonts/Sahel-VF.woff2') format('woff2');
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 .hero-section {
   position: relative;
   min-height: 88vh;
@@ -159,17 +167,17 @@ model-viewer:focus-within,
 
 .hero-content-card {
   position: relative;
-  background: linear-gradient(160deg, rgba(38, 24, 16, 0.85) 0%, rgba(18, 15, 12, 0.95) 100%);
-  border: 1px solid rgba(216, 178, 100, 0.16);
-  border-radius: var(--r-lg);
-  padding: 3rem 2.4rem;
+  isolation: isolate;
+  padding: 2.5rem 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 2rem;
-  min-height: 440px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+  justify-content: center;
+  gap: 2.5rem;
   text-align: right;
+}
+
+.hero-content-card::before {
+  content: none;
 }
 
 .hero-badge {
@@ -196,26 +204,71 @@ model-viewer:focus-within,
 }
 
 .hero-main-title {
-  font-size: clamp(1.9rem, 3vw, 2.75rem);
+  font-family: 'Sahel', var(--font-body);
+  font-size: clamp(2.4rem, 3.6vw, 3.5rem);
   font-weight: 900;
   color: var(--text-ivory);
-  line-height: 1.35;
-  margin-bottom: 1.3rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
 }
 
 .hero-main-title span {
   color: var(--gold-primary);
-  font-weight: 900;
+  font-size: 0.65em;
+  font-weight: 700;
   display: block;
-  margin-top: 0.35rem;
+  margin-top: 0.65rem;
+}
+
+.hero-main-title .hero-title-lead {
+  color: var(--text-ivory);
+  font-size: clamp(2rem, 3.4vw, 3.2rem);
+  font-weight: 500;
+  margin: 0;
+}
+
+.hero-title-brand {
+  display: block;
+  width: fit-content;
+  font-family: var(--font-serif);
+  font-size: clamp(5.5rem, 10vw, 9rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.07em;
+  color: var(--gold-light);
+  margin: 0.1em 0 0.15em;
+}
+
+@media (max-width: 640px) {
+  .hero-title-brand { font-size: 6rem; }
+  .hero-actions-group .hero-btn-secondary { padding-inline: 0; }
 }
 
 .hero-main-desc {
-  color: #dfd7cc;
-  font-size: 1.02rem;
-  line-height: 1.9;
+  font-family: 'Sahel', var(--font-body);
+  color: var(--text-main);
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  max-width: 46ch;
+  line-height: 1.85;
   font-weight: 400;
-  margin-bottom: 1.2rem;
+  margin-bottom: 0;
+}
+
+.hero-main-desc > span {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.9em;
+  color: var(--text-main);
+}
+
+.hero-main-desc > .hero-brand-meaning {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-top: 0.35rem;
+  color: var(--gold-light);
+  white-space: nowrap;
 }
 
 .hero-main-desc strong {
@@ -226,36 +279,71 @@ model-viewer:focus-within,
 .hero-actions-group {
   display: flex;
   align-items: center;
-  gap: 1.1rem;
+  gap: 1.75rem;
   flex-wrap: wrap;
 }
 
 .hero-btn-primary {
-  padding: 0.95rem 2rem;
+  padding: 0.95rem 1.5rem;
   font-size: 0.98rem;
-  gap: 8px;
-  border-radius: var(--r-md);
+  gap: 2.5rem;
+  border-radius: 4px;
+  background: var(--gold-primary);
+  color: var(--bg-deep);
+  border-color: var(--gold-primary);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+.hero-btn-primary:hover {
+  background: var(--gold-light);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
 }
 
 .hero-btn-secondary {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 0.95rem 1.8rem;
-  border-radius: var(--r-md);
+  padding: 0.7rem 0;
+  min-height: 44px;
+  border-bottom: 1px solid rgba(216, 178, 100, 0.5);
   text-decoration: none;
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-ivory);
-  background: rgba(20, 18, 16, 0.75);
-  border: 1px solid rgba(216, 178, 100, 0.25);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: color 0.2s ease;
 }
 
 .hero-btn-secondary:hover {
-  background: rgba(61, 36, 21, 0.85);
-  border-color: var(--gold-primary);
   color: var(--gold-light);
-  transform: translateY(-2px);
+}
+
+@media (min-width: 993px) {
+  .hero-content-top {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 1.5rem;
+  }
+  .hero-main-title { margin-bottom: 0; }
+  .hero-main-desc {
+    padding-bottom: 0.65rem;
+    font-size: 1.15rem;
+    line-height: 2;
+  }
+  .hero-actions-group {
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(216, 178, 100, 0.25);
+  }
+}
+
+@media (max-width: 992px) {
+  .hero-content-top { display: flex; align-items: end; gap: 1.25rem; }
+  .hero-content-top .hero-main-title { flex: 1; margin-bottom: 0; }
+  .hero-content-top .hero-main-desc {
+    flex: 0 0 auto;
+    font-size: 0.95rem;
+    line-height: 2;
+    padding-bottom: 0.65rem;
+  }
 }
