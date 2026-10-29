@@ -75,7 +75,8 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
+         main: resolve(__dirname, 'index.html'),
+         wholesale: resolve(__dirname, 'wholesale/index.html'),
         admin: resolve(__dirname, 'admin/index.html'),
         catalog: resolve(__dirname, 'catalog/index.html'),
       },

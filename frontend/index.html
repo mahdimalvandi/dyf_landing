@@ -51,7 +51,7 @@
       <ul>
         <li><a href="#about" class="nav-item">درباره DYF</a></li>
         <li><a href="#editorial-lines" class="nav-item">گالری</a></li>
-        <li><a href="#order" class="nav-item">همکاری و سفارش</a></li>
+        <li><a href="/wholesale/" class="nav-item">همکاری و سفارش</a></li>
         <li><a href="#contact" class="nav-item">تماس</a></li>
       </ul>
     </nav>
@@ -78,7 +78,7 @@
       <li><a href="/" class="mobile-nav-link">صفحه اصلی</a></li>
       <li><a href="#about" class="mobile-nav-link">درباره DYF</a></li>
       <li><a href="#editorial-lines" class="mobile-nav-link">گالری</a></li>
-      <li><a href="#order" class="mobile-nav-link">همکاری و سفارش</a></li>
+      <li><a href="/wholesale/" class="mobile-nav-link">همکاری و سفارش</a></li>
       <li><a href="#contact" class="mobile-nav-link">تماس</a></li>
     </ul>
 
@@ -148,7 +148,7 @@
           </div>
 
           <div class="hero-actions-group">
-            <a href="#inquiry" class="btn-specular js-specular hero-btn-primary">
+            <a href="/wholesale/#inquiry" class="btn-specular js-specular hero-btn-primary">
               <span>شروع همکاری</span>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
             </a>
@@ -167,7 +167,7 @@
       <div class="collection-preview__intro">
         <h2 id="collection-title">نگاهی به مدل‌ها</h2>
         <p>چند انتخاب برای آشنایی با دنیای کفش‌های DYF.</p>
-        <a href="#inquiry" class="collection-preview__link">
+        <a href="/wholesale/#inquiry" class="collection-preview__link">
           <span>درخواست کاتالوگ خصوصی</span>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
         </a>
@@ -215,7 +215,7 @@
         <h2 id="brand-story-title">تجربه‌ای که پیش از<br>نام <bdi lang="en">DYF</bdi> آغاز شد.</h2>
         <p>DYF ادامهٔ تجربهٔ ما در بازار کفش مردانه است؛ این بار با نام و هویتی مستقل. شناخت سلیقهٔ مشتریان و گفت‌وگو با فروشندگان، بخشی از این مسیر بوده و هست.</p>
         <p class="brand-story__closing">برای ما، معرفی یک مدل شروع گفت‌وگوست؛ دربارهٔ انتخاب‌هایی که با مجموعه و مشتریان شما تناسب دارند.</p>
-        <a class="brand-story__link" href="#inquiry"><span>گفت‌وگو دربارهٔ همکاری</span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg></a>
+        <a class="brand-story__link" href="/wholesale/#inquiry"><span>گفت‌وگو دربارهٔ همکاری</span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg></a>
       </div>
       <figure class="brand-story__image">
         <div class="brand-story__frame"><picture>
@@ -329,17 +329,16 @@
     </div>
   </section>
 
-  <section class="defender-section" id="leather">
+  <section class="defender-section" id="leather" aria-labelledby="material-title">
     <div class="container">
 
       <header class="defender-showcase-header">
-        <span class="defender-showcase-kicker">THE DEFENDER MATERIAL STUDY</span>
-        <h2 class="defender-showcase-title">
+        <h2 class="defender-showcase-title" id="material-title">
           جزئیات، پیش از محصول.
         </h2>
 
         <p class="defender-showcase-lead">
-          در کارگاه DYF، کیفیت کفش پیش از شکل‌گیری محصول، در انتخاب آگاهانه متریال و ظرافت پرداخت آغاز می‌شود؛ پیوندی دقیق میان چرم اصیل، دوخت سراجی و مهندسی گام که هویت پایدار هر مدل را رقم می‌زند.
+          از انتخاب متریال تا دوخت و پرداخت، جزئیات ساخت را از نزدیک ببینید.
         </p>
       </header>
 
@@ -350,7 +349,7 @@
             <source srcset="assets/images/shoes.webp" type="image/webp">
             <img 
               src="assets/images/shoes.jpeg" 
-              alt="کفش تمام چرم رسمی مردانه DYF - تصویر شاخص فرم و کیفیت محصول" 
+               alt="نمای کلی یک جفت کفش رسمی قهوه‌ای بنددار"
               class="defender-master-img"
               loading="lazy"
               decoding="async"
@@ -359,7 +358,7 @@
             />
           </picture>
           <div class="defender-frame-caption">
-            <span class="caption-index">01</span>
+            <span class="caption-index" aria-hidden="true">۰۱</span>
             <span class="caption-title">فرم قالب و ساختار کفش</span>
           </div>
         </div>
@@ -368,286 +367,56 @@
 
           <div class="defender-detail-frame">
             <picture>
-              <source srcset="assets/images/bag.webp" type="image/webp">
+              <source srcset="assets/images/shoes.webp" type="image/webp">
               <img 
-                src="assets/images/bag.jpeg" 
-                alt="نمای نزدیک از بافت و دانه چرم طبیعی" 
+                src="assets/images/shoes.jpeg"
+                alt="برش نزدیک از رویه و تغییر رنگ پرداخت کفش قهوه‌ای"
                 class="defender-detail-img"
                 loading="lazy"
                 decoding="async"
-                width="1200"
-                height="1200"
+                width="1024"
+                height="1024"
               />
             </picture>
             <div class="defender-frame-caption">
-              <span class="caption-index">02</span>
-              <span class="caption-title">دانه و بافت چرم طبیعی</span>
+              <span class="caption-index" aria-hidden="true">۰۲</span>
+              <span class="caption-title">رویه و پرداخت</span>
             </div>
           </div>
 
           <div class="defender-detail-frame">
             <picture>
-              <source srcset="assets/images/bag2.webp" type="image/webp">
+              <source srcset="assets/images/shoes.webp" type="image/webp">
               <img 
-                src="assets/images/bag2.jpeg" 
-                alt="نمای نزدیک از فرایند دوخت سراجی و پرداخت دست‌دوز چرم" 
+                src="assets/images/shoes.jpeg"
+                alt="برش نزدیک از بندها و خط دوخت رویهٔ همان کفش"
                 class="defender-detail-img"
                 loading="lazy"
                 decoding="async"
-                width="1254"
-                height="1254"
+                width="1024"
+                height="1024"
               />
             </picture>
             <div class="defender-frame-caption">
-              <span class="caption-index">03</span>
-              <span class="caption-title">دوخت و پرداخت چرم</span>
+              <span class="caption-index" aria-hidden="true">۰۳</span>
+              <span class="caption-title">دوخت و اتصال رویه</span>
             </div>
           </div>
         </div>
       </div>
 
-      <footer class="defender-showcase-footer">
-        <p class="defender-essence-tag">MATERIAL · CRAFT · DETAIL</p>
-        <div class="defender-brand-signoff">
-          <span class="signoff-hairline" aria-hidden="true"></span>
-          <span class="signoff-label">DEFENDER YOUR FOOT — DYF</span>
-          <span class="signoff-hairline" aria-hidden="true"></span>
-        </div>
-      </footer>
     </div>
   </section>
 
-  <section class="pipeline-section" id="order">
-    <div class="container">
-      <header class="pipeline-header">
-        <span class="pipeline-kicker">THE ORDER JOURNEY</span>
-        <h2 class="pipeline-title">مسیر سفارش عمده در DYF</h2>
-        <p class="pipeline-desc">
-          از انتخاب مدل تا آماده‌سازی و ارسال، مراحل همکاری را در یک نگاه ببینید.
-        </p>
-      </header>
-
-      <div class="pipeline-timeline">
-
-        <article class="pipeline-node">
-          <div class="pipeline-marker" aria-hidden="true">
-            <span class="pipeline-number">۱</span>
-          </div>
-          <div class="pipeline-body">
-            <h3 class="pipeline-step-title">انتخاب مدل از کاتالوگ</h3>
-            <p class="pipeline-step-desc">
-              کاتالوگ و لیست قیمت به‌صورت خصوصی برای همکاران ارسال می‌شود.
-            </p>
-          </div>
-        </article>
-
-        <article class="pipeline-node">
-          <div class="pipeline-marker" aria-hidden="true">
-            <span class="pipeline-number">۲</span>
-          </div>
-          <div class="pipeline-body">
-            <h3 class="pipeline-step-title">ثبت سفارش</h3>
-            <p class="pipeline-step-desc">
-              از طریق تلفن، واتساپ یا همین فرم؛ با سایزبندی و تعداد هر مدل.
-            </p>
-          </div>
-        </article>
-
-        <article class="pipeline-node">
-          <div class="pipeline-marker" aria-hidden="true">
-            <span class="pipeline-number">۳</span>
-          </div>
-          <div class="pipeline-body">
-            <h3 class="pipeline-step-title">تأیید و زمان‌بندی</h3>
-            <p class="pipeline-step-desc">
-              تعداد، زمان تحویل و جزئیات ارسال نهایی می‌شود.
-            </p>
-          </div>
-        </article>
-
-        <article class="pipeline-node">
-          <div class="pipeline-marker" aria-hidden="true">
-            <span class="pipeline-number">۴</span>
-          </div>
-          <div class="pipeline-body">
-            <h3 class="pipeline-step-title">ارسال با باربری</h3>
-            <p class="pipeline-step-desc">
-              سفارش به باربری موردنظر شما تحویل داده می‌شود.
-            </p>
-          </div>
-        </article>
-      </div>
-
-      <div class="pipeline-action">
-        <a href="#inquiry" class="pipeline-cta-link">
-          برای شروع همکاری عمده، با ما در تماس باشید
-          <span class="pipeline-cta-arrow" aria-hidden="true">←</span>
-        </a>
-      </div>
+  <section class="partner-invitation" id="order" aria-labelledby="partner-invitation-title">
+    <div class="container partner-invitation__inner">
+      <h2 id="partner-invitation-title">همکاری با DYF</h2>
+      <p>برای آشنایی با شرایط خرید عمده و دریافت کاتالوگ، وارد صفحهٔ همکاری شوید.</p>
+      <a class="partner-invitation__link" href="/wholesale/">شرایط همکاری و خرید عمده <span aria-hidden="true">←</span></a>
     </div>
   </section>
 
-  <section class="inquiry-section" id="inquiry">
-    <div class="inquiry-watermark" aria-hidden="true">DYF</div>
-    <div class="container">
-      <div class="inquiry-layout">
 
-        <div class="inquiry-intro-col">
-          <div class="inquiry-meta">
-            <span class="inquiry-kicker">WHOLESALE INQUIRY</span>
-            <span class="inquiry-meta-sep" aria-hidden="true">/</span>
-            <span class="inquiry-meta-sub">DIRECT ATELIER</span>
-          </div>
-
-          <h2 class="inquiry-main-title">
-            <span class="inquiry-title-line">شروع یک همکاری،</span>
-            <span class="inquiry-title-accent">از یک گفت‌وگو.</span>
-          </h2>
-
-          <p class="inquiry-intro-desc">
-            برای بررسی شرایط تأمین، تطبیق تیراژ و دریافت کاتالوگ مدل‌ها، مشخصات مجموعه خود را ثبت کنید تا در کوتاه‌ترین زمان با شما در ارتباط باشیم.
-          </p>
-        </div>
-
-        <div class="inquiry-form-sector">
-          <div class="inquiry-form-header">
-            <h3 class="inquiry-form-title">فرم ثبت درخواست همکاری</h3>
-            <p class="inquiry-form-subtitle">اطلاعات زیر را تکمیل کنید تا کارشناس تأمین با شما تماس بگیرد.</p>
-          </div>
-
-          <div class="inquiry-error-banner" id="inquiryGeneralError" role="alert" aria-live="assertive">
-            <div class="inquiry-error-header">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-              </svg>
-              <span class="inquiry-error-title">خطا در ثبت اطلاعات در سرور</span>
-            </div>
-            <p class="inquiry-error-text" id="inquiryErrorText"></p>
-            <div class="inquiry-error-actions">
-              <button type="button" class="inquiry-error-btn-retry" id="inquiryRetryBtn">تلاش مجدد</button>
-              <a href="https://wa.me/989153177455" target="_blank" rel="noopener noreferrer" class="inquiry-error-btn-wa" id="inquiryErrorWaLink">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.42 0-2.82-.37-4.06-1.08l-.29-.17-3.12.82.83-3.04-.19-.3a8.21 8.21 0 0 1-1.26-4.46c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.24-.75-.67-1.25-1.49-1.4-1.74-.14-.25-.02-.39.11-.51.11-.11.25-.29.38-.44.12-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.12.17 1.78 2.71 4.3 3.8.6.26 1.07.41 1.44.53.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.23-.17-.48-.3z"/>
-                </svg>
-                <span>ارسال مستقیم در واتساپ</span>
-              </a>
-            </div>
-          </div>
-
-          <form class="inquiry-form" id="inquiryForm">
-            <div class="inquiry-fields-grid">
-              <div class="inquiry-form-group">
-                <label class="inquiry-label" for="storeName">نام فروشگاه / نام خریدار</label>
-                <input 
-                  type="text" 
-                  id="storeName" 
-                  name="storeName" 
-                  class="inquiry-input" 
-                  placeholder="مثال: فروشگاه آروین / محمد راد" 
-                  aria-describedby="storeNameError"
-                  required
-                >
-                <span class="inquiry-field-error" id="storeNameError" role="alert"></span>
-              </div>
-
-              <div class="inquiry-form-group">
-                <label class="inquiry-label" for="cityMarket">شهر و بازار فعالیت</label>
-                <input 
-                  type="text" 
-                  id="cityMarket" 
-                  name="cityMarket" 
-                  class="inquiry-input" 
-                  placeholder="مثال: تهران - بازار بزرگ" 
-                  aria-describedby="cityMarketError"
-                  required
-                >
-                <span class="inquiry-field-error" id="cityMarketError" role="alert"></span>
-              </div>
-
-              <div class="inquiry-form-group">
-                <label class="inquiry-label" for="phoneNumber">شماره تماس مستقیم</label>
-                <input 
-                  type="tel" 
-                  id="phoneNumber" 
-                  name="phoneNumber" 
-                  class="inquiry-input" 
-                  placeholder="۰۹۱۵۳۱۷۷۴۵۵" 
-                  dir="ltr"
-                  aria-describedby="phoneNumberError"
-                  required
-                >
-                <span class="inquiry-field-error" id="phoneNumberError" role="alert"></span>
-              </div>
-
-              <div class="inquiry-form-group">
-                <label class="inquiry-label" for="linePreference">لاین موردنظر جهت استعلام</label>
-                <select id="linePreference" name="linePreference" class="inquiry-select">
-                  <option value="both">هر دو لاین (رسمی + اسپرت)</option>
-                  <option value="executive">لاین رسمی و چرمی (FORMAL)</option>
-                  <option value="sneaker">لاین اسپرت و کژوال (SPORT & CASUAL)</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="inquiry-form-actions">
-              <button type="submit" class="inquiry-submit-btn">
-                ثبت درخواست همکاری
-              </button>
-              <a href="https://wa.me/989153177455" target="_blank" rel="noopener noreferrer" class="inquiry-whatsapp-btn">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.42 0-2.82-.37-4.06-1.08l-.29-.17-3.12.82.83-3.04-.19-.3a8.21 8.21 0 0 1-1.26-4.46c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.24-.75-.67-1.25-1.49-1.4-1.74-.14-.25-.02-.39.11-.51.11-.11.25-.29.38-.44.12-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.12.17 1.78 2.71 4.3 3.8.6.26 1.07.41 1.44.53.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.23-.17-.48-.3z"/>
-                </svg>
-                <span>ارتباط مستقیم در واتساپ</span>
-              </a>
-            </div>
-
-            <p class="inquiry-privacy-note">
-              اطلاعات شما فقط برای هماهنگی همکاری استفاده می‌شود و در اختیار هیچ شخص یا مجموعه‌ای قرار نمی‌گیرد.
-            </p>
-          </form>
-
-          <div class="inquiry-success-panel" id="formSuccessBanner">
-            <div class="inquiry-success-icon" aria-hidden="true">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-            </div>
-            <h4 class="inquiry-success-title">درخواست شما با موفقیت ثبت شد</h4>
-            <p class="inquiry-success-desc">
-              درخواست شما ثبت شد. به زودی جهت هماهنگی با شماره واردشده تماس می‌گیریم.
-            </p>
-            <button type="button" class="inquiry-reset-btn" id="resetFormBtn">
-              ثبت استعلام جدید
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="faq-section" id="faq">
-    <div class="container">
-      <h2 class="faq-title">سؤال‌های پرتکرار همکاری</h2>
-      <details>
-        <summary>کاتالوگ و لیست قیمت چطور دریافت می‌شود؟</summary>
-        <p>کاتالوگ فقط برای همکاران ارسال می‌شود؛ فرم استعلام را تکمیل کنید یا در واتساپ پیام بدهید.</p>
-      </details>
-      <details>
-        <summary>حداقل سفارش چقدر است؟</summary>
-        <p>سفارش‌ها به‌صورت سری کامل انجام می‌شود؛ جزئیات دقیق هنگام استعلام اعلام می‌شود.</p>
-      </details>
-      <details>
-        <summary>ارسال به شهرستان چطور است؟</summary>
-        <p>ارسال به سراسر ایران با باربری موردنظر شما انجام می‌شود.</p>
-      </details>
-      <details>
-        <summary>فروش تک به تک هم دارید؟</summary>
-        <p>خیر؛ فعالیت DYF فقط عمده و مخصوص همکاران است.</p>
-      </details>
-    </div>
-  </section>
   </main>
 
   <footer class="site-footer" id="contact">
@@ -666,9 +435,9 @@
             <li><a href="#about" class="footer-link">داستان DYF</a></li>
             <li><a href="#editorial-lines" class="footer-link">لوک‌بوک و لاین‌های کارگاهی</a></li>
             <li><a href="#leather" class="footer-link">مطالعه متریال Defender</a></li>
-            <li><a href="#order" class="footer-link">فرآیند ۴ مرحله‌ای سفارش عمده</a></li>
-            <li><a href="#inquiry" class="footer-link">میز استعلام تیراژ و کاتالوگ</a></li>
-            <li><a href="#faq" class="footer-link">سؤال‌های پرتکرار همکاری</a></li>
+            <li><a href="/wholesale/" class="footer-link">همکاری و خرید عمده</a></li>
+            <li><a href="/wholesale/#inquiry" class="footer-link">میز استعلام تیراژ و کاتالوگ</a></li>
+            <li><a href="/wholesale/#faq" class="footer-link">سؤال‌های پرتکرار همکاری</a></li>
           </ul>
         </div>
 
@@ -696,7 +465,7 @@
             <li><a href="https://wa.me/989153177455?text=%D8%B3%D9%84%D8%A7%D9%85%D8%8C%20%DA%A9%D8%A7%D8%AA%D8%A7%D9%84%D9%88%DA%AF%20DYF%20%D8%B1%D9%88%20%D9%85%DB%8C%E2%80%8C%D8%AE%D9%88%D8%A7%D9%85" target="_blank" rel="noopener noreferrer" class="footer-link">ارتباط در واتساپ و مشاوره تیراژ</a></li>
             <li><a href="https://t.me/dyf_footwear" target="_blank" rel="noopener noreferrer" class="footer-link">کانال تلگرام DYF</a></li>
             <li><a href="https://instagram.com/dyf.shoes" target="_blank" rel="noopener noreferrer" class="footer-link">صفحه اینستاگرام (dyf.shoes@)</a></li>
-            <li><a href="#inquiry" class="footer-link footer-cta-link">ثبت فرم درخواست همکاری</a></li>
+            <li><a href="/wholesale/#inquiry" class="footer-link footer-cta-link">ثبت فرم درخواست همکاری</a></li>
           </ul>
         </div>
       </div>

@@ -27,7 +27,7 @@ export function formatPhoneNumberForApi(phone) {
   return normalized;
 }
 
-export function initInquiryForm() {
+export function initInquiryForm({ source = 'landing_page' } = {}) {
   const inquiryForm = document.getElementById('inquiryForm');
   const formSuccessBanner = document.getElementById('formSuccessBanner');
   const resetFormBtn = document.getElementById('resetFormBtn');
@@ -146,7 +146,7 @@ export function initInquiryForm() {
       city_market: cityMarket,
       phone_number: formatPhoneNumberForApi(rawPhone),
       line_preference: linePreference,
-      source: 'landing_page',
+      source,
     };
 
     const lineNames = {

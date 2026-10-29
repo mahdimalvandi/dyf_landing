@@ -15,6 +15,7 @@ export async function initModelViewerControl() {
   if (!viewer) return;
   const wrapper = viewer.closest('.hero-3d-wrapper');
   const fallback = wrapper?.querySelector('.hero-fallback-emblem');
+  fallback?.setAttribute('aria-hidden', 'true');
   let observer;
   let failed = false;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');

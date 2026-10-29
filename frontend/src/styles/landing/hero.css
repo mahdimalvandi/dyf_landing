@@ -92,6 +92,7 @@
 
 .hero-fallback-emblem {
   display: block;
+  visibility: hidden;
   position: absolute;
   max-width: 80%;
   max-height: 80%;
