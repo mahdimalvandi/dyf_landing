@@ -160,6 +160,9 @@
   .defender-showcase-lead { font-size: 0.9rem; }
   .defender-visual-triptych { gap: 1rem; }
   .defender-master-frame { height: auto; aspect-ratio: 1; }
-  .defender-details-stack { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; height: 440px; gap: 1rem; }
+  .defender-details-stack { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: 1fr; height: clamp(150px, 45vw, 230px); gap: 0.75rem; }
   .defender-frame-caption { right: 0.75rem; bottom: 0.75rem; }
+  .defender-detail-frame .defender-frame-caption { right: 8px; bottom: 8px; max-width: calc(100% - 16px); padding: 5px 7px; gap: 5px; }
+  .defender-detail-frame .caption-title { font-size: 0.7rem; line-height: 1.7; }
+  .defender-detail-frame .caption-index { font-size: 0.7rem; padding-inline-end: 5px; }
 }

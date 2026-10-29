@@ -7,9 +7,11 @@ import { initScrollAnimations } from './modules/scroll-animations.js';
 import { initWorkshopVideo } from './modules/workshop-video.js';
 import { initCollectionSlider } from './modules/collection-slider.js';
 import { initHeroWriting } from './modules/hero-writing.js';
+import { initMobileContact } from './modules/mobile-contact.js';
 
 function bootstrapLanding() {
   initMobileMenu();
+  initMobileContact();
 
   initSpecularHighlight();
 

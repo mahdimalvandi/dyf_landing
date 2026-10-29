@@ -121,9 +121,14 @@
     max-width: 680px;
   }
   .footer-grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2rem 1rem;
   }
+  .footer-brand { grid-column: 1 / -1; }
+  .footer-col { min-width: 0; }
+  .footer-col h4 { font-size: 0.85rem; }
+  .footer-col .footer-link,
+  .footer-col .footer-info-item { font-size: 0.78rem; overflow-wrap: anywhere; }
 }
 
 @media (max-width: 920px) {
