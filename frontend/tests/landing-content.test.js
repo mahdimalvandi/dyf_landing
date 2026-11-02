@@ -20,19 +20,18 @@ test('landing describes partner production without invented capacity or ownershi
   assert.match(html, /مواد اولیه را تأمین می‌کنیم/);
   assert.match(html, /واحدهای تولیدی همکار/);
   assert.doesNotMatch(html, /مهندسی محافظت|تولید انحصاری سری‌های|تمام‌چرم طبیعی تبریز/);
-  assert.match(html, /href="\/media-credits.html"/);
+  assert.doesNotMatch(html, /media-credits\.html/);
   assert.doesNotMatch(html, /media-source-note|تصویر مرجع<|فیلم مرجع از کارگاه مستقل/);
-  const credits = readFileSync(new URL('../public/media-credits.html', import.meta.url), 'utf8');
-  assert.match(credits, /Der Schuhmache/);
-  assert.match(credits, /Ayten Fadel/);
-  assert.match(credits, /creativecommons.org\/licenses\/by\/3.0/);
+  assert.equal(existsSync(new URL('../public/media-credits.html', import.meta.url)), false);
+  assert.match(html, /Ayten Fadel/);
+  assert.match(html, /creativecommons.org\/licenses\/by\/3.0/);
 });
 
 test('wholesale uses the landing footer structure and correct cross-page links', () => {
   const wholesale = readFileSync(new URL('../wholesale/index.html', import.meta.url), 'utf8');
   const footer = wholesale.match(/<footer class="site-footer"[\s\S]*?<\/footer>/)?.[0];
   assert.ok(footer);
-  for (const label of ['بخش‌های اصلی', 'تماس و کانال‌های رسمی', 'DEFENDER YOUR FOOT (DYF)', 'منابع تصاویر و فیلم']) {
+  for (const label of ['بخش‌های اصلی', 'تماس و کانال‌های رسمی', 'DEFENDER YOUR FOOT (DYF)']) {
     assert.ok(footer.includes(label));
   }
   assert.match(footer, /href="\/#about"/);
