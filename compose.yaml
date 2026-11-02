@@ -1,0 +1,86 @@
+name: dyf
+
+x-backend: &backend
+  image: dyf-backend:local
+  build:
+    context: ./backend
+  environment:
+    APP_ENV: production
+    APP_PORT: "8080"
+    DB_HOST: db
+    DB_PORT: "5432"
+    DB_USER: dyf
+    DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+    DB_NAME: dyf_catalog
+    DB_SSLMODE: disable
+    OTP_PROVIDER: msgway
+    MSGWAY_API_KEY: ${MSGWAY_API_KEY:?Set MSGWAY_API_KEY in .env}
+    MSGWAY_TEMPLATE_ID: ${MSGWAY_TEMPLATE_ID:?Set MSGWAY_TEMPLATE_ID in .env}
+    MEDIA_SIGNING_KEY: ${MEDIA_SIGNING_KEY:?Set a permanent MEDIA_SIGNING_KEY in .env}
+    CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:?Set HTTPS site origins in .env}
+    TZ: Asia/Tehran
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: dyf_catalog
+      POSTGRES_USER: dyf
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      TZ: Asia/Tehran
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dyf -d dyf_catalog"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks: [data]
+
+  migrate:
+    <<: *backend
+    command: ["/app/migrate", "up"]
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [data]
+
+  backend:
+    <<: *backend
+    restart: unless-stopped
+    init: true
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    volumes:
+      - uploads:/app/uploads
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/api/v1/health"]
+      interval: 15s
+      timeout: 5s
+      start_period: 15s
+      retries: 5
+    networks: [data, web]
+
+  frontend:
+    image: dyf-frontend:local
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${HTTP_BIND:-127.0.0.1}:${HTTP_PORT:-8090}:80"
+    networks: [web]
+
+volumes:
+  postgres_data:
+  uploads:
+
+networks:
+  data:
+    internal: true
+  web:

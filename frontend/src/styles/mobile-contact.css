@@ -1,0 +1,35 @@
+.mobile-bottom-dock { display: none; }
+@media (max-width: 992px) {
+  body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+  .mobile-bottom-dock {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 120;
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    gap: 10px;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+    background: var(--bg-deep);
+    border-top: 1px solid var(--border-medium);
+  }
+  .mobile-bottom-dock[hidden] { display: none; }
+  .dock-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 48px;
+    padding: 8px 6px;
+    border-radius: var(--r-sm);
+    font-size: clamp(0.72rem, 3.2vw, 0.88rem);
+    font-weight: 700;
+    line-height: 1.5;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .dock-action-btn svg { flex-shrink: 0; }
+  .dock-btn-call { background: var(--bg-surface); color: var(--gold-light); border: 1px solid var(--border-strong); }
+  .dock-btn-whatsapp { background: var(--gold-primary); color: #20190d; border: 1px solid var(--gold-primary); }
+  .dock-action-btn:active { transform: scale(0.98); }
+  .dock-action-btn:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 3px; }
+}

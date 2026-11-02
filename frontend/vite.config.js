@@ -9,7 +9,8 @@ export default defineConfig({
     {
       name: 'catalog-runtime-images',
       writeBundle() {
-        cpSync(resolve(__dirname, 'assets/images'), resolve(__dirname, 'dist/assets/images'), { recursive: true });
+         cpSync(resolve(__dirname, 'assets/images'), resolve(__dirname, 'dist/assets/images'), { recursive: true });
+         cpSync(resolve(__dirname, 'assets/models'), resolve(__dirname, 'dist/assets/models'), { recursive: true });
       },
     },
     {
@@ -62,11 +63,11 @@ export default defineConfig({
     open: false,
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: process.env.API_PROXY_TARGET || 'http://localhost:8080',
         changeOrigin: true,
       },
       '/uploads': {
-        target: 'http://localhost:8080',
+        target: process.env.API_PROXY_TARGET || 'http://localhost:8080',
         changeOrigin: true,
       },
     },
@@ -74,7 +75,8 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
+         main: resolve(__dirname, 'index.html'),
+         wholesale: resolve(__dirname, 'wholesale/index.html'),
         admin: resolve(__dirname, 'admin/index.html'),
         catalog: resolve(__dirname, 'catalog/index.html'),
       },

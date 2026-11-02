@@ -8,6 +8,7 @@ import (
 	"dyf-backend/config"
 	"dyf-backend/internal/middleware"
 	"dyf-backend/pkg/database"
+	"dyf-backend/pkg/media"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
@@ -24,6 +25,12 @@ type CoreService struct {
 }
 
 func New(appConfig config.Config) CoreService {
+	if err := appConfig.Validate(); err != nil {
+		log.Fatalf("[CONFIG ERROR] %v", err)
+	}
+	if err := media.Configure(appConfig.MediaSigningKey); err != nil {
+		log.Fatalf("[MEDIA CONFIG ERROR] %v", err)
+	}
 	databaseConnection, connectionError := database.ConnectPostgres(appConfig)
 	if connectionError != nil {
 		log.Fatalf("[DATABASE ERROR] failed to connect: %v", connectionError)
@@ -39,9 +46,17 @@ func New(appConfig config.Config) CoreService {
 	})
 
 	fiberApplication.Use(recover.New())
-	fiberApplication.Use(logger.New())
+	// Never log query strings: catalog credentials and signed media URLs contain secrets.
+	fiberApplication.Use(logger.New(logger.Config{Format: "${time} ${status} ${method}\n"}))
+	fiberApplication.Use(func(c fiber.Ctx) error {
+		c.Set("X-Content-Type-Options", "nosniff")
+		c.Set("Referrer-Policy", "no-referrer")
+		c.Set("X-Robots-Tag", "noindex, nofollow, noarchive")
+		c.Set("Cache-Control", "private, no-store")
+		return c.Next()
+	})
 	fiberApplication.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"*"},
+		AllowOrigins: appConfig.AllowedOrigins,
 		AllowHeaders: []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With"},
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"},
 	}))

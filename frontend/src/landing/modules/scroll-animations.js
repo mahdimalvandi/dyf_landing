@@ -129,7 +129,7 @@ export function initScrollAnimations({ onNavClick } = {}) {
     },
     {
       trigger: '.story-text-col',
-      elements: '.story-badge, .story-title, .story-description, .story-point-item',
+      elements: '.story-title, .story-description',
       start: 'top 85%',
       stagger: 0.08,
     },
@@ -251,23 +251,6 @@ export function initScrollAnimations({ onNavClick } = {}) {
         { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out', stagger: 0.1 },
         0.42
       );
-    }
-  }
-
-  const storySection = document.querySelector('.story-section');
-  if (storySection && window.innerWidth >= 993) {
-    const pointItems = storySection.querySelectorAll('.story-point-item');
-
-    if (pointItems.length) {
-      pointItems.forEach((item) => {
-        ScrollTrigger.create({
-          trigger: item,
-          start: 'top 75%',
-          end: 'bottom 45%',
-          onEnter: () => item.classList.add('is-active'),
-          onLeaveBack: () => item.classList.remove('is-active'),
-        });
-      });
     }
   }
 

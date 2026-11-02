@@ -8,7 +8,6 @@ import (
 	constantsShoe "dyf-backend/statics/constants/shoe"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/middleware/static"
 	"gorm.io/gorm"
 )
 
@@ -16,7 +15,7 @@ func SetupRoutes(fiberApp *fiber.App, databaseConnection *gorm.DB) {
 	baseHandler := handler.NewBaseHandler()
 
 	_ = os.MkdirAll(constantsShoe.UploadDirectory, 0755)
-	fiberApp.Use("/uploads", static.New("./uploads"))
+	routes.RegisterMediaRoutes(fiberApp, databaseConnection)
 
 	apiGroup := fiberApp.Group("/api/v1")
 	apiGroup.Get("/health", baseHandler.HealthCheck)

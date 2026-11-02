@@ -99,7 +99,7 @@ export function useAdminData() {
       const uploaded = await api('/shoes/upload', { method: 'POST', body: form });
       return { ...item, url: uploaded.url };
     }));
-    const strip = (url) => url?.includes('/uploads/') ? url.slice(url.indexOf('/uploads/')) : url;
+    const strip = (url) => url?.includes('/uploads/') ? url.slice(url.indexOf('/uploads/')).split('?')[0] : url;
     return {
       title: data.title, description: data.description || '',
       categoryIDs: categories.value.filter((category) => data.categories?.includes(category.name)).map((category) => category.id),

@@ -1,5 +1,9 @@
 # DYF (Defender Your Foot) — Private B2B Catalog & Luxury Brand Platform
 
+## استقرار روی سرور با Docker
+
+برای اجرای production شامل فرانت‌اند، بک‌اند، PostgreSQL، مایگریشن و ذخیره‌سازی دائمی، از [`compose.yaml`](compose.yaml) و [راهنمای استقرار Docker](docs/deployment/docker.md) استفاده کنید. تنظیمات محرمانه از فایل `.env` در ریشه خوانده می‌شوند؛ نمونه در [`.env.example`](.env.example) است. راهنمای Docker مرجع اجرای سرور است؛ دستورهای قدیمی وب‌سرور استاتیک پایین این فایل برای اجرای برنامهٔ فعلی کافی نیستند.
+
 پلتفرم یکپارچه معرفی برند، پنل مدیریت کارگاهی و کاتالوگ خصوصی B2B برند کفش چرم دست‌دوز **DYF (Defender Your Foot)**، طراحی و توسعه داده‌شده بر پایه **دیزاین سیستم DYF v4** با رویکرد اشرافی (Luxury Atelier) و ساختار Vanilla JavaScript بدون وابستگی به فریم‌ورک‌های سنگین.
 
 ---
