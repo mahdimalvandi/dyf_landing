@@ -38,14 +38,14 @@ test('workshop prototype follows about, stays out of hero, and loads video lazil
 
   const video = html.match(/<video\b[^>]*class="workshop-film__video"[^>]*>/)?.[0];
   assert.ok(video);
-  assert.match(video, /data-src="\/assets\/videos\/workshop-demo.mp4"/);
+  assert.match(video, /data-src="\/assets\/videos\/mens-leather-workshop.mp4"/);
   assert.doesNotMatch(video, /\s+src=/);
   assert.match(video, /preload="none"/);
   assert.match(video, /muted loop playsinline/);
   assert.ok(!html.includes('workshop-film__caption'));
   assert.ok(!html.includes('workshop-film__shade'));
   assert.ok(!html.includes('workshop-film__toggle'));
-  for (const file of ['workshop-demo.mp4', 'workshop-demo-poster.jpg']) {
+  for (const file of ['mens-leather-workshop.mp4', 'mens-leather-workshop-poster.jpg']) {
     const size = statSync(new URL(`../public/assets/videos/${file}`, import.meta.url)).size;
     assert.ok(size > 1000 && size < 5_000_000, `${file} must be present and lightweight`);
   }
