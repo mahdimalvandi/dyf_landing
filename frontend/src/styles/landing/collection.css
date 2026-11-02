@@ -62,8 +62,8 @@
   width: 100%;
   height: auto;
   aspect-ratio: 1;
-  object-fit: cover;
-  background: #30251c;
+   object-fit: contain;
+   background: #f6f6f4;
 }
 .collection-model figcaption {
   padding: 1rem 0 0;
@@ -76,8 +76,6 @@
 .collection-model p { margin: 0; font-size: 0.85rem; line-height: 1.9; color: var(--text-muted); }
 .collection-model a { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; margin-top: 1.2rem; padding-top: 0.7rem; border-top: 1px solid rgba(216,178,100,0.18); color: var(--gold-light); text-decoration: none; font-size: 0.85rem; }
 .collection-model a:hover { color: var(--text-ivory); }
-.collection-model:nth-child(2) img { object-position: 25% center; }
-.collection-model:nth-child(3) img { object-position: 80% center; }
 .collection-controls { display: flex; align-items: center; gap: 1.5rem; margin-top: 1.75rem; }
 .collection-controls__arrows { display: flex; gap: 8px; }
 .collection-controls button { cursor: pointer; }

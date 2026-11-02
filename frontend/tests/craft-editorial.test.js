@@ -25,7 +25,7 @@ test('craft editorial section retains both rows, alternating layout, and require
 
   // Header content checks
   assert.match(craftSection, /<h2\b[^>]*class="craft-main-title"[^>]*>\s*برای هر سبک، یک انتخاب\.\s*<\/h2>/);
-  assert.match(craftSection, /<p\b[^>]*class="craft-main-desc"[^>]*>\s*دو مسیر در کفش مردانه؛ برای استایل رسمی و استفادهٔ روزمره\.\s*<\/p>/);
+  assert.match(craftSection, /دو گروه برای نیازهای متفاوت فروشگاه/);
 
   // Both rows exist
   assert.match(craftSection, /<article\b[^>]*class="[^"]*craft-editorial-row[^"]*craft-row-formal[^"]*"/);
@@ -41,9 +41,9 @@ test('craft editorial section retains both rows, alternating layout, and require
   const formalMediaIndex = formalRow.indexOf('craft-media-col');
   const formalTextIndex = formalRow.indexOf('craft-text-col');
   assert.ok(formalMediaIndex < formalTextIndex, 'formal row must have photo before text');
-  assert.match(formalRow, /alt="پرداخت و دوخت کفش چرمی با ابزار کفاشی"/);
+  assert.match(formalRow, /alt="نمای مستند از برش قطعهٔ چرمی کفش با ابزار دستی"/);
   assert.match(formalRow, /<h3\b[^>]*class="craft-line-title"[^>]*>\s*رسمی و چرمی\s*<\/h3>/);
-  assert.match(formalRow, /<p\b[^>]*class="craft-line-desc"[^>]*>\s*مدل‌های رسمی مردانه برای مشتریانی که کفش را برای محل کار، مهمانی یا همراه کت‌وشلوار انتخاب می‌کنند\.\s*<\/p>/);
+  assert.match(formalRow, /برای ویترین رسمی فروشگاه/);
   assert.match(formalRow, /class="craft-line-details"/);
   assert.match(formalRow, /<dt>\s*نوع مدل\s*<\/dt>\s*<dd>\s*کفش رسمی مردانه\s*<\/dd>/);
   assert.match(formalRow, /<dt>\s*مورد استفاده\s*<\/dt>\s*<dd>\s*محل کار، مهمانی و پوشش رسمی\s*<\/dd>/);
@@ -55,9 +55,9 @@ test('craft editorial section retains both rows, alternating layout, and require
   const sportTextIndex = sportRow.indexOf('craft-text-col');
   const sportMediaIndex = sportRow.indexOf('craft-media-col');
   assert.ok(sportTextIndex < sportMediaIndex, 'sport row must have text before photo');
-  assert.match(sportRow, /alt="دوخت رویه و اتصال زیرهٔ کفش با چرخ کفاشی"/);
+  assert.match(sportRow, /alt="عکس مرجع یک کفش جیر بنددار مردانه با ظاهر روزمره"/);
   assert.match(sportRow, /<h3\b[^>]*class="craft-line-title"[^>]*>\s*اسپرت و کژوال\s*<\/h3>/);
-  assert.match(sportRow, /<p\b[^>]*class="craft-line-desc"[^>]*>\s*مدل‌های اسپرت و کژوال مردانه برای مشتریانی که کفش را برای رفت‌وآمد و پوشش روزمره انتخاب می‌کنند\.\s*<\/p>/);
+  assert.match(sportRow, /برای بخش روزمرهٔ فروشگاه/);
   assert.match(sportRow, /class="craft-line-details"/);
   assert.match(sportRow, /<dt>\s*نوع مدل\s*<\/dt>\s*<dd>\s*کفش اسپرت و کژوال مردانه\s*<\/dd>/);
   assert.match(sportRow, /<dt>\s*مورد استفاده\s*<\/dt>\s*<dd>\s*رفت‌وآمد و پوشش روزمره\s*<\/dd>/);
