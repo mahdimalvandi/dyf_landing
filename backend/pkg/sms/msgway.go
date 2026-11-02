@@ -89,8 +89,8 @@ func (msgWay MsgWaySender) SendOTP(payload MessagePayload) error {
 		return fmt.Errorf("failed parsing msgway response: %w", unmarshalError)
 	}
 
-	if parsedResponse.Status != "success" && httpResponse.StatusCode >= 400 {
-		return fmt.Errorf("msgway returned error code %s: %s", parsedResponse.Error.Code, parsedResponse.Error.Message)
+	if httpResponse.StatusCode < 200 || httpResponse.StatusCode >= 300 || parsedResponse.Status != "success" {
+		return fmt.Errorf("msgway rejected OTP (HTTP %d, status %q, error code %q)", httpResponse.StatusCode, parsedResponse.Status, parsedResponse.Error.Code)
 	}
 
 	return nil
